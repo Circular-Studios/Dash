@@ -70,12 +70,32 @@ body {
 #menu {
   min-height: 800px;
   border-right: 1px solid #eee;
+  width: 180px;
+}
+@media (min-width: 1200px) {
+  width: 200px;
+}
+@media (max-width: 979px) and (min-width: 768px) {
+  #menu {
+    width: 140px;
+  }
+}
+@media (max-width: 768px) {
+  #menu {
+    min-height: 0px;
+    border: none;
+    position: static;
+    width: auto;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+  }
 }
 
 #menu li.nav-header {
   color: #111;
   font-family: 'ProximaNova-Bold';
   font-weight: normal;
+  letter-spacing: 2px;
 }
 #menu li a {
   padding-top: 8px;
@@ -106,10 +126,6 @@ body {
 }
 
 @media (max-width: 979px) {
-  #menu {
-    min-height: 0px;
-    border: none;
-  }
   body {
     padding-top: 0px;
   }

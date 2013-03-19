@@ -104,3 +104,14 @@ body {
 }
 .orange-button {
 }
+
+@media (max-width: 979px) {
+  #menu {
+    min-height: 0px;
+    border: none;
+  }
+  body {
+    padding-top: 0px;
+  }
+}
+

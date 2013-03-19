@@ -13,6 +13,7 @@
       to the bottom of the topbar */ }
     </style>
     <link href="/assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="/assets/css/docs.css" rel="stylesheet">
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js">
@@ -32,18 +33,29 @@
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <a href="/" class="brand">Jetstrap Docs</a>
+          <a href="/" class="brand"><img src="http://s3.amazonaws.com/jetstrap-site/images/jetstrap_logo.png"></a>
+          <ul class="nav pull-right">
+            <li><a href="http://jetstrap.com/">Jetstrap</a></li>
+            <li><a href="http://jetstrap.com/#about">About</a></li>
+            <li><a href="http://jetstrap.com/#love">Love</a></li>
+            <li><a href="http://blog.jetstrap.com/" target="_blank">Blog</a></li>
+            <li style="line-height: 59px; vertical-align: middle"><a href="http://jetstrap.com/" class="orange-button">Sign up free</a></li>
+          </ul>
         </div>
       </div>
     </div>
     <div class="container">
       <div class="row">
         <div class="span3">
-          <ul class="nav nav-list">
-            <li><a href="/">Home</a></li>
+          <ul id="menu" class="nav nav-list">
+            <li class="nav-header">JETSTRAP DOCS</li>
+            <li data-section=""><a href="/">Home</a></li>
             <li class="nav-header">USING JETSTRAP</li>
-            <li><a href="/builder/gettingstarted.html">Getting Started</a></li>
-            <li><a href="/builder/components.html">Components</a></li>
+            <li data-section="builder/gettingstarted"><a href="/builder/gettingstarted.html">Getting Started</a></li>
+            <li data-section="builder/components"><a href="/builder/components.html">Components</a></li>
+            <li class="nav-header">SUPPORT</li>
+            <li><a href="https://www.hipchat.com/gPtZ47JkC">Chat with us!</a></li>
+            <li><a href="http://help.jetstrap.com/">File a ticket</a></li>
           </ul>
         </div>
         <div class="span9">
@@ -58,6 +70,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js">
     </script>
     <script src="/assets/js/bootstrap.js">
+    </script>
+
+    <script>
+      $('#menu [data-section="{{page.section}}"]').addClass('active');
     </script>
 
     <script type="text/javascript">

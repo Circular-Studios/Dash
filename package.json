@@ -1,0 +1,15 @@
+{
+	"name": "dvelop",
+	
+	"description": "Helps you make vidja games.",
+	"copyright": "Copyright © 2013",
+	"authors": [ "Colden Cullen" ],
+	"dependencies": {
+	},
+	"targetName": "Dvelop",
+	"targetType": "executable",
+	"targetPath": "Output/",
+	"importPaths": [
+		"source"
+	]
+}

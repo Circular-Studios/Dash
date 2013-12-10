@@ -10,16 +10,15 @@
 		{
 			"name": "windows-app",
 			"platforms": [ "windows" ],
-			"targetName": "Dvelop",
 			"targetType": "executable",
 			"libs": [ "ole32.lib", "kernel32.lib", "user32.lib", "comctl32.lib", "comdlg32.lib" ]
 		},
 		{
 			"name": "osx-app",
 			"platforms": [ "osx" ],
-			"targetName": "Dvelop",
 			"targetType": "executable"
 		}
 	],
+	"targetName": "Dvelop",
 	"targetPath": "output/"
 }

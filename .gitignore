@@ -166,3 +166,11 @@ Desktop.ini
 
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
+
+# ========================
+# Dvelop stuffs
+# ========================
+
+output/
+*.sln
+*.visualdproj

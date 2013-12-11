@@ -1,7 +1,7 @@
-module graphics.graphicscontroller;
+module graphics.graphics;
 import graphics.adapters.adaptercontroller, graphics.adapters.openglcontroller, graphics.adapters.directxcontroller;
 
-class GraphicsController
+class Graphics
 {
 static
 {

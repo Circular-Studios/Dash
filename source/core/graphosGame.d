@@ -1,5 +1,5 @@
 module core.graphosgame;
-import graphics.graphicscontroller;
+import graphics.graphics;
 import utility.time;
 
 enum GameState { Menu = 0, Game = 1, Reset = 2, Quit = 3 };
@@ -55,13 +55,13 @@ public:
 				//////////////////////////////////////////////////////////////////////////
 
 				// Begin drawing
-				GraphicsController.getAdapter().beginDraw();
+				Graphics.getAdapter().beginDraw();
 
 				// Draw in child class
 				draw();
 
 				// End drawing
-				GraphicsController.getAdapter().endDraw();
+				Graphics.getAdapter().endDraw();
 			}
 			/*
 			catch (std::exception e)

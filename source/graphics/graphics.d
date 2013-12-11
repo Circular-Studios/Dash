@@ -37,7 +37,6 @@ public:
 	void initialize()
 	{
 		adapter.initialize();
-		window.initialize();
 		//Shaders.initialize();
 	}
 

@@ -1,7 +1,6 @@
 module graphics.windows.win32;
 import core.global;
-import graphics.graphics;
-import graphics.windows.windows;
+import graphics.graphics, graphics.windows.windows;
 
 import std.c.windows.windows;
 

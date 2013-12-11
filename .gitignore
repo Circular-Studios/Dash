@@ -171,6 +171,7 @@ $RECYCLE.BIN/
 # Dvelop stuffs
 # ========================
 
+.dub/
 output/
 *.sln
 *.visualdproj

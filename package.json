@@ -5,6 +5,8 @@
 	"copyright": "Copyright © 2013",
 	"authors": [ "Colden Cullen" ],
 	"dependencies": {
+		"derelict-gl3": "~master",
+		"derelict-fi": "~master"
 	},
 	"configurations": [
 		{

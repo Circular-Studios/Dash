@@ -1,8 +1,8 @@
-module graphics.adapters.openglcontroller;
-import graphics.adapters.adaptercontroller;
+module graphics.adapters.opengl;
+import graphics.adapters.adapter;
 import derelict.opengl3.gl3;
 
-class OpenGLController : AdapterController
+class OpenGL : Adapter
 {
 public:
 	override void initialize()

@@ -1,5 +1,5 @@
-module graphics.adapters.adaptercontroller;
-import core.graphosglobal;
+module graphics.adapters.adapter;
+import core.global;
 
 union DeviceContext
 {
@@ -13,7 +13,7 @@ union Device
 	void* dx;
 }
 
-abstract class AdapterController
+abstract class Adapter
 {
 public:
 	abstract void initialize();

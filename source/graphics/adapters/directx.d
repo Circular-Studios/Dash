@@ -1,7 +1,7 @@
-module graphics.adapters.directxcontroller;
-import graphics.adapters.adaptercontroller;
+module graphics.adapters.directx;
+import graphics.adapters.adapter;
 
-class DirectXController : AdapterController
+class DirectX : Adapter
 {
 public:
 	override void initialize()

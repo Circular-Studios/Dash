@@ -1,6 +1,7 @@
-module graphics.windows.windowcontroller;
+module graphics.windows.windows;
+import core.global;
 
-abstract class WindowController
+abstract class Windows
 {
 public:
 	abstract void initialize();
@@ -10,4 +11,11 @@ public:
 
 	abstract void openWindow();
 	abstract void closeWindow();
+
+protected:
+	uint width, screenWidth;
+	uint height, screenHeight;
+	bool fullscreen;
+
+
 }

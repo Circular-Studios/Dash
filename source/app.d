@@ -1,7 +1,7 @@
-import core.graphosgame;
+import core.dgame;
 import std.stdio;
 
 void main()
 {
-	( new GraphosGame() ).run();
+	( new DGame() ).run();
 }

@@ -1,10 +1,10 @@
-module core.graphosgame;
-import graphics.graphicscontroller;
+module core.dgame;
+import graphics.graphics;
 import utility.time;
 
 enum GameState { Menu = 0, Game = 1, Reset = 2, Quit = 3 };
 
-class GraphosGame
+class DGame
 {
 public:
 	GameState currentState;
@@ -55,13 +55,13 @@ public:
 				//////////////////////////////////////////////////////////////////////////
 
 				// Begin drawing
-				GraphicsController.adapter.beginDraw();
+				Graphics.adapter.beginDraw();
 
 				// Draw in child class
 				draw();
 
 				// End drawing
-				GraphicsController.adapter.endDraw();
+				Graphics.adapter.endDraw();
 			}
 			/*
 			catch (std::exception e)
@@ -101,7 +101,18 @@ protected:
 private:
 	void start()
 	{
+		currentState = GameState.Menu;
+        //camera = null;
 
+		//JsonController.initialize();
+		//Config.initialize();
+		Graphics.initialize();
+		//Assets.initialize();
+		//Physics.initialize();
+
+        //ui = new UserInterface( this );
+
+        initialize();
 	}
 	void stop()
 	{

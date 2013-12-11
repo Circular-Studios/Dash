@@ -18,7 +18,7 @@ public:
         // Init time
 		Time.initialize();
 		// Init tasks
-		TaskManager.initialize();
+		//TaskManager.initialize();
 
         start();
 
@@ -41,11 +41,11 @@ public:
 				Time.update();
 
 				// Update input
-				InputController.update();
+				//InputController.update();
 
 				// Update physics
-				if( currentState == GameState.Game )
-					PhysicsController.stepPhysics( Time.deltaTime );
+				//if( currentState == GameState.Game )
+				//	PhysicsController.stepPhysics( Time.deltaTime );
 
 				// Do the updating of the child class.
 				update();
@@ -55,13 +55,13 @@ public:
 				//////////////////////////////////////////////////////////////////////////
 
 				// Begin drawing
-				GraphicsController.getAdapter().beginDraw();
+				GraphicsController.adapter.beginDraw();
 
 				// Draw in child class
 				draw();
 
 				// End drawing
-				GraphicsController.getAdapter().endDraw();
+				GraphicsController.adapter.endDraw();
 			}
 			/*
 			catch (std::exception e)

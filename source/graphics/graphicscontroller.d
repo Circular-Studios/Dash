@@ -1,12 +1,13 @@
 module graphics.graphicscontroller;
 import graphics.adapters.adaptercontroller, graphics.adapters.openglcontroller, graphics.adapters.directxcontroller;
+import graphics.windows.windowcontroller, graphics.windows.win32controller;
 
 class GraphicsController
 {
 static
 {
 public:
-	AdapterController getAdapter()
+	@property AdapterController adapter()
 	{
 		// if gl
 		{
@@ -22,8 +23,21 @@ public:
 		}
 	}
 
+	@property WindowController window()
+	{
+		// if win32
+		version( Windows )
+		{
+			if( win is null )
+				win = new Win32Controller();
+			return win;
+		}
+	}
+
 private:
 	OpenGLController gl;
 	DirectXController dx;
+
+	Win32Controller win;
 }
 }

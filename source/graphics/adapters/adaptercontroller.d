@@ -28,4 +28,5 @@ public:
 	mixin( Property!( "DeviceContext", "deviceContext" ) );
 
 private:
+
 }

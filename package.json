@@ -12,13 +12,15 @@
 			"platforms": [ "windows" ],
 			"targetName": "Dvelop",
 			"targetType": "executable",
+			"mainSourceFile": "source/app.d",
 			"libs": [ "ole32", "kernel32", "user32", "comctl32", "comdlg32" ]
 		},
 		{
 			"name": "osx-app",
 			"platforms": [ "osx" ],
 			"targetName": "Dvelop",
-			"targetType": "executable"
+			"targetType": "executable",
+			"mainSourceFile": "source/app.d"
 		}
 	],
 	"targetPath": "output/"

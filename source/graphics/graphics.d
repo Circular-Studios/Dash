@@ -1,26 +1,33 @@
 module graphics.graphics;
+import core.global;
 import graphics.adapters.adapter, graphics.adapters.opengl, graphics.adapters.directx;
 import graphics.windows.windows, graphics.windows.win32;
+
+enum GraphicsAdapter { OpenGL, DirectX };
 
 class Graphics
 {
 static
 {
 public:
+	mixin( Property!( "GraphicsAdapter", "activeAdapter", "private", "" ) );
+
 	@property Adapter adapter()
 	{
-		// if gl
+		if( activeAdapter == GraphicsAdapter.OpenGL )
 		{
 			if( gl is null )
 				gl = new OpenGL();
 			return gl;
 		}
-		// elseif dx
+		if( activeAdapter == GraphicsAdapter.DirectX )
 		{
 			if( dx is null )
 				dx = new DirectX();
 			return dx;
 		}
+
+		return null;
 	}
 
 	@property Windows window()
@@ -36,6 +43,7 @@ public:
 
 	void initialize()
 	{
+		activeAdapter = GraphicsAdapter.OpenGL;
 		adapter.initialize();
 		//Shaders.initialize();
 	}

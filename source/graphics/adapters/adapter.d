@@ -2,21 +2,14 @@ module graphics.adapters.adapter;
 import core.global;
 import graphics.adapters.opengl;
 
-union DeviceContext
-{
-	GLDeviceContext gl;
-	void* dx;
-}
-
-union Device
-{
-	void* gl;
-	void* dx;
-}
-
 abstract class Adapter
 {
 public:
+	@property void* glDevice() { return _glDevice; }
+	@property void* dxDevice() { return _dxDevice; }
+	@property GLDeviceContext glDeviceContext() { return _glDeviceContext; }
+	@property void* dxDeviceContext() { return _dxDeviceContext; }
+
 	abstract void initialize();
 	abstract void shutdown();
 	abstract void resize();
@@ -25,9 +18,22 @@ public:
 	abstract void beginDraw();
 	abstract void endDraw();
 
-	mixin( Property!( "Device", "device", "protected" ) );
-	mixin( Property!( "DeviceContext", "deviceContext", "protected" ) );
+protected:
+	@property void glDevice( void* val ) { _glDevice = val; }
+	@property void dxDevice( void* val ) { _dxDevice = val; }
+	@property void glDeviceContext( GLDeviceContext val ) { _glDeviceContext = val; }
+	@property void dxDeviceContext( void* val ) { _dxDeviceContext = val; }
 
 private:
+	union
+	{
+		void* _glDevice;
+		void* _dxDevice;
+	}
 
+	union
+	{
+		GLDeviceContext _glDeviceContext;
+		void* _dxDeviceContext;
+	}
 }

@@ -35,13 +35,13 @@ public:
 				//////////////////////////////////////////////////////////////////////////
 
 				// Platform specific program stuff
-				//GraphicsController.messageLoop();
+				Graphics.window.messageLoop();
 
 				// Update time
 				Time.update();
 
 				// Update input
-				//InputController.update();
+				//Input.update();
 
 				// Update physics
 				//if( currentState == GameState.Game )

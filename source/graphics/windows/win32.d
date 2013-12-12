@@ -64,17 +64,17 @@ public:
 
 		WNDCLASSEX wcex = {
 			WNDCLASSEX.sizeof,
-			CS_HREDRAW | CS_VREDRAW | CS_OWNDC,
+			CS_HREDRAW | CS_VREDRAW,// | CS_OWNDC,
 			&WndProc,
 			0,
 			0,
 			hInstance,
-			null,//LoadIcon( hInstance, MAKEINTRESOURCE(,
+			null,
 			LoadCursor( null, IDC_ARROW ),
 			cast(HBRUSH)( COLOR_WINDOW + 1 ),
 			null,
 			"Dvelop",
-			null//LoadIcon( hInstance, IDI_SMALL )
+			null
 		};
 
 		RegisterClassEx( &wcex );

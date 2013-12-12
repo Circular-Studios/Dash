@@ -173,5 +173,6 @@ $RECYCLE.BIN/
 
 .dub/
 output/
+third_party/
 *.sln
 *.visualdproj

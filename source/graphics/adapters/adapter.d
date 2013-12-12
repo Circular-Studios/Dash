@@ -1,9 +1,10 @@
 module graphics.adapters.adapter;
 import core.global;
+import graphics.adapters.opengl;
 
 union DeviceContext
 {
-	void* gl;
+	GLDeviceContext gl;
 	void* dx;
 }
 
@@ -24,8 +25,8 @@ public:
 	abstract void beginDraw();
 	abstract void endDraw();
 
-	mixin( Property!( "Device", "device" ) );
-	mixin( Property!( "DeviceContext", "deviceContext" ) );
+	mixin( Property!( "Device", "device", "protected" ) );
+	mixin( Property!( "DeviceContext", "deviceContext", "protected" ) );
 
 private:
 

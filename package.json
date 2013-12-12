@@ -8,6 +8,10 @@
 		"derelict-gl3": "~master",
 		"derelict-fi": "~master"
 	},
+	"importPaths": [
+		"source/",
+		"third_party/DWinProgramming/WindowsAPI"
+	],
 	"configurations": [
 		{
 			"name": "windows-app",
@@ -15,7 +19,10 @@
 			"targetName": "Dvelop",
 			"targetType": "executable",
 			"mainSourceFile": "source/app.d",
-			"libs": [ "ole32", "kernel32", "user32", "comctl32", "comdlg32" ]
+			"libs": [ 
+				"gdi32", "user32",
+				"ole32", "kernel32", "user32", "comctl32", "comdlg32" 
+			]
 		},
 		{
 			"name": "osx-app",

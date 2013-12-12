@@ -16,6 +16,4 @@ protected:
 	uint width, screenWidth;
 	uint height, screenHeight;
 	bool fullscreen;
-
-
 }

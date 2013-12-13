@@ -13,6 +13,9 @@ public:
 
 	@property Adapter adapter()
 	{
+		static OpenGL gl;
+		static DirectX dx;
+
 		if( activeAdapter == GraphicsAdapter.OpenGL )
 		{
 			if( gl is null )
@@ -34,6 +37,7 @@ public:
 		// if win32
 		version( Windows )
 		{
+			static Windows win;
 			if( win is null )
 				win = new Win32();
 			return win;
@@ -46,10 +50,4 @@ public:
 		adapter.initialize();
 		//Shaders.initialize();
 	}
-
-private:
-	OpenGL gl;
-	DirectX dx;
-
-	Windows win;
 }

@@ -32,7 +32,7 @@ public:
 	{
 		foreach( ci, component; componentList )
 		{
-			component.draw();
+			component.draw( shader );
 		}
 	}
 

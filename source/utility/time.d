@@ -1,10 +1,9 @@
 module utility.time;
 import std.datetime;
 
-class Time
+static class Time
 {
-static
-{
+static:
 public:
 	@property float deltaTime() { return 0.016; }
 	@property float totalTime() { return 1.00f; }
@@ -24,5 +23,4 @@ private:
 	SysTime prev;
 	Duration delta;
 	Duration total;
-}
 }

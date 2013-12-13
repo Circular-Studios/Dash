@@ -5,10 +5,9 @@ import graphics.windows.windows, graphics.windows.win32;
 
 enum GraphicsAdapter { OpenGL, DirectX };
 
-class Graphics
+static class Graphics
 {
-static
-{
+static:
 public:
 	mixin( Property!( "GraphicsAdapter", "activeAdapter", "private", "" ) );
 
@@ -53,5 +52,4 @@ private:
 	DirectX dx;
 
 	Windows win;
-}
 }

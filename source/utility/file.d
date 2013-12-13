@@ -5,20 +5,29 @@ import std.stdio;
 class File
 {
 public:
-static
-{
-	File[] scanDirectory( string path, string pattern = "*" )
+	enum Resources : string
 	{
-		File[] files;
+		Meshes = "Resources/Assets/Meshes",
+		Textures = "Resources/Assets/Textures",
+		Scripts = "Resources/Assets/Scripts"
+	}
+
+	static File[] scanDirectory( string path, string pattern = "*" )
+	{
+		File[] files = new File[ 1 ];
+		uint filesFound = 0;
 
 		foreach( name; std.file.dirEntries( path, pattern, std.file.SpanMode.breadth ) )
 		{
-			writeln( ( new File( name ) ).fullPath );
+			if( filesFound == files.length )
+				files.length *= 2;
+
+			files[ filesFound++ ] = new File( name );
+			writeln( files[ filesFound - 1 ].fullPath );
 		}
 
 		return files;
 	}
-}
 
 	@property string fullPath()		{ return _fullPath; }
 	@property string relativePath()	{ return std.path.relativePath( fullPath ); }

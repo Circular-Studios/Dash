@@ -1,4 +1,5 @@
 module core.dgame;
+import components.assets;
 import graphics.graphics;
 import utility.time;
 
@@ -107,20 +108,28 @@ private:
 		//JsonController.initialize();
 		//Config.initialize();
 		Graphics.initialize();
-		//Assets.initialize();
+		Assets.initialize();
 		//Physics.initialize();
 
         //ui = new UserInterface( this );
 
         initialize();
 	}
+
 	void stop()
 	{
-
+		Assets.shutdown();
 	}
+
 	void reset()
 	{
 		shutdown();
+
+		// Stop controllers
+		Assets.shutdown();
+
+		// Reinitialize controllers
+		Assets.initialize();
 
 		initialize();
 	}

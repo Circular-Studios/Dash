@@ -31,10 +31,10 @@ public:
 
 		// Find files
 		if( pattern.length )
-			foreach( name; std.file.dirEntries( "."/*safePath*/, pattern, std.file.SpanMode.breadth ) )
+			foreach( name; std.file.dirEntries( safePath, pattern, std.file.SpanMode.breadth ) )
 				handleFile( name );
 		else
-			foreach( name; std.file.dirEntries( "."/*safePath*/, std.file.SpanMode.breadth ) )
+			foreach( name; std.file.dirEntries( safePath, std.file.SpanMode.breadth ) )
 				handleFile( name );
 
 		files.length = filesFound;

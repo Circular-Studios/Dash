@@ -12,6 +12,7 @@ static:
 public:
 	void initialize()
 	{
+		// Initialize root node as map
 		root = Node( [""], [""] );
 
 		foreach( file; FilePath.scanDirectory( ".", "*.yaml" ) )
@@ -22,22 +23,21 @@ public:
 
 	T get( T )( string path )
 	{
+		// Iterate until we find the end, and then return value
 		Node current = root;
 
 		try
 		{
 			foreach( word; split( path, "." ) )
-			{
 				current = current[ word ];
-			}
 
 			return current.as!T;
 		}
 		catch( YAMLException e )
 		{
-			Output.printMessage( OutputType.Error, "Path not found: " ~ path );
+			Output.printMessage( OutputType.Error, "Path not found/invalid type: " ~ path );
 
-			return null;
+			return 0;
 		}
 	}
 

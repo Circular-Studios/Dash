@@ -6,7 +6,8 @@
 	"authors": [ "Colden Cullen" ],
 	"dependencies": {
 		"derelict-gl3": "~master",
-		"derelict-fi": "~master"
+		"derelict-fi": "~master",
+		"dyaml": "~master"
 	},
 	"importPaths": [
 		"source/",

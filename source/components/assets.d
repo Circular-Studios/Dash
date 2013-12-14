@@ -1,6 +1,6 @@
 module components.assets;
 import components.icomponent, components.mesh, components.texture;
-import utility.file;
+import utility.filepath;
 
 static class Assets
 {
@@ -13,12 +13,12 @@ public:
 
 	void initialize()
 	{
-		foreach( file; File.scanDirectory( File.Resources.Meshes ) )
+		foreach( file; FilePath.scanDirectory( FilePath.Resources.Meshes ) )
 		{
 			componentShelf[ file.baseFileName ] = new Mesh( file.fullPath );
 		}
 
-		foreach( file; File.scanDirectory( File.Resources.Textures ) )
+		foreach( file; FilePath.scanDirectory( FilePath.Resources.Textures ) )
 		{
 			componentShelf[ file.baseFileName ] = new Texture( file.fullPath );
 		}

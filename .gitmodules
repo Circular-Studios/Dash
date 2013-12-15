@@ -1,3 +1,6 @@
 [submodule "third_party/DWinProgramming"]
 	path = third_party/DWinProgramming
 	url = https://github.com/AndrejMitrovic/DWinProgramming.git
+[submodule "third_party/D-YAML"]
+	path = third_party/D-YAML
+	url = git@github.com:ColdenCullen/D-YAML.git

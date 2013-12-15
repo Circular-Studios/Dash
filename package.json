@@ -1,17 +1,16 @@
 {
 	"name": "dvelop",
-	
 	"description": "Helps you make vidja games.",
 	"copyright": "Copyright © 2013",
 	"authors": [ "Colden Cullen" ],
 	"dependencies": {
 		"derelict-gl3": "~master",
-		"derelict-fi": "~master",
-		"dyaml": "~master"
+		"derelict-fi": "~master"
 	},
 	"importPaths": [
 		"source/",
-		"third_party/DWinProgramming/WindowsAPI"
+		"third_party/DWinProgramming/WindowsAPI",
+		"third_party/D-YAML/source"
 	],
 	"configurations": [
 		{
@@ -21,6 +20,7 @@
 			"targetType": "executable",
 			"mainSourceFile": "source/app.d",
 			"libs": [ 
+				"third_party/D-YAML/dyaml_d",
 				"gdi32", "user32",
 				"ole32", "kernel32", "user32", "comctl32", "comdlg32" 
 			]

@@ -3,6 +3,8 @@ import core.global;
 import components.icomponent;
 import graphics.shaders.ishader;
 
+import yaml;
+
 final class GameObject
 {
 public:
@@ -15,10 +17,10 @@ public:
 		this.shader = shader;
 	}
 
-	/*this( Yaml jsonObject )
+	this( Node jsonObject )
 	{
 		// Handle stuff
-	}*/
+	}
 
 	void update()
 	{

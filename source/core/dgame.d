@@ -1,7 +1,7 @@
 module core.dgame;
 import components.assets;
 import graphics.graphics;
-import utility.time, utility.yaml;
+import utility.time;
 
 enum GameState { Menu = 0, Game = 1, Reset = 2, Quit = 3 };
 
@@ -105,7 +105,6 @@ private:
 		currentState = GameState.Menu;
         //camera = null;
 
-		Yaml.initialize();
 		//Config.initialize();
 		Graphics.initialize();
 		Assets.initialize();

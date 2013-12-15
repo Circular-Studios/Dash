@@ -21,7 +21,7 @@ else
 class OpenGL : Adapter
 {
 public:
-	mixin( Property!( "GLRenderContext", "renderContext" ) );
+	mixin( Property!( GLRenderContext, "renderContext" ) );
 
 	override void initialize()
 	{

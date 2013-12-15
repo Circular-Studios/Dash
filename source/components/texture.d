@@ -9,11 +9,13 @@ import derelict.freeimage.freeimage;
 class Texture : IComponent
 {
 public:
-	mixin( Property!( "uint", "width" ) );
-	mixin( Property!( "uint", "height" ) );
+	mixin( Property!( uint, "width" ) );
+	mixin( Property!( uint, "height" ) );
 
 	this( string filePath )
 	{	
+		super( null );
+
 		if( Graphics.activeAdapter == GraphicsAdapter.OpenGL )
 		{
 			DerelictFI.load();

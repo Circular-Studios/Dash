@@ -1,9 +1,17 @@
 module components.icomponent;
+import core.global, core.gameobject;
 import graphics.shaders.ishader;
 
-interface IComponent
+abstract class IComponent
 {
-	void update();
-	void draw( IShader shader );
-	void shutdown();
+	this( GameObject owner )
+	{
+		this.owner = owner;
+	}
+
+	abstract void update();
+	abstract void draw( IShader shader );
+	abstract void shutdown();
+
+	mixin( Property!( GameObject, "owner" ) );
 }

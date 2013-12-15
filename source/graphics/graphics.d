@@ -8,7 +8,7 @@ static class Graphics
 {
 static:
 public:
-	mixin( Property!( "GraphicsAdapter", "activeAdapter", "private", "" ) );
+	mixin( Property!( GraphicsAdapter, "activeAdapter", "private", "" ) );
 
 	@property Adapter adapter()
 	{

@@ -3,11 +3,11 @@ import core.global;
 import components.icomponent;
 import graphics.shaders.ishader;
 
-class GameObject
+final class GameObject
 {
 public:
-	mixin( Property!( "IShader", "shader", "public" ) );
-	//mixin( Property!( "Transform", "transform", "public" ) );
+	mixin( Property!( IShader, "shader", "public" ) );
+	//mixin( Property!( Transform, "transform", "public" ) );
 
 	this( IShader shader = null )
 	{

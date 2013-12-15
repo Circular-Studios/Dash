@@ -1,7 +1,6 @@
 module graphics.graphics;
 import core.global;
-import graphics.adapters.adapter, graphics.adapters.opengl, graphics.adapters.directx;
-import graphics.windows.windows, graphics.windows.win32;
+import graphics.adapters, graphics.windows;
 
 enum GraphicsAdapter { OpenGL, DirectX };
 

@@ -9,8 +9,8 @@ import derelict.freeimage.freeimage;
 class Texture : IComponent
 {
 public:
-	mixin( Property!( uint, "width" ) );
-	mixin( Property!( uint, "height" ) );
+	mixin( Property!( "uint", "width" ) );
+	mixin( Property!( "uint", "height" ) );
 
 	this( string filePath )
 	{	
@@ -73,10 +73,7 @@ public:
 		}
 	}
 
-	@property uint glId() { return _glId; }
-
-private:
-	@property void glId( uint val ) { _glId = val; }
+	mixin( BackedProperty!( "uint", "_glId", "glId" ) );
 
 	union
 	{

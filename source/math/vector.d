@@ -1,18 +1,20 @@
 module math.vector;
+import core.global;
+
+import std.math;
+import std.signals, std.conv;
 
 class Vector( uint S = 3 )
 {
 public:
-	this( float def = 0.0f )
+	this( float def = 0.0f ) @safe
 	{
 		for( uint ii = 0; ii < S; ++ii )
 			values[ ii ] = def;
 	}
 
-	this( float[] arg ... )
+	this( float[] arg ... ) @safe
 	{
-		static assert( arg.length == S, "Invalid number of arguments" );
-
 		for( uint ii = 0; ii < S; ++ii )
 			values[ ii ] = arg[ ii ];
 	}
@@ -20,13 +22,13 @@ public:
 	/**
 		Calls other operators, and assigns results back to itself
 	*/
-	Vector!S opOpAssign( string op )( const Vector!S other )
+	Vector!S opOpAssign( string op )( const Vector!S other ) @safe
 	{
 		values = opBinary!( op[ 0 ] )( other ).values;
 		return this;
 	}
 
-	float dot( const Vector!S other ) pure
+	float dot( const Vector!S other ) pure @safe
 	{
 		float result = 0.0f;
 
@@ -52,25 +54,25 @@ public:
 	//    return result;
 	//}
 
-	Vector!S opBinary( string op : "*" )( const float other ) pure
+	Vector!S opBinary( string op : "*" )( const float other ) pure @safe
 	{
-		return mulitdlply( other );
+		return multiply( other );
 	}
-	Vector!S multiply( const Vector!S other ) pure
+	Vector!S multiply( const Vector!S other ) pure @safe
 	{
 		auto result = new Vector!S;
 
 		for( uint ii = 0; ii < S; ++ii )
-			result.values[ ii ] += values[ ii ] * other;
+			result.values[ ii ] += values[ ii ] * other.values[ ii ];
 
 		return result;
 	}
 
-	Vector!S opBinary( string op : "+" )( const Vector!S other ) pure
+	Vector!S opBinary( string op : "+" )( const Vector!S other ) pure @safe
 	{
 		return add( other );
 	}
-	Vector!S add( const Vector!S other ) pure
+	Vector!S add( const Vector!S other ) pure @safe
 	{
 		auto result = new Vector!S;
 
@@ -80,11 +82,11 @@ public:
 		return result;
 	}
 
-	Vector!S opBinary( string op : "-" )( const Vector!S other ) pure
+	Vector!S opBinary( string op : "-" )( const Vector!S other ) pure @safe
 	{
 		return add( other );
 	}
-	Vector!S subtract( const Vector!S other ) pure
+	Vector!S subtract( const Vector!S other ) pure @safe
 	{
 		auto result = new Vector!S;
 
@@ -94,7 +96,7 @@ public:
 		return result;
 	}
 
-	Vector!S opUnary( string op : "-" )() pure
+	Vector!S opUnary( string op : "-" )() pure @safe
 	{
 		auto result = new Vector!S;
 
@@ -104,48 +106,68 @@ public:
 		return result;
 	}
 
-private:
-	float[ S ] values;
-}
-
-class Vector( uint S : 2 )
-{
-public:
-	static const Vector!3 up = new Vector!3( 0.0f, 1.0f );
-	static const Vector!3 right = new Vector!3( 1.0f, 0.0f );
-
-	alias values[ 0 ] x;
-	alias values[ 1 ] y;
-}
-
-class Vector( uint S : 3 )
-{
-public:
-	static const Vector!3 up = new Vector!3( 0.0f, 1.0f, 0.0f );
-	static const Vector!3 forward = new Vector!3( 0.0f, 0.0f, 1.0f );
-	static const Vector!3 right = new Vector!3( 1.0f, 0.0f, 0.0f );
-
-	alias values[ 0 ] x;
-	alias values[ 1 ] y;
-	alias values[ 2 ] z;
-
-	Vector!S cross( const Vector!3 other ) pure
+	float magnitude() pure @safe
 	{
-		auto result = new Vector!3;
+		float result = 0.0f;
 
-		result.x = ( y * other.z ) - ( z * other.y );
-		result.y = ( z * other.x ) - ( x * other.z );
-		result.z = ( x * other.y ) - ( y * other.x );
+		for( uint ii = 0; ii < S; ++ii )
+			result += values[ ii ] * values[ ii ];
+
+		result = sqrt( result );
 
 		return result;
 	}
-}
 
-class Vector( uint S : 4 )
-{
-public:
-	alias values[ 0 ] x;
-	alias values[ 1 ] y;
-	alias values[ 2 ] z;
-	alias values[ 3 ] w;
+	Vector!S normalize() pure @safe
+	{
+		auto result = new Vector!S;
+		auto mag = magnitude();
+
+		for( uint ii = 0; ii < S; ++ii )
+			result.values[ ii ] = values[ ii ] / mag;
+
+		return result;
+	}
+
+	static if( S >= 2 )
+	{
+		mixin( EmmittingBackedProperty!( "float", "values[0]", "x", "public" ) );
+		mixin( EmmittingBackedProperty!( "float", "values[1]", "y", "public" ) );
+	}
+	static if( S >= 3 )
+	{
+		mixin( EmmittingBackedProperty!( "float", "values[2]", "z", "public" ) );
+	}
+	static if( S >= 4 )
+	{
+		mixin( EmmittingBackedProperty!( "float", "values[3]", "w", "public" ) );
+	}
+
+	static if( S == 2 )
+	{
+		static const Vector!2 up = new Vector!2( 0.0f, 1.0f );
+		static const Vector!2 right = new Vector!2( 1.0f, 0.0f );
+	}
+	static if( S == 3 )
+	{
+		static const Vector!3 up = new Vector!3( 0.0f, 1.0f, 0.0f );
+		static const Vector!3 forward = new Vector!3( 0.0f, 0.0f, 1.0f );
+		static const Vector!3 right = new Vector!3( 1.0f, 0.0f, 0.0f );
+
+		Vector!S cross( Vector!3 other )
+		{
+			auto result = new Vector!3;
+
+			result.x = ( y * other.z ) - ( z * other.y );
+			result.y = ( z * other.x ) - ( x * other.z );
+			result.z = ( x * other.y ) - ( y * other.x );
+
+			return result;
+		}
+	}
+
+	mixin Signal!( string, string );
+
+private:
+	float[ S ] values;
 }

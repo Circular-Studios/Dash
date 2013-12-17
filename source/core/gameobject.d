@@ -2,24 +2,42 @@ module core.gameobject;
 import core.global;
 import components.icomponent;
 import graphics.shaders.ishader;
+import math.transform;
 
 import yaml;
+import std.signals, std.conv;
 
 final class GameObject
 {
 public:
-	mixin( Property!( IShader, "shader", "public" ) );
-	//mixin( Property!( Transform, "transform", "public" ) );
+	mixin( Property!( "IShader", "shader", "public" ) );
+	mixin( Property!( "Transform", "transform", "public" ) );
 
-	this( IShader shader = null )
+	this()
 	{
+		transform = new Transform;
+		transform.connect( &emit );
+	}
+
+	this( IShader shader )
+	{
+		this();
+
 		// Transform
 		this.shader = shader;
 	}
 
 	this( Node jsonObject )
 	{
+		this();
 		// Handle stuff
+	}
+
+	~this()
+	{
+		destroy( transform );
+
+		destroy_s( shader );
 	}
 
 	void update()
@@ -65,6 +83,8 @@ public:
 	{
 		return componentList[ T.classinfo ];
 	}
+
+	mixin Signal!( string, string );
 
 private:
 	IComponent[ClassInfo] componentList;

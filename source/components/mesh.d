@@ -9,10 +9,10 @@ import derelict.opengl3.gl3;
 class Mesh : IComponent
 {
 public:
-	mixin( Property!( uint, "glVertexArray" ) );
-	mixin( Property!( uint, "numVerticies" ) );
-	mixin( BackedProperty!( uint, _glIndexBuffer, "glIndexBuffer" ) );
-	mixin( BackedProperty!( uint, _glVertexBuffer, "glVertexBuffer" ) );
+	mixin( Property!( "uint", "glVertexArray" ) );
+	mixin( Property!( "uint", "numVerticies" ) );
+	mixin( BackedProperty!( "uint", "_glIndexBuffer", "glIndexBuffer" ) );
+	mixin( BackedProperty!( "uint", "_glVertexBuffer", "glVertexBuffer" ) );
 	static @property uint vertexSize() { return float.sizeof * 8; }
 
 	this( string filePath )

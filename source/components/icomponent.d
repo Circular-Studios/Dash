@@ -13,5 +13,5 @@ abstract class IComponent
 	abstract void draw( IShader shader );
 	abstract void shutdown();
 
-	mixin( Property!( GameObject, "owner" ) );
+	mixin( Property!( "GameObject", "owner" ) );
 }

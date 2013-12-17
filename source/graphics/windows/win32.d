@@ -55,8 +55,8 @@ class Win32 : Windows
 public:
 	static @property Win32 get() { return cast(Win32)Graphics.window; }
 
-	mixin( Property!( HWND, "hWnd" ) );
-	mixin( Property!( HINSTANCE, "hInstance" ) );
+	mixin( Property!( "HWND", "hWnd" ) );
+	mixin( Property!( "HINSTANCE", "hInstance" ) );
 
 	override void initialize()
 	{

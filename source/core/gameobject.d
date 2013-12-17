@@ -37,7 +37,11 @@ public:
 	{
 		destroy( transform );
 
-		destroy_s( shader );
+		if( shader )
+		{
+			destroy( shader );
+			shader = null;
+		}
 	}
 
 	void update()

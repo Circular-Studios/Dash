@@ -30,10 +30,11 @@ template EmmittingBackedProperty( string Type, string field, string name, string
 		"{ if( " ~ checkExpr ~ " && val != " ~ field ~ " ) { " ~ field ~ " = val; emit( \"" ~ name ~ "\", to!string( val ) ); } }\n";
 }
 
-void destroy_s( T )( T t )
+void destroy_s( T )( ref T t )
 {
 	if( t )
 	{
 		destroy( t );
+		t = null;
 	}
 }

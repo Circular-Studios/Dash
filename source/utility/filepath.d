@@ -6,13 +6,13 @@ class FilePath
 public:
 	enum Resources : string
 	{
-		Meshes = "./Resources/Meshes",
-		Textures = "./Resources/Textures",
-		Scripts = "./Resources/Scripts",
-		Prefabs = "./Resources/Prefabs",
-		Objects = "./Resources/Objects",
-		Shaders = "./Resources/Shaders",
-		UI = "./Resources/UI"
+		Meshes = "./Game/Meshes",
+		Textures = "./Game/Textures",
+		Scripts = "./Game/Scripts",
+		Prefabs = "./Game/Prefabs",
+		Objects = "./Game/Objects",
+		Shaders = "./Game/Shaders",
+		UI = "./Game/UI"
 	}
 
 	static FilePath[] scanDirectory( string path, string pattern = "" )

@@ -33,6 +33,5 @@
 			"mainSourceFile": "source/app.d"
 		}
 	],
-	"workingDirectory": "bin/",
 	"targetPath": "bin/"
 }

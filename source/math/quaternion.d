@@ -3,6 +3,7 @@ import core.global;
 import math.matrix;
 
 import std.signals, std.conv;
+import std.math;
 
 class Quaternion
 {
@@ -14,10 +15,13 @@ public:
 
 	this( const float x, const float y, const float z, const float angle )
 	{
-		_x = x;
-		_y = y;
-		_z = z;
-		_w = w;
+		immutable float fHalfAngle = angle / 2.0f;
+		immutable float fSin = sin( fHalfAngle );
+
+		_w = cos( fHalfAngle );
+		_x = fSin * x;
+		_y = fSin * y;
+		_z = fSin * z;
 
 		connect( &this.updateMatrix );
 	}

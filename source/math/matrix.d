@@ -1,4 +1,5 @@
 module math.matrix;
+import math.vector;
 import std.math;
 
 class Matrix( uint S = 4 ) if( S > 1 && S < 5 )
@@ -56,7 +57,7 @@ static
 
 	Matrix!S opBinary( string op : "*" )( const Matrix!S other ) pure
 	{
-		return mulitdlply( other );
+		return mulitiply( other );
 	}
 	Matrix!S multiply( const Matrix!S other ) pure
 	{
@@ -74,6 +75,21 @@ static
 				result.matrix[ xx ][ yy ] = value;
 			}
 		}
+
+		return result;
+	}
+
+	Vector!T opBinary( string op : "*", uint T )( const Vector!T other ) pure
+	{
+		return multiply( other );
+	}
+	Vector!T multiply( uint T )( const Vector!T other ) pure
+	{
+		auto result = new Vector!T;
+
+		for( uint ii = 0; ii < T; ++ii )
+			for( uint jj = 0; jj < T; ++jj )
+				result.values[ ii ] += matrix[ jj ][ ii ] * other.values[ jj ];
 
 		return result;
 	}

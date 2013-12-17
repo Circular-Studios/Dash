@@ -166,8 +166,7 @@ public:
 		}
 	}
 
-	mixin Signal!( string, string );
-
-private:
 	float[ S ] values;
+
+	mixin Signal!( string, string );
 }

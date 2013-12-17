@@ -29,19 +29,19 @@ public:
 	mixin( EmmittingProperty!( "float", "z" ) );
 	mixin( EmmittingProperty!( "float", "w" ) );
 
-	mixin( Property!( "Matrix!4", "viewMatrix" ) );
+	mixin( Property!( "Matrix!4", "matrix" ) );
 
 private:
 	void updateMatrix( string name, string newVal )
 	{
-		viewMatrix.matrix[ 0 ][ 0 ] = 1.0f - 2.0f * y * y - 2.0f * z * z;
-		viewMatrix.matrix[ 0 ][ 1 ] = 2.0f * x * y - 2.0f * z * w;
-		viewMatrix.matrix[ 0 ][ 2 ] = 2.0f * x * z + 2.0f * y * w;
-		viewMatrix.matrix[ 1 ][ 0 ] = 2.0f * x * y + 2.0f * z * w;
-		viewMatrix.matrix[ 1 ][ 1 ] = 1.0f - 2.0f * x * x - 2.0f * z * z;
-		viewMatrix.matrix[ 1 ][ 2 ] = 2.0f * y * z - 2.0f * x * w;
-		viewMatrix.matrix[ 2 ][ 0 ] = 2.0f * x * z - 2.0f * y * w;
-		viewMatrix.matrix[ 2 ][ 1 ] = 2.0f * y * z + 2.0f * x * w;
-		viewMatrix.matrix[ 2 ][ 2 ] = 1.0f - 2.0f * x * x - 2.0f * y * y;
+		matrix.matrix[ 0 ][ 0 ] = 1.0f - 2.0f * y * y - 2.0f * z * z;
+		matrix.matrix[ 0 ][ 1 ] = 2.0f * x * y - 2.0f * z * w;
+		matrix.matrix[ 0 ][ 2 ] = 2.0f * x * z + 2.0f * y * w;
+		matrix.matrix[ 1 ][ 0 ] = 2.0f * x * y + 2.0f * z * w;
+		matrix.matrix[ 1 ][ 1 ] = 1.0f - 2.0f * x * x - 2.0f * z * z;
+		matrix.matrix[ 1 ][ 2 ] = 2.0f * y * z - 2.0f * x * w;
+		matrix.matrix[ 2 ][ 0 ] = 2.0f * x * z - 2.0f * y * w;
+		matrix.matrix[ 2 ][ 1 ] = 2.0f * y * z + 2.0f * x * w;
+		matrix.matrix[ 2 ][ 2 ] = 1.0f - 2.0f * x * x - 2.0f * y * y;
 	}
 }

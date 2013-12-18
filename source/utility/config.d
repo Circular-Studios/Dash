@@ -16,7 +16,7 @@ static:
 public:
 	void initialize()
 	{
-		auto constructor = new Constructor;
+		constructor = new Constructor;
 		constructor.addConstructorScalar( "!Vector2", &constructVector2 );
 		constructor.addConstructorMapping( "!Vector2-Map", &constructVector2 );
 		constructor.addConstructorScalar( "!Vector3", &constructVector3 );
@@ -25,9 +25,14 @@ public:
 		constructor.addConstructorScalar( "!GraphicsAdapter", &constructEnum!GraphicsAdapter );
 		constructor.addConstructorScalar( "!Verbosity", &constructEnum!Verbosity );
 
-		auto loader = Loader( FilePath.Resources.Config );
+		config = loadYaml( FilePath.Resources.Config );
+	}
+
+	Node loadYaml( string path )
+	{
+		auto loader = Loader( path );
 		loader.constructor = constructor;
-		config = loader.load();
+		return loader.load();
 	}
 
 	T get( T )( string path )
@@ -58,6 +63,7 @@ public:
 
 private:
 	Node config;
+	Constructor constructor;
 }
 
 Vector!2 constructVector2( ref Node node )

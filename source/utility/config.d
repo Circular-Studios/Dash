@@ -17,13 +17,13 @@ public:
 	void initialize()
 	{
 		auto constructor = new Constructor;
-		constructor.addConstructorScalar( "!vector2", &constructVector2 );
-		constructor.addConstructorMapping( "!vector2-map", &constructVector2 );
-		constructor.addConstructorScalar( "!vector3", &constructVector3 );
-		constructor.addConstructorMapping( "!vector3-map", &constructVector2 );
-		constructor.addConstructorScalar( "!gamestate", &constructEnum!GameState );
-		constructor.addConstructorScalar( "!adapter", &constructEnum!GraphicsAdapter );
-		constructor.addConstructorScalar( "!verbosity", &constructEnum!Verbosity );
+		constructor.addConstructorScalar( "!Vector2", &constructVector2 );
+		constructor.addConstructorMapping( "!Vector2-Map", &constructVector2 );
+		constructor.addConstructorScalar( "!Vector3", &constructVector3 );
+		constructor.addConstructorMapping( "!Vector3-Map", &constructVector2 );
+		constructor.addConstructorScalar( "!GameState", &constructEnum!GameState );
+		constructor.addConstructorScalar( "!GraphicsAdapter", &constructEnum!GraphicsAdapter );
+		constructor.addConstructorScalar( "!Verbosity", &constructEnum!Verbosity );
 
 		auto loader = Loader( FilePath.Resources.Config );
 		loader.constructor = constructor;

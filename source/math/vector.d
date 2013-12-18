@@ -54,6 +54,24 @@ public:
 	//    return result;
 	//}
 
+	override int opCmp( Object o )
+	{
+		if( o.classinfo != this.classinfo )
+			return 1;
+
+		auto other = cast(Vector!S)o;
+
+		for( uint ii = 0; ii < S; ++ii )
+		{
+			if( values[ ii ] < other.values[ ii ] )
+				return -1;
+			else if( values[ ii ] > other.values[ ii ] )
+				return 1;
+		}
+
+		return 0;
+	}
+
 	Vector!S opBinary( string op : "*" )( const float other ) pure @safe
 	{
 		return multiply( other );

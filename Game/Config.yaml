@@ -1,0 +1,18 @@
+Game:
+    DefaultState: Field Unused
+    Verbosity: !verbosity High
+Display:
+    Fullscreen: false
+    height: 720
+    width: 1280
+Graphics:
+    Adapter: !adapter OpenGL
+    BackfaceCulling: true
+    VSync: false
+Physics:
+    Gravity: !vector3 0.0 -10.0 0.0
+Scripts:
+    Path: "Game/Scripts/Output.js"
+UserInterface:
+    FilePath: "Game/UI/index.html"
+    Scale: !vector2 1.0 1.0

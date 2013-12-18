@@ -1,4 +1,5 @@
 module utility.output;
+import utility.config;
 import std.stdio;
 
 enum OutputType { Info, Warning, Error }
@@ -8,6 +9,11 @@ static class Output
 {
 static:
 public:
+	void initialize()
+	{
+		verbosity = Config.get!Verbosity( "Game.Verbosity" );
+	}
+
 	void printMessage( OutputType type, string message )
 	{
 		if( shouldPrint( type ) )
@@ -21,6 +27,8 @@ public:
 	}
 
 private:
+	Verbosity verbosity;
+
 	string getHeader( OutputType type )
 	{
 		switch( type )
@@ -41,8 +49,6 @@ private:
 
 	bool shouldPrint( OutputType type )
 	{
-		auto verb = Verbosity.High;
-
-		return type > verb;
+		return type > verbosity;
 	}
 }

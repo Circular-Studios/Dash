@@ -1,6 +1,7 @@
 module graphics.graphics;
 import core.global;
 import graphics.adapters, graphics.windows;
+import utility.config;
 
 enum GraphicsAdapter { OpenGL, DirectX };
 
@@ -45,7 +46,7 @@ public:
 
 	void initialize()
 	{
-		activeAdapter = GraphicsAdapter.OpenGL;
+		activeAdapter = Config.get!GraphicsAdapter( "Graphics.Adapter" );
 		adapter.initialize();
 		//Shaders.initialize();
 	}

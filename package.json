@@ -20,8 +20,7 @@
 			"targetName": "Dvelop",
 			"targetType": "executable",
 			"mainSourceFile": "source/app.d",
-			"libs": [ 
-				"third_party/D-YAML/dyaml_d",
+			"libs": [
 				"gdi32", "user32",
 				"ole32", "kernel32", "user32", "comctl32", "comdlg32" 
 			]

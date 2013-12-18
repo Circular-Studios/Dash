@@ -12,7 +12,8 @@ public:
 		Prefabs = "./Game/Prefabs",
 		Objects = "./Game/Objects",
 		Shaders = "./Game/Shaders",
-		UI = "./Game/UI"
+		UI = "./Game/UI",
+		Config = "./Game/Config.yaml"
 	}
 
 	static FilePath[] scanDirectory( string path, string pattern = "" )

@@ -32,5 +32,8 @@
 			"mainSourceFile": "source/app.d"
 		}
 	],
+	"dflags": [
+		"-Xfdoc/doc.json"
+	],
 	"targetPath": "bin/"
 }

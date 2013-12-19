@@ -1,5 +1,5 @@
 module math.vector;
-import core.global;
+import core.properties;
 
 import std.math;
 import std.signals, std.conv;

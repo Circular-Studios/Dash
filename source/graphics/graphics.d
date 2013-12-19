@@ -1,5 +1,5 @@
 module graphics.graphics;
-import core.global;
+import core.properties;
 import graphics.adapters, graphics.windows;
 import utility.config;
 

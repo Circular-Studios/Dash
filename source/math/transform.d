@@ -1,5 +1,5 @@
 module math.transform;
-import core.global;
+import core.properties;
 import math.vector, math.matrix, math.quaternion;
 
 import std.signals, std.conv;

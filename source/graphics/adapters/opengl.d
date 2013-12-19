@@ -1,5 +1,5 @@
 module graphics.adapters.opengl;
-import core.global;
+import core.properties;
 import graphics.graphics;
 import graphics.windows.win32;
 import graphics.adapters.adapter;

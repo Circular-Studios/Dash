@@ -1,5 +1,5 @@
 module components.icomponent;
-import core.global, core.gameobject;
+import core.properties, core.gameobject;
 import graphics.shaders.ishader;
 
 abstract class IComponent

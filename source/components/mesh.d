@@ -1,5 +1,5 @@
 module components.mesh;
-import core.global;
+import core.properties;
 import components.icomponent;
 import graphics.graphics, graphics.shaders.ishader;
 import math.vector;

@@ -1,5 +1,5 @@
 module math.quaternion;
-import core.global;
+import core.properties;
 import math.matrix;
 
 import std.signals, std.conv;
@@ -22,21 +22,19 @@ public:
 		_x = fSin * x;
 		_y = fSin * y;
 		_z = fSin * z;
-
-		connect( &this.updateMatrix );
 	}
 
 	mixin Signal!( string, string );
 
-	mixin( EmmittingProperty!( "float", "x", "public" ) );
-	mixin( EmmittingProperty!( "float", "y" ) );
-	mixin( EmmittingProperty!( "float", "z" ) );
-	mixin( EmmittingProperty!( "float", "w" ) );
+	mixin( EmmittingPropertySetDirty!( "float", "x", "matrix", "public" ) );
+	mixin( EmmittingPropertySetDirty!( "float", "y", "matrix", "public" ) );
+	mixin( EmmittingPropertySetDirty!( "float", "z", "matrix", "public" ) );
+	mixin( EmmittingPropertySetDirty!( "float", "w", "matrix", "public" ) );
 
-	mixin( Property!( "Matrix!4", "matrix" ) );
+	mixin( DirtyProperty!( "Matrix!4", "matrix", "updateMatrix" ) );
 
 private:
-	void updateMatrix( string name, string newVal )
+	void updateMatrix()
 	{
 		matrix.matrix[ 0 ][ 0 ] = 1.0f - 2.0f * y * y - 2.0f * z * z;
 		matrix.matrix[ 0 ][ 1 ] = 2.0f * x * y - 2.0f * z * w;

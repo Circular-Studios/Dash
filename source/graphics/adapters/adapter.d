@@ -1,5 +1,5 @@
 module graphics.adapters.adapter;
-import core.global;
+import core.properties;
 import graphics.adapters.opengl;
 
 abstract class Adapter

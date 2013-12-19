@@ -1,5 +1,5 @@
 module components.camera;
-import core.global, core.gameobject;
+import core.properties, core.gameobject;
 import components.icomponent;
 import graphics.shaders.ishader;
 import math.matrix, math.vector;

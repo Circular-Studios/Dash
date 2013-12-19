@@ -1,5 +1,5 @@
 module graphics.windows.windows;
-import core.global;
+import core.properties;
 
 abstract class Windows
 {

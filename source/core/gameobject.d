@@ -1,5 +1,5 @@
 module core.gameobject;
-import core.global;
+import core.properties;
 import components.icomponent;
 import graphics.shaders.ishader;
 import math.transform;

@@ -1,5 +1,5 @@
 module graphics.windows.win32;
-import core.global;
+import core.properties;
 import graphics.graphics;
 import graphics.windows.windows;
 

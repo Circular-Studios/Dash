@@ -10,7 +10,8 @@
 	},
 	"importPaths": [
 		"source/",
-		"third_party/DWinProgramming/WindowsAPI"
+		"third_party/DWinProgramming/WindowsAPI",
+		"bin/GameBin/"
 	],
 	"configurations": [
 		{

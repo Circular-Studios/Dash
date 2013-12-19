@@ -1,0 +1,16 @@
+{
+	"name": "gamebin",
+	"description": "A minimal D application.",
+	"copyright": "Copyright © 2013, cpc1668",
+	"authors": ["cpc1668"],
+	"dependencies": {
+	},
+	"libs": [
+		"phobos"
+	],
+	"dflags": [
+		"-Hfmyclass.di"
+	],
+	"mainSourceFile": "source/app.d",
+	"targetType": "dynamicLibrary"
+}

@@ -10,8 +10,7 @@
 	},
 	"importPaths": [
 		"source/",
-		"third_party/DWinProgramming/WindowsAPI",
-		"third_party/D-YAML/source"
+		"third_party/DWinProgramming/WindowsAPI"
 	],
 	"configurations": [
 		{

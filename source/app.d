@@ -1,8 +1,6 @@
-import core.graphosGame;
-import std.stdio;
+import core.dgame;
 
 void main()
 {
-	//auto g = new GraphosGame();
-	writeln( "POOP" );
+    new DGame().run();
 }

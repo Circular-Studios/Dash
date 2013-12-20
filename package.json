@@ -1,24 +1,38 @@
 {
 	"name": "dvelop",
-	
 	"description": "Helps you make vidja games.",
 	"copyright": "Copyright © 2013",
 	"authors": [ "Colden Cullen" ],
 	"dependencies": {
+		"derelict-gl3": "~master",
+		"derelict-fi": "~master",
+		"dyaml": "~master"
 	},
+	"importPaths": [
+		"source/",
+		"third_party/DWinProgramming/WindowsAPI"
+	],
 	"configurations": [
 		{
 			"name": "windows-app",
 			"platforms": [ "windows" ],
 			"targetType": "executable",
-			"libs": [ "ole32.lib", "kernel32.lib", "user32.lib", "comctl32.lib", "comdlg32.lib" ]
+			"mainSourceFile": "source/app.d",
+			"libs": [
+				"gdi32", "user32",
+				"ole32", "kernel32", "user32", "comctl32", "comdlg32" 
+			]
 		},
 		{
 			"name": "osx-app",
 			"platforms": [ "osx" ],
-			"targetType": "executable"
+			"targetName": "Dvelop",
+			"targetType": "executable",
+			"mainSourceFile": "source/app.d"
 		}
 	],
-	"targetName": "Dvelop",
-	"targetPath": "output/"
+	"dflags": [
+		"-Xfdoc/doc.json"
+	],
+	"targetPath": "bin/"
 }

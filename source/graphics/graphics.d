@@ -42,6 +42,14 @@ public:
 				win = new Win32();
 			return win;
 		}
+		version( Linux )
+		{
+			return null;
+		}
+		version( OSX )
+		{
+			return null;
+		}
 	}
 
 	void initialize()

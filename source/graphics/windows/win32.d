@@ -1,4 +1,7 @@
 module graphics.windows.win32;
+
+version( Windows ):
+
 import core.properties;
 import graphics.graphics;
 import graphics.windows.windows;

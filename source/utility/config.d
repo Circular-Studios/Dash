@@ -43,7 +43,7 @@ public:
 
 		for( current = config; right.length; )
 		{
-			uint split = right.indexOf( '.' );
+			auto split = right.indexOf( '.' );
 			if( split == -1 )
 			{
 				current = current[ right ];

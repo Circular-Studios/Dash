@@ -17,7 +17,7 @@ static:
 public:
 	void initialize()
 	{
-		auto h = cast(HMODULE)Runtime.loadLibrary( "bin/GameBin/gamebin.dll" );
+		auto h = cast(HMODULE)Runtime.loadLibrary( "bin/GameBin/gamebin_d.dll" );
 
 		if( h is null )
 		{
@@ -26,11 +26,16 @@ public:
 
 		//auto mc = new MyClass;
 
-		FARPROC fp = GetProcAddress( h, "_D7myclass7MyClass7__ClassZ" );
+		alias MyClass function() gameCtor;
 
-		auto ctor = cast( MyClass function() )fp;
+		//const char[] name = demangle( "myclass.getDGame" );
+		string name = getDGame.mangleof;
+		//string name = "_D7myclass8getDGameFZC7myclass7MyClass";
+		FARPROC fp = GetProcAddress( h, name.ptr );
 
-		auto test = (*ctor)();
+		auto ctor = cast(gameCtor)fp;
+
+		Object test = (*ctor)();
 
 		//Output.printMessage( OutputType.Info, "Result from mc: " ~ mc.test().to!string );
 

@@ -9,7 +9,8 @@
 		"phobos"
 	],
 	"dflags": [
-		"-Hfmyclass.di"
+		"-Hfmyclass.di",
+		"-map"
 	],
 	"mainSourceFile": "source/app.d",
 	"targetType": "dynamicLibrary"

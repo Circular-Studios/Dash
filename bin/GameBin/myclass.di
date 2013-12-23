@@ -1,7 +1,12 @@
 // D import file generated from 'source\app.d'
 module myclass;
-class MyClass
+export 
 {
-	public int test();
+	MyClass getDGame();
+	class MyClass
+	{
+		this();
+		public int test();
 
+	}
 }

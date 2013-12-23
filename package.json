@@ -16,7 +16,6 @@
 	"configurations": [
 		{
 			"name": "windows-app",
-			"platforms": [ "windows" ],
 			"targetName": "Dvelop",
 			"targetType": "executable",
 			"mainSourceFile": "source/app.d",

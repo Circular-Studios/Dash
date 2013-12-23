@@ -15,9 +15,10 @@ static class Scripts
 {
 static:
 public:
+	version( Windows )
 	void initialize()
 	{
-		auto h = cast(HMODULE)Runtime.loadLibrary( "bin/GameBin/gamebin_d.dll" );
+		auto h = cast(HMODULE)Runtime.loadLibrary( "bin/GameBin/gamebin.dll" );
 
 		if( h is null )
 		{

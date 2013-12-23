@@ -7,6 +7,8 @@ import derelict.opengl3.gl3;
 
 version( Windows )
 {
+	import win32.windef;
+
 	alias HGLRC GLRenderContext;
 	alias HDC GLDeviceContext;
 }
@@ -20,7 +22,7 @@ else
 abstract class OpenGL : Adapter
 {
 public:
-	mixin( Property!( "GLRenderContext", "renderContext" ) );
+	mixin( Property!( "GLRenderContext", "renderContext", "protected" ) );
 
 	override void resize()
 	{

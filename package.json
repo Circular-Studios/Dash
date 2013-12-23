@@ -15,7 +15,6 @@
 	"configurations": [
 		{
 			"name": "windows-app",
-			"platforms": [ "windows" ],
 			"targetType": "executable",
 			"mainSourceFile": "source/app.d",
 			"libs": [

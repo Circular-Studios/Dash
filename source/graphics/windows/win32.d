@@ -58,7 +58,7 @@ class Win32 : Windows
 public:
 	static @property Win32 get() { return cast(Win32)Graphics.window; }
 
-	@property OpenGl gl()
+	override @property OpenGL gl()
 	{
 		static Win32Gl opengl;
 		if( opengl is null )

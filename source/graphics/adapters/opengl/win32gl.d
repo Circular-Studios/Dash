@@ -2,12 +2,13 @@ module graphics.adapters.opengl.win32gl;
 
 version( Windows ):
 
+import graphics.graphics;
 import graphics.adapters.opengl.opengl;
 import graphics.windows.win32;
 
 import win32.windef, win32.winuser;
 import win32.wingdi : PIXELFORMATDESCRIPTOR, SetPixelFormat, SwapBuffers;
-import derelict.opengl3.wgl, derelict.opengl3.wglext;
+import derelict.opengl3.gl3, derelict.opengl3.wgl, derelict.opengl3.wglext;
 
 class Win32Gl : OpenGL
 {
@@ -21,6 +22,8 @@ public:
 		uint formatCount;
 		int pixelFormat;
 		PIXELFORMATDESCRIPTOR pfd;
+
+		HGLRC handle;
 		
 		glDeviceContext = GetDC( Win32.get().hWnd );		
 		SetPixelFormat( glDeviceContext, 1, &pfd );

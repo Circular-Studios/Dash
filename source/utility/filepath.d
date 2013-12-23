@@ -4,16 +4,18 @@ static import std.file, std.path;
 class FilePath
 {
 public:
+	enum ResourceHome = "./Game";
+
 	enum Resources : string
 	{
-		Meshes = "./Game/Meshes",
-		Textures = "./Game/Textures",
-		Scripts = "./Game/Scripts",
-		Prefabs = "./Game/Prefabs",
-		Objects = "./Game/Objects",
-		Shaders = "./Game/Shaders",
-		UI = "./Game/UI",
-		Config = "./Game/Config.yaml"
+		Meshes = ResourceHome ~ "/Meshes",
+		Textures = ResourceHome ~ "/Textures",
+		Scripts = ResourceHome ~ "/Scripts",
+		Prefabs = ResourceHome ~ "/Prefabs",
+		Objects = ResourceHome ~ "/Objects",
+		Shaders = ResourceHome ~ "/Shaders",
+		UI = ResourceHome ~ "/UI",
+		Config = ResourceHome ~ "/Config.yaml"
 	}
 
 	static FilePath[] scanDirectory( string path, string pattern = "" )

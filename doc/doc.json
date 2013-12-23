@@ -5672,57 +5672,67 @@
     "line" : 4,
     "members" : [
      {
+      "name" : "ResourceHome",
+      "kind" : "variable",
+      "line" : 7,
+      "storageClass" : [
+       "enum"
+      ],
+      "deco" : "Aya",
+      "init" : "\"./Game\""
+     },
+     {
       "name" : "Resources",
       "kind" : "enum",
-      "line" : 7,
+      "line" : 9,
       "baseDeco" : "Aya",
       "members" : [
        {
         "name" : "Meshes",
         "kind" : "enum member",
-        "line" : 9
+        "line" : 11
        },
        {
         "name" : "Textures",
         "kind" : "enum member",
-        "line" : 10
+        "line" : 12
        },
        {
         "name" : "Scripts",
         "kind" : "enum member",
-        "line" : 11
+        "line" : 13
        },
        {
         "name" : "Prefabs",
         "kind" : "enum member",
-        "line" : 12
+        "line" : 14
        },
        {
         "name" : "Objects",
         "kind" : "enum member",
-        "line" : 13
+        "line" : 15
        },
        {
         "name" : "Shaders",
         "kind" : "enum member",
-        "line" : 14
+        "line" : 16
        },
        {
         "name" : "UI",
         "kind" : "enum member",
-        "line" : 15
+        "line" : 17
        },
        {
         "name" : "Config",
         "kind" : "enum member",
-        "line" : 16
+        "line" : 18
        }
       ]
      },
      {
       "name" : "scanDirectory",
       "kind" : "function",
-      "line" : 19,
+      "line" : 21,
       "storageClass" : [
        "static"
       ],
@@ -5738,32 +5748,10 @@
         "default" : "\"\""
        }
       ],
-      "endline" : 48
-     },
-     {
-      "name" : "fullPath",
-      "kind" : "function",
-      "line" : 50,
-      "storageClass" : [
-       "@property"
-      ],
-      "deco" : "FNdZAya",
-      "originalType" : "string()",
       "endline" : 50
      },
      {
-      "name" : "relativePath",
-      "kind" : "function",
-      "line" : 51,
-      "storageClass" : [
-       "@property"
-      ],
-      "deco" : "FNdZAya",
-      "originalType" : "string()",
-      "endline" : 51
-     },
-     {
-      "name" : "fileName",
+      "name" : "fullPath",
       "kind" : "function",
       "line" : 52,
       "storageClass" : [
@@ -5774,7 +5762,7 @@
       "endline" : 52
      },
      {
-      "name" : "baseFileName",
+      "name" : "relativePath",
       "kind" : "function",
       "line" : 53,
       "storageClass" : [
@@ -5785,7 +5773,7 @@
       "endline" : 53
      },
      {
-      "name" : "directory",
+      "name" : "fileName",
       "kind" : "function",
       "line" : 54,
       "storageClass" : [
@@ -5796,7 +5784,7 @@
       "endline" : 54
      },
      {
-      "name" : "extension",
+      "name" : "baseFileName",
       "kind" : "function",
       "line" : 55,
       "storageClass" : [
@@ -5807,9 +5795,31 @@
       "endline" : 55
      },
      {
+      "name" : "directory",
+      "kind" : "function",
+      "line" : 56,
+      "storageClass" : [
+       "@property"
+      ],
+      "deco" : "FNdZAya",
+      "originalType" : "string()",
+      "endline" : 56
+     },
+     {
+      "name" : "extension",
+      "kind" : "function",
+      "line" : 57,
+      "storageClass" : [
+       "@property"
+      ],
+      "deco" : "FNdZAya",
+      "originalType" : "string()",
+      "endline" : 57
+     },
+     {
       "name" : "this",
       "kind" : "constructor",
-      "line" : 57,
+      "line" : 59,
       "deco" : "FAyaZC7utility8filepath8FilePath",
       "originalType" : "(string path)",
       "parameters" : [
@@ -5818,13 +5828,13 @@
         "deco" : "Aya"
        }
       ],
-      "endline" : 61
+      "endline" : 63
      },
      {
       "name" : "_fullPath",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 64,
+      "line" : 66,
       "deco" : "Aya",
       "offset" : 8
      }

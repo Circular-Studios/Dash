@@ -1,11 +1,9 @@
 module scripting.scripts;
-import utility.output;
+import utility.config, utility.filepath, utility.output;
 
 import myclass;
 
 import core.runtime, core.demangle;
-import utility.config;
-
 import std.conv;
 
 version( Windows )
@@ -22,7 +20,7 @@ public:
 		HMODULE scriptDll;
 		void initialize()
 		{
-			scriptDll = cast(HMODULE)Runtime.loadLibrary( Config.get!string( "Scripts.FilePath" ) );
+			scriptDll = cast(HMODULE)Runtime.loadLibrary( FilePath.ResourceHome ~ Config.get!string( "Scripts.FilePath" ) );
 
 			if( scriptDll is null )
 			{

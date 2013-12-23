@@ -6,7 +6,7 @@ Display:
     height: 720
     width: 1280
 Graphics:
-    Adapter: !GraphicsAdapter OpenGL
+    Adapter: !Adapter OpenGL
     BackfaceCulling: true
     VSync: false
 Physics:
@@ -14,5 +14,5 @@ Physics:
 Scripts:
     FilePath: "GameBin/gamebin.dll"
 UserInterface:
-    FilePath: "Game/UI/index.html"
+    FilePath: "/UI/index.html"
     Scale: !Vector2 1.0 1.0

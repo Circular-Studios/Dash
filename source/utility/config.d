@@ -22,7 +22,7 @@ public:
 		constructor.addConstructorScalar( "!Vector3", &constructVector3 );
 		constructor.addConstructorMapping( "!Vector3-Map", &constructVector2 );
 		constructor.addConstructorScalar( "!GameState", &constructEnum!GameState );
-		constructor.addConstructorScalar( "!GraphicsAdapter", &constructEnum!GraphicsAdapter );
+		constructor.addConstructorScalar( "!Adapter", &constructEnum!GraphicsAdapter );
 		constructor.addConstructorScalar( "!Verbosity", &constructEnum!Verbosity );
 
 		config = loadYaml( FilePath.Resources.Config );

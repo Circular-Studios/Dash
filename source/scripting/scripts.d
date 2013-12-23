@@ -4,6 +4,8 @@ import utility.output;
 import myclass;
 
 import core.runtime, core.demangle;
+import utility.config;
+
 import std.conv;
 
 version( Windows )
@@ -16,33 +18,31 @@ static class Scripts
 static:
 public:
 	version( Windows )
-	void initialize()
 	{
-		auto h = cast(HMODULE)Runtime.loadLibrary( "bin/GameBin/gamebin.dll" );
-
-		if( h is null )
+		HMODULE scriptDll;
+		void initialize()
 		{
-			Output.printMessage( OutputType.Error, "Error loading dll file." );
+			scriptDll = cast(HMODULE)Runtime.loadLibrary( Config.get!string( "Scripts.FilePath" ) );
+
+			if( scriptDll is null )
+			{
+				Output.printMessage( OutputType.Error, "Error loading dll file." );
+			}
+
+			FARPROC fp = GetProcAddress( scriptDll, getDGame.mangleof.ptr );
+
+			auto ctor = cast(MyClass function())fp;
+			Object test = (*ctor)();
+
+			if( test is null )
+			{
+				Output.printMessage( OutputType.Error, "Error creating class instance." );
+			}
 		}
 
-		//auto mc = new MyClass;
-
-		alias MyClass function() gameCtor;
-
-		//const char[] name = demangle( "myclass.getDGame" );
-		string name = getDGame.mangleof;
-		//string name = "_D7myclass8getDGameFZC7myclass7MyClass";
-		FARPROC fp = GetProcAddress( h, name.ptr );
-
-		auto ctor = cast(gameCtor)fp;
-
-		Object test = (*ctor)();
-
-		//Output.printMessage( OutputType.Info, "Result from mc: " ~ mc.test().to!string );
-
-		if( test is null )
+		void shutdown()
 		{
-			Output.printMessage( OutputType.Error, "Error creating class instance." );
+			Runtime.unloadLibrary( scriptDll );
 		}
 	}
 }

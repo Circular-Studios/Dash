@@ -12,7 +12,7 @@ Graphics:
 Physics:
     Gravity: !Vector3 0.0 -10.0 0.0
 Scripts:
-    Path: "Game/Scripts/Output.js"
+    FilePath: "GameBin/gamebin.dll"
 UserInterface:
     FilePath: "Game/UI/index.html"
     Scale: !Vector2 1.0 1.0

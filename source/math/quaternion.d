@@ -58,7 +58,7 @@ public:
 
 	Matrix!4 ToRotationMatrix() 
 	{
-		return Matrix!4( 0, 0, 0, 0 /* TO DO */ );
+		return new Matrix!4( /* TO DO */ );
 	}
 
 private:

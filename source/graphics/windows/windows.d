@@ -1,5 +1,6 @@
 module graphics.windows.windows;
 import core.properties;
+import graphics.adapters.opengl;
 
 abstract class Windows
 {
@@ -9,6 +10,8 @@ public:
 	mixin( Property!( "uint", "height", "protected" ) );
 	mixin( Property!( "uint", "screenHeight", "protected" ) );
 	mixin( Property!( "bool", "fullscreen", "protected" ) );
+
+	abstract @property OpenGL gl();
 
 	abstract void initialize();
 	abstract void shutdown();

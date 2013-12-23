@@ -2768,9 +2768,9 @@
   ]
  },
  {
-  "name" : "graphics.adapters.opengl",
+  "name" : "graphics.adapters.opengl.opengl",
   "kind" : "module",
-  "file" : "source/graphics/adapters/opengl.d",
+  "file" : "source/graphics/adapters/opengl/opengl.d",
   "members" : [
    {
     "name" : "core.properties",
@@ -2785,58 +2785,40 @@
     "protection" : "private"
    },
    {
-    "name" : "graphics.windows.win32",
+    "name" : "graphics.adapters.adapter",
     "kind" : "import",
     "line" : 4,
     "protection" : "private"
    },
    {
-    "name" : "graphics.adapters.adapter",
-    "kind" : "import",
-    "line" : 5,
-    "protection" : "private"
-   },
-   {
     "name" : "derelict.opengl3.gl3",
     "kind" : "import",
-    "line" : 7,
-    "protection" : "private"
-   },
-   {
-    "name" : "derelict.opengl3.wgl",
-    "kind" : "import",
-    "line" : 7,
-    "protection" : "private"
-   },
-   {
-    "name" : "derelict.opengl3.wglext",
-    "kind" : "import",
-    "line" : 7,
+    "line" : 6,
     "protection" : "private"
    },
    {
     "name" : "GLRenderContext",
     "kind" : "alias",
-    "line" : 20,
+    "line" : 16,
     "deco" : "k"
    },
    {
     "name" : "GLDeviceContext",
     "kind" : "alias",
-    "line" : 21,
+    "line" : 17,
     "deco" : "k"
    },
    {
     "name" : "OpenGL",
     "kind" : "class",
-    "line" : 24,
+    "line" : 20,
     "base" : "Adapter",
     "members" : [
      {
       "name" : "_renderContext",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 27,
+      "line" : 23,
       "deco" : "k",
       "originalType" : "GLRenderContext",
       "offset" : 32
@@ -2844,19 +2826,19 @@
      {
       "name" : "renderContext",
       "kind" : "function",
-      "line" : 27,
+      "line" : 23,
       "storageClass" : [
        "@property"
       ],
       "deco" : "FNdZk",
       "originalType" : "GLRenderContext()",
-      "endline" : 27
+      "endline" : 23
      },
      {
       "name" : "renderContext",
       "kind" : "function",
       "protection" : "private",
-      "line" : 27,
+      "line" : 23,
       "storageClass" : [
        "@property"
       ],
@@ -2868,43 +2850,17 @@
         "deco" : "k"
        }
       ],
-      "endline" : 27
-     },
-     {
-      "name" : "initialize",
-      "kind" : "function",
-      "line" : 29,
-      "storageClass" : [
-       "override"
-      ],
-      "deco" : "FZv",
-      "endline" : 116,
-      "overrides" : [
-       "graphics.adapters.adapter.Adapter.initialize"
-      ]
-     },
-     {
-      "name" : "shutdown",
-      "kind" : "function",
-      "line" : 128,
-      "storageClass" : [
-       "override"
-      ],
-      "deco" : "FZv",
-      "endline" : 131,
-      "overrides" : [
-       "graphics.adapters.adapter.Adapter.shutdown"
-      ]
+      "endline" : 23
      },
      {
       "name" : "resize",
       "kind" : "function",
-      "line" : 133,
+      "line" : 25,
       "storageClass" : [
        "override"
       ],
       "deco" : "FZv",
-      "endline" : 136,
+      "endline" : 28,
       "overrides" : [
        "graphics.adapters.adapter.Adapter.resize"
       ]
@@ -2912,12 +2868,12 @@
      {
       "name" : "reload",
       "kind" : "function",
-      "line" : 138,
+      "line" : 30,
       "storageClass" : [
        "override"
       ],
       "deco" : "FZv",
-      "endline" : 151,
+      "endline" : 43,
       "overrides" : [
        "graphics.adapters.adapter.Adapter.reload"
       ]
@@ -2925,32 +2881,42 @@
      {
       "name" : "beginDraw",
       "kind" : "function",
-      "line" : 153,
+      "line" : 45,
       "storageClass" : [
        "override"
       ],
       "deco" : "FZv",
-      "endline" : 156,
+      "endline" : 48,
       "overrides" : [
        "graphics.adapters.adapter.Adapter.beginDraw"
-      ]
-     },
-     {
-      "name" : "endDraw",
-      "kind" : "function",
-      "line" : 165,
-      "storageClass" : [
-       "override"
-      ],
-      "deco" : "FZv",
-      "endline" : 168,
-      "overrides" : [
-       "graphics.adapters.adapter.Adapter.endDraw"
       ]
      }
     ]
    }
   ]
+ },
+ {
+  "name" : "graphics.adapters.opengl",
+  "kind" : "module",
+  "file" : "source/graphics/adapters/opengl/package.d",
+  "members" : [
+   {
+    "name" : "graphics.adapters.opengl.opengl",
+    "kind" : "import",
+    "line" : 4
+   },
+   {
+    "name" : "graphics.adapters.opengl.win32gl",
+    "kind" : "import",
+    "line" : 5
+   }
+  ]
+ },
+ {
+  "name" : "graphics.adapters.opengl.win32gl",
+  "kind" : "module",
+  "file" : "source/graphics/adapters/opengl/win32gl.d",
+  "members" : []
  },
  {
   "name" : "graphics.adapters",
@@ -3077,29 +3043,29 @@
       ],
       "deco" : "FNdZC8graphics8adapters7adapter7Adapter",
       "originalType" : "Adapter()",
-      "endline" : 33
+      "endline" : 31
      },
      {
       "name" : "window",
       "kind" : "function",
-      "line" : 35,
+      "line" : 33,
       "storageClass" : [
        "static",
        "@property"
       ],
       "deco" : "FNdZC8graphics7windows7windows7Windows",
       "originalType" : "Windows()",
-      "endline" : 53
+      "endline" : 51
      },
      {
       "name" : "initialize",
       "kind" : "function",
-      "line" : 55,
+      "line" : 53,
       "storageClass" : [
        "static"
       ],
       "deco" : "FZv",
-      "endline" : 60
+      "endline" : 58
      }
     ]
    }
@@ -3536,34 +3502,40 @@
     "protection" : "private"
    },
    {
+    "name" : "graphics.adapters.opengl",
+    "kind" : "import",
+    "line" : 3,
+    "protection" : "private"
+   },
+   {
     "name" : "Windows",
     "kind" : "class",
-    "line" : 4,
+    "line" : 5,
     "members" : [
      {
       "name" : "_width",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 7,
+      "line" : 8,
       "deco" : "k",
       "offset" : 16
      },
      {
       "name" : "width",
       "kind" : "function",
-      "line" : 7,
+      "line" : 8,
       "storageClass" : [
        "@property"
       ],
       "deco" : "FNdZk",
       "originalType" : "uint()",
-      "endline" : 7
+      "endline" : 8
      },
      {
       "name" : "width",
       "kind" : "function",
       "protection" : "protected",
-      "line" : 7,
+      "line" : 8,
       "storageClass" : [
        "@property"
       ],
@@ -3575,32 +3547,32 @@
         "deco" : "k"
        }
       ],
-      "endline" : 7
+      "endline" : 8
      },
      {
       "name" : "_screenWidth",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 8,
+      "line" : 9,
       "deco" : "k",
       "offset" : 20
      },
      {
       "name" : "screenWidth",
       "kind" : "function",
-      "line" : 8,
+      "line" : 9,
       "storageClass" : [
        "@property"
       ],
       "deco" : "FNdZk",
       "originalType" : "uint()",
-      "endline" : 8
+      "endline" : 9
      },
      {
       "name" : "screenWidth",
       "kind" : "function",
       "protection" : "protected",
-      "line" : 8,
+      "line" : 9,
       "storageClass" : [
        "@property"
       ],
@@ -3612,32 +3584,32 @@
         "deco" : "k"
        }
       ],
-      "endline" : 8
+      "endline" : 9
      },
      {
       "name" : "_height",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 9,
+      "line" : 10,
       "deco" : "k",
       "offset" : 24
      },
      {
       "name" : "height",
       "kind" : "function",
-      "line" : 9,
+      "line" : 10,
       "storageClass" : [
        "@property"
       ],
       "deco" : "FNdZk",
       "originalType" : "uint()",
-      "endline" : 9
+      "endline" : 10
      },
      {
       "name" : "height",
       "kind" : "function",
       "protection" : "protected",
-      "line" : 9,
+      "line" : 10,
       "storageClass" : [
        "@property"
       ],
@@ -3649,32 +3621,32 @@
         "deco" : "k"
        }
       ],
-      "endline" : 9
+      "endline" : 10
      },
      {
       "name" : "_screenHeight",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 10,
+      "line" : 11,
       "deco" : "k",
       "offset" : 28
      },
      {
       "name" : "screenHeight",
       "kind" : "function",
-      "line" : 10,
+      "line" : 11,
       "storageClass" : [
        "@property"
       ],
       "deco" : "FNdZk",
       "originalType" : "uint()",
-      "endline" : 10
+      "endline" : 11
      },
      {
       "name" : "screenHeight",
       "kind" : "function",
       "protection" : "protected",
-      "line" : 10,
+      "line" : 11,
       "storageClass" : [
        "@property"
       ],
@@ -3686,32 +3658,32 @@
         "deco" : "k"
        }
       ],
-      "endline" : 10
+      "endline" : 11
      },
      {
       "name" : "_fullscreen",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 11,
+      "line" : 12,
       "deco" : "b",
       "offset" : 32
      },
      {
       "name" : "fullscreen",
       "kind" : "function",
-      "line" : 11,
+      "line" : 12,
       "storageClass" : [
        "@property"
       ],
       "deco" : "FNdZb",
       "originalType" : "bool()",
-      "endline" : 11
+      "endline" : 12
      },
      {
       "name" : "fullscreen",
       "kind" : "function",
       "protection" : "protected",
-      "line" : 11,
+      "line" : 12,
       "storageClass" : [
        "@property"
       ],
@@ -3723,37 +3695,21 @@
         "deco" : "b"
        }
       ],
-      "endline" : 11
+      "endline" : 12
      },
      {
-      "name" : "initialize",
-      "kind" : "function",
-      "line" : 13,
-      "storageClass" : [
-       "abstract"
-      ],
-      "deco" : "FZv"
-     },
-     {
-      "name" : "shutdown",
+      "name" : "gl",
       "kind" : "function",
       "line" : 14,
       "storageClass" : [
-       "abstract"
+       "abstract",
+       "@property"
       ],
-      "deco" : "FZv"
+      "deco" : "FNdZC8graphics8adapters6opengl6opengl6OpenGL",
+      "originalType" : "OpenGL()"
      },
      {
-      "name" : "resize",
-      "kind" : "function",
-      "line" : 15,
-      "storageClass" : [
-       "abstract"
-      ],
-      "deco" : "FZv"
-     },
-     {
-      "name" : "messageLoop",
+      "name" : "initialize",
       "kind" : "function",
       "line" : 16,
       "storageClass" : [
@@ -3762,7 +3718,16 @@
       "deco" : "FZv"
      },
      {
-      "name" : "openWindow",
+      "name" : "shutdown",
+      "kind" : "function",
+      "line" : 17,
+      "storageClass" : [
+       "abstract"
+      ],
+      "deco" : "FZv"
+     },
+     {
+      "name" : "resize",
       "kind" : "function",
       "line" : 18,
       "storageClass" : [
@@ -3771,9 +3736,27 @@
       "deco" : "FZv"
      },
      {
-      "name" : "closeWindow",
+      "name" : "messageLoop",
       "kind" : "function",
       "line" : 19,
+      "storageClass" : [
+       "abstract"
+      ],
+      "deco" : "FZv"
+     },
+     {
+      "name" : "openWindow",
+      "kind" : "function",
+      "line" : 21,
+      "storageClass" : [
+       "abstract"
+      ],
+      "deco" : "FZv"
+     },
+     {
+      "name" : "closeWindow",
+      "kind" : "function",
+      "line" : 22,
       "storageClass" : [
        "abstract"
       ],

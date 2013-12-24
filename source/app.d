@@ -6,7 +6,7 @@ import myclass;
 void main()
 {
 	Scripts.initialize();
-	Scripts.callFunction!(MyClass)( &getDGame );
+	Scripts.callFunction!(MyClass)( getDGame.mangleof );
 
     new DGame().run();
 }

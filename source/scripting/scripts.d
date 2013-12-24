@@ -27,14 +27,19 @@ public:
 			}
 		}
 
-		TReturn callFunction( TReturn )( ref TReturn function() func )
+		TReturn callFunction( TReturn )( TReturn function() func )
 		{
 			return (*(cast(TReturn function())GetProcAddress( scriptDll, func.mangleof.ptr )))();
 		}
 
-		TReturn callFunction( TReturn, TArgs... )( ref TReturn function( TArgs ) func, TArgs args )
+		TReturn callFunction( TReturn, TArgs... )( TReturn function( TArgs ) func, TArgs args )
 		{
 			return (*(cast(TReturn function( TArgs ))GetProcAddress( scriptDll, func.mangleof.ptr )))( args );
+		}
+
+		TReturn callFunction( TReturn )( string mangledName )
+		{
+			return (*(cast(TReturn function())GetProcAddress( scriptDll, mangledName.ptr )))();
 		}
 
 		void shutdown()

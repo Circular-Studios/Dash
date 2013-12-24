@@ -10,11 +10,23 @@
     "protection" : "private"
    },
    {
+    "name" : "scripting.scripts",
+    "kind" : "import",
+    "line" : 2,
+    "protection" : "private"
+   },
+   {
+    "name" : "myclass",
+    "kind" : "import",
+    "line" : 4,
+    "protection" : "private"
+   },
+   {
     "name" : "main",
     "kind" : "function",
-    "line" : 3,
+    "line" : 6,
     "deco" : "FZv",
-    "endline" : 6
+    "endline" : 12
    }
   ]
  },
@@ -5374,44 +5386,38 @@
     "protection" : "private"
    },
    {
-    "name" : "myclass",
+    "name" : "core.runtime",
     "kind" : "import",
     "line" : 4,
     "protection" : "private"
    },
    {
-    "name" : "core.runtime",
-    "kind" : "import",
-    "line" : 6,
-    "protection" : "private"
-   },
-   {
     "name" : "core.demangle",
     "kind" : "import",
-    "line" : 6,
+    "line" : 4,
     "protection" : "private"
    },
    {
     "name" : "std.conv",
     "kind" : "import",
-    "line" : 7,
+    "line" : 5,
     "protection" : "private"
    },
    {
     "name" : "std.c.windows.windows",
     "kind" : "import",
-    "line" : 11,
+    "line" : 9,
     "protection" : "private"
    },
    {
     "name" : "Scripts",
     "kind" : "class",
-    "line" : 14,
+    "line" : 12,
     "members" : [
      {
       "name" : "scriptDll",
       "kind" : "variable",
-      "line" : 20,
+      "line" : 18,
       "storageClass" : [
        "static"
       ],
@@ -5421,16 +5427,42 @@
      {
       "name" : "initialize",
       "kind" : "function",
-      "line" : 22,
+      "line" : 20,
       "storageClass" : [
        "static"
       ],
       "deco" : "FZv",
-      "endline" : 40
+      "endline" : 28
      },
      {
       "kind" : "template",
-      "line" : 42,
+      "line" : 30,
+      "name" : "callFunction",
+      "parameters" : [
+       {
+        "name" : "TReturn",
+        "kind" : "type"
+       }
+      ],
+      "members" : [
+       {
+        "name" : "callFunction",
+        "kind" : "function",
+        "line" : 30,
+        "type" : "TReturn(TReturn function() func)",
+        "parameters" : [
+         {
+          "name" : "func",
+          "type" : "TReturn function()"
+         }
+        ],
+        "endline" : 33
+       }
+      ]
+     },
+     {
+      "kind" : "template",
+      "line" : 35,
       "name" : "callFunction",
       "parameters" : [
        {
@@ -5446,34 +5478,57 @@
        {
         "name" : "callFunction",
         "kind" : "function",
-        "line" : 42,
-        "type" : "TReturn(ref TReturn function(TArgs) func, TArgs args)",
+        "line" : 35,
+        "type" : "TReturn(TReturn function(TArgs) func, TArgs args)",
         "parameters" : [
          {
           "name" : "func",
-          "type" : "TReturn function(TArgs)",
-          "storageClass" : [
-           "ref"
-          ]
+          "type" : "TReturn function(TArgs)"
          },
          {
           "name" : "args",
           "type" : "TArgs"
          }
         ],
-        "endline" : 45
+        "endline" : 38
+       }
+      ]
+     },
+     {
+      "kind" : "template",
+      "line" : 40,
+      "name" : "callFunction",
+      "parameters" : [
+       {
+        "name" : "TReturn",
+        "kind" : "type"
+       }
+      ],
+      "members" : [
+       {
+        "name" : "callFunction",
+        "kind" : "function",
+        "line" : 40,
+        "type" : "TReturn(string mangledName)",
+        "parameters" : [
+         {
+          "name" : "mangledName",
+          "type" : "string"
+         }
+        ],
+        "endline" : 43
        }
       ]
      },
      {
       "name" : "shutdown",
       "kind" : "function",
-      "line" : 47,
+      "line" : 45,
       "storageClass" : [
        "static"
       ],
       "deco" : "FZv",
-      "endline" : 50
+      "endline" : 48
      }
     ]
    }

@@ -5356,6 +5356,18 @@
   "file" : "source\\scripting\\scripts.d",
   "members" : [
    {
+    "name" : "utility.config",
+    "kind" : "import",
+    "line" : 2,
+    "protection" : "private"
+   },
+   {
+    "name" : "utility.filepath",
+    "kind" : "import",
+    "line" : 2,
+    "protection" : "private"
+   },
+   {
     "name" : "utility.output",
     "kind" : "import",
     "line" : 2,
@@ -5380,32 +5392,26 @@
     "protection" : "private"
    },
    {
-    "name" : "utility.config",
+    "name" : "std.conv",
     "kind" : "import",
     "line" : 7,
     "protection" : "private"
    },
    {
-    "name" : "std.conv",
-    "kind" : "import",
-    "line" : 9,
-    "protection" : "private"
-   },
-   {
     "name" : "std.c.windows.windows",
     "kind" : "import",
-    "line" : 13,
+    "line" : 11,
     "protection" : "private"
    },
    {
     "name" : "Scripts",
     "kind" : "class",
-    "line" : 16,
+    "line" : 14,
     "members" : [
      {
       "name" : "scriptDll",
       "kind" : "variable",
-      "line" : 22,
+      "line" : 20,
       "storageClass" : [
        "static"
       ],
@@ -5415,22 +5421,59 @@
      {
       "name" : "initialize",
       "kind" : "function",
-      "line" : 23,
+      "line" : 22,
       "storageClass" : [
        "static"
       ],
       "deco" : "FZv",
-      "endline" : 41
+      "endline" : 40
+     },
+     {
+      "kind" : "template",
+      "line" : 42,
+      "name" : "callFunction",
+      "parameters" : [
+       {
+        "name" : "TReturn",
+        "kind" : "type"
+       },
+       {
+        "name" : "TArgs",
+        "kind" : "tuple"
+       }
+      ],
+      "members" : [
+       {
+        "name" : "callFunction",
+        "kind" : "function",
+        "line" : 42,
+        "type" : "TReturn(ref TReturn function(TArgs) func, TArgs args)",
+        "parameters" : [
+         {
+          "name" : "func",
+          "type" : "TReturn function(TArgs)",
+          "storageClass" : [
+           "ref"
+          ]
+         },
+         {
+          "name" : "args",
+          "type" : "TArgs"
+         }
+        ],
+        "endline" : 45
+       }
+      ]
      },
      {
       "name" : "shutdown",
       "kind" : "function",
-      "line" : 43,
+      "line" : 47,
       "storageClass" : [
        "static"
       ],
       "deco" : "FZv",
-      "endline" : 46
+      "endline" : 50
      }
     ]
    }

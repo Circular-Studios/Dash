@@ -1,8 +1,6 @@
 module scripting.scripts;
 import utility.config, utility.filepath, utility.output;
 
-import myclass;
-
 import core.runtime, core.demangle;
 import std.conv;
 
@@ -18,6 +16,7 @@ public:
 	version( Windows )
 	{
 		HMODULE scriptDll;
+
 		void initialize()
 		{
 			scriptDll = cast(HMODULE)Runtime.loadLibrary( FilePath.ResourceHome ~ Config.get!string( "Scripts.FilePath" ) );
@@ -26,16 +25,16 @@ public:
 			{
 				Output.printMessage( OutputType.Error, "Error loading dll file." );
 			}
+		}
 
-			FARPROC fp = GetProcAddress( scriptDll, getDGame.mangleof.ptr );
+		TReturn callFunction( TReturn )( ref TReturn function() func )
+		{
+			return (*(cast(TReturn function())GetProcAddress( scriptDll, func.mangleof.ptr )))();
+		}
 
-			auto ctor = cast(MyClass function())fp;
-			Object test = (*ctor)();
-
-			if( test is null )
-			{
-				Output.printMessage( OutputType.Error, "Error creating class instance." );
-			}
+		TReturn callFunction( TReturn, TArgs... )( ref TReturn function( TArgs ) func, TArgs args )
+		{
+			return (*(cast(TReturn function( TArgs ))GetProcAddress( scriptDll, func.mangleof.ptr )))( args );
 		}
 
 		void shutdown()

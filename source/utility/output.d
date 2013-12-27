@@ -49,6 +49,6 @@ private:
 
 	bool shouldPrint( OutputType type )
 	{
-		return type > verbosity;
+		return type >= verbosity;
 	}
 }

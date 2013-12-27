@@ -1,4 +1,7 @@
 module graphics.adapters.directx;
+
+version( Windows ):
+
 import graphics.adapters.adapter;
 
 class DirectX : Adapter

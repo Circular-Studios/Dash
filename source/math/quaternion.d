@@ -33,6 +33,34 @@ public:
 
 	mixin( DirtyProperty!( "Matrix!4", "matrix", "updateMatrix" ) );
 
+	Quaternion opBinary( string op ) ( Quaternion rhs )
+	{
+		static if ( op  == "*" )
+		{
+			return Quaternion( /* TO DO */ );
+		}
+		else static assert ( 0, "Operator " ~ op ~ " not implemented " );
+	}
+
+	ref Quaternion opOpAssign( string op ) ( Quaternion rhs )
+	{
+		static if ( op == "*" )
+		{
+			x = 0;
+			y = 0;
+			z = 0;
+			w = 0;
+			/* TO DO */
+			return this;
+		}
+		else static assert ( 0, "Operator " ~ op ~ " not implemented for assign " );
+	}
+
+	Matrix!4 ToRotationMatrix() 
+	{
+		return new Matrix!4( /* TO DO */ );
+	}
+
 private:
 	void updateMatrix()
 	{

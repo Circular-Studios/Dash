@@ -1,4 +1,5 @@
 module graphics.windows;
+
 public:
 import graphics.windows.windows;
 version( Windows )

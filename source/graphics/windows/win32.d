@@ -1,7 +1,11 @@
 module graphics.windows.win32;
+
+version( Windows ):
+
 import core.properties;
 import graphics.graphics;
 import graphics.windows.windows;
+import graphics.adapters.opengl;
 
 import win32.windef, win32.winuser, win32.winbase;
 
@@ -49,11 +53,19 @@ LRESULT WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 	return 0;
 }
 
-version( Windows )
 class Win32 : Windows
 {
 public:
 	static @property Win32 get() { return cast(Win32)Graphics.window; }
+
+	override @property OpenGL gl()
+	{
+		static Win32Gl opengl;
+		if( opengl is null )
+			opengl = new Win32Gl;
+
+		return opengl;
+	}
 
 	mixin( Property!( "HWND", "hWnd" ) );
 	mixin( Property!( "HINSTANCE", "hInstance" ) );

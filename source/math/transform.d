@@ -23,7 +23,7 @@ public:
 	~this()
 	{
 		destroy( position );
-		destroy( rotation );
+		destroy( rotation ); 
 		destroy( scale );
 	}
 

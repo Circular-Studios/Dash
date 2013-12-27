@@ -83,7 +83,7 @@ public:
 
 		file.close();
 
-		_numVertices = outputData.length / 8;  // 8 is num floats per vertex
+		_numVertices = cast(uint)( outputData.length / 8 );  // 8 is num floats per vertex
 		_numIndices = numVertices;
 
 		uint[] indices = new uint[ numIndices ];

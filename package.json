@@ -10,13 +10,11 @@
 	},
 	"importPaths": [
 		"source/",
-		"third_party/DWinProgramming/WindowsAPI",
-		"bin/Game/GameBin/"
+		"third_party/DWinProgramming/WindowsAPI"
 	],
 	"configurations": [
 		{
 			"name": "windows-app",
-			"targetName": "Dvelop",
 			"targetType": "executable",
 			"mainSourceFile": "source/app.d",
 			"libs": [

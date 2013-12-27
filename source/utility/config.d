@@ -4,11 +4,11 @@ import utility.filepath;
 
 import core.dgame : GameState;
 import graphics.graphics : GraphicsAdapter;
-import utility.output : Verbosity;
+import utility.filepath, utility.output : Verbosity;
 
 import yaml;
 
-import std.array, std.conv, std.string;
+import std.array, std.conv, std.string, std.path;
 
 static class Config
 {
@@ -59,6 +59,11 @@ public:
 		}
 
 		return current.as!T;
+	}
+
+	string getPath( string path )
+	{
+		return buildNormalizedPath( FilePath.ResourceHome, get!string( path ) );
 	}
 
 private:

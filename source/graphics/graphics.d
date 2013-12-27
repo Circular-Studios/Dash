@@ -18,9 +18,7 @@ public:
 
 		if( activeAdapter == GraphicsAdapter.OpenGL )
 		{
-			if( gl is null )
-				gl = new OpenGL();
-			return gl;
+			return window.gl;
 		}
 		if( activeAdapter == GraphicsAdapter.DirectX )
 		{
@@ -41,6 +39,14 @@ public:
 			if( win is null )
 				win = new Win32();
 			return win;
+		}
+		version( Linux )
+		{
+			return null;
+		}
+		version( OSX )
+		{
+			return null;
 		}
 	}
 

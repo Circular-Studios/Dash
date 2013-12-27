@@ -20,7 +20,7 @@ public:
 		{
 			auto name = object[ "Name" ].as!string;
 
-			objects[ name ] = new GameObject( object );
+			objects[ name ] = GameObject.createFromYaml( object );
 		}
 
 		foreach( file; FilePath.scanDirectory( objectPath ) )

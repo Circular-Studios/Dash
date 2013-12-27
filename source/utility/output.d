@@ -1,5 +1,6 @@
 /**
  * Defines the static Output class, which handles all output to the console window.
+ */
 module utility.output;
 import utility.config;
 import std.stdio;

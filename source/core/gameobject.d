@@ -21,6 +21,17 @@ public:
 	 * The current transform of the object.
 	 */
 	mixin( Property!( "Transform", "transform", "public" ) );
+	mixin Signal!( string, string );
+
+	/**
+	 * Create a GameObject from a Yaml node.
+	 */
+	static GameObject createFromYaml( Node yamlObject )
+	{
+		GameObject obj;
+
+		return obj;
+	}
 
 	/**
 	 * Creates basic GameObject with transform and connection to transform's emitter.
@@ -37,15 +48,7 @@ public:
 	this( IShader shader )
 	{
 		this();
-
-		// Transform
 		this.shader = shader;
-	}
-
-	this( Node jsonObject )
-	{
-		this();
-		// Handle stuff
 	}
 
 	~this()
@@ -62,57 +65,62 @@ public:
 	/**
 	 * Called once per frame to update all components.
 	 */
-	void update()
+	final void update()
 	{
 		foreach( ci, component; componentList )
-		{
 			component.update();
-		}
+
+		onUpdate();
 	}
 
 	/**
 	 * Called once per frame to draw all components.
 	 */
-	void draw()
+	final void draw()
 	{
 		foreach( ci, component; componentList )
-		{
 			component.draw( shader );
-		}
+
+		onDraw();
 	}
 
 	/**
 	 * Called when the game is shutting down, to shutdown all components.
 	 */
-	void shutdown()
+	final void shutdown()
 	{
+		onShutdown();
+
 		foreach( ci, component; componentList )
-		{
 			component.shutdown();
-		}
-
 		foreach( key; componentList.keys )
-		{
 			componentList.remove( key );
-		}
 	}
 
-	void onCollision( GameObject other )
-	{
-		
-	}
-
-	void addComponent( T )( T newComponent )
+	/**
+	 * Adds a component to the object.
+	 */
+	final void addComponent( T )( T newComponent )
 	{
 		componentList[ T.classinfo ] = newComponent;
 	}
 
-	T getComponent( T )()
+	/**
+	 * Gets a component of the given type.
+	 */
+	final T getComponent( T )()
 	{
 		return componentList[ T.classinfo ];
 	}
 
-	mixin Signal!( string, string );
+	/// Called on the update cycle.
+	void onUpdate() { }
+	/// Called on the draw cycle.
+	void onDraw() { }
+	/// Called on shutdown.
+	void onShutdown() { }
+	/// Called when the object collides with another object.
+	void onCollision( GameObject other ) { }
 
 private:
 	IComponent[ClassInfo] componentList;

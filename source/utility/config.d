@@ -4,11 +4,11 @@ import utility.filepath;
 
 import core.dgame : GameState;
 import graphics.graphics : GraphicsAdapter;
-import utility.output : Verbosity;
+import utility.filepath, utility.output : Verbosity;
 
 import yaml;
 
-import std.array, std.conv, std.string;
+import std.array, std.conv, std.string, std.path;
 
 static class Config
 {
@@ -22,7 +22,7 @@ public:
 		constructor.addConstructorScalar( "!Vector3", &constructVector3 );
 		constructor.addConstructorMapping( "!Vector3-Map", &constructVector2 );
 		constructor.addConstructorScalar( "!GameState", &constructEnum!GameState );
-		constructor.addConstructorScalar( "!GraphicsAdapter", &constructEnum!GraphicsAdapter );
+		constructor.addConstructorScalar( "!Adapter", &constructEnum!GraphicsAdapter );
 		constructor.addConstructorScalar( "!Verbosity", &constructEnum!Verbosity );
 
 		config = loadYaml( FilePath.Resources.Config );
@@ -43,7 +43,7 @@ public:
 
 		for( current = config; right.length; )
 		{
-			auto split = right.indexOf( '.' );
+			uint split = right.indexOf( '.' );
 			if( split == -1 )
 			{
 				current = current[ right ];
@@ -59,6 +59,11 @@ public:
 		}
 
 		return current.as!T;
+	}
+
+	string getPath( string path )
+	{
+		return buildNormalizedPath( FilePath.ResourceHome, get!string( path ) );
 	}
 
 private:

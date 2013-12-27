@@ -2427,6 +2427,270 @@
   ]
  },
  {
+  "name" : "graphics.adapters.opengl.opengl",
+  "kind" : "module",
+  "file" : "source\\graphics\\adapters\\opengl\\opengl.d",
+  "members" : [
+   {
+    "name" : "core.properties",
+    "kind" : "import",
+    "line" : 2,
+    "protection" : "private"
+   },
+   {
+    "name" : "graphics.graphics",
+    "kind" : "import",
+    "line" : 3,
+    "protection" : "private"
+   },
+   {
+    "name" : "graphics.adapters.adapter",
+    "kind" : "import",
+    "line" : 4,
+    "protection" : "private"
+   },
+   {
+    "name" : "derelict.opengl3.gl3",
+    "kind" : "import",
+    "line" : 6,
+    "protection" : "private"
+   },
+   {
+    "name" : "win32.windef",
+    "kind" : "import",
+    "line" : 10,
+    "protection" : "private"
+   },
+   {
+    "name" : "GLRenderContext",
+    "kind" : "alias",
+    "line" : 12,
+    "deco" : "Pv"
+   },
+   {
+    "name" : "GLDeviceContext",
+    "kind" : "alias",
+    "line" : 13,
+    "deco" : "Pv"
+   },
+   {
+    "name" : "OpenGL",
+    "kind" : "class",
+    "line" : 22,
+    "base" : "Adapter",
+    "members" : [
+     {
+      "name" : "_renderContext",
+      "kind" : "variable",
+      "protection" : "private",
+      "line" : 25,
+      "deco" : "Pv",
+      "originalType" : "GLRenderContext",
+      "offset" : 16
+     },
+     {
+      "name" : "renderContext",
+      "kind" : "function",
+      "line" : 25,
+      "storageClass" : [
+       "@property"
+      ],
+      "deco" : "FNdZPv",
+      "originalType" : "GLRenderContext()",
+      "endline" : 25
+     },
+     {
+      "name" : "renderContext",
+      "kind" : "function",
+      "protection" : "protected",
+      "line" : 25,
+      "storageClass" : [
+       "@property"
+      ],
+      "deco" : "FNdPvZv",
+      "originalType" : "void(GLRenderContext _newVal)",
+      "parameters" : [
+       {
+        "name" : "_newVal",
+        "deco" : "Pv"
+       }
+      ],
+      "endline" : 25
+     },
+     {
+      "name" : "resize",
+      "kind" : "function",
+      "line" : 27,
+      "storageClass" : [
+       "override"
+      ],
+      "deco" : "FZv",
+      "endline" : 30,
+      "overrides" : [
+       "graphics.adapters.adapter.Adapter.resize"
+      ]
+     },
+     {
+      "name" : "reload",
+      "kind" : "function",
+      "line" : 32,
+      "storageClass" : [
+       "override"
+      ],
+      "deco" : "FZv",
+      "endline" : 45,
+      "overrides" : [
+       "graphics.adapters.adapter.Adapter.reload"
+      ]
+     },
+     {
+      "name" : "beginDraw",
+      "kind" : "function",
+      "line" : 47,
+      "storageClass" : [
+       "override"
+      ],
+      "deco" : "FZv",
+      "endline" : 50,
+      "overrides" : [
+       "graphics.adapters.adapter.Adapter.beginDraw"
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "name" : "graphics.adapters.opengl",
+  "kind" : "module",
+  "file" : "source\\graphics\\adapters\\opengl\\package.d",
+  "members" : [
+   {
+    "name" : "graphics.adapters.opengl.opengl",
+    "kind" : "import",
+    "line" : 4
+   },
+   {
+    "name" : "graphics.adapters.opengl.win32gl",
+    "kind" : "import",
+    "line" : 6
+   }
+  ]
+ },
+ {
+  "name" : "graphics.adapters.opengl.win32gl",
+  "kind" : "module",
+  "file" : "source\\graphics\\adapters\\opengl\\win32gl.d",
+  "members" : [
+   {
+    "name" : "graphics.graphics",
+    "kind" : "import",
+    "line" : 5,
+    "protection" : "private"
+   },
+   {
+    "name" : "graphics.adapters.opengl.opengl",
+    "kind" : "import",
+    "line" : 6,
+    "protection" : "private"
+   },
+   {
+    "name" : "graphics.windows.win32",
+    "kind" : "import",
+    "line" : 7,
+    "protection" : "private"
+   },
+   {
+    "name" : "win32.windef",
+    "kind" : "import",
+    "line" : 9,
+    "protection" : "private"
+   },
+   {
+    "name" : "win32.winuser",
+    "kind" : "import",
+    "line" : 9,
+    "protection" : "private"
+   },
+   {
+    "name" : "win32.wingdi",
+    "kind" : "import",
+    "line" : 10,
+    "protection" : "private",
+    "selective" : [
+     "PIXELFORMATDESCRIPTOR",
+     "SetPixelFormat",
+     "SwapBuffers"
+    ]
+   },
+   {
+    "name" : "derelict.opengl3.gl3",
+    "kind" : "import",
+    "line" : 11,
+    "protection" : "private"
+   },
+   {
+    "name" : "derelict.opengl3.wgl",
+    "kind" : "import",
+    "line" : 11,
+    "protection" : "private"
+   },
+   {
+    "name" : "derelict.opengl3.wglext",
+    "kind" : "import",
+    "line" : 11,
+    "protection" : "private"
+   },
+   {
+    "name" : "Win32Gl",
+    "kind" : "class",
+    "line" : 13,
+    "base" : "OpenGL",
+    "members" : [
+     {
+      "name" : "initialize",
+      "kind" : "function",
+      "line" : 16,
+      "storageClass" : [
+       "override"
+      ],
+      "deco" : "FZv",
+      "endline" : 90,
+      "overrides" : [
+       "graphics.adapters.adapter.Adapter.initialize"
+      ]
+     },
+     {
+      "name" : "shutdown",
+      "kind" : "function",
+      "line" : 92,
+      "storageClass" : [
+       "override"
+      ],
+      "deco" : "FZv",
+      "endline" : 99,
+      "overrides" : [
+       "graphics.adapters.adapter.Adapter.shutdown"
+      ]
+     },
+     {
+      "name" : "endDraw",
+      "kind" : "function",
+      "line" : 101,
+      "storageClass" : [
+       "override"
+      ],
+      "deco" : "FZv",
+      "endline" : 104,
+      "overrides" : [
+       "graphics.adapters.adapter.Adapter.endDraw"
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
   "name" : "graphics.adapters.adapter",
   "kind" : "module",
   "file" : "source\\graphics\\adapters\\adapter.d",
@@ -2663,24 +2927,24 @@
    {
     "name" : "graphics.adapters.adapter",
     "kind" : "import",
-    "line" : 2,
+    "line" : 5,
     "protection" : "private"
    },
    {
     "name" : "DirectX",
     "kind" : "class",
-    "line" : 4,
+    "line" : 7,
     "base" : "Adapter",
     "members" : [
      {
       "name" : "initialize",
       "kind" : "function",
-      "line" : 7,
+      "line" : 10,
       "storageClass" : [
        "override"
       ],
       "deco" : "FZv",
-      "endline" : 10,
+      "endline" : 13,
       "overrides" : [
        "graphics.adapters.adapter.Adapter.initialize"
       ]
@@ -2688,12 +2952,12 @@
      {
       "name" : "shutdown",
       "kind" : "function",
-      "line" : 12,
+      "line" : 15,
       "storageClass" : [
        "override"
       ],
       "deco" : "FZv",
-      "endline" : 15,
+      "endline" : 18,
       "overrides" : [
        "graphics.adapters.adapter.Adapter.shutdown"
       ]
@@ -2701,12 +2965,12 @@
      {
       "name" : "resize",
       "kind" : "function",
-      "line" : 17,
+      "line" : 20,
       "storageClass" : [
        "override"
       ],
       "deco" : "FZv",
-      "endline" : 20,
+      "endline" : 23,
       "overrides" : [
        "graphics.adapters.adapter.Adapter.resize"
       ]
@@ -2714,12 +2978,12 @@
      {
       "name" : "reload",
       "kind" : "function",
-      "line" : 22,
+      "line" : 25,
       "storageClass" : [
        "override"
       ],
       "deco" : "FZv",
-      "endline" : 25,
+      "endline" : 28,
       "overrides" : [
        "graphics.adapters.adapter.Adapter.reload"
       ]
@@ -2727,12 +2991,12 @@
      {
       "name" : "beginDraw",
       "kind" : "function",
-      "line" : 27,
+      "line" : 30,
       "storageClass" : [
        "override"
       ],
       "deco" : "FZv",
-      "endline" : 30,
+      "endline" : 33,
       "overrides" : [
        "graphics.adapters.adapter.Adapter.beginDraw"
       ]
@@ -2740,220 +3004,12 @@
      {
       "name" : "endDraw",
       "kind" : "function",
-      "line" : 31,
+      "line" : 34,
       "storageClass" : [
        "override"
       ],
       "deco" : "FZv",
-      "endline" : 34,
-      "overrides" : [
-       "graphics.adapters.adapter.Adapter.endDraw"
-      ]
-     }
-    ]
-   }
-  ]
- },
- {
-  "name" : "graphics.adapters.opengl",
-  "kind" : "module",
-  "file" : "source\\graphics\\adapters\\opengl.d",
-  "members" : [
-   {
-    "name" : "core.properties",
-    "kind" : "import",
-    "line" : 2,
-    "protection" : "private"
-   },
-   {
-    "name" : "graphics.graphics",
-    "kind" : "import",
-    "line" : 3,
-    "protection" : "private"
-   },
-   {
-    "name" : "graphics.windows.win32",
-    "kind" : "import",
-    "line" : 4,
-    "protection" : "private"
-   },
-   {
-    "name" : "graphics.adapters.adapter",
-    "kind" : "import",
-    "line" : 5,
-    "protection" : "private"
-   },
-   {
-    "name" : "win32.windef",
-    "kind" : "import",
-    "line" : 7,
-    "protection" : "private"
-   },
-   {
-    "name" : "win32.winuser",
-    "kind" : "import",
-    "line" : 7,
-    "protection" : "private"
-   },
-   {
-    "name" : "win32.wingdi",
-    "kind" : "import",
-    "line" : 8,
-    "protection" : "private",
-    "selective" : [
-     "PIXELFORMATDESCRIPTOR",
-     "SetPixelFormat",
-     "SwapBuffers"
-    ]
-   },
-   {
-    "name" : "derelict.opengl3.gl3",
-    "kind" : "import",
-    "line" : 9,
-    "protection" : "private"
-   },
-   {
-    "name" : "derelict.opengl3.wgl",
-    "kind" : "import",
-    "line" : 9,
-    "protection" : "private"
-   },
-   {
-    "name" : "derelict.opengl3.wglext",
-    "kind" : "import",
-    "line" : 9,
-    "protection" : "private"
-   },
-   {
-    "name" : "GLRenderContext",
-    "kind" : "alias",
-    "line" : 13,
-    "deco" : "Pv"
-   },
-   {
-    "name" : "GLDeviceContext",
-    "kind" : "alias",
-    "line" : 14,
-    "deco" : "Pv"
-   },
-   {
-    "name" : "OpenGL",
-    "kind" : "class",
-    "line" : 21,
-    "base" : "Adapter",
-    "members" : [
-     {
-      "name" : "_renderContext",
-      "kind" : "variable",
-      "protection" : "private",
-      "line" : 24,
-      "deco" : "Pv",
-      "originalType" : "GLRenderContext",
-      "offset" : 16
-     },
-     {
-      "name" : "renderContext",
-      "kind" : "function",
-      "line" : 24,
-      "storageClass" : [
-       "@property"
-      ],
-      "deco" : "FNdZPv",
-      "originalType" : "GLRenderContext()",
-      "endline" : 24
-     },
-     {
-      "name" : "renderContext",
-      "kind" : "function",
-      "protection" : "private",
-      "line" : 24,
-      "storageClass" : [
-       "@property"
-      ],
-      "deco" : "FNdPvZv",
-      "originalType" : "void(GLRenderContext _newVal)",
-      "parameters" : [
-       {
-        "name" : "_newVal",
-        "deco" : "Pv"
-       }
-      ],
-      "endline" : 24
-     },
-     {
-      "name" : "initialize",
-      "kind" : "function",
-      "line" : 26,
-      "storageClass" : [
-       "override"
-      ],
-      "deco" : "FZv",
-      "endline" : 114,
-      "overrides" : [
-       "graphics.adapters.adapter.Adapter.initialize"
-      ]
-     },
-     {
-      "name" : "shutdown",
-      "kind" : "function",
-      "line" : 116,
-      "storageClass" : [
-       "override"
-      ],
-      "deco" : "FZv",
-      "endline" : 123,
-      "overrides" : [
-       "graphics.adapters.adapter.Adapter.shutdown"
-      ]
-     },
-     {
-      "name" : "resize",
-      "kind" : "function",
-      "line" : 125,
-      "storageClass" : [
-       "override"
-      ],
-      "deco" : "FZv",
-      "endline" : 128,
-      "overrides" : [
-       "graphics.adapters.adapter.Adapter.resize"
-      ]
-     },
-     {
-      "name" : "reload",
-      "kind" : "function",
-      "line" : 130,
-      "storageClass" : [
-       "override"
-      ],
-      "deco" : "FZv",
-      "endline" : 143,
-      "overrides" : [
-       "graphics.adapters.adapter.Adapter.reload"
-      ]
-     },
-     {
-      "name" : "beginDraw",
-      "kind" : "function",
-      "line" : 145,
-      "storageClass" : [
-       "override"
-      ],
-      "deco" : "FZv",
-      "endline" : 148,
-      "overrides" : [
-       "graphics.adapters.adapter.Adapter.beginDraw"
-      ]
-     },
-     {
-      "name" : "endDraw",
-      "kind" : "function",
-      "line" : 150,
-      "storageClass" : [
-       "override"
-      ],
-      "deco" : "FZv",
-      "endline" : 153,
+      "endline" : 37,
       "overrides" : [
        "graphics.adapters.adapter.Adapter.endDraw"
       ]
@@ -3388,12 +3444,12 @@
    {
     "name" : "graphics.windows.windows",
     "kind" : "import",
-    "line" : 3
+    "line" : 4
    },
    {
     "name" : "graphics.windows.win32",
     "kind" : "import",
-    "line" : 5
+    "line" : 6
    }
   ]
  },
@@ -3405,43 +3461,49 @@
    {
     "name" : "core.properties",
     "kind" : "import",
-    "line" : 2,
+    "line" : 5,
     "protection" : "private"
    },
    {
     "name" : "graphics.graphics",
     "kind" : "import",
-    "line" : 3,
+    "line" : 6,
     "protection" : "private"
    },
    {
     "name" : "graphics.windows.windows",
     "kind" : "import",
-    "line" : 4,
+    "line" : 7,
+    "protection" : "private"
+   },
+   {
+    "name" : "graphics.adapters.opengl",
+    "kind" : "import",
+    "line" : 8,
     "protection" : "private"
    },
    {
     "name" : "win32.windef",
     "kind" : "import",
-    "line" : 6,
+    "line" : 10,
     "protection" : "private"
    },
    {
     "name" : "win32.winuser",
     "kind" : "import",
-    "line" : 6,
+    "line" : 10,
     "protection" : "private"
    },
    {
     "name" : "win32.winbase",
     "kind" : "import",
-    "line" : 6,
+    "line" : 10,
     "protection" : "private"
    },
    {
     "name" : "DWS_FULLSCREEN",
     "kind" : "variable",
-    "line" : 8,
+    "line" : 12,
     "storageClass" : [
      "const"
     ],
@@ -3452,7 +3514,7 @@
    {
     "name" : "DWS_WINDOWED",
     "kind" : "variable",
-    "line" : 9,
+    "line" : 13,
     "storageClass" : [
      "const"
     ],
@@ -3463,7 +3525,7 @@
    {
     "name" : "WndProc",
     "kind" : "function",
-    "line" : 12,
+    "line" : 16,
     "deco" : "WPvkkiZi",
     "originalType" : "extern (Windows) LRESULT(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)",
     "parameters" : [
@@ -3484,31 +3546,46 @@
       "deco" : "i"
      }
     ],
-    "endline" : 50
+    "endline" : 54
    },
    {
     "name" : "Win32",
     "kind" : "class",
-    "line" : 53,
+    "line" : 56,
     "base" : "Windows",
     "members" : [
      {
       "name" : "get",
       "kind" : "function",
-      "line" : 56,
+      "line" : 59,
       "storageClass" : [
        "static",
        "@property"
       ],
       "deco" : "FNdZC8graphics7windows5win325Win32",
       "originalType" : "Win32()",
-      "endline" : 56
+      "endline" : 59
+     },
+     {
+      "name" : "gl",
+      "kind" : "function",
+      "line" : 61,
+      "storageClass" : [
+       "override",
+       "@property"
+      ],
+      "deco" : "FNdZC8graphics8adapters6opengl6opengl6OpenGL",
+      "originalType" : "OpenGL()",
+      "endline" : 68,
+      "overrides" : [
+       "graphics.windows.windows.Windows.gl"
+      ]
      },
      {
       "name" : "_hWnd",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 58,
+      "line" : 70,
       "deco" : "Pv",
       "originalType" : "HWND",
       "offset" : 28
@@ -3516,19 +3593,19 @@
      {
       "name" : "hWnd",
       "kind" : "function",
-      "line" : 58,
+      "line" : 70,
       "storageClass" : [
        "@property"
       ],
       "deco" : "FNdZPv",
       "originalType" : "HWND()",
-      "endline" : 58
+      "endline" : 70
      },
      {
       "name" : "hWnd",
       "kind" : "function",
       "protection" : "private",
-      "line" : 58,
+      "line" : 70,
       "storageClass" : [
        "@property"
       ],
@@ -3540,13 +3617,13 @@
         "deco" : "Pv"
        }
       ],
-      "endline" : 58
+      "endline" : 70
      },
      {
       "name" : "_hInstance",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 59,
+      "line" : 71,
       "deco" : "Pv",
       "originalType" : "HINSTANCE",
       "offset" : 32
@@ -3554,19 +3631,19 @@
      {
       "name" : "hInstance",
       "kind" : "function",
-      "line" : 59,
+      "line" : 71,
       "storageClass" : [
        "@property"
       ],
       "deco" : "FNdZPv",
       "originalType" : "HINSTANCE()",
-      "endline" : 59
+      "endline" : 71
      },
      {
       "name" : "hInstance",
       "kind" : "function",
       "protection" : "private",
-      "line" : 59,
+      "line" : 71,
       "storageClass" : [
        "@property"
       ],
@@ -3578,17 +3655,17 @@
         "deco" : "Pv"
        }
       ],
-      "endline" : 59
+      "endline" : 71
      },
      {
       "name" : "initialize",
       "kind" : "function",
-      "line" : 61,
+      "line" : 73,
       "storageClass" : [
        "override"
       ],
       "deco" : "FZv",
-      "endline" : 81,
+      "endline" : 93,
       "overrides" : [
        "graphics.windows.windows.Windows.initialize"
       ]
@@ -3596,12 +3673,12 @@
      {
       "name" : "shutdown",
       "kind" : "function",
-      "line" : 83,
+      "line" : 95,
       "storageClass" : [
        "override"
       ],
       "deco" : "FZv",
-      "endline" : 86,
+      "endline" : 98,
       "overrides" : [
        "graphics.windows.windows.Windows.shutdown"
       ]
@@ -3609,12 +3686,12 @@
      {
       "name" : "resize",
       "kind" : "function",
-      "line" : 88,
+      "line" : 100,
       "storageClass" : [
        "override"
       ],
       "deco" : "FZv",
-      "endline" : 118,
+      "endline" : 130,
       "overrides" : [
        "graphics.windows.windows.Windows.resize"
       ]
@@ -3622,12 +3699,12 @@
      {
       "name" : "openWindow",
       "kind" : "function",
-      "line" : 120,
+      "line" : 132,
       "storageClass" : [
        "override"
       ],
       "deco" : "FZv",
-      "endline" : 131,
+      "endline" : 143,
       "overrides" : [
        "graphics.windows.windows.Windows.openWindow"
       ]
@@ -3635,12 +3712,12 @@
      {
       "name" : "closeWindow",
       "kind" : "function",
-      "line" : 133,
+      "line" : 145,
       "storageClass" : [
        "override"
       ],
       "deco" : "FZv",
-      "endline" : 137,
+      "endline" : 149,
       "overrides" : [
        "graphics.windows.windows.Windows.closeWindow"
       ]
@@ -3648,12 +3725,12 @@
      {
       "name" : "messageLoop",
       "kind" : "function",
-      "line" : 139,
+      "line" : 151,
       "storageClass" : [
        "override"
       ],
       "deco" : "FZv",
-      "endline" : 152,
+      "endline" : 164,
       "overrides" : [
        "graphics.windows.windows.Windows.messageLoop"
       ]
@@ -3674,34 +3751,40 @@
     "protection" : "private"
    },
    {
+    "name" : "graphics.adapters.opengl",
+    "kind" : "import",
+    "line" : 3,
+    "protection" : "private"
+   },
+   {
     "name" : "Windows",
     "kind" : "class",
-    "line" : 4,
+    "line" : 5,
     "members" : [
      {
       "name" : "_width",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 7,
+      "line" : 8,
       "deco" : "k",
       "offset" : 8
      },
      {
       "name" : "width",
       "kind" : "function",
-      "line" : 7,
+      "line" : 8,
       "storageClass" : [
        "@property"
       ],
       "deco" : "FNdZk",
       "originalType" : "uint()",
-      "endline" : 7
+      "endline" : 8
      },
      {
       "name" : "width",
       "kind" : "function",
       "protection" : "protected",
-      "line" : 7,
+      "line" : 8,
       "storageClass" : [
        "@property"
       ],
@@ -3713,32 +3796,32 @@
         "deco" : "k"
        }
       ],
-      "endline" : 7
+      "endline" : 8
      },
      {
       "name" : "_screenWidth",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 8,
+      "line" : 9,
       "deco" : "k",
       "offset" : 12
      },
      {
       "name" : "screenWidth",
       "kind" : "function",
-      "line" : 8,
+      "line" : 9,
       "storageClass" : [
        "@property"
       ],
       "deco" : "FNdZk",
       "originalType" : "uint()",
-      "endline" : 8
+      "endline" : 9
      },
      {
       "name" : "screenWidth",
       "kind" : "function",
       "protection" : "protected",
-      "line" : 8,
+      "line" : 9,
       "storageClass" : [
        "@property"
       ],
@@ -3750,32 +3833,32 @@
         "deco" : "k"
        }
       ],
-      "endline" : 8
+      "endline" : 9
      },
      {
       "name" : "_height",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 9,
+      "line" : 10,
       "deco" : "k",
       "offset" : 16
      },
      {
       "name" : "height",
       "kind" : "function",
-      "line" : 9,
+      "line" : 10,
       "storageClass" : [
        "@property"
       ],
       "deco" : "FNdZk",
       "originalType" : "uint()",
-      "endline" : 9
+      "endline" : 10
      },
      {
       "name" : "height",
       "kind" : "function",
       "protection" : "protected",
-      "line" : 9,
+      "line" : 10,
       "storageClass" : [
        "@property"
       ],
@@ -3787,32 +3870,32 @@
         "deco" : "k"
        }
       ],
-      "endline" : 9
+      "endline" : 10
      },
      {
       "name" : "_screenHeight",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 10,
+      "line" : 11,
       "deco" : "k",
       "offset" : 20
      },
      {
       "name" : "screenHeight",
       "kind" : "function",
-      "line" : 10,
+      "line" : 11,
       "storageClass" : [
        "@property"
       ],
       "deco" : "FNdZk",
       "originalType" : "uint()",
-      "endline" : 10
+      "endline" : 11
      },
      {
       "name" : "screenHeight",
       "kind" : "function",
       "protection" : "protected",
-      "line" : 10,
+      "line" : 11,
       "storageClass" : [
        "@property"
       ],
@@ -3824,32 +3907,32 @@
         "deco" : "k"
        }
       ],
-      "endline" : 10
+      "endline" : 11
      },
      {
       "name" : "_fullscreen",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 11,
+      "line" : 12,
       "deco" : "b",
       "offset" : 24
      },
      {
       "name" : "fullscreen",
       "kind" : "function",
-      "line" : 11,
+      "line" : 12,
       "storageClass" : [
        "@property"
       ],
       "deco" : "FNdZb",
       "originalType" : "bool()",
-      "endline" : 11
+      "endline" : 12
      },
      {
       "name" : "fullscreen",
       "kind" : "function",
       "protection" : "protected",
-      "line" : 11,
+      "line" : 12,
       "storageClass" : [
        "@property"
       ],
@@ -3861,37 +3944,21 @@
         "deco" : "b"
        }
       ],
-      "endline" : 11
+      "endline" : 12
      },
      {
-      "name" : "initialize",
-      "kind" : "function",
-      "line" : 13,
-      "storageClass" : [
-       "abstract"
-      ],
-      "deco" : "FZv"
-     },
-     {
-      "name" : "shutdown",
+      "name" : "gl",
       "kind" : "function",
       "line" : 14,
       "storageClass" : [
-       "abstract"
+       "abstract",
+       "@property"
       ],
-      "deco" : "FZv"
+      "deco" : "FNdZC8graphics8adapters6opengl6opengl6OpenGL",
+      "originalType" : "OpenGL()"
      },
      {
-      "name" : "resize",
-      "kind" : "function",
-      "line" : 15,
-      "storageClass" : [
-       "abstract"
-      ],
-      "deco" : "FZv"
-     },
-     {
-      "name" : "messageLoop",
+      "name" : "initialize",
       "kind" : "function",
       "line" : 16,
       "storageClass" : [
@@ -3900,7 +3967,16 @@
       "deco" : "FZv"
      },
      {
-      "name" : "openWindow",
+      "name" : "shutdown",
+      "kind" : "function",
+      "line" : 17,
+      "storageClass" : [
+       "abstract"
+      ],
+      "deco" : "FZv"
+     },
+     {
+      "name" : "resize",
       "kind" : "function",
       "line" : 18,
       "storageClass" : [
@@ -3909,9 +3985,27 @@
       "deco" : "FZv"
      },
      {
-      "name" : "closeWindow",
+      "name" : "messageLoop",
       "kind" : "function",
       "line" : 19,
+      "storageClass" : [
+       "abstract"
+      ],
+      "deco" : "FZv"
+     },
+     {
+      "name" : "openWindow",
+      "kind" : "function",
+      "line" : 21,
+      "storageClass" : [
+       "abstract"
+      ],
+      "deco" : "FZv"
+     },
+     {
+      "name" : "closeWindow",
+      "kind" : "function",
+      "line" : 22,
       "storageClass" : [
        "abstract"
       ],
@@ -4024,29 +4118,29 @@
       ],
       "deco" : "FNdZC8graphics8adapters7adapter7Adapter",
       "originalType" : "Adapter()",
-      "endline" : 33
+      "endline" : 31
      },
      {
       "name" : "window",
       "kind" : "function",
-      "line" : 35,
+      "line" : 33,
       "storageClass" : [
        "static",
        "@property"
       ],
       "deco" : "FNdZC8graphics7windows7windows7Windows",
       "originalType" : "Windows()",
-      "endline" : 45
+      "endline" : 51
      },
      {
       "name" : "initialize",
       "kind" : "function",
-      "line" : 47,
+      "line" : 53,
       "storageClass" : [
        "static"
       ],
       "deco" : "FZv",
-      "endline" : 52
+      "endline" : 58
      }
     ]
    }
@@ -4684,12 +4778,74 @@
       "endline" : 34
      },
      {
+      "kind" : "template",
+      "line" : 36,
+      "name" : "opBinary",
+      "parameters" : [
+       {
+        "name" : "op",
+        "kind" : "value",
+        "deco" : "Aya"
+       }
+      ],
+      "members" : [
+       {
+        "name" : "opBinary",
+        "kind" : "function",
+        "line" : 36,
+        "type" : "Quaternion(Quaternion rhs)",
+        "parameters" : [
+         {
+          "name" : "rhs",
+          "type" : "Quaternion"
+         }
+        ],
+        "endline" : 43
+       }
+      ]
+     },
+     {
+      "kind" : "template",
+      "line" : 45,
+      "name" : "opOpAssign",
+      "parameters" : [
+       {
+        "name" : "op",
+        "kind" : "value",
+        "deco" : "Aya"
+       }
+      ],
+      "members" : [
+       {
+        "name" : "opOpAssign",
+        "kind" : "function",
+        "line" : 45,
+        "type" : "Quaternion(Quaternion rhs)",
+        "parameters" : [
+         {
+          "name" : "rhs",
+          "type" : "Quaternion"
+         }
+        ],
+        "endline" : 57
+       }
+      ]
+     },
+     {
+      "name" : "ToRotationMatrix",
+      "kind" : "function",
+      "line" : 59,
+      "deco" : "FZC4math6matrix14__T6MatrixVi4Z6Matrix",
+      "originalType" : "Matrix!4()",
+      "endline" : 62
+     },
+     {
       "name" : "updateMatrix",
       "kind" : "function",
       "protection" : "private",
-      "line" : 37,
+      "line" : 65,
       "deco" : "FZv",
-      "endline" : 48
+      "endline" : 76
      }
     ]
    }
@@ -5373,12 +5529,6 @@
     "protection" : "private"
    },
    {
-    "name" : "std.path",
-    "kind" : "import",
-    "line" : 5,
-    "protection" : "private"
-   },
-   {
     "name" : "std.c.windows.windows",
     "kind" : "import",
     "line" : 9,
@@ -5562,6 +5712,12 @@
     ]
    },
    {
+    "name" : "utility.filepath",
+    "kind" : "import",
+    "line" : 7,
+    "protection" : "private"
+   },
+   {
     "name" : "utility.output",
     "kind" : "import",
     "line" : 7,
@@ -5590,6 +5746,12 @@
    },
    {
     "name" : "std.string",
+    "kind" : "import",
+    "line" : 11,
+    "protection" : "private"
+   },
+   {
+    "name" : "std.path",
     "kind" : "import",
     "line" : 11,
     "protection" : "private"
@@ -5652,10 +5814,26 @@
       ]
      },
      {
+      "name" : "getPath",
+      "kind" : "function",
+      "line" : 64,
+      "storageClass" : [
+       "static"
+      ],
+      "deco" : "FAyaZAya",
+      "parameters" : [
+       {
+        "name" : "path",
+        "deco" : "Aya"
+       }
+      ],
+      "endline" : 67
+     },
+     {
       "name" : "config",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 65,
+      "line" : 70,
       "storageClass" : [
        "static"
       ],
@@ -5665,7 +5843,7 @@
       "name" : "constructor",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 66,
+      "line" : 71,
       "storageClass" : [
        "static"
       ],
@@ -5677,7 +5855,7 @@
    {
     "name" : "constructVector2",
     "kind" : "function",
-    "line" : 69,
+    "line" : 74,
     "deco" : "FKS5dyaml4node4NodeZC4math6vector14__T6VectorVi2Z6Vector",
     "originalType" : "Vector!2(ref Node node)",
     "parameters" : [
@@ -5689,12 +5867,12 @@
       ]
      }
     ],
-    "endline" : 92
+    "endline" : 97
    },
    {
     "name" : "constructVector3",
     "kind" : "function",
-    "line" : 94,
+    "line" : 99,
     "deco" : "FKS5dyaml4node4NodeZC4math6vector14__T6VectorVi3Z6Vector",
     "originalType" : "Vector!3(ref Node node)",
     "parameters" : [
@@ -5706,11 +5884,11 @@
       ]
      }
     ],
-    "endline" : 119
+    "endline" : 124
    },
    {
     "kind" : "template",
-    "line" : 121,
+    "line" : 126,
     "name" : "constructEnum",
     "parameters" : [
      {
@@ -5722,7 +5900,7 @@
      {
       "name" : "constructEnum",
       "kind" : "function",
-      "line" : 121,
+      "line" : 126,
       "type" : "T(ref Node node)",
       "parameters" : [
        {
@@ -5733,7 +5911,7 @@
         ]
        }
       ],
-      "endline" : 131
+      "endline" : 136
      }
     ]
    }
@@ -6237,7 +6415,7 @@
     "kind" : "function",
     "line" : 4,
     "deco" : "FZv",
-    "endline" : 10
+    "endline" : 7
    }
   ]
  }

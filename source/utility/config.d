@@ -21,9 +21,9 @@ public:
 		constructor.addConstructorMapping( "!Vector2-Map", &constructVector2 );
 		constructor.addConstructorScalar( "!Vector3", &constructVector3 );
 		constructor.addConstructorMapping( "!Vector3-Map", &constructVector2 );
-		constructor.addConstructorScalar( "!GameState", &constructEnum!GameState );
-		constructor.addConstructorScalar( "!Adapter", &constructEnum!GraphicsAdapter );
-		constructor.addConstructorScalar( "!Verbosity", &constructEnum!Verbosity );
+		constructor.addConstructorScalar( "!GameState", &constructConv!GameState );
+		constructor.addConstructorScalar( "!Adapter", &constructConv!GraphicsAdapter );
+		constructor.addConstructorScalar( "!Verbosity", &constructConv!Verbosity );
 
 		config = loadYaml( FilePath.Resources.Config );
 	}
@@ -35,13 +35,13 @@ public:
 		return loader.load();
 	}
 
-	T get( T )( string path )
+	static T get( T )( Node node, string path )
 	{
 		Node current;
 		string left;
 		string right = path;
-
-		for( current = config; right.length; )
+		
+		for( current = node; right.length; )
 		{
 			uint split = right.indexOf( '.' );
 			if( split == -1 )
@@ -57,8 +57,13 @@ public:
 				current = current[ left ];
 			}
 		}
-
+		
 		return current.as!T;
+	}
+
+	T get( T )( string path )
+	{
+		return get!T( config, path );
 	}
 
 	string getPath( string path )
@@ -123,7 +128,7 @@ Vector!3 constructVector3( ref Node node )
 	return result;
 }
 
-T constructEnum( T )( ref Node node ) if( is( T == enum ) )
+T constructConv( T )( ref Node node ) if( is( T == enum ) )
 {
 	if( node.isScalar )
 	{

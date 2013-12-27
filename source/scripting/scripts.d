@@ -19,7 +19,7 @@ static:
 public:
 	void initialize()
 	{
-		string dllpath = FilePath.ResourceHome ~ Config.get!string( "Scripts.FilePath" );
+		string dllpath = Config.getPath( "Scripts.FilePath" );
 
 		version( Windows )
 		{

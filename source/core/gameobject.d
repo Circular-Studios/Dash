@@ -12,6 +12,12 @@ final class GameObject
 public:
 	mixin( Property!( "IShader", "shader", "public" ) );
 	mixin( Property!( "Transform", "transform", "public" ) );
+	mixin Signal!( string, string );
+
+	static GameObject createFromYaml( Node yamlObject )
+	{
+		// Handle stuff
+	}
 
 	this()
 	{
@@ -22,15 +28,7 @@ public:
 	this( IShader shader )
 	{
 		this();
-
-		// Transform
 		this.shader = shader;
-	}
-
-	this( Node jsonObject )
-	{
-		this();
-		// Handle stuff
 	}
 
 	~this()
@@ -44,51 +42,47 @@ public:
 		}
 	}
 
-	void update()
+	final void update()
 	{
 		foreach( ci, component; componentList )
-		{
 			component.update();
-		}
+
+		onUpdate();
 	}
 
-	void draw()
+	final void draw()
 	{
 		foreach( ci, component; componentList )
-		{
 			component.draw( shader );
-		}
+
+		onDraw();
 	}
 
-	void shutdown()
+	final void shutdown()
 	{
+		onShutdown();
+
 		foreach( ci, component; componentList )
-		{
 			component.shutdown();
-		}
-
 		foreach( key; componentList.keys )
-		{
 			componentList.remove( key );
-		}
 	}
 
-	void onCollision( GameObject other )
-	{
-		
-	}
-
-	void addComponent( T )( T newComponent )
+	final void addComponent( T )( T newComponent )
 	{
 		componentList[ T.classinfo ] = newComponent;
 	}
 
-	T getComponent( T )()
+	final T getComponent( T )()
 	{
 		return componentList[ T.classinfo ];
 	}
 
-	mixin Signal!( string, string );
+	// Overridables
+	void onUpdate() { }
+	void onDraw() { }
+	void onShutdown() { }
+	void onCollision( GameObject other ) { }
 
 private:
 	IComponent[ClassInfo] componentList;

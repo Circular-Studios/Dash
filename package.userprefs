@@ -1,0 +1,13 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="windows-app" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="source\scripting\scripts.d">
+    <Files>
+      <File FileName="source\scripting\scripts.d" Line="43" Column="4" />
+      <File FileName="package.json" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

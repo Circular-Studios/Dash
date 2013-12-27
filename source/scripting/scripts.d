@@ -8,43 +8,89 @@ version( Windows )
 {
 	import std.c.windows.windows;
 }
+else version( Posix )
+{
+	import core.sys.posix.dlfcn;
+}
 
 static class Scripts
 {
 static:
 public:
-	version( Windows )
+	void initialize()
 	{
-		HMODULE scriptDll;
+		string dllpath = FilePath.ResourceHome ~ Config.get!string( "Scripts.FilePath" );
 
-		void initialize()
+		version( Windows )
 		{
-			scriptDll = cast(HMODULE)Runtime.loadLibrary( FilePath.ResourceHome ~ Config.get!string( "Scripts.FilePath" ) );
-
-			if( scriptDll is null )
-			{
-				Output.printMessage( OutputType.Error, "Error loading dll file." );
-			}
+			//auto handle = Runtime.loadLibrary( dllpath );
+			scriptDll = cast(HMODULE)Runtime.loadLibrary( dllpath );
+		}
+		else version( Posix )
+		{
+			scriptDll = dlopen( dllpath, RTLD_LAZY );
 		}
 
-		TReturn callFunction( TReturn )( TReturn function() func )
+		if( scriptDll is null )
 		{
-			return (*(cast(TReturn function())GetProcAddress( scriptDll, func.mangleof.ptr )))();
+			Output.printMessage( OutputType.Error, "Error loading dll file." );
+			return;
 		}
 
-		TReturn callFunction( TReturn, TArgs... )( TReturn function( TArgs ) func, TArgs args )
-		{
-			return (*(cast(TReturn function( TArgs ))GetProcAddress( scriptDll, func.mangleof.ptr )))( args );
-		}
+		auto ctor = cast(Object function( Object ))getAddress( "D7myclass7MyClass6__ctorMFZC7myclass7MyClass" );
+		auto object = ctor( new Object );
 
-		TReturn callFunction( TReturn )( string mangledName )
-		{
-			return (*(cast(TReturn function())GetProcAddress( scriptDll, mangledName.ptr )))();
-		}
+		auto test = cast( float function( int, float, Object ))getAddress( "D7myclass7MyClass4testMFifZf" );
+		auto testResults = test( 2, 0.25, object );
 
-		void shutdown()
+		Output.printValue( OutputType.Info, "I Made a thing", testResults );
+	}
+
+	void* getAddress( string mangledName )
+	{
+		version( Windows )
+		{
+			auto addr = GetProcAddress( scriptDll, mangledName.ptr );
+			
+			if( !addr && mangledName[ 0 ] != '_' )
+				return getAddress( "_" ~ mangledName );
+			else
+				return addr;
+		}
+		else version( Posix )
+		{
+			return dlsym( lh, mangledName.ptr );
+		}
+	}
+
+	T getValue( T )( string mangledName )
+	{
+		return *cast(T*)getAddress( mangledName );
+	}
+
+	TReturn callFunction( TReturn )( string mangledName )
+	{
+		return (*(cast(TReturn function())getAddress( mangledName )))();
+	}
+
+	TReturn callFunction( TReturn, TArgs... )( string mangledName, TArgs args )
+	{
+		return (*(cast(TReturn function(TArgs))getAddress( mangledName )))( args );
+	}
+
+	void shutdown()
+	{
+		version( Windows )
 		{
 			Runtime.unloadLibrary( scriptDll );
 		}
+		else version( Posix )
+		{
+			dlclose( scriptDll );
+		}
 	}
+
+private:
+	version( Windows )	HMODULE	scriptDll;
+	version( Posix )	void*	scriptDll;
 }

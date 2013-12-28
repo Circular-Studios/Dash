@@ -10,7 +10,13 @@ import std.signals, std.conv;
 final class GameObject
 {
 public:
+	/**
+	 * The shader this object uses to draw.
+	 */
 	mixin( Property!( "IShader", "shader", "public" ) );
+	/**
+	 * The current transform of the object.
+	 */
 	mixin( Property!( "Transform", "transform", "public" ) );
 
 	this()
@@ -44,6 +50,9 @@ public:
 		}
 	}
 
+	/**
+	 * Called once per frame to update all components.
+	 */
 	void update()
 	{
 		foreach( ci, component; componentList )
@@ -52,6 +61,9 @@ public:
 		}
 	}
 
+	/**
+	 * Called once per frame to draw all components.
+	 */
 	void draw()
 	{
 		foreach( ci, component; componentList )
@@ -60,6 +72,9 @@ public:
 		}
 	}
 
+	/**
+	 * Called when the game is shutting down, to shutdown all components.
+	 */
 	void shutdown()
 	{
 		foreach( ci, component; componentList )

@@ -4,8 +4,14 @@ static import std.file, std.path;
 class FilePath
 {
 public:
+	/**
+	 * The path to the resources home folder.
+	 */
 	enum ResourceHome = "./Game";
 
+	/**
+	 * Paths to the different resource files.
+	 */
 	enum Resources : string
 	{
 		Meshes = ResourceHome ~ "/Meshes",
@@ -18,6 +24,9 @@ public:
 		Config = ResourceHome ~ "/Config.yaml"
 	}
 
+	/**
+	 * Get all files in a given directory.
+	 */
 	static FilePath[] scanDirectory( string path, string pattern = "" )
 	{
 		// Get absolute path to folder
@@ -49,11 +58,17 @@ public:
 		return files;
 	}
 
+	/// The full path to the file.
 	@property string fullPath()		{ return _fullPath; }
+	/// The relative path from the executable to the file.
 	@property string relativePath()	{ return std.path.relativePath( fullPath ); }
+	/// The name of the file with its extension.
 	@property string fileName()		{ return std.path.baseName( fullPath ); }
+	/// The name of the file without its extension.
 	@property string baseFileName()	{ return std.path.stripExtension( fileName ); }
+	/// The path to the directory containing the file.
 	@property string directory()	{ return std.path.dirName( fullPath ); }
+	/// The extensino of the file.
 	@property string extension()	{ return std.path.extension( fullPath ); }
 
 	this( string path )

@@ -10,7 +10,10 @@ class DGame
 public:
 	GameState currentState;
 
-	void run()
+	/**
+	 * Main Game loop.
+	 */
+	final void run()
 	{
 		// Init tasks
 		//TaskManager.initialize();
@@ -74,26 +77,29 @@ public:
 	//static Camera camera;
 
 protected:
-	void initialize()
-	{
-
-	}
-	void update()
-	{
-
-	}
-	void draw()
-	{
-
-	}
-	void shutdown()
-	{
-
-	}
+	/**
+	 * To be overridden, logic for when the game is being initalized.
+	 */
+	void initialize() { }
+	/**
+	 * To be overridden, called once per frame during the update cycle.
+	 */
+	void update() { }
+	/**
+	 * To be overridden, called once per frame during the draw cycle.
+	 */
+	void draw()	{ }
+	/**
+	 * To be overridden, called when the came is closing.
+	 */
+	void shutdown() { }
 
 	//UserInterface ui;
 
 private:
+	/**
+	 * Function called to initialize controllers.
+	 */
 	void start()
 	{
 		currentState = GameState.Menu;
@@ -110,11 +116,17 @@ private:
         initialize();
 	}
 
+	/**
+	 * Function called to shutdown controllers.
+	 */
 	void stop()
 	{
 		Assets.shutdown();
 	}
 
+	/**
+	 * Called when engine is resetting.
+	 */
 	void reset()
 	{
 		shutdown();

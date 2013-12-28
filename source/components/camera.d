@@ -9,6 +9,13 @@ import std.signals, std.conv;
 class Camera : IComponent
 {
 public:
+	/**
+	 * The view matrix of the camera.
+	 */
+	mixin( Property!( "Matrix!4", "viewMatrix" ) );
+	
+	mixin Signal!( string, string );
+
 	this( GameObject owner )
 	{
 		super( owner );
@@ -16,12 +23,8 @@ public:
 		owner.transform.connect( &this.updateViewMatrix );
 	}
 
-	mixin( Property!( "Matrix!4", "viewMatrix" ) );
-
-	mixin Signal!( string, string );
-
 private:
-	void updateViewMatrix( string name, string newVal )
+	void updateViewMatrix( string name, string newValue )
 	{
 		auto up = owner.transform.rotation.matrix * Vector!3.up;
 		auto lookAt = ( owner.transform.rotation.matrix * Vector!3.forward ) + owner.transform.position;

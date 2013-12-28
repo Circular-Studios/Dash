@@ -1,6 +1,14 @@
 module core.properties;
 
 public:
+/**
+ * Create a property.
+ * Params:
+ * 		type = 			The type of the object.
+ * 		name =			The name of the property.
+ * 		setterAccess =	[private] The access modifier of the setter.
+ * 		checkExpr =		[true] The expression to evaluate when setting the property.
+ */
 template Property( string type, string name, string setterAccess = "private", string checkExpr = "true" )
 {
 	immutable char[] Property =
@@ -10,6 +18,15 @@ template Property( string type, string name, string setterAccess = "private", st
 		"\n";
 }
 
+/**
+ * Create a property backed by a field.
+ * Params:
+ * 		type = 			The type of the object.
+ * 		field =			The name of the field backing the property
+ * 		name =			The name of the property.
+ * 		setterAccess =	[private] The access modifier of the setter.
+ * 		checkExpr =		[true] The expression to evaluate when setting the property.
+ */
 template BackedProperty( string type, string field, string name, string setterAccess = "private", string checkExpr = "true" )
 {
 	immutable char[] BackedProperty = 
@@ -18,6 +35,14 @@ template BackedProperty( string type, string field, string name, string setterAc
 		"\n";
 }
 
+/**
+ * Create a property that emits when set.
+ * Params:
+ * 		type = 			The type of the object.
+ * 		name =			The name of the property.
+ * 		setterAccess =	[private] The access modifier of the setter.
+ * 		checkExpr =		[true] The expression to evaluate when setting the property.
+ */
 template EmmittingProperty( string type, string name, string setterAccess = "private", string checkExpr = "true" )
 {
 	immutable char[] EmmittingProperty = 
@@ -27,6 +52,15 @@ template EmmittingProperty( string type, string name, string setterAccess = "pri
 		"\n";
 }
 
+/**
+ * Create a property backed by a field that emits when set.
+ * Params:
+ * 		type = 			The type of the object.
+ * 		field =			The name of the field backing the property.
+ * 		name =			The name of the property.
+ * 		setterAccess =	[private] The access modifier of the setter.
+ * 		checkExpr =		[true] The expression to evaluate when setting the property.
+ */
 template EmmittingBackedProperty( string type, string field, string name, string setterAccess = "private", string checkExpr = "true" )
 {
 	immutable char[] EmmittingBackedProperty = 
@@ -35,6 +69,15 @@ template EmmittingBackedProperty( string type, string field, string name, string
 		"\n";
 }
 
+/**
+ * Create a property that can be marked as dirty.
+ * Params:
+ * 		type = 			The type of the object.
+ * 		name =			The name of the property.
+ * 		updateFunc =	The name of the function to call when the property is dirty.
+ * 		setterAccess =	[private] The access modifier of the setter.
+ * 		checkExpr =		[true] The expression to evaluate when setting the property.
+ */
 template DirtyProperty( string type, string name, string updateFunc, string setterAccess = "private", string checkExpr = "true" )
 {
 	immutable char[] DirtyProperty =
@@ -45,6 +88,16 @@ template DirtyProperty( string type, string name, string updateFunc, string sett
 		"\n";
 }
 
+/**
+ * Create a property that is backed by a field, and can be marked as dirty.
+ * Params:
+ * 		type = 			The type of the object.
+ *		field =			The name of the field backing the property.
+ * 		name =			The name of the property.
+ * 		updateFunc =	The name of the function to call when the property is dirty.
+ * 		setterAccess =	[private] The access modifier of the setter.
+ * 		checkExpr =		[true] The expression to evaluate when setting the property.
+ */
 template BackedDirtyProperty( string type, string field, string name, string updateFunc, string setterAccess = "private", string checkExpr = "true" )
 {
 	immutable char[] BackedDirtyProperty =
@@ -54,6 +107,15 @@ template BackedDirtyProperty( string type, string field, string name, string upd
 		"\n";
 }
 
+/**
+ * Create a property that can be marked as dirty, and emits when set.
+ * Params:
+ * 		type = 			The type of the object.
+ * 		name =			The name of the property.
+ * 		updateFunc =	The name of the function to call when the property is dirty.
+ * 		setterAccess =	[private] The access modifier of the setter.
+ * 		checkExpr =		[true] The expression to evaluate when setting the property.
+ */
 template EmmittingDirtyProperty( string type, string name, string updateFunc, string setterAccess = "private", string checkExpr = "true" )
 {
 	immutable char[] EmmittingDirtyProperty =
@@ -64,6 +126,16 @@ template EmmittingDirtyProperty( string type, string name, string updateFunc, st
 		"\n";
 }
 
+/**
+ * Create a property that is backed by a field, can be marked as dirty, and emits when set.
+ * Params:
+ * 		type = 			The type of the object.
+ * 		field =			The name of the field backing the property.
+ * 		name =			The name of the property.
+ * 		updateFunc =	The name of the function to call when the property is dirty.
+ * 		setterAccess =	[private] The access modifier of the setter.
+ * 		checkExpr =		[true] The expression to evaluate when setting the property.
+ */
 template BackedEmmittingDirtyProperty( string type, string field, string name, string updateFunc, string setterAccess = "private", string checkExpr = "true" )
 {
 	immutable char[] EmmittingDirtyProperty =
@@ -73,6 +145,15 @@ template BackedEmmittingDirtyProperty( string type, string field, string name, s
 		"\n";
 }
 
+/**
+ * Create a property that marks another property as dirty when set.
+ * Params:
+ * 		type = 			The type of the object.
+ * 		name =			The name of the property.
+ * 		dirtyProp =		Name of the property to mark dirty.
+ * 		setterAccess =	[private] The access modifier of the setter.
+ * 		checkExpr =		[true] The expression to evaluate when setting the property.
+ */
 template PropertySetDirty( string type, string name, string dirtyProp, string setterAccess = "private", string checkExpr = "true" )
 {
 	immutable char[] PropertySetDirty =
@@ -82,6 +163,15 @@ template PropertySetDirty( string type, string name, string dirtyProp, string se
 		"\n";
 }
 
+/**
+ * Create a property that marks another property as dirty when set, and emits when set.
+ * Params:
+ * 		type = 			The type of the object.
+ * 		name =			The name of the property.
+ * 		dirtyProp =		Name of the property to mark dirty.
+ * 		setterAccess =	[private] The access modifier of the setter.
+ * 		checkExpr =		[true] The expression to evaluate when setting the property.
+ */
 template EmmittingPropertySetDirty( string type, string name, string dirtyProp, string setterAccess = "private", string checkExpr = "true" )
 {
 	immutable char[] EmmittingPropertySetDirty =
@@ -91,6 +181,16 @@ template EmmittingPropertySetDirty( string type, string name, string dirtyProp, 
 		"\n";
 }
 
+/**
+ * Create a property that marks another property as dirty when set, and is backed by a field.
+ * Params:
+ * 		type = 			The type of the object.
+ * 		field =			The name of the field backing the property.
+ * 		name =			The name of the property.
+ * 		dirtyProp =		Name of the property to mark dirty.
+ * 		setterAccess =	[private] The access modifier of the setter.
+ * 		checkExpr =		[true] The expression to evaluate when setting the property.
+ */
 template BackedPropertySetDirty( string type, string field, string name, string dirtyProp, string setterAccess = "private", string checkExpr = "true" )
 {
 	immutable char[] PropertySetDirty =
@@ -99,6 +199,16 @@ template BackedPropertySetDirty( string type, string field, string name, string 
 		"\n";
 }
 
+/**
+ * Create a property that is backed by a field, emits when set, and marks another property as dirty when set.
+ * Params:
+ * 		type = 			The type of the object.
+ * 		field =			The name of the field backing the property.
+ * 		name =			The name of the property.
+ * 		dirtyProp =		Name of the property to mark dirty.
+ * 		setterAccess =	[private] The access modifier of the setter.
+ * 		checkExpr =		[true] The expression to evaluate when setting the property.
+ */
 template BackedEmmittingPropertySetDirty( string type, string field, string name, string dirtyProp, string setterAccess = "private", string checkExpr = "true" )
 {
 	immutable char[] EmmittingPropertySetDirty =
@@ -123,7 +233,7 @@ template DirtyFieldName( string name )
 }
 template IsDirtyField( string name )
 {
-	immutable char[] IsDirtyField = "private bool " ~ DirtyFieldName!name ~ " = false;";
+	immutable char[] IsDirtyField = "public bool " ~ DirtyFieldName!name ~ " = false;";
 }
 
 template Getter( string type, string name, string fieldName = "" )

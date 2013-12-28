@@ -9,8 +9,14 @@ static class Graphics
 {
 static:
 public:
+	/**
+	 * The currently active adapter type.
+	 */
 	mixin( Property!( "GraphicsAdapter", "activeAdapter" ) );
 
+	/**
+	 * A pointer to the currently active adapter.
+	 */
 	@property Adapter adapter()
 	{
 		static OpenGL gl;
@@ -30,6 +36,9 @@ public:
 		return null;
 	}
 
+	/**
+	 * A pointer to the currently active window manager.
+	 */
 	@property Windows window()
 	{
 		// if win32
@@ -50,6 +59,9 @@ public:
 		}
 	}
 
+	/**
+	 * Initialize the controllers.
+	 */
 	void initialize()
 	{
 		activeAdapter = Config.get!GraphicsAdapter( "Graphics.Adapter" );

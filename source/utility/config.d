@@ -14,6 +14,9 @@ static class Config
 {
 static:
 public:
+	/**
+	 * Initialize the configuration manager.
+	 */
 	void initialize()
 	{
 		constructor = new Constructor;
@@ -28,6 +31,9 @@ public:
 		config = loadYaml( FilePath.Resources.Config );
 	}
 
+	/**
+	 * Load a yaml file with the engine-specific mappings.
+	 */
 	Node loadYaml( string path )
 	{
 		auto loader = Loader( path );
@@ -35,6 +41,9 @@ public:
 		return loader.load();
 	}
 
+	/**
+	 * Get the element, cast to the given type, at the given path.
+	 */
 	T get( T )( string path )
 	{
 		Node current;
@@ -61,6 +70,9 @@ public:
 		return current.as!T;
 	}
 
+	/**
+	 * Get element as a file path.
+	 */
 	string getPath( string path )
 	{
 		return buildNormalizedPath( FilePath.ResourceHome, get!string( path ) );

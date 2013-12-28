@@ -54,7 +54,7 @@
     "members" : [
      {
       "kind" : "template",
-      "line" : 9,
+      "line" : 12,
       "name" : "getAsset",
       "parameters" : [
        {
@@ -66,7 +66,7 @@
        {
         "name" : "getAsset",
         "kind" : "function",
-        "line" : 9,
+        "line" : 12,
         "type" : "T(string name)",
         "parameters" : [
          {
@@ -74,35 +74,35 @@
           "type" : "string"
          }
         ],
-        "endline" : 12
+        "endline" : 15
        }
       ]
      },
      {
       "name" : "initialize",
       "kind" : "function",
-      "line" : 14,
+      "line" : 20,
       "storageClass" : [
        "static"
       ],
       "deco" : "FZv",
-      "endline" : 25
+      "endline" : 31
      },
      {
       "name" : "shutdown",
       "kind" : "function",
-      "line" : 27,
+      "line" : 36,
       "storageClass" : [
        "static"
       ],
       "deco" : "FZv",
-      "endline" : 33
+      "endline" : 42
      },
      {
       "name" : "componentShelf",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 36,
+      "line" : 45,
       "storageClass" : [
        "static"
       ],
@@ -172,24 +172,10 @@
     "base" : "IComponent",
     "members" : [
      {
-      "name" : "this",
-      "kind" : "constructor",
-      "line" : 12,
-      "deco" : "FC4core10gameobject10GameObjectZC10components6camera6Camera",
-      "originalType" : "(GameObject owner)",
-      "parameters" : [
-       {
-        "name" : "owner",
-        "deco" : "C4core10gameobject10GameObject"
-       }
-      ],
-      "endline" : 17
-     },
-     {
       "name" : "_viewMatrix",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 19,
+      "line" : 15,
       "deco" : "C4math6matrix14__T6MatrixVi4Z6Matrix",
       "originalType" : "Matrix!4",
       "offset" : 12
@@ -197,19 +183,19 @@
      {
       "name" : "viewMatrix",
       "kind" : "function",
-      "line" : 19,
+      "line" : 15,
       "storageClass" : [
        "@property"
       ],
       "deco" : "FNdZC4math6matrix14__T6MatrixVi4Z6Matrix",
       "originalType" : "Matrix!4()",
-      "endline" : 19
+      "endline" : 15
      },
      {
       "name" : "viewMatrix",
       "kind" : "function",
       "protection" : "private",
-      "line" : 19,
+      "line" : 15,
       "storageClass" : [
        "@property"
       ],
@@ -221,18 +207,32 @@
         "deco" : "C4math6matrix14__T6MatrixVi4Z6Matrix"
        }
       ],
-      "endline" : 19
+      "endline" : 15
      },
      {
       "name" : "Signal!(string, string)",
       "kind" : "mixin",
-      "line" : 21
+      "line" : 17
+     },
+     {
+      "name" : "this",
+      "kind" : "constructor",
+      "line" : 19,
+      "deco" : "FC4core10gameobject10GameObjectZC10components6camera6Camera",
+      "originalType" : "(GameObject owner)",
+      "parameters" : [
+       {
+        "name" : "owner",
+        "deco" : "C4core10gameobject10GameObject"
+       }
+      ],
+      "endline" : 24
      },
      {
       "name" : "updateViewMatrix",
       "kind" : "function",
       "protection" : "private",
-      "line" : 24,
+      "line" : 27,
       "deco" : "FAyaAyaZv",
       "parameters" : [
        {
@@ -240,11 +240,11 @@
         "deco" : "Aya"
        },
        {
-        "name" : "newVal",
+        "name" : "newValue",
         "deco" : "Aya"
        }
       ],
-      "endline" : 40
+      "endline" : 43
      }
     ]
    }
@@ -276,12 +276,12 @@
    {
     "name" : "IComponent",
     "kind" : "class",
-    "line" : 5,
+    "line" : 8,
     "members" : [
      {
       "name" : "this",
       "kind" : "constructor",
-      "line" : 7,
+      "line" : 10,
       "deco" : "FC4core10gameobject10GameObjectZC10components10icomponent10IComponent",
       "originalType" : "(GameObject owner)",
       "parameters" : [
@@ -290,12 +290,12 @@
         "deco" : "C4core10gameobject10GameObject"
        }
       ],
-      "endline" : 10
+      "endline" : 13
      },
      {
       "name" : "update",
       "kind" : "function",
-      "line" : 12,
+      "line" : 18,
       "storageClass" : [
        "abstract"
       ],
@@ -304,7 +304,7 @@
      {
       "name" : "draw",
       "kind" : "function",
-      "line" : 13,
+      "line" : 22,
       "storageClass" : [
        "abstract"
       ],
@@ -319,7 +319,7 @@
      {
       "name" : "shutdown",
       "kind" : "function",
-      "line" : 14,
+      "line" : 26,
       "storageClass" : [
        "abstract"
       ],
@@ -329,7 +329,7 @@
       "name" : "_owner",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 16,
+      "line" : 31,
       "deco" : "C4core10gameobject10GameObject",
       "originalType" : "GameObject",
       "offset" : 8
@@ -337,19 +337,19 @@
      {
       "name" : "owner",
       "kind" : "function",
-      "line" : 16,
+      "line" : 31,
       "storageClass" : [
        "@property"
       ],
       "deco" : "FNdZC4core10gameobject10GameObject",
       "originalType" : "GameObject()",
-      "endline" : 16
+      "endline" : 31
      },
      {
       "name" : "owner",
       "kind" : "function",
-      "protection" : "private",
-      "line" : 16,
+      "protection" : "protected",
+      "line" : 31,
       "storageClass" : [
        "@property"
       ],
@@ -361,7 +361,7 @@
         "deco" : "C4core10gameobject10GameObject"
        }
       ],
-      "endline" : 16
+      "endline" : 31
      }
     ]
    }
@@ -984,65 +984,68 @@
      {
       "name" : "run",
       "kind" : "function",
-      "line" : 13,
+      "line" : 16,
+      "storageClass" : [
+       "final"
+      ],
       "deco" : "FZv",
-      "endline" : 72
+      "endline" : 75
      },
      {
       "name" : "initialize",
       "kind" : "function",
       "protection" : "protected",
-      "line" : 77,
+      "line" : 83,
       "deco" : "FZv",
-      "endline" : 80
+      "endline" : 83
      },
      {
       "name" : "update",
       "kind" : "function",
       "protection" : "protected",
-      "line" : 81,
+      "line" : 87,
       "deco" : "FZv",
-      "endline" : 84
+      "endline" : 87
      },
      {
       "name" : "draw",
       "kind" : "function",
       "protection" : "protected",
-      "line" : 85,
+      "line" : 91,
       "deco" : "FZv",
-      "endline" : 88
+      "endline" : 91
      },
      {
       "name" : "shutdown",
       "kind" : "function",
       "protection" : "protected",
-      "line" : 89,
+      "line" : 95,
       "deco" : "FZv",
-      "endline" : 92
+      "endline" : 95
      },
      {
       "name" : "start",
       "kind" : "function",
       "protection" : "private",
-      "line" : 97,
+      "line" : 103,
       "deco" : "FZv",
-      "endline" : 111
+      "endline" : 117
      },
      {
       "name" : "stop",
       "kind" : "function",
       "protection" : "private",
-      "line" : 113,
+      "line" : 122,
       "deco" : "FZv",
-      "endline" : 116
+      "endline" : 125
      },
      {
       "name" : "reset",
       "kind" : "function",
       "protection" : "private",
-      "line" : 118,
+      "line" : 130,
       "deco" : "FZv",
-      "endline" : 129
+      "endline" : 141
      }
     ]
    }
@@ -1104,7 +1107,7 @@
       "name" : "_shader",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 13,
+      "line" : 16,
       "deco" : "C8graphics7shaders7ishader7IShader",
       "originalType" : "IShader",
       "offset" : 8
@@ -1112,18 +1115,18 @@
      {
       "name" : "shader",
       "kind" : "function",
-      "line" : 13,
+      "line" : 16,
       "storageClass" : [
        "@property"
       ],
       "deco" : "FNdZC8graphics7shaders7ishader7IShader",
       "originalType" : "IShader()",
-      "endline" : 13
+      "endline" : 16
      },
      {
       "name" : "shader",
       "kind" : "function",
-      "line" : 13,
+      "line" : 16,
       "storageClass" : [
        "@property"
       ],
@@ -1135,13 +1138,13 @@
         "deco" : "C8graphics7shaders7ishader7IShader"
        }
       ],
-      "endline" : 13
+      "endline" : 16
      },
      {
       "name" : "_transform",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 14,
+      "line" : 20,
       "deco" : "C4math9transform9Transform",
       "originalType" : "Transform",
       "offset" : 12
@@ -1149,18 +1152,18 @@
      {
       "name" : "transform",
       "kind" : "function",
-      "line" : 14,
+      "line" : 20,
       "storageClass" : [
        "@property"
       ],
       "deco" : "FNdZC4math9transform9Transform",
       "originalType" : "Transform()",
-      "endline" : 14
+      "endline" : 20
      },
      {
       "name" : "transform",
       "kind" : "function",
-      "line" : 14,
+      "line" : 20,
       "storageClass" : [
        "@property"
       ],
@@ -1172,20 +1175,20 @@
         "deco" : "C4math9transform9Transform"
        }
       ],
-      "endline" : 14
-     },
-     {
-      "name" : "this",
-      "kind" : "constructor",
-      "line" : 16,
-      "deco" : "FZC4core10gameobject10GameObject",
-      "originalType" : "()",
       "endline" : 20
      },
      {
       "name" : "this",
       "kind" : "constructor",
       "line" : 22,
+      "deco" : "FZC4core10gameobject10GameObject",
+      "originalType" : "()",
+      "endline" : 26
+     },
+     {
+      "name" : "this",
+      "kind" : "constructor",
+      "line" : 28,
       "deco" : "FC8graphics7shaders7ishader7IShaderZC4core10gameobject10GameObject",
       "originalType" : "(IShader shader)",
       "parameters" : [
@@ -1194,12 +1197,12 @@
         "deco" : "C8graphics7shaders7ishader7IShader"
        }
       ],
-      "endline" : 28
+      "endline" : 34
      },
      {
       "name" : "this",
       "kind" : "constructor",
-      "line" : 30,
+      "line" : 36,
       "deco" : "FS5dyaml4node4NodeZC4core10gameobject10GameObject",
       "originalType" : "(Node jsonObject)",
       "parameters" : [
@@ -1208,40 +1211,40 @@
         "deco" : "S5dyaml4node4Node"
        }
       ],
-      "endline" : 34
+      "endline" : 40
      },
      {
       "name" : "~this",
       "kind" : "destructor",
-      "line" : 36,
+      "line" : 42,
       "deco" : "FZv",
-      "endline" : 45
+      "endline" : 51
      },
      {
       "name" : "update",
       "kind" : "function",
-      "line" : 47,
+      "line" : 56,
       "deco" : "FZv",
-      "endline" : 53
+      "endline" : 62
      },
      {
       "name" : "draw",
       "kind" : "function",
-      "line" : 55,
+      "line" : 67,
       "deco" : "FZv",
-      "endline" : 61
+      "endline" : 73
      },
      {
       "name" : "shutdown",
       "kind" : "function",
-      "line" : 63,
+      "line" : 78,
       "deco" : "FZv",
-      "endline" : 74
+      "endline" : 89
      },
      {
       "name" : "onCollision",
       "kind" : "function",
-      "line" : 76,
+      "line" : 91,
       "deco" : "FC4core10gameobject10GameObjectZv",
       "parameters" : [
        {
@@ -1249,11 +1252,11 @@
         "deco" : "C4core10gameobject10GameObject"
        }
       ],
-      "endline" : 79
+      "endline" : 94
      },
      {
       "kind" : "template",
-      "line" : 81,
+      "line" : 96,
       "name" : "addComponent",
       "parameters" : [
        {
@@ -1265,7 +1268,7 @@
        {
         "name" : "addComponent",
         "kind" : "function",
-        "line" : 81,
+        "line" : 96,
         "type" : "void(T newComponent)",
         "parameters" : [
          {
@@ -1273,13 +1276,13 @@
           "type" : "T"
          }
         ],
-        "endline" : 84
+        "endline" : 99
        }
       ]
      },
      {
       "kind" : "template",
-      "line" : 86,
+      "line" : 101,
       "name" : "getComponent",
       "parameters" : [
        {
@@ -1291,22 +1294,22 @@
        {
         "name" : "getComponent",
         "kind" : "function",
-        "line" : 86,
+        "line" : 101,
         "type" : "T()",
-        "endline" : 89
+        "endline" : 104
        }
       ]
      },
      {
       "name" : "Signal!(string, string)",
       "kind" : "mixin",
-      "line" : 91
+      "line" : 106
      },
      {
       "name" : "componentList",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 94,
+      "line" : 109,
       "deco" : "HC14TypeInfo_ClassC10components10icomponent10IComponent",
       "originalType" : "IComponent[ClassInfo]",
       "offset" : 28
@@ -1314,7 +1317,7 @@
      {
       "name" : "~this",
       "kind" : "destructor",
-      "line" : 36,
+      "line" : 42,
       "deco" : "FZv"
      }
     ]
@@ -1358,7 +1361,7 @@
      {
       "name" : "loadObjects",
       "kind" : "function",
-      "line" : 11,
+      "line" : 14,
       "deco" : "FAyaZv",
       "parameters" : [
        {
@@ -1366,12 +1369,12 @@
         "deco" : "Aya"
        }
       ],
-      "endline" : 30
+      "endline" : 33
      },
      {
       "name" : "opIndex",
       "kind" : "function",
-      "line" : 32,
+      "line" : 38,
       "deco" : "FAyaZC4core10gameobject10GameObject",
       "parameters" : [
        {
@@ -1379,12 +1382,12 @@
         "deco" : "Aya"
        }
       ],
-      "endline" : 35
+      "endline" : 41
      },
      {
       "name" : "removeObject",
       "kind" : "function",
-      "line" : 37,
+      "line" : 46,
       "deco" : "FAyaZv",
       "parameters" : [
        {
@@ -1392,19 +1395,19 @@
         "deco" : "Aya"
        }
       ],
-      "endline" : 40
+      "endline" : 49
      },
      {
       "name" : "clearObjects",
       "kind" : "function",
-      "line" : 42,
+      "line" : 54,
       "deco" : "FZv",
-      "endline" : 46
+      "endline" : 58
      },
      {
       "name" : "callFunction",
       "kind" : "function",
-      "line" : 48,
+      "line" : 63,
       "deco" : "FPFC4core10gameobject10GameObjectZvZv",
       "parameters" : [
        {
@@ -1412,27 +1415,27 @@
         "deco" : "PFC4core10gameobject10GameObjectZv"
        }
       ],
-      "endline" : 52
+      "endline" : 67
      },
      {
       "name" : "update",
       "kind" : "function",
-      "line" : 54,
+      "line" : 72,
       "deco" : "FZv",
-      "endline" : 57
+      "endline" : 75
      },
      {
       "name" : "draw",
       "kind" : "function",
-      "line" : 59,
+      "line" : 80,
       "deco" : "FZv",
-      "endline" : 62
+      "endline" : 83
      },
      {
       "name" : "objects",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 65,
+      "line" : 86,
       "deco" : "HAyaC4core10gameobject10GameObject",
       "offset" : 8
      }
@@ -1447,7 +1450,7 @@
   "members" : [
    {
     "kind" : "template",
-    "line" : 4,
+    "line" : 12,
     "name" : "Property",
     "parameters" : [
      {
@@ -1477,7 +1480,7 @@
      {
       "name" : "Property",
       "kind" : "variable",
-      "line" : 6,
+      "line" : 14,
       "type" : "char[]",
       "init" : "Field!(type, name) ~ Getter!(type, name) ~ Setter!(setterAccess, type, name, checkExpr) ~ \"\\x0a\""
      }
@@ -1485,7 +1488,7 @@
    },
    {
     "kind" : "template",
-    "line" : 13,
+    "line" : 30,
     "name" : "BackedProperty",
     "parameters" : [
      {
@@ -1520,7 +1523,7 @@
      {
       "name" : "BackedProperty",
       "kind" : "variable",
-      "line" : 15,
+      "line" : 32,
       "type" : "char[]",
       "init" : "Getter!(type, name, field) ~ Setter!(setterAccess, type, name, checkExpr, field) ~ \"\\x0a\""
      }
@@ -1528,7 +1531,7 @@
    },
    {
     "kind" : "template",
-    "line" : 21,
+    "line" : 46,
     "name" : "EmmittingProperty",
     "parameters" : [
      {
@@ -1558,7 +1561,7 @@
      {
       "name" : "EmmittingProperty",
       "kind" : "variable",
-      "line" : 23,
+      "line" : 48,
       "type" : "char[]",
       "init" : "Field!(type, name) ~ Getter!(type, name) ~ EmmittingSetter!(setterAccess, type, name, checkExpr) ~ \"\\x0a\""
      }
@@ -1566,7 +1569,7 @@
    },
    {
     "kind" : "template",
-    "line" : 30,
+    "line" : 64,
     "name" : "EmmittingBackedProperty",
     "parameters" : [
      {
@@ -1601,7 +1604,7 @@
      {
       "name" : "EmmittingBackedProperty",
       "kind" : "variable",
-      "line" : 32,
+      "line" : 66,
       "type" : "char[]",
       "init" : "Getter!(type, name, field) ~ EmmittingSetter!(setterAccess, type, name, checkExpr, field) ~ \"\\x0a\""
      }
@@ -1609,7 +1612,7 @@
    },
    {
     "kind" : "template",
-    "line" : 38,
+    "line" : 81,
     "name" : "DirtyProperty",
     "parameters" : [
      {
@@ -1644,7 +1647,7 @@
      {
       "name" : "DirtyProperty",
       "kind" : "variable",
-      "line" : 40,
+      "line" : 83,
       "type" : "char[]",
       "init" : "Field!(type, name) ~ IsDirtyField!name ~ DirtyGetter!(type, name, updateFunc) ~ Setter!(setterAccess, type, name, checkExpr) ~ \"\\x0a\""
      }
@@ -1652,7 +1655,7 @@
    },
    {
     "kind" : "template",
-    "line" : 48,
+    "line" : 101,
     "name" : "BackedDirtyProperty",
     "parameters" : [
      {
@@ -1692,7 +1695,7 @@
      {
       "name" : "BackedDirtyProperty",
       "kind" : "variable",
-      "line" : 50,
+      "line" : 103,
       "type" : "char[]",
       "init" : "IsDirtyField!name ~ DirtyGetter!(type, name, updateFunc, field) ~ Setter!(setterAccess, type, name, checkExpr, field) ~ \"\\x0a\""
      }
@@ -1700,7 +1703,7 @@
    },
    {
     "kind" : "template",
-    "line" : 57,
+    "line" : 119,
     "name" : "EmmittingDirtyProperty",
     "parameters" : [
      {
@@ -1735,7 +1738,7 @@
      {
       "name" : "EmmittingDirtyProperty",
       "kind" : "variable",
-      "line" : 59,
+      "line" : 121,
       "type" : "char[]",
       "init" : "Field!(type, name) ~ IsDirtyField!name ~ DirtyGetter!(type, name, updateFunc) ~ EmmittingSetter!(setterAccess, type, name, checkExpr) ~ \"\\x0a\""
      }
@@ -1743,7 +1746,7 @@
    },
    {
     "kind" : "template",
-    "line" : 67,
+    "line" : 139,
     "name" : "BackedEmmittingDirtyProperty",
     "parameters" : [
      {
@@ -1783,7 +1786,7 @@
      {
       "name" : "EmmittingDirtyProperty",
       "kind" : "variable",
-      "line" : 69,
+      "line" : 141,
       "type" : "char[]",
       "init" : "IsDirtyField!name ~ DirtyGetter!(type, name, updateFunc, field) ~ EmmittingSetter!(setterAccess, type, name, checkExpr, field) ~ \"\\x0a\""
      }
@@ -1791,7 +1794,7 @@
    },
    {
     "kind" : "template",
-    "line" : 76,
+    "line" : 157,
     "name" : "PropertySetDirty",
     "parameters" : [
      {
@@ -1826,7 +1829,7 @@
      {
       "name" : "PropertySetDirty",
       "kind" : "variable",
-      "line" : 78,
+      "line" : 159,
       "type" : "char[]",
       "init" : "Field!(type, name) ~ Getter!(type, name) ~ DirtySetter!(setterAccess, type, name, dirtyField, setCond) ~ \"\\x0a\""
      }
@@ -1834,7 +1837,7 @@
    },
    {
     "kind" : "template",
-    "line" : 85,
+    "line" : 175,
     "name" : "EmmittingPropertySetDirty",
     "parameters" : [
      {
@@ -1869,7 +1872,7 @@
      {
       "name" : "EmmittingPropertySetDirty",
       "kind" : "variable",
-      "line" : 87,
+      "line" : 177,
       "type" : "char[]",
       "init" : "Field!(type, name) ~ Getter!(type, name) ~ EmmittingDirtySetter!(setterAccess, type, name, dirtyProp, checkExpr) ~ \"\\x0a\""
      }
@@ -1877,7 +1880,7 @@
    },
    {
     "kind" : "template",
-    "line" : 94,
+    "line" : 194,
     "name" : "BackedPropertySetDirty",
     "parameters" : [
      {
@@ -1917,7 +1920,7 @@
      {
       "name" : "PropertySetDirty",
       "kind" : "variable",
-      "line" : 96,
+      "line" : 196,
       "type" : "char[]",
       "init" : "Getter!(type, name, field) ~ DirtySetter!(setterAccess, type, name, dirtyField, checkExpr, field) ~ \"\\x0a\""
      }
@@ -1925,7 +1928,7 @@
    },
    {
     "kind" : "template",
-    "line" : 102,
+    "line" : 212,
     "name" : "BackedEmmittingPropertySetDirty",
     "parameters" : [
      {
@@ -1965,7 +1968,7 @@
      {
       "name" : "EmmittingPropertySetDirty",
       "kind" : "variable",
-      "line" : 104,
+      "line" : 214,
       "type" : "char[]",
       "init" : "Getter!(type, name, field) ~ EmmittingDirtySetter!(setterAccess, type, name, dirtyField, checkExpr, field) ~ \"\\x0a\""
      }
@@ -1974,7 +1977,7 @@
    {
     "kind" : "template",
     "protection" : "private",
-    "line" : 111,
+    "line" : 221,
     "name" : "FieldName",
     "parameters" : [
      {
@@ -1993,7 +1996,7 @@
      {
       "name" : "FieldName",
       "kind" : "variable",
-      "line" : 113,
+      "line" : 223,
       "type" : "char[]",
       "init" : "field.length ? field : \"_\" ~ name"
      }
@@ -2002,7 +2005,7 @@
    {
     "kind" : "template",
     "protection" : "private",
-    "line" : 115,
+    "line" : 225,
     "name" : "Field",
     "parameters" : [
      {
@@ -2020,7 +2023,7 @@
      {
       "name" : "Field",
       "kind" : "variable",
-      "line" : 117,
+      "line" : 227,
       "type" : "char[]",
       "init" : "\"private \" ~ type ~ \" \" ~ FieldName!name ~ \";\""
      }
@@ -2029,7 +2032,7 @@
    {
     "kind" : "template",
     "protection" : "private",
-    "line" : 120,
+    "line" : 230,
     "name" : "DirtyFieldName",
     "parameters" : [
      {
@@ -2042,7 +2045,7 @@
      {
       "name" : "DirtyFieldName",
       "kind" : "variable",
-      "line" : 122,
+      "line" : 232,
       "type" : "char[]",
       "init" : "FieldName!name ~ \"IsDirty\""
      }
@@ -2051,7 +2054,7 @@
    {
     "kind" : "template",
     "protection" : "private",
-    "line" : 124,
+    "line" : 234,
     "name" : "IsDirtyField",
     "parameters" : [
      {
@@ -2064,16 +2067,16 @@
      {
       "name" : "IsDirtyField",
       "kind" : "variable",
-      "line" : 126,
+      "line" : 236,
       "type" : "char[]",
-      "init" : "\"private bool \" ~ DirtyFieldName!name ~ \" = false;\""
+      "init" : "\"public bool \" ~ DirtyFieldName!name ~ \" = false;\""
      }
     ]
    },
    {
     "kind" : "template",
     "protection" : "private",
-    "line" : 129,
+    "line" : 239,
     "name" : "Getter",
     "parameters" : [
      {
@@ -2097,7 +2100,7 @@
      {
       "name" : "Getter",
       "kind" : "variable",
-      "line" : 131,
+      "line" : 241,
       "type" : "char[]",
       "init" : "\"public @property \" ~ type ~ \" \" ~ name ~ \"(){\" ~ \"return \" ~ FieldName!(name, fieldName) ~ \"; }\""
      }
@@ -2106,7 +2109,7 @@
    {
     "kind" : "template",
     "protection" : "private",
-    "line" : 135,
+    "line" : 245,
     "name" : "DirtyGetter",
     "parameters" : [
      {
@@ -2135,7 +2138,7 @@
      {
       "name" : "DirtyGetter",
       "kind" : "variable",
-      "line" : 137,
+      "line" : 247,
       "type" : "char[]",
       "init" : "\"public @property \" ~ type ~ \" \" ~ name ~ \"() {\" ~ \"if( \" ~ DirtyFieldName!name ~ \" ) {\" ~ dirtyUpdateFunc ~ \"();\" ~ DirtyFieldName!name ~ \" = false; }\" ~ \"return \" ~ FieldName!(name, fieldName) ~ \"; }\""
      }
@@ -2144,7 +2147,7 @@
    {
     "kind" : "template",
     "protection" : "private",
-    "line" : 144,
+    "line" : 254,
     "name" : "SetterHeader",
     "parameters" : [
      {
@@ -2167,7 +2170,7 @@
      {
       "name" : "SetterHeader",
       "kind" : "variable",
-      "line" : 146,
+      "line" : 256,
       "type" : "char[]",
       "init" : "access ~ \" @property void \" ~ name ~ \"( \" ~ type ~ \" _newVal ) {\""
      }
@@ -2176,7 +2179,7 @@
    {
     "kind" : "template",
     "protection" : "private",
-    "line" : 148,
+    "line" : 258,
     "name" : "SetterAssignment",
     "parameters" : [
      {
@@ -2195,7 +2198,7 @@
      {
       "name" : "SetterAssignment",
       "kind" : "variable",
-      "line" : 150,
+      "line" : 260,
       "type" : "char[]",
       "init" : "FieldName!(name, fieldName) ~ \" = _newVal;\""
      }
@@ -2204,7 +2207,7 @@
    {
     "kind" : "template",
     "protection" : "private",
-    "line" : 152,
+    "line" : 262,
     "name" : "SetterCond",
     "parameters" : [
      {
@@ -2227,7 +2230,7 @@
      {
       "name" : "SetterCond",
       "kind" : "variable",
-      "line" : 154,
+      "line" : 264,
       "type" : "char[]",
       "init" : "setCond ~ \" && _newVal != \" ~ FieldName!(name, fieldName)"
      }
@@ -2236,7 +2239,7 @@
    {
     "kind" : "template",
     "protection" : "private",
-    "line" : 156,
+    "line" : 266,
     "name" : "SetterEmit",
     "parameters" : [
      {
@@ -2249,7 +2252,7 @@
      {
       "name" : "SetterEmit",
       "kind" : "variable",
-      "line" : 158,
+      "line" : 268,
       "type" : "char[]",
       "init" : "\"emit( \\\"\" ~ name ~ \"\\\", to!string( _newVal ) );\""
      }
@@ -2258,7 +2261,7 @@
    {
     "kind" : "template",
     "protection" : "private",
-    "line" : 160,
+    "line" : 270,
     "name" : "Setter",
     "parameters" : [
      {
@@ -2292,7 +2295,7 @@
      {
       "name" : "Setter",
       "kind" : "variable",
-      "line" : 162,
+      "line" : 272,
       "type" : "char[]",
       "init" : "SetterHeader!(access, type, name) ~ \"if( \" ~ SetterCond!(setCond, name, fieldName) ~ \" ) { \" ~ SetterAssignment!(name, fieldName) ~ \" } }\""
      }
@@ -2301,7 +2304,7 @@
    {
     "kind" : "template",
     "protection" : "private",
-    "line" : 167,
+    "line" : 277,
     "name" : "EmmittingSetter",
     "parameters" : [
      {
@@ -2335,7 +2338,7 @@
      {
       "name" : "EmmittingSetter",
       "kind" : "variable",
-      "line" : 169,
+      "line" : 279,
       "type" : "char[]",
       "init" : "SetterHeader!(access, type, name) ~ \"if( \" ~ SetterCond!(setCond, name, fieldName) ~ \" ) { \" ~ SetterAssignment!(name, fieldName) ~ SetterEmit!name ~ \" } }\""
      }
@@ -2344,7 +2347,7 @@
    {
     "kind" : "template",
     "protection" : "private",
-    "line" : 175,
+    "line" : 285,
     "name" : "DirtySetter",
     "parameters" : [
      {
@@ -2383,7 +2386,7 @@
      {
       "name" : "DirtySetter",
       "kind" : "variable",
-      "line" : 177,
+      "line" : 287,
       "type" : "char[]",
       "init" : "SetterHeader!(access, type, name) ~ \"if( \" ~ SetterCond!(setCond, name, fieldName) ~ \" ) { \" ~ SetterAssignment!(name, fieldName) ~ DirtyFieldName!dirtyField ~ \" = true; } }\""
      }
@@ -2392,7 +2395,7 @@
    {
     "kind" : "template",
     "protection" : "private",
-    "line" : 183,
+    "line" : 293,
     "name" : "EmmittingDirtySetter",
     "parameters" : [
      {
@@ -2431,7 +2434,7 @@
      {
       "name" : "EmmittingDirtySetter",
       "kind" : "variable",
-      "line" : 185,
+      "line" : 295,
       "type" : "char[]",
       "init" : "SetterHeader!(access, type, name) ~ \"if( \" ~ SetterCond!(setCond, name, fieldName) ~ \" ) { \" ~ SetterAssignment!(name, fieldName) ~ SetterEmit!name ~ DirtyFieldName!dirtyField ~ \" = true; } }\""
      }
@@ -4755,7 +4758,6 @@
      {
       "name" : "_matrixIsDirty",
       "kind" : "variable",
-      "protection" : "private",
       "line" : 34,
       "deco" : "b",
       "init" : "false",

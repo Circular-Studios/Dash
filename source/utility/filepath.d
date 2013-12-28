@@ -58,8 +58,10 @@ public:
 
 	this( string path )
 	{
-		if( std.path.isValidPath( path ) )
+		if( std.file.isFile( path ) )
 			_fullPath = std.path.buildNormalizedPath( std.path.absolutePath( path ) );
+		else
+			throw new Exception( "Invalid file name." );
 	}
 
 private:

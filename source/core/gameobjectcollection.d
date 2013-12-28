@@ -3,6 +3,8 @@ import core.gameobject;
 import graphics.shaders.ishader;
 import utility.filepath, utility.config;
 
+import yaml;
+
 class GameObjectCollection
 {
 public:

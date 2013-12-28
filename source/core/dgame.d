@@ -1,4 +1,5 @@
 module core.dgame;
+import core.gameobjectcollection;
 import components.assets;
 import graphics.graphics;
 import scripting.scripts;
@@ -23,6 +24,9 @@ public:
 		//TaskManager.initialize();
 
         start();
+
+		auto goc = new GameObjectCollection;
+		goc.loadObjects;
 
         // Loop until there is a quit message from the window or the user.
         while( currentState != GameState.Quit )

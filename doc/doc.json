@@ -893,98 +893,96 @@
   "file" : "source\\core\\dgame.d",
   "members" : [
    {
-    "name" : "components.assets",
+    "name" : "core.gameobjectcollection",
     "kind" : "import",
     "line" : 2,
     "protection" : "private"
    },
    {
-    "name" : "graphics.graphics",
+    "name" : "components.assets",
     "kind" : "import",
     "line" : 3,
     "protection" : "private"
    },
    {
-    "name" : "scripting.scripts",
+    "name" : "graphics.graphics",
     "kind" : "import",
     "line" : 4,
     "protection" : "private"
    },
    {
-    "name" : "utility.time",
+    "name" : "scripting.scripts",
     "kind" : "import",
     "line" : 5,
+    "protection" : "private"
+   },
+   {
+    "name" : "utility.time",
+    "kind" : "import",
+    "line" : 6,
     "protection" : "private"
    },
    {
     "name" : "utility.config",
     "kind" : "import",
-    "line" : 5,
+    "line" : 6,
     "protection" : "private"
    },
    {
     "name" : "utility.output",
     "kind" : "import",
-    "line" : 5,
+    "line" : 6,
     "protection" : "private"
    },
    {
     "name" : "GameState",
     "kind" : "enum",
-    "line" : 7,
+    "line" : 8,
     "baseDeco" : "i",
     "members" : [
      {
       "name" : "Menu",
       "kind" : "enum member",
-      "line" : 7
+      "line" : 8
      },
      {
       "name" : "Game",
       "kind" : "enum member",
-      "line" : 7
+      "line" : 8
      },
      {
       "name" : "Reset",
       "kind" : "enum member",
-      "line" : 7
+      "line" : 8
      },
      {
       "name" : "Quit",
       "kind" : "enum member",
-      "line" : 7
+      "line" : 8
      }
     ]
    },
    {
     "name" : "DGame",
     "kind" : "class",
-    "line" : 9,
+    "line" : 10,
     "members" : [
      {
       "name" : "currentState",
       "kind" : "variable",
-      "line" : 12,
+      "line" : 13,
       "deco" : "E4core5dgame9GameState",
       "offset" : 8
      },
      {
       "name" : "run",
       "kind" : "function",
-      "line" : 14,
+      "line" : 15,
       "deco" : "FZv",
-      "endline" : 79
+      "endline" : 83
      },
      {
       "name" : "initialize",
-      "kind" : "function",
-      "protection" : "protected",
-      "line" : 84,
-      "deco" : "FZv",
-      "endline" : 87
-     },
-     {
-      "name" : "update",
       "kind" : "function",
       "protection" : "protected",
       "line" : 88,
@@ -992,7 +990,7 @@
       "endline" : 91
      },
      {
-      "name" : "draw",
+      "name" : "update",
       "kind" : "function",
       "protection" : "protected",
       "line" : 92,
@@ -1000,7 +998,7 @@
       "endline" : 95
      },
      {
-      "name" : "shutdown",
+      "name" : "draw",
       "kind" : "function",
       "protection" : "protected",
       "line" : 96,
@@ -1008,28 +1006,36 @@
       "endline" : 99
      },
      {
+      "name" : "shutdown",
+      "kind" : "function",
+      "protection" : "protected",
+      "line" : 100,
+      "deco" : "FZv",
+      "endline" : 103
+     },
+     {
       "name" : "start",
       "kind" : "function",
       "protection" : "private",
-      "line" : 104,
+      "line" : 108,
       "deco" : "FZv",
-      "endline" : 119
+      "endline" : 123
      },
      {
       "name" : "stop",
       "kind" : "function",
       "protection" : "private",
-      "line" : 121,
+      "line" : 125,
       "deco" : "FZv",
-      "endline" : 124
+      "endline" : 128
      },
      {
       "name" : "reset",
       "kind" : "function",
       "protection" : "private",
-      "line" : 126,
+      "line" : 130,
       "deco" : "FZv",
-      "endline" : 137
+      "endline" : 141
      }
     ]
    }
@@ -1059,39 +1065,51 @@
     "protection" : "private"
    },
    {
-    "name" : "math.transform",
+    "name" : "scripting.scripts",
     "kind" : "import",
     "line" : 5,
     "protection" : "private"
    },
    {
-    "name" : "yaml",
+    "name" : "utility.config",
+    "kind" : "import",
+    "line" : 6,
+    "protection" : "private"
+   },
+   {
+    "name" : "math.transform",
     "kind" : "import",
     "line" : 7,
     "protection" : "private"
    },
    {
+    "name" : "yaml",
+    "kind" : "import",
+    "line" : 9,
+    "protection" : "private"
+   },
+   {
     "name" : "std.signals",
     "kind" : "import",
-    "line" : 8,
+    "line" : 11,
     "protection" : "private"
    },
    {
     "name" : "std.conv",
     "kind" : "import",
-    "line" : 8,
+    "line" : 11,
     "protection" : "private"
    },
    {
     "name" : "GameObject",
     "kind" : "class",
-    "line" : 10,
+    "line" : 13,
     "members" : [
      {
       "name" : "_shader",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 13,
+      "line" : 16,
       "deco" : "C8graphics7shaders7ishader7IShader",
       "originalType" : "IShader",
       "offset" : 8
@@ -1099,18 +1117,18 @@
      {
       "name" : "shader",
       "kind" : "function",
-      "line" : 13,
+      "line" : 16,
       "storageClass" : [
        "@property"
       ],
       "deco" : "FNdZC8graphics7shaders7ishader7IShader",
       "originalType" : "IShader()",
-      "endline" : 13
+      "endline" : 16
      },
      {
       "name" : "shader",
       "kind" : "function",
-      "line" : 13,
+      "line" : 16,
       "storageClass" : [
        "@property"
       ],
@@ -1122,13 +1140,13 @@
         "deco" : "C8graphics7shaders7ishader7IShader"
        }
       ],
-      "endline" : 13
+      "endline" : 16
      },
      {
       "name" : "_transform",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 14,
+      "line" : 17,
       "deco" : "C4math9transform9Transform",
       "originalType" : "Transform",
       "offset" : 12
@@ -1136,18 +1154,18 @@
      {
       "name" : "transform",
       "kind" : "function",
-      "line" : 14,
+      "line" : 17,
       "storageClass" : [
        "@property"
       ],
       "deco" : "FNdZC4math9transform9Transform",
       "originalType" : "Transform()",
-      "endline" : 14
+      "endline" : 17
      },
      {
       "name" : "transform",
       "kind" : "function",
-      "line" : 14,
+      "line" : 17,
       "storageClass" : [
        "@property"
       ],
@@ -1159,20 +1177,41 @@
         "deco" : "C4math9transform9Transform"
        }
       ],
-      "endline" : 14
+      "endline" : 17
+     },
+     {
+      "name" : "Signal!(string, string)",
+      "kind" : "mixin",
+      "line" : 18
+     },
+     {
+      "name" : "createFromYaml",
+      "kind" : "function",
+      "line" : 20,
+      "storageClass" : [
+       "static"
+      ],
+      "deco" : "FS5dyaml4node4NodeZC4core10gameobject10GameObject",
+      "parameters" : [
+       {
+        "name" : "yamlObject",
+        "deco" : "S5dyaml4node4Node"
+       }
+      ],
+      "endline" : 32
      },
      {
       "name" : "this",
       "kind" : "constructor",
-      "line" : 16,
+      "line" : 34,
       "deco" : "FZC4core10gameobject10GameObject",
       "originalType" : "()",
-      "endline" : 20
+      "endline" : 38
      },
      {
       "name" : "this",
       "kind" : "constructor",
-      "line" : 22,
+      "line" : 40,
       "deco" : "FC8graphics7shaders7ishader7IShaderZC4core10gameobject10GameObject",
       "originalType" : "(IShader shader)",
       "parameters" : [
@@ -1181,66 +1220,48 @@
         "deco" : "C8graphics7shaders7ishader7IShader"
        }
       ],
-      "endline" : 28
-     },
-     {
-      "name" : "this",
-      "kind" : "constructor",
-      "line" : 30,
-      "deco" : "FS5dyaml4node4NodeZC4core10gameobject10GameObject",
-      "originalType" : "(Node jsonObject)",
-      "parameters" : [
-       {
-        "name" : "jsonObject",
-        "deco" : "S5dyaml4node4Node"
-       }
-      ],
-      "endline" : 34
+      "endline" : 44
      },
      {
       "name" : "~this",
       "kind" : "destructor",
-      "line" : 36,
+      "line" : 46,
       "deco" : "FZv",
-      "endline" : 45
+      "endline" : 55
      },
      {
       "name" : "update",
       "kind" : "function",
-      "line" : 47,
+      "line" : 57,
+      "storageClass" : [
+       "final"
+      ],
       "deco" : "FZv",
-      "endline" : 53
+      "endline" : 63
      },
      {
       "name" : "draw",
       "kind" : "function",
-      "line" : 55,
+      "line" : 65,
+      "storageClass" : [
+       "final"
+      ],
       "deco" : "FZv",
-      "endline" : 61
+      "endline" : 71
      },
      {
       "name" : "shutdown",
       "kind" : "function",
-      "line" : 63,
-      "deco" : "FZv",
-      "endline" : 74
-     },
-     {
-      "name" : "onCollision",
-      "kind" : "function",
-      "line" : 76,
-      "deco" : "FC4core10gameobject10GameObjectZv",
-      "parameters" : [
-       {
-        "name" : "other",
-        "deco" : "C4core10gameobject10GameObject"
-       }
+      "line" : 73,
+      "storageClass" : [
+       "final"
       ],
-      "endline" : 79
+      "deco" : "FZv",
+      "endline" : 81
      },
      {
       "kind" : "template",
-      "line" : 81,
+      "line" : 83,
       "name" : "addComponent",
       "parameters" : [
        {
@@ -1252,7 +1273,7 @@
        {
         "name" : "addComponent",
         "kind" : "function",
-        "line" : 81,
+        "line" : 83,
         "type" : "void(T newComponent)",
         "parameters" : [
          {
@@ -1260,13 +1281,13 @@
           "type" : "T"
          }
         ],
-        "endline" : 84
+        "endline" : 86
        }
       ]
      },
      {
       "kind" : "template",
-      "line" : 86,
+      "line" : 88,
       "name" : "getComponent",
       "parameters" : [
        {
@@ -1278,22 +1299,51 @@
        {
         "name" : "getComponent",
         "kind" : "function",
-        "line" : 86,
+        "line" : 88,
         "type" : "T()",
-        "endline" : 89
+        "endline" : 91
        }
       ]
      },
      {
-      "name" : "Signal!(string, string)",
-      "kind" : "mixin",
-      "line" : 91
+      "name" : "onUpdate",
+      "kind" : "function",
+      "line" : 94,
+      "deco" : "FZv",
+      "endline" : 94
+     },
+     {
+      "name" : "onDraw",
+      "kind" : "function",
+      "line" : 95,
+      "deco" : "FZv",
+      "endline" : 95
+     },
+     {
+      "name" : "onShutdown",
+      "kind" : "function",
+      "line" : 96,
+      "deco" : "FZv",
+      "endline" : 96
+     },
+     {
+      "name" : "onCollision",
+      "kind" : "function",
+      "line" : 97,
+      "deco" : "FC4core10gameobject10GameObjectZv",
+      "parameters" : [
+       {
+        "name" : "other",
+        "deco" : "C4core10gameobject10GameObject"
+       }
+      ],
+      "endline" : 97
      },
      {
       "name" : "componentList",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 94,
+      "line" : 100,
       "deco" : "HC14TypeInfo_ClassC10components10icomponent10IComponent",
       "originalType" : "IComponent[ClassInfo]",
       "offset" : 28
@@ -1301,7 +1351,8 @@
      {
       "name" : "~this",
       "kind" : "destructor",
-      "line" : 36,
+      "file" : "C:\\D\\dmd2\\windows\\bin\\..\\..\\src\\phobos\\std\\signals.d",
+      "line" : 248,
       "deco" : "FZv"
      }
     ]
@@ -1338,27 +1389,34 @@
     "protection" : "private"
    },
    {
+    "name" : "std.path",
+    "kind" : "import",
+    "line" : 8,
+    "protection" : "private"
+   },
+   {
     "name" : "GameObjectCollection",
     "kind" : "class",
-    "line" : 8,
+    "line" : 10,
     "members" : [
      {
       "name" : "loadObjects",
       "kind" : "function",
-      "line" : 11,
+      "line" : 13,
       "deco" : "FAyaZv",
       "parameters" : [
        {
         "name" : "objectPath",
-        "deco" : "Aya"
+        "deco" : "Aya",
+        "default" : "\"\""
        }
       ],
-      "endline" : 30
+      "endline" : 32
      },
      {
       "name" : "opIndex",
       "kind" : "function",
-      "line" : 32,
+      "line" : 34,
       "deco" : "FAyaZC4core10gameobject10GameObject",
       "parameters" : [
        {
@@ -1366,12 +1424,12 @@
         "deco" : "Aya"
        }
       ],
-      "endline" : 35
+      "endline" : 37
      },
      {
       "name" : "removeObject",
       "kind" : "function",
-      "line" : 37,
+      "line" : 39,
       "deco" : "FAyaZv",
       "parameters" : [
        {
@@ -1379,19 +1437,19 @@
         "deco" : "Aya"
        }
       ],
-      "endline" : 40
+      "endline" : 42
      },
      {
       "name" : "clearObjects",
       "kind" : "function",
-      "line" : 42,
+      "line" : 44,
       "deco" : "FZv",
-      "endline" : 46
+      "endline" : 48
      },
      {
       "name" : "callFunction",
       "kind" : "function",
-      "line" : 48,
+      "line" : 50,
       "deco" : "FPFC4core10gameobject10GameObjectZvZv",
       "parameters" : [
        {
@@ -1399,27 +1457,27 @@
         "deco" : "PFC4core10gameobject10GameObjectZv"
        }
       ],
-      "endline" : 52
+      "endline" : 54
      },
      {
       "name" : "update",
       "kind" : "function",
-      "line" : 54,
+      "line" : 56,
       "deco" : "FZv",
-      "endline" : 57
+      "endline" : 59
      },
      {
       "name" : "draw",
       "kind" : "function",
-      "line" : 59,
+      "line" : 61,
       "deco" : "FZv",
-      "endline" : 62
+      "endline" : 64
      },
      {
       "name" : "objects",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 65,
+      "line" : 67,
       "deco" : "HAyaC4core10gameobject10GameObject",
       "offset" : 8
      }
@@ -5523,6 +5581,12 @@
     "protection" : "private"
    },
    {
+    "name" : "std.array",
+    "kind" : "import",
+    "line" : 5,
+    "protection" : "private"
+   },
+   {
     "name" : "std.conv",
     "kind" : "import",
     "line" : 5,
@@ -5547,12 +5611,12 @@
        "static"
       ],
       "deco" : "FZv",
-      "endline" : 47
+      "endline" : 46
      },
      {
       "name" : "getAddress",
       "kind" : "function",
-      "line" : 49,
+      "line" : 48,
       "storageClass" : [
        "static"
       ],
@@ -5563,11 +5627,11 @@
         "deco" : "Aya"
        }
       ],
-      "endline" : 64
+      "endline" : 63
      },
      {
       "kind" : "template",
-      "line" : 66,
+      "line" : 65,
       "name" : "getValue",
       "parameters" : [
        {
@@ -5579,7 +5643,7 @@
        {
         "name" : "getValue",
         "kind" : "function",
-        "line" : 66,
+        "line" : 65,
         "type" : "T(string mangledName)",
         "parameters" : [
          {
@@ -5587,13 +5651,13 @@
           "type" : "string"
          }
         ],
-        "endline" : 69
+        "endline" : 68
        }
       ]
      },
      {
       "kind" : "template",
-      "line" : 71,
+      "line" : 70,
       "name" : "callFunction",
       "parameters" : [
        {
@@ -5605,7 +5669,7 @@
        {
         "name" : "callFunction",
         "kind" : "function",
-        "line" : 71,
+        "line" : 70,
         "type" : "TReturn(string mangledName)",
         "parameters" : [
          {
@@ -5613,13 +5677,13 @@
           "type" : "string"
          }
         ],
-        "endline" : 74
+        "endline" : 73
        }
       ]
      },
      {
       "kind" : "template",
-      "line" : 76,
+      "line" : 75,
       "name" : "callFunction",
       "parameters" : [
        {
@@ -5635,7 +5699,7 @@
        {
         "name" : "callFunction",
         "kind" : "function",
-        "line" : 76,
+        "line" : 75,
         "type" : "TReturn(string mangledName, TArgs args)",
         "parameters" : [
          {
@@ -5647,25 +5711,51 @@
           "type" : "TArgs"
          }
         ],
-        "endline" : 79
+        "endline" : 78
+       }
+      ]
+     },
+     {
+      "kind" : "template",
+      "line" : 80,
+      "name" : "callCtor",
+      "parameters" : [
+       {
+        "name" : "TReturn",
+        "kind" : "type"
+       }
+      ],
+      "members" : [
+       {
+        "name" : "callCtor",
+        "kind" : "function",
+        "line" : 80,
+        "type" : "TReturn(string className)",
+        "parameters" : [
+         {
+          "name" : "className",
+          "type" : "string"
+         }
+        ],
+        "endline" : 90
        }
       ]
      },
      {
       "name" : "shutdown",
       "kind" : "function",
-      "line" : 81,
+      "line" : 92,
       "storageClass" : [
        "static"
       ],
       "deco" : "FZv",
-      "endline" : 91
+      "endline" : 102
      },
      {
       "name" : "scriptDll",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 94,
+      "line" : 105,
       "storageClass" : [
        "static"
       ],
@@ -5757,6 +5847,12 @@
     "protection" : "private"
    },
    {
+    "name" : "std.typecons",
+    "kind" : "import",
+    "line" : 11,
+    "protection" : "private"
+   },
+   {
     "name" : "Config",
     "kind" : "class",
     "line" : 13,
@@ -5802,6 +5898,36 @@
         "name" : "get",
         "kind" : "function",
         "line" : 38,
+        "type" : "Nullable!T(Node node, string path)",
+        "parameters" : [
+         {
+          "name" : "node",
+          "type" : "Node"
+         },
+         {
+          "name" : "path",
+          "type" : "string"
+         }
+        ],
+        "endline" : 69
+       }
+      ]
+     },
+     {
+      "kind" : "template",
+      "line" : 71,
+      "name" : "get",
+      "parameters" : [
+       {
+        "name" : "T",
+        "kind" : "type"
+       }
+      ],
+      "members" : [
+       {
+        "name" : "get",
+        "kind" : "function",
+        "line" : 71,
         "type" : "T(string path)",
         "parameters" : [
          {
@@ -5809,14 +5935,14 @@
           "type" : "string"
          }
         ],
-        "endline" : 62
+        "endline" : 74
        }
       ]
      },
      {
       "name" : "getPath",
       "kind" : "function",
-      "line" : 64,
+      "line" : 76,
       "storageClass" : [
        "static"
       ],
@@ -5827,13 +5953,13 @@
         "deco" : "Aya"
        }
       ],
-      "endline" : 67
+      "endline" : 79
      },
      {
       "name" : "config",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 70,
+      "line" : 82,
       "storageClass" : [
        "static"
       ],
@@ -5843,7 +5969,7 @@
       "name" : "constructor",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 71,
+      "line" : 83,
       "storageClass" : [
        "static"
       ],
@@ -5855,7 +5981,7 @@
    {
     "name" : "constructVector2",
     "kind" : "function",
-    "line" : 74,
+    "line" : 86,
     "deco" : "FKS5dyaml4node4NodeZC4math6vector14__T6VectorVi2Z6Vector",
     "originalType" : "Vector!2(ref Node node)",
     "parameters" : [
@@ -5867,12 +5993,12 @@
       ]
      }
     ],
-    "endline" : 97
+    "endline" : 109
    },
    {
     "name" : "constructVector3",
     "kind" : "function",
-    "line" : 99,
+    "line" : 111,
     "deco" : "FKS5dyaml4node4NodeZC4math6vector14__T6VectorVi3Z6Vector",
     "originalType" : "Vector!3(ref Node node)",
     "parameters" : [
@@ -5884,12 +6010,12 @@
       ]
      }
     ],
-    "endline" : 124
+    "endline" : 136
    },
    {
     "kind" : "template",
-    "line" : 126,
-    "name" : "constructEnum",
+    "line" : 138,
+    "name" : "constructConv",
     "parameters" : [
      {
       "name" : "T",
@@ -5898,9 +6024,9 @@
     ],
     "members" : [
      {
-      "name" : "constructEnum",
+      "name" : "constructConv",
       "kind" : "function",
-      "line" : 126,
+      "line" : 138,
       "type" : "T(ref Node node)",
       "parameters" : [
        {
@@ -5911,7 +6037,7 @@
         ]
        }
       ],
-      "endline" : 136
+      "endline" : 148
      }
     ]
    }
@@ -6096,13 +6222,13 @@
         "deco" : "Aya"
        }
       ],
-      "endline" : 63
+      "endline" : 65
      },
      {
       "name" : "_fullPath",
       "kind" : "variable",
       "protection" : "private",
-      "line" : 66,
+      "line" : 68,
       "deco" : "Aya",
       "offset" : 8
      }
@@ -6309,6 +6435,7 @@
      {
       "name" : "deltaTime",
       "kind" : "function",
+      "protection" : "export",
       "line" : 8,
       "storageClass" : [
        "static",
@@ -6321,6 +6448,7 @@
      {
       "name" : "totalTime",
       "kind" : "function",
+      "protection" : "export",
       "line" : 9,
       "storageClass" : [
        "static",
@@ -6333,6 +6461,7 @@
      {
       "name" : "initialize",
       "kind" : "function",
+      "protection" : "export",
       "line" : 11,
       "storageClass" : [
        "static"
@@ -6343,6 +6472,7 @@
      {
       "name" : "update",
       "kind" : "function",
+      "protection" : "export",
       "line" : 16,
       "storageClass" : [
        "static"
@@ -6405,17 +6535,11 @@
     "protection" : "private"
    },
    {
-    "name" : "scripting.scripts",
-    "kind" : "import",
-    "line" : 2,
-    "protection" : "private"
-   },
-   {
     "name" : "main",
     "kind" : "function",
-    "line" : 4,
+    "line" : 3,
     "deco" : "FZv",
-    "endline" : 7
+    "endline" : 6
    }
   ]
  }

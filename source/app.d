@@ -1,5 +1,4 @@
 import core.dgame;
-import scripting.scripts;
 
 void main()
 {

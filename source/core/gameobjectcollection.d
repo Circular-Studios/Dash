@@ -5,19 +5,21 @@ import utility.filepath;
 
 import yaml;
 
+import std.path;
+
 class GameObjectCollection
 {
 public:
-	void loadObjects( string objectPath )
+	void loadObjects( string objectPath = "" )
 	{
 		void addObject( Node object )
 		{
 			auto name = object[ "Name" ].as!string;
 
-			objects[ name ] = new GameObject( object );
+			objects[ name ] = GameObject.createFromYaml( object );
 		}
 
-		foreach( file; FilePath.scanDirectory( objectPath ) )
+		foreach( file; FilePath.scanDirectory( buildNormalizedPath( FilePath.ResourceHome, objectPath ), "*.yml" ) )
 		{
 			auto object = Loader( file.fullPath ).load();
 

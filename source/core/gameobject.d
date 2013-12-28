@@ -2,9 +2,12 @@ module core.gameobject;
 import core.properties;
 import components.icomponent;
 import graphics.shaders.ishader;
+import scripting.scripts;
+import utility.config;
 import math.transform;
 
 import yaml;
+
 import std.signals, std.conv;
 
 final class GameObject
@@ -16,7 +19,16 @@ public:
 
 	static GameObject createFromYaml( Node yamlObject )
 	{
-		// Handle stuff
+		GameObject obj;
+
+		// Try to get from script
+		string className = Config.get!string( yamlObject, "Script.ClassName" );
+		if( className is null )
+			obj = new GameObject;
+		else
+			obj = Scripts.callCtor!GameObject( className );
+
+		return obj;
 	}
 
 	this()

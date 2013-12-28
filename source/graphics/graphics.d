@@ -53,7 +53,7 @@ public:
 	void initialize()
 	{
 		activeAdapter = Config.get!GraphicsAdapter( "Graphics.Adapter" );
-		adapter.initialize();
+		//adapter.initialize();
 		//Shaders.initialize();
 	}
 }

@@ -2,7 +2,7 @@ module scripting.scripts;
 import utility.config, utility.filepath, utility.output;
 
 import core.runtime, core.demangle;
-import std.conv;
+import std.array, std.conv;
 
 version( Windows )
 {
@@ -37,11 +37,9 @@ public:
 			return;
 		}
 
-		auto ctor = cast(Object function( Object ))getAddress( "D7myclass7MyClass6__ctorMFZC7myclass7MyClass" );
-		auto object = ctor( new Object );
+		auto object = callCtor!Object( "myclass.MyClass" );//ctor( new Object );
 
-		auto test = cast( float function( int, float, Object ))getAddress( "D7myclass7MyClass4testMFifZf" );
-		auto testResults = test( 2, 0.25, object );
+		auto testResults = callFunction!( float, int, float, Object )( "D7myclass7MyClass4testMFifZf", 2, 0.25, object );//test( 2, 0.25, object );
 
 		Output.printValue( OutputType.Info, "I Made a thing", testResults );
 	}
@@ -76,6 +74,18 @@ public:
 	TReturn callFunction( TReturn, TArgs... )( string mangledName, TArgs args )
 	{
 		return (*(cast(TReturn function(TArgs))getAddress( mangledName )))( args );
+	}
+
+	TReturn callCtor( TReturn )( string className )
+	{
+		// Generate mangled name
+		string mangledClassName = "";
+		foreach( name; className.split( "." ) )
+			mangledClassName ~= name.length.to!string ~ name;
+	
+		string ctorName = "D" ~ mangledClassName ~ "6__ctorMFZC" ~ mangledClassName;
+
+		return callFunction!( TReturn, Object )( ctorName, new Object );
 	}
 
 	void shutdown()

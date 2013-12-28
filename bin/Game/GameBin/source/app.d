@@ -1,7 +1,7 @@
 module myclass;
 
 import core.runtime;
-import std.c.stdio;
+import std.stdio;
 import std.c.stdlib;
 import std.string;
 import std.c.windows.windows;
@@ -34,6 +34,8 @@ export:
 	this()
 	{
 		_x = 32;
+
+		writeln( "MyClass.this()" );
 	}
 
 	@property int x() { return _x; }

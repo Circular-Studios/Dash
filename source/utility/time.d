@@ -5,17 +5,17 @@ static class Time
 {
 static:
 public:
-	@property float deltaTime() { return 0.016; }
-	@property float totalTime() { return 1.00f; }
+	export @property float deltaTime() { return 0.016; }
+	export @property float totalTime() { return 1.00f; }
 
-	void initialize()
+	export void initialize()
 	{
 
 	}
 
-	void update()
+	export void update()
 	{
-
+		
 	}
 
 private:

@@ -1,19 +1,28 @@
+/**
+ * Defines the static class Config, which handles all configuration options.
+ */
 module utility.config;
-import math.vector;
 import utility.filepath;
 
+import math.vector;
 import core.dgame : GameState;
 import graphics.graphics : GraphicsAdapter;
-import utility.filepath, utility.output : Verbosity;
+import utility.output : Verbosity;
 
 import yaml;
 
 import std.array, std.conv, std.string, std.path, std.typecons;
 
+/**
+ * Static class which handles the configuration options and YAML interactions.
+ */
 static class Config
 {
 static:
 public:
+	/**
+	 * Initialize the configuration settings.
+	 */
 	void initialize()
 	{
 		constructor = new Constructor;
@@ -28,6 +37,9 @@ public:
 		config = loadYaml( FilePath.Resources.Config );
 	}
 
+	/**
+	 * Load a yaml file with the engine-specific mappings.
+	 */
 	Node loadYaml( string path )
 	{
 		auto loader = Loader( path );
@@ -35,7 +47,10 @@ public:
 		return loader.load();
 	}
 
-	static Nullable!T get( T )( Node node, string path )
+	/**
+	 * Get the element, cast to the given type, at the given path, in the given node.
+	 */
+	T get( T )( string path, Node node = config )
 	{
 		Node current;
 		string left;
@@ -68,11 +83,9 @@ public:
 		return Nullable!T( current.as!T );
 	}
 
-	T get( T )( string path )
-	{
-		return get!T( config, path );
-	}
-
+	/**
+	 * Get element as a file path.
+	 */
 	string getPath( string path )
 	{
 		return FilePath.ResourceHome ~ get!string( path );//buildNormalizedPath( FilePath.ResourceHome, get!string( path ) );;

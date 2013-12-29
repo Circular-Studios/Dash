@@ -1,3 +1,6 @@
+/**
+ * Defines the Mesh class, which controls all meshes loaded into the world.
+ */
 module components.mesh;
 import core.properties;
 import components.icomponent;
@@ -16,7 +19,7 @@ public:
 	mixin( Property!( "uint", "numIndices" ) );
 	mixin( BackedProperty!( "uint", "_glIndexBuffer", "glIndexBuffer" ) );
 	mixin( BackedProperty!( "uint", "_glVertexBuffer", "glVertexBuffer" ) );
-	static @property uint vertexSize() { return float.sizeof * 8; }
+	enum VertexSize = float.sizeof * 8u;
 
 	this( string filePath )
 	{

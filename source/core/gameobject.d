@@ -1,3 +1,6 @@
+/**
+ * Defines the GameObject class, to be subclassed by scripts and instantiated for static objects.
+ */
 module core.gameobject;
 import core.properties;
 import components.icomponent;
@@ -13,16 +16,25 @@ import std.signals, std.conv;
 final class GameObject
 {
 public:
+	/**
+	 * The shader this object uses to draw.
+	 */
 	mixin( Property!( "IShader", "shader", "public" ) );
+	/**
+	 * The current transform of the object.
+	 */
 	mixin( Property!( "Transform", "transform", "public" ) );
 	mixin Signal!( string, string );
 
+	/**
+	 * Create a GameObject from a Yaml node.
+	 */
 	static GameObject createFromYaml( Node yamlObject )
 	{
 		GameObject obj;
 
 		// Try to get from script
-		string className = Config.get!string( yamlObject, "Script.ClassName" );
+		string className = Config.get!string( "Script.ClassName", yamlObject );
 		if( className is null )
 			obj = new GameObject;
 		else
@@ -31,12 +43,20 @@ public:
 		return obj;
 	}
 
+	/**
+	 * Crea
+	/**
+	 * Creates basic GameObject with transform and connection to transform's emitter.
+	 */
 	this()
 	{
 		transform = new Transform;
 		transform.connect( &emit );
 	}
 
+	/**
+	 * Initializes GameObject with shader
+	 */
 	this( IShader shader )
 	{
 		this();
@@ -54,6 +74,9 @@ public:
 		}
 	}
 
+	/**
+	 * Called once per frame to update all components.
+	 */
 	final void update()
 	{
 		foreach( ci, component; componentList )
@@ -62,6 +85,9 @@ public:
 		onUpdate();
 	}
 
+	/**
+	 * Called once per frame to draw all components.
+	 */
 	final void draw()
 	{
 		foreach( ci, component; componentList )
@@ -70,6 +96,9 @@ public:
 		onDraw();
 	}
 
+	/**
+	 * Called when the game is shutting down, to shutdown all components.
+	 */
 	final void shutdown()
 	{
 		onShutdown();
@@ -80,11 +109,17 @@ public:
 			componentList.remove( key );
 	}
 
+	/**
+	 * Adds a component to the object.
+	 */
 	final void addComponent( T )( T newComponent )
 	{
 		componentList[ T.classinfo ] = newComponent;
 	}
 
+	/**
+	 * Gets a component of the given type.
+	 */
 	final T getComponent( T )()
 	{
 		return componentList[ T.classinfo ];
@@ -92,8 +127,11 @@ public:
 
 	// Overridables
 	void onUpdate() { }
+	/// Called on the draw cycle.
 	void onDraw() { }
+	/// Called on shutdown.
 	void onShutdown() { }
+	/// Called when the object collides with another object.
 	void onCollision( GameObject other ) { }
 
 private:

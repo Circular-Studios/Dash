@@ -1,3 +1,5 @@
+/**
+ * Defines the static Output class, which handles all output to the console window.
 module utility.output;
 import utility.config;
 import std.stdio;
@@ -38,7 +40,7 @@ static class Output
 static:
 public:
 	/**
-	 * initialize the controller.
+	 * Initialize the controller.
 	 */
 	void initialize()
 	{
@@ -64,8 +66,14 @@ public:
 	}
 
 private:
+	/**
+	 * Caches the verbosity set in the config.
+	 */
 	Verbosity verbosity;
 
+	/**
+	 * Gets the header for the given output type.
+	 */
 	string getHeader( OutputType type )
 	{
 		switch( type )

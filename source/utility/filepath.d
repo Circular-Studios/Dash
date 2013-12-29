@@ -1,6 +1,12 @@
+/**
+ * Defines the FilePath class, which stores default resource paths, and handles path manipulation.
+ */
 module utility.filepath;
 static import std.file, std.path;
 
+/**
+ * A class which stores default resource paths, and handles path manipulation.
+ */
 class FilePath
 {
 public:
@@ -61,16 +67,19 @@ public:
 	/// The full path to the file.
 	@property string fullPath()		{ return _fullPath; }
 	/// The relative path from the executable to the file.
-	@property string relativePath()	{ return std.path.relativePath( fullPath ); }
+	@property string relativePath()	{ return std.path.relativePath( _fullPath ); }
 	/// The name of the file with its extension.
-	@property string fileName()		{ return std.path.baseName( fullPath ); }
+	@property string fileName()		{ return std.path.baseName( _fullPath ); }
 	/// The name of the file without its extension.
-	@property string baseFileName()	{ return std.path.stripExtension( fileName ); }
+	@property string baseFileName()	{ return std.path.stripExtension( _fullPath ); }
 	/// The path to the directory containing the file.
-	@property string directory()	{ return std.path.dirName( fullPath ); }
+	@property string directory()	{ return std.path.dirName( _fullPath ); }
 	/// The extensino of the file.
-	@property string extension()	{ return std.path.extension( fullPath ); }
+	@property string extension()	{ return std.path.extension( _fullPath ); }
 
+	/**
+	 * Create an instance based on a given file path.
+	 */
 	this( string path )
 	{
 		if( std.file.isFile( path ) )

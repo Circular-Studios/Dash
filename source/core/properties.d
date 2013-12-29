@@ -1,5 +1,5 @@
 /**
- * Defineds template mixins for defining properties in classes.
+ * Defines template mixins for defining properties in classes.
  * 
  * Authors: Colden Cullen, ColdenCullen@gmail.com
  */

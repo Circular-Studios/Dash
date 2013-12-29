@@ -1,5 +1,5 @@
 /**
- * Defines Texture, which contains info for a texture loaded into the world.
+ * Defines the Texture class, which contains info for a texture loaded into the world.
  */
 module components.texture;
 import core.properties;

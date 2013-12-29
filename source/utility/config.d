@@ -1,7 +1,10 @@
+/**
+ * Defines the static class Config, which handles all configuration options.
+ */
 module utility.config;
-import math.vector;
 import utility.filepath;
 
+import math.vector;
 import core.dgame : GameState;
 import graphics.graphics : GraphicsAdapter;
 import utility.filepath, utility.output : Verbosity;
@@ -10,12 +13,15 @@ import yaml;
 
 import std.array, std.conv, std.string, std.path;
 
+/**
+ * Static class which handles the configuration options and YAML interactions.
+ */
 static class Config
 {
 static:
 public:
 	/**
-	 * Initialize the configuration manager.
+	 * Initialize the configuration settings.
 	 */
 	void initialize()
 	{

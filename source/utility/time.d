@@ -1,6 +1,12 @@
+/**
+ * Defines the static Time class, which manages all game time related things.
+ */
 module utility.time;
 import std.datetime;
 
+/**
+ * Manages time and delta time.
+ */
 static class Time
 {
 static:
@@ -18,13 +24,6 @@ public:
 	 * Initialize the time controller with initial values.
 	 */
 	static this()
-	{
-		cur = prev = Clock.currTime;
-		total = delta = 0.0f;
-	}
-
-	/** ditto */
-	deprecated void initialize()
 	{
 		cur = prev = Clock.currTime;
 		total = delta = 0.0f;

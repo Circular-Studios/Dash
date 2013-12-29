@@ -1,3 +1,6 @@
+/**
+ * Defines the GameObjectCollection class, which manages game objects and allows for batch operations on them.
+ */
 module core.gameobjectcollection;
 import core.gameobject;
 import graphics.shaders.ishader;
@@ -59,6 +62,11 @@ public:
 
 	/**
 	 * Call the given function on each game object.
+	 * 
+	 * Examples:
+	 * ---
+	 * goc.callFunction( go => go.update() );
+	 * ---
 	 */
 	void callFunction( void function( GameObject ) func )
 	{

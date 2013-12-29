@@ -1,5 +1,5 @@
 /**
- * Defines Assets, a static class which manages all textures, meshes, etc...
+ * Defines the static Assets class, a static class which manages all textures, meshes, etc...
  */
 module components.assets;
 import components.icomponent, components.mesh, components.texture;

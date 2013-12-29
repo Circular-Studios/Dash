@@ -41,7 +41,7 @@
 			"postBuildCommands": [
 				"dub run ddox -- filter doc/doc.json filter --ex dyaml --ex yaml --ex ddox --ex vibe --ex derelict",
 				"dub run ddox -- generate-html doc/doc.json doc/",
-				"rm -f doc/__dummy.html"
+				"rm -f doc/__dummy.html doc/doc.json"
 			]
 		}
 	},

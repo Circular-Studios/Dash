@@ -95,6 +95,9 @@
 				<a href="../../math/vector.html">math.vector</a>
 			</li>
 			<li>
+				<a href="../../scripting/scripts.html">scripting.scripts</a>
+			</li>
+			<li>
 				<a href="../../utility/config.html">utility.config</a>
 			</li>
 			<li>
@@ -162,14 +165,6 @@
 						</td>
 						<td> Initializes <a href="../../core/gameobject/GameObject.html"><code class="prettyprint lang-d">GameObject</code></a> with <a href="../../core/gameobject/GameObject.this.html#shader"><code class="prettyprint lang-d">shader</code></a>
 </td>
-					</tr>
-					<tr>
-						<td>
-							<a href="../../core/gameobject/GameObject.this.html" class="public">
-								<code>this</code>
-							</a>
-						</td>
-						<td></td>
 					</tr>
 				</table>
 			</section>
@@ -262,7 +257,17 @@
 								<code>addComponent</code>
 							</a>
 						</td>
-						<td></td>
+						<td> Adds a component to the object.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject.createFromYaml.html" class="public">
+								<code>createFromYaml</code>
+							</a>
+						</td>
+						<td> Create a <a href="../../core/gameobject/GameObject.html"><code class="prettyprint lang-d">GameObject</code></a> from a Yaml node.
+</td>
 					</tr>
 					<tr>
 						<td>
@@ -279,7 +284,8 @@
 								<code>getComponent</code>
 							</a>
 						</td>
-						<td></td>
+						<td> Gets a component of the given type.
+</td>
 					</tr>
 					<tr>
 						<td>
@@ -287,7 +293,35 @@
 								<code>onCollision</code>
 							</a>
 						</td>
-						<td></td>
+						<td> Called when the object collides with another object.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject.onDraw.html" class="public">
+								<code>onDraw</code>
+							</a>
+						</td>
+						<td> Called on the <a href="../../core/gameobject/GameObject.draw.html"><code class="prettyprint lang-d">draw</code></a> cycle.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject.onShutdown.html" class="public">
+								<code>onShutdown</code>
+							</a>
+						</td>
+						<td> Called on <a href="../../core/gameobject/GameObject.shutdown.html"><code class="prettyprint lang-d">shutdown</code></a>.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject.onUpdate.html" class="public">
+								<code>onUpdate</code>
+							</a>
+						</td>
+						<td> Called on the <a href="../../core/gameobject/GameObject.update.html"><code class="prettyprint lang-d">update</code></a> cycle.
+</td>
 					</tr>
 					<tr>
 						<td>

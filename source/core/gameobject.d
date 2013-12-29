@@ -1,3 +1,6 @@
+/**
+ * Defines the GameObject class, to be subclassed by scripts and instantiated for static objects.
+ */
 module core.gameobject;
 import core.properties;
 import components.icomponent;
@@ -19,12 +22,18 @@ public:
 	 */
 	mixin( Property!( "Transform", "transform", "public" ) );
 
+	/**
+	 * Creates basic GameObject with transform and connection to transform's emitter.
+	 */
 	this()
 	{
 		transform = new Transform;
 		transform.connect( &emit );
 	}
 
+	/**
+	 * Initializes GameObject with shader
+	 */
 	this( IShader shader )
 	{
 		this();

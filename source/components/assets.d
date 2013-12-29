@@ -1,3 +1,6 @@
+/**
+ * Defines Assets, a static class which manages all textures, meshes, etc...
+ */
 module components.assets;
 import components.icomponent, components.mesh, components.texture;
 import utility.filepath;

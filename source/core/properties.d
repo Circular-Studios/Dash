@@ -1,3 +1,8 @@
+/**
+ * Defineds template mixins for defining properties in classes.
+ * 
+ * Authors: Colden Cullen, ColdenCullen@gmail.com
+ */
 module core.properties;
 
 public:

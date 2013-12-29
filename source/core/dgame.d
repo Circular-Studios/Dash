@@ -1,3 +1,6 @@
+/**
+ * Defines DGame, the base class for all game logic.
+ */
 module core.dgame;
 import components.assets;
 import graphics.graphics;

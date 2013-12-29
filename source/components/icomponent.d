@@ -1,3 +1,6 @@
+/**
+ * Defines the IComponent abstract class, which is the base for all components.
+ */
 module components.icomponent;
 import core.properties, core.gameobject;
 import graphics.shaders.ishader;

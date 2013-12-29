@@ -1,3 +1,6 @@
+/**
+ * Defines the Camera class, which controls the view matrix for the world.
+ */
 module components.camera;
 import core.properties, core.gameobject;
 import components.icomponent;

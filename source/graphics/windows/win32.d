@@ -6,6 +6,7 @@ import core.properties;
 import graphics.graphics;
 import graphics.windows.windows;
 import graphics.adapters.opengl;
+import utility.input;
 
 import win32.windef, win32.winuser, win32.winbase;
 
@@ -24,27 +25,27 @@ LRESULT WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 			break;
 			// If key down, send it to input
         case WM_KEYDOWN:
-			//Input.keyDown( (unsigned int)wParam );
+			Input.setKeyState( cast(uint)wParam, true );
 			break;
 			// If key up, send it to input
         case WM_KEYUP:
-			//Input.keyUp( (unsigned int)wParam );
+			Input.setKeyState( cast(uint)wParam, false );
 			break;
 			// On Mouse Event
         case WM_RBUTTONDOWN:
-			//Input.keyDown( VK_RBUTTON );
+			Input.setKeyState( VK_RBUTTON, true );
 			break;
 			// On Mouse Event
         case WM_RBUTTONUP:
-			//Input.keyUp( VK_RBUTTON );
+			Input.setKeyState( VK_RBUTTON, false );
 			break;
 			// On Mouse Event
         case WM_LBUTTONDOWN:
-			//Input.keyDown( VK_LBUTTON );
+			Input.setKeyState( VK_LBUTTON, true );
 			break;
 			// On Mouse Event
         case WM_LBUTTONUP:
-			//Input.keyUp( VK_LBUTTON );
+			Input.setKeyState( VK_LBUTTON, false );
 			break;
 			// If no change, send to default windows handler
         default:

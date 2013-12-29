@@ -107,11 +107,29 @@
 				<a href="../../utility/time.html">utility.time</a>
 			</li>
 			</ul>
+			<noscript>
+				<p style="color: red">The search functionality needs JavaScript enabled</p>
+			</noscript>
+			<div id="symbolSearchPane" style="display: none">
+				<p>
+					<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+				</p>
+				<ul id="symbolSearchResults" style="display: none"></ul>
+				<script type="application/javascript" src="../../symbols.js"></script>
+				<script type="application/javascript">
+					//<![CDATA[
+					var symbolSearchRootDir = "../../";					$('#symbolSearchPane').show();
+					//]]>
+				</script>
+			</div>
 		</nav>
 		<div id="main-contents">
 			<h1>Constructor GameObject.this</h1><!-- using block body in layout.dt--><!-- Default block ddox.description in ddox.layout.dt--><!-- Default block ddox.sections in ddox.layout.dt--><!-- using block ddox.members in ddox.layout.dt-->
 			<h2>Overload group</h2>
-			<p></p>
+			<p> Creates basic <a href="../../core/gameobject/GameObject.html"><code class="prettyprint lang-d">GameObject</code></a> with <a href="../../core/gameobject/GameObject.transform.html"><code class="prettyprint lang-d">transform</code></a> and connection to <a href="../../core/gameobject/GameObject.transform.html"><code class="prettyprint lang-d">transform</code></a>'s emitter.
+</p>
+<section>
+</section>
 
 			<section>
 				<h3>Prototype</h3>
@@ -120,7 +138,10 @@ this();</pre>
 			</section>
 
 			<h2>Overload group</h2>
-			<p></p>
+			<p> Initializes <a href="../../core/gameobject/GameObject.html"><code class="prettyprint lang-d">GameObject</code></a> with <a href="../../core/gameobject/GameObject.this.html#shader"><code class="prettyprint lang-d">shader</code></a>
+</p>
+<section>
+</section>
 
 			<section>
 				<h3>Prototype</h3>

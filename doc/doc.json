@@ -5,39 +5,39 @@
 		"members": [
 			{
 				"kind": "import",
-				"line": 2,
+				"line": 5,
 				"protection": "private",
 				"name": "components.icomponent"
 			},
 			{
 				"kind": "import",
-				"line": 2,
+				"line": 5,
 				"protection": "private",
 				"name": "components.mesh"
 			},
 			{
 				"kind": "import",
-				"line": 2,
+				"line": 5,
 				"protection": "private",
 				"name": "components.texture"
 			},
 			{
 				"kind": "import",
-				"line": 3,
+				"line": 6,
 				"protection": "private",
 				"name": "utility.filepath"
 			},
 			{
 				"kind": "class",
-				"line": 5,
+				"line": 8,
 				"members": [
 					{
 						"kind": "template",
-						"line": 12,
+						"line": 15,
 						"members": [
 							{
 								"kind": "function",
-								"line": 12,
+								"line": 15,
 								"type": "T(string name)",
 								"parameters": [
 									{
@@ -47,7 +47,7 @@
 								],
 								"name": "getAsset",
 								"comment": "\n Get the asset with the given type and name.\n\t \n",
-								"endline": 15
+								"endline": 18
 							}
 						],
 						"parameters": [
@@ -61,29 +61,29 @@
 					},
 					{
 						"kind": "function",
-						"line": 20,
+						"line": 23,
 						"storageClass": [
 							"static"
 						],
 						"deco": "FZv",
 						"name": "initialize",
 						"comment": "\n Load all assets in the FilePath.ResourceHome folder.\n\t \n",
-						"endline": 31
+						"endline": 34
 					},
 					{
 						"kind": "function",
-						"line": 36,
+						"line": 39,
 						"storageClass": [
 							"static"
 						],
 						"deco": "FZv",
 						"name": "shutdown",
 						"comment": "\n Unload and destroy all stored assets.\n\t \n",
-						"endline": 42
+						"endline": 45
 					},
 					{
 						"kind": "variable",
-						"line": 45,
+						"line": 48,
 						"protection": "private",
 						"storageClass": [
 							"static"
@@ -95,7 +95,8 @@
 				"name": "Assets"
 			}
 		],
-		"name": "components.assets"
+		"name": "components.assets",
+		"comment": "\n Defines Assets, a static class which manages all textures, meshes, etc...\n \n"
 	},
 	{
 		"kind": "module",
@@ -103,60 +104,60 @@
 		"members": [
 			{
 				"kind": "import",
-				"line": 2,
+				"line": 5,
 				"protection": "private",
 				"name": "core.properties"
 			},
 			{
 				"kind": "import",
-				"line": 2,
+				"line": 5,
 				"protection": "private",
 				"name": "core.gameobject"
 			},
 			{
 				"kind": "import",
-				"line": 3,
+				"line": 6,
 				"protection": "private",
 				"name": "components.icomponent"
 			},
 			{
 				"kind": "import",
-				"line": 4,
+				"line": 7,
 				"protection": "private",
 				"name": "graphics.shaders.ishader"
 			},
 			{
 				"kind": "import",
-				"line": 5,
+				"line": 8,
 				"protection": "private",
 				"name": "math.matrix"
 			},
 			{
 				"kind": "import",
-				"line": 5,
+				"line": 8,
 				"protection": "private",
 				"name": "math.vector"
 			},
 			{
 				"kind": "import",
-				"line": 7,
+				"line": 10,
 				"protection": "private",
 				"name": "std.signals"
 			},
 			{
 				"kind": "import",
-				"line": 7,
+				"line": 10,
 				"protection": "private",
 				"name": "std.conv"
 			},
 			{
 				"kind": "class",
-				"line": 9,
+				"line": 12,
 				"base": "IComponent",
 				"members": [
 					{
 						"kind": "variable",
-						"line": 15,
+						"line": 18,
 						"protection": "private",
 						"deco": "C4math6matrix14__T6MatrixVi4Z6Matrix",
 						"name": "_viewMatrix",
@@ -165,18 +166,18 @@
 					},
 					{
 						"kind": "function",
-						"line": 15,
+						"line": 18,
 						"storageClass": [
 							"@property"
 						],
 						"deco": "FNdZC4math6matrix14__T6MatrixVi4Z6Matrix",
 						"name": "viewMatrix",
 						"originalType": "Matrix!4()",
-						"endline": 15
+						"endline": 18
 					},
 					{
 						"kind": "function",
-						"line": 15,
+						"line": 18,
 						"protection": "private",
 						"storageClass": [
 							"@property"
@@ -190,16 +191,16 @@
 						],
 						"name": "viewMatrix",
 						"originalType": "void(Matrix!4 _newVal)",
-						"endline": 15
+						"endline": 18
 					},
 					{
 						"kind": "mixin",
-						"line": 17,
+						"line": 20,
 						"name": "Signal!(string, string)"
 					},
 					{
 						"kind": "constructor",
-						"line": 19,
+						"line": 22,
 						"deco": "FC4core10gameobject10GameObjectZC10components6camera6Camera",
 						"parameters": [
 							{
@@ -209,11 +210,11 @@
 						],
 						"name": "this",
 						"originalType": "(GameObject owner)",
-						"endline": 24
+						"endline": 27
 					},
 					{
 						"kind": "function",
-						"line": 27,
+						"line": 30,
 						"protection": "private",
 						"deco": "FAyaAyaZv",
 						"parameters": [
@@ -227,13 +228,14 @@
 							}
 						],
 						"name": "updateViewMatrix",
-						"endline": 43
+						"endline": 46
 					}
 				],
 				"name": "Camera"
 			}
 		],
-		"name": "components.camera"
+		"name": "components.camera",
+		"comment": "\n Defines the Camera class, which controls the view matrix for the world.\n \n"
 	},
 	{
 		"kind": "module",
@@ -241,29 +243,29 @@
 		"members": [
 			{
 				"kind": "import",
-				"line": 2,
+				"line": 5,
 				"protection": "private",
 				"name": "core.properties"
 			},
 			{
 				"kind": "import",
-				"line": 2,
+				"line": 5,
 				"protection": "private",
 				"name": "core.gameobject"
 			},
 			{
 				"kind": "import",
-				"line": 3,
+				"line": 6,
 				"protection": "private",
 				"name": "graphics.shaders.ishader"
 			},
 			{
 				"kind": "class",
-				"line": 8,
+				"line": 11,
 				"members": [
 					{
 						"kind": "constructor",
-						"line": 10,
+						"line": 13,
 						"deco": "FC4core10gameobject10GameObjectZC10components10icomponent10IComponent",
 						"parameters": [
 							{
@@ -273,11 +275,11 @@
 						],
 						"name": "this",
 						"originalType": "(GameObject owner)",
-						"endline": 13
+						"endline": 16
 					},
 					{
 						"kind": "function",
-						"line": 18,
+						"line": 21,
 						"storageClass": [
 							"abstract"
 						],
@@ -287,7 +289,7 @@
 					},
 					{
 						"kind": "function",
-						"line": 22,
+						"line": 25,
 						"storageClass": [
 							"abstract"
 						],
@@ -303,7 +305,7 @@
 					},
 					{
 						"kind": "function",
-						"line": 26,
+						"line": 29,
 						"storageClass": [
 							"abstract"
 						],
@@ -313,7 +315,7 @@
 					},
 					{
 						"kind": "variable",
-						"line": 31,
+						"line": 34,
 						"protection": "private",
 						"deco": "C4core10gameobject10GameObject",
 						"name": "_owner",
@@ -322,18 +324,18 @@
 					},
 					{
 						"kind": "function",
-						"line": 31,
+						"line": 34,
 						"storageClass": [
 							"@property"
 						],
 						"deco": "FNdZC4core10gameobject10GameObject",
 						"name": "owner",
 						"originalType": "GameObject()",
-						"endline": 31
+						"endline": 34
 					},
 					{
 						"kind": "function",
-						"line": 31,
+						"line": 34,
 						"protection": "protected",
 						"storageClass": [
 							"@property"
@@ -347,14 +349,15 @@
 						],
 						"name": "owner",
 						"originalType": "void(GameObject _newVal)",
-						"endline": 31
+						"endline": 34
 					}
 				],
 				"name": "IComponent",
 				"comment": "\n Interface for components to implement.\n \n"
 			}
 		],
-		"name": "components.icomponent"
+		"name": "components.icomponent",
+		"comment": "\n Defines the IComponent abstract class, which is the base for all components.\n \n"
 	},
 	{
 		"kind": "module",
@@ -362,60 +365,60 @@
 		"members": [
 			{
 				"kind": "import",
-				"line": 2,
+				"line": 5,
 				"protection": "private",
 				"name": "core.properties"
 			},
 			{
 				"kind": "import",
-				"line": 3,
+				"line": 6,
 				"protection": "private",
 				"name": "components.icomponent"
 			},
 			{
 				"kind": "import",
-				"line": 4,
+				"line": 7,
 				"protection": "private",
 				"name": "graphics.graphics"
 			},
 			{
 				"kind": "import",
-				"line": 4,
+				"line": 7,
 				"protection": "private",
 				"name": "graphics.shaders.ishader"
 			},
 			{
 				"kind": "import",
-				"line": 5,
+				"line": 8,
 				"protection": "private",
 				"name": "math.vector"
 			},
 			{
 				"kind": "import",
-				"line": 7,
+				"line": 10,
 				"protection": "private",
 				"name": "derelict.opengl3.gl3"
 			},
 			{
 				"kind": "import",
-				"line": 9,
+				"line": 12,
 				"protection": "private",
 				"name": "std.stdio"
 			},
 			{
 				"kind": "import",
-				"line": 9,
+				"line": 12,
 				"protection": "private",
 				"name": "std.stream"
 			},
 			{
 				"kind": "class",
-				"line": 11,
+				"line": 14,
 				"base": "IComponent",
 				"members": [
 					{
 						"kind": "variable",
-						"line": 14,
+						"line": 17,
 						"protection": "private",
 						"deco": "k",
 						"name": "_glVertexArray",
@@ -423,18 +426,18 @@
 					},
 					{
 						"kind": "function",
-						"line": 14,
+						"line": 17,
 						"storageClass": [
 							"@property"
 						],
 						"deco": "FNdZk",
 						"name": "glVertexArray",
 						"originalType": "uint()",
-						"endline": 14
+						"endline": 17
 					},
 					{
 						"kind": "function",
-						"line": 14,
+						"line": 17,
 						"protection": "private",
 						"storageClass": [
 							"@property"
@@ -448,11 +451,11 @@
 						],
 						"name": "glVertexArray",
 						"originalType": "void(uint _newVal)",
-						"endline": 14
+						"endline": 17
 					},
 					{
 						"kind": "variable",
-						"line": 15,
+						"line": 18,
 						"protection": "private",
 						"deco": "k",
 						"name": "_numVertices",
@@ -460,18 +463,18 @@
 					},
 					{
 						"kind": "function",
-						"line": 15,
+						"line": 18,
 						"storageClass": [
 							"@property"
 						],
 						"deco": "FNdZk",
 						"name": "numVertices",
 						"originalType": "uint()",
-						"endline": 15
+						"endline": 18
 					},
 					{
 						"kind": "function",
-						"line": 15,
+						"line": 18,
 						"protection": "private",
 						"storageClass": [
 							"@property"
@@ -485,11 +488,11 @@
 						],
 						"name": "numVertices",
 						"originalType": "void(uint _newVal)",
-						"endline": 15
+						"endline": 18
 					},
 					{
 						"kind": "variable",
-						"line": 16,
+						"line": 19,
 						"protection": "private",
 						"deco": "k",
 						"name": "_numIndices",
@@ -497,106 +500,104 @@
 					},
 					{
 						"kind": "function",
-						"line": 16,
-						"storageClass": [
-							"@property"
-						],
-						"deco": "FNdZk",
-						"name": "numIndices",
-						"originalType": "uint()",
-						"endline": 16
-					},
-					{
-						"kind": "function",
-						"line": 16,
-						"protection": "private",
-						"storageClass": [
-							"@property"
-						],
-						"deco": "FNdkZv",
-						"parameters": [
-							{
-								"deco": "k",
-								"name": "_newVal"
-							}
-						],
-						"name": "numIndices",
-						"originalType": "void(uint _newVal)",
-						"endline": 16
-					},
-					{
-						"kind": "function",
-						"line": 17,
-						"storageClass": [
-							"@property"
-						],
-						"deco": "FNdZk",
-						"name": "glIndexBuffer",
-						"originalType": "uint()",
-						"endline": 17
-					},
-					{
-						"kind": "function",
-						"line": 17,
-						"protection": "private",
-						"storageClass": [
-							"@property"
-						],
-						"deco": "FNdkZv",
-						"parameters": [
-							{
-								"deco": "k",
-								"name": "_newVal"
-							}
-						],
-						"name": "glIndexBuffer",
-						"originalType": "void(uint _newVal)",
-						"endline": 17
-					},
-					{
-						"kind": "function",
-						"line": 18,
-						"storageClass": [
-							"@property"
-						],
-						"deco": "FNdZk",
-						"name": "glVertexBuffer",
-						"originalType": "uint()",
-						"endline": 18
-					},
-					{
-						"kind": "function",
-						"line": 18,
-						"protection": "private",
-						"storageClass": [
-							"@property"
-						],
-						"deco": "FNdkZv",
-						"parameters": [
-							{
-								"deco": "k",
-								"name": "_newVal"
-							}
-						],
-						"name": "glVertexBuffer",
-						"originalType": "void(uint _newVal)",
-						"endline": 18
-					},
-					{
-						"kind": "function",
 						"line": 19,
 						"storageClass": [
-							"static",
 							"@property"
 						],
 						"deco": "FNdZk",
-						"name": "vertexSize",
+						"name": "numIndices",
 						"originalType": "uint()",
 						"endline": 19
 					},
 					{
-						"kind": "constructor",
+						"kind": "function",
+						"line": 19,
+						"protection": "private",
+						"storageClass": [
+							"@property"
+						],
+						"deco": "FNdkZv",
+						"parameters": [
+							{
+								"deco": "k",
+								"name": "_newVal"
+							}
+						],
+						"name": "numIndices",
+						"originalType": "void(uint _newVal)",
+						"endline": 19
+					},
+					{
+						"kind": "function",
+						"line": 20,
+						"storageClass": [
+							"@property"
+						],
+						"deco": "FNdZk",
+						"name": "glIndexBuffer",
+						"originalType": "uint()",
+						"endline": 20
+					},
+					{
+						"kind": "function",
+						"line": 20,
+						"protection": "private",
+						"storageClass": [
+							"@property"
+						],
+						"deco": "FNdkZv",
+						"parameters": [
+							{
+								"deco": "k",
+								"name": "_newVal"
+							}
+						],
+						"name": "glIndexBuffer",
+						"originalType": "void(uint _newVal)",
+						"endline": 20
+					},
+					{
+						"kind": "function",
 						"line": 21,
+						"storageClass": [
+							"@property"
+						],
+						"deco": "FNdZk",
+						"name": "glVertexBuffer",
+						"originalType": "uint()",
+						"endline": 21
+					},
+					{
+						"kind": "function",
+						"line": 21,
+						"protection": "private",
+						"storageClass": [
+							"@property"
+						],
+						"deco": "FNdkZv",
+						"parameters": [
+							{
+								"deco": "k",
+								"name": "_newVal"
+							}
+						],
+						"name": "glVertexBuffer",
+						"originalType": "void(uint _newVal)",
+						"endline": 21
+					},
+					{
+						"kind": "variable",
+						"line": 22,
+						"init": "32u",
+						"storageClass": [
+							"enum"
+						],
+						"deco": "k",
+						"name": "VertexSize"
+					},
+					{
+						"kind": "constructor",
+						"line": 24,
 						"deco": "FAyaZC10components4mesh4Mesh",
 						"parameters": [
 							{
@@ -606,24 +607,24 @@
 						],
 						"name": "this",
 						"originalType": "(string filePath)",
-						"endline": 137
+						"endline": 140
 					},
 					{
 						"kind": "function",
-						"line": 139,
+						"line": 142,
 						"storageClass": [
 							"override"
 						],
 						"deco": "FZv",
 						"name": "update",
-						"endline": 142,
+						"endline": 145,
 						"overrides": [
 							"components.icomponent.IComponent.update"
 						]
 					},
 					{
 						"kind": "function",
-						"line": 144,
+						"line": 147,
 						"storageClass": [
 							"override"
 						],
@@ -635,27 +636,27 @@
 							}
 						],
 						"name": "draw",
-						"endline": 147,
+						"endline": 150,
 						"overrides": [
 							"components.icomponent.IComponent.draw"
 						]
 					},
 					{
 						"kind": "function",
-						"line": 149,
+						"line": 152,
 						"storageClass": [
 							"override"
 						],
 						"deco": "FZv",
 						"name": "shutdown",
-						"endline": 161,
+						"endline": 164,
 						"overrides": [
 							"components.icomponent.IComponent.shutdown"
 						]
 					},
 					{
 						"kind": "variable",
-						"line": 166,
+						"line": 169,
 						"protection": "private",
 						"deco": "k",
 						"name": "_glIndexBuffer",
@@ -663,7 +664,7 @@
 					},
 					{
 						"kind": "variable",
-						"line": 171,
+						"line": 174,
 						"protection": "private",
 						"deco": "k",
 						"name": "_glVertexBuffer",
@@ -673,7 +674,8 @@
 				"name": "Mesh"
 			}
 		],
-		"name": "components.mesh"
+		"name": "components.mesh",
+		"comment": "\n Defines the Mesh class, which controls all meshes loaded into the world.\n \n"
 	},
 	{
 		"kind": "module",
@@ -681,48 +683,48 @@
 		"members": [
 			{
 				"kind": "import",
-				"line": 2,
+				"line": 5,
 				"protection": "private",
 				"name": "core.properties"
 			},
 			{
 				"kind": "import",
-				"line": 3,
+				"line": 6,
 				"protection": "private",
 				"name": "components.icomponent"
 			},
 			{
 				"kind": "import",
-				"line": 4,
+				"line": 7,
 				"protection": "private",
 				"name": "graphics.graphics"
 			},
 			{
 				"kind": "import",
-				"line": 4,
+				"line": 7,
 				"protection": "private",
 				"name": "graphics.shaders.ishader"
 			},
 			{
 				"kind": "import",
-				"line": 6,
+				"line": 9,
 				"protection": "private",
 				"name": "derelict.opengl3.gl3"
 			},
 			{
 				"kind": "import",
-				"line": 7,
+				"line": 10,
 				"protection": "private",
 				"name": "derelict.freeimage.freeimage"
 			},
 			{
 				"kind": "class",
-				"line": 9,
+				"line": 12,
 				"base": "IComponent",
 				"members": [
 					{
 						"kind": "variable",
-						"line": 12,
+						"line": 15,
 						"protection": "private",
 						"deco": "k",
 						"name": "_width",
@@ -730,18 +732,18 @@
 					},
 					{
 						"kind": "function",
-						"line": 12,
+						"line": 15,
 						"storageClass": [
 							"@property"
 						],
 						"deco": "FNdZk",
 						"name": "width",
 						"originalType": "uint()",
-						"endline": 12
+						"endline": 15
 					},
 					{
 						"kind": "function",
-						"line": 12,
+						"line": 15,
 						"protection": "private",
 						"storageClass": [
 							"@property"
@@ -755,11 +757,11 @@
 						],
 						"name": "width",
 						"originalType": "void(uint _newVal)",
-						"endline": 12
+						"endline": 15
 					},
 					{
 						"kind": "variable",
-						"line": 13,
+						"line": 16,
 						"protection": "private",
 						"deco": "k",
 						"name": "_height",
@@ -767,18 +769,18 @@
 					},
 					{
 						"kind": "function",
-						"line": 13,
+						"line": 16,
 						"storageClass": [
 							"@property"
 						],
 						"deco": "FNdZk",
 						"name": "height",
 						"originalType": "uint()",
-						"endline": 13
+						"endline": 16
 					},
 					{
 						"kind": "function",
-						"line": 13,
+						"line": 16,
 						"protection": "private",
 						"storageClass": [
 							"@property"
@@ -792,11 +794,11 @@
 						],
 						"name": "height",
 						"originalType": "void(uint _newVal)",
-						"endline": 13
+						"endline": 16
 					},
 					{
 						"kind": "constructor",
-						"line": 15,
+						"line": 18,
 						"deco": "FAyaZC10components7texture7Texture",
 						"parameters": [
 							{
@@ -806,24 +808,24 @@
 						],
 						"name": "this",
 						"originalType": "(string filePath)",
-						"endline": 50
+						"endline": 53
 					},
 					{
 						"kind": "function",
-						"line": 52,
+						"line": 55,
 						"storageClass": [
 							"override"
 						],
 						"deco": "FZv",
 						"name": "update",
-						"endline": 55,
+						"endline": 58,
 						"overrides": [
 							"components.icomponent.IComponent.update"
 						]
 					},
 					{
 						"kind": "function",
-						"line": 57,
+						"line": 60,
 						"storageClass": [
 							"override"
 						],
@@ -835,38 +837,38 @@
 							}
 						],
 						"name": "draw",
-						"endline": 60,
+						"endline": 63,
 						"overrides": [
 							"components.icomponent.IComponent.draw"
 						]
 					},
 					{
 						"kind": "function",
-						"line": 62,
+						"line": 65,
 						"storageClass": [
 							"override"
 						],
 						"deco": "FZv",
 						"name": "shutdown",
-						"endline": 74,
+						"endline": 77,
 						"overrides": [
 							"components.icomponent.IComponent.shutdown"
 						]
 					},
 					{
 						"kind": "function",
-						"line": 76,
+						"line": 79,
 						"storageClass": [
 							"@property"
 						],
 						"deco": "FNdZk",
 						"name": "glId",
 						"originalType": "uint()",
-						"endline": 76
+						"endline": 79
 					},
 					{
 						"kind": "function",
-						"line": 76,
+						"line": 79,
 						"protection": "private",
 						"storageClass": [
 							"@property"
@@ -880,11 +882,11 @@
 						],
 						"name": "glId",
 						"originalType": "void(uint _newVal)",
-						"endline": 76
+						"endline": 79
 					},
 					{
 						"kind": "variable",
-						"line": 80,
+						"line": 83,
 						"deco": "k",
 						"name": "_glId",
 						"offset": 20
@@ -893,7 +895,8 @@
 				"name": "Texture"
 			}
 		],
-		"name": "components.texture"
+		"name": "components.texture",
+		"comment": "\n Defines Texture, which contains info for a texture loaded into the world.\n \n"
 	},
 	{
 		"kind": "module",
@@ -901,56 +904,56 @@
 		"members": [
 			{
 				"kind": "import",
-				"line": 2,
+				"line": 5,
 				"protection": "private",
 				"name": "components.assets"
 			},
 			{
 				"kind": "import",
-				"line": 3,
+				"line": 6,
 				"protection": "private",
 				"name": "graphics.graphics"
 			},
 			{
 				"kind": "import",
-				"line": 4,
+				"line": 7,
 				"protection": "private",
 				"name": "utility.time"
 			},
 			{
 				"kind": "import",
-				"line": 4,
+				"line": 7,
 				"protection": "private",
 				"name": "utility.config"
 			},
 			{
 				"kind": "import",
-				"line": 4,
+				"line": 7,
 				"protection": "private",
 				"name": "utility.output"
 			},
 			{
 				"kind": "enum",
-				"line": 6,
+				"line": 9,
 				"members": [
 					{
 						"kind": "enum member",
-						"line": 6,
+						"line": 9,
 						"name": "Menu"
 					},
 					{
 						"kind": "enum member",
-						"line": 6,
+						"line": 9,
 						"name": "Game"
 					},
 					{
 						"kind": "enum member",
-						"line": 6,
+						"line": 9,
 						"name": "Reset"
 					},
 					{
 						"kind": "enum member",
-						"line": 6,
+						"line": 9,
 						"name": "Quit"
 					}
 				],
@@ -959,94 +962,95 @@
 			},
 			{
 				"kind": "class",
-				"line": 8,
+				"line": 11,
 				"members": [
 					{
 						"kind": "variable",
-						"line": 11,
+						"line": 14,
 						"deco": "E4core5dgame9GameState",
 						"name": "currentState",
 						"offset": 8
 					},
 					{
 						"kind": "function",
-						"line": 16,
+						"line": 19,
 						"storageClass": [
 							"final"
 						],
 						"deco": "FZv",
 						"name": "run",
 						"comment": "\n Main Game loop.\n\t \n",
-						"endline": 75
+						"endline": 78
 					},
 					{
 						"kind": "function",
-						"line": 83,
+						"line": 86,
 						"protection": "protected",
 						"deco": "FZv",
 						"name": "initialize",
 						"comment": "\n To be overridden, logic for when the game is being initalized.\n\t \n",
-						"endline": 83
+						"endline": 86
 					},
 					{
 						"kind": "function",
-						"line": 87,
+						"line": 90,
 						"protection": "protected",
 						"deco": "FZv",
 						"name": "update",
 						"comment": "\n To be overridden, called once per frame during the update cycle.\n\t \n",
-						"endline": 87
+						"endline": 90
 					},
 					{
 						"kind": "function",
-						"line": 91,
+						"line": 94,
 						"protection": "protected",
 						"deco": "FZv",
 						"name": "draw",
 						"comment": "\n To be overridden, called once per frame during the draw cycle.\n\t \n",
-						"endline": 91
+						"endline": 94
 					},
 					{
 						"kind": "function",
-						"line": 95,
+						"line": 98,
 						"protection": "protected",
 						"deco": "FZv",
 						"name": "shutdown",
 						"comment": "\n To be overridden, called when the came is closing.\n\t \n",
-						"endline": 95
+						"endline": 98
 					},
 					{
 						"kind": "function",
-						"line": 103,
+						"line": 106,
 						"protection": "private",
 						"deco": "FZv",
 						"name": "start",
 						"comment": "\n Function called to initialize controllers.\n\t \n",
-						"endline": 117
+						"endline": 120
 					},
 					{
 						"kind": "function",
-						"line": 122,
+						"line": 125,
 						"protection": "private",
 						"deco": "FZv",
 						"name": "stop",
 						"comment": "\n Function called to shutdown controllers.\n\t \n",
-						"endline": 125
+						"endline": 128
 					},
 					{
 						"kind": "function",
-						"line": 130,
+						"line": 133,
 						"protection": "private",
 						"deco": "FZv",
 						"name": "reset",
 						"comment": "\n Called when engine is resetting.\n\t \n",
-						"endline": 141
+						"endline": 144
 					}
 				],
 				"name": "DGame"
 			}
 		],
-		"name": "core.dgame"
+		"name": "core.dgame",
+		"comment": "\n Defines DGame, the base class for all game logic.\n \n"
 	},
 	{
 		"kind": "module",
@@ -1054,53 +1058,53 @@
 		"members": [
 			{
 				"kind": "import",
-				"line": 2,
+				"line": 5,
 				"protection": "private",
 				"name": "core.properties"
 			},
 			{
 				"kind": "import",
-				"line": 3,
+				"line": 6,
 				"protection": "private",
 				"name": "components.icomponent"
 			},
 			{
 				"kind": "import",
-				"line": 4,
+				"line": 7,
 				"protection": "private",
 				"name": "graphics.shaders.ishader"
 			},
 			{
 				"kind": "import",
-				"line": 5,
+				"line": 8,
 				"protection": "private",
 				"name": "math.transform"
 			},
 			{
 				"kind": "import",
-				"line": 7,
+				"line": 10,
 				"protection": "private",
 				"name": "yaml"
 			},
 			{
 				"kind": "import",
-				"line": 8,
+				"line": 11,
 				"protection": "private",
 				"name": "std.signals"
 			},
 			{
 				"kind": "import",
-				"line": 8,
+				"line": 11,
 				"protection": "private",
 				"name": "std.conv"
 			},
 			{
 				"kind": "class",
-				"line": 10,
+				"line": 13,
 				"members": [
 					{
 						"kind": "variable",
-						"line": 16,
+						"line": 19,
 						"protection": "private",
 						"deco": "C8graphics7shaders7ishader7IShader",
 						"name": "_shader",
@@ -1109,18 +1113,18 @@
 					},
 					{
 						"kind": "function",
-						"line": 16,
+						"line": 19,
 						"storageClass": [
 							"@property"
 						],
 						"deco": "FNdZC8graphics7shaders7ishader7IShader",
 						"name": "shader",
 						"originalType": "IShader()",
-						"endline": 16
+						"endline": 19
 					},
 					{
 						"kind": "function",
-						"line": 16,
+						"line": 19,
 						"storageClass": [
 							"@property"
 						],
@@ -1133,11 +1137,11 @@
 						],
 						"name": "shader",
 						"originalType": "void(IShader _newVal)",
-						"endline": 16
+						"endline": 19
 					},
 					{
 						"kind": "variable",
-						"line": 20,
+						"line": 23,
 						"protection": "private",
 						"deco": "C4math9transform9Transform",
 						"name": "_transform",
@@ -1146,18 +1150,18 @@
 					},
 					{
 						"kind": "function",
-						"line": 20,
+						"line": 23,
 						"storageClass": [
 							"@property"
 						],
 						"deco": "FNdZC4math9transform9Transform",
 						"name": "transform",
 						"originalType": "Transform()",
-						"endline": 20
+						"endline": 23
 					},
 					{
 						"kind": "function",
-						"line": 20,
+						"line": 23,
 						"storageClass": [
 							"@property"
 						],
@@ -1170,19 +1174,20 @@
 						],
 						"name": "transform",
 						"originalType": "void(Transform _newVal)",
-						"endline": 20
-					},
-					{
-						"kind": "constructor",
-						"line": 22,
-						"deco": "FZC4core10gameobject10GameObject",
-						"name": "this",
-						"originalType": "()",
-						"endline": 26
+						"endline": 23
 					},
 					{
 						"kind": "constructor",
 						"line": 28,
+						"deco": "FZC4core10gameobject10GameObject",
+						"name": "this",
+						"comment": "\n Creates basic GameObject with transform and connection to transform's emitter.\n\t \n",
+						"originalType": "()",
+						"endline": 32
+					},
+					{
+						"kind": "constructor",
+						"line": 37,
 						"deco": "FC8graphics7shaders7ishader7IShaderZC4core10gameobject10GameObject",
 						"parameters": [
 							{
@@ -1191,12 +1196,13 @@
 							}
 						],
 						"name": "this",
+						"comment": "\n Initializes GameObject with shader\n\t \n",
 						"originalType": "(IShader shader)",
-						"endline": 34
+						"endline": 43
 					},
 					{
 						"kind": "constructor",
-						"line": 36,
+						"line": 45,
 						"deco": "FS5dyaml4node4NodeZC4core10gameobject10GameObject",
 						"parameters": [
 							{
@@ -1206,42 +1212,42 @@
 						],
 						"name": "this",
 						"originalType": "(Node jsonObject)",
-						"endline": 40
+						"endline": 49
 					},
 					{
 						"kind": "destructor",
-						"line": 42,
+						"line": 51,
 						"deco": "FZv",
 						"name": "~this",
-						"endline": 51
+						"endline": 60
 					},
 					{
 						"kind": "function",
-						"line": 56,
+						"line": 65,
 						"deco": "FZv",
 						"name": "update",
 						"comment": "\n Called once per frame to update all components.\n\t \n",
-						"endline": 62
+						"endline": 71
 					},
 					{
 						"kind": "function",
-						"line": 67,
+						"line": 76,
 						"deco": "FZv",
 						"name": "draw",
 						"comment": "\n Called once per frame to draw all components.\n\t \n",
-						"endline": 73
+						"endline": 82
 					},
 					{
 						"kind": "function",
-						"line": 78,
+						"line": 87,
 						"deco": "FZv",
 						"name": "shutdown",
 						"comment": "\n Called when the game is shutting down, to shutdown all components.\n\t \n",
-						"endline": 89
+						"endline": 98
 					},
 					{
 						"kind": "function",
-						"line": 91,
+						"line": 100,
 						"deco": "FC4core10gameobject10GameObjectZv",
 						"parameters": [
 							{
@@ -1250,15 +1256,15 @@
 							}
 						],
 						"name": "onCollision",
-						"endline": 94
+						"endline": 103
 					},
 					{
 						"kind": "template",
-						"line": 96,
+						"line": 105,
 						"members": [
 							{
 								"kind": "function",
-								"line": 96,
+								"line": 105,
 								"type": "void(T newComponent)",
 								"parameters": [
 									{
@@ -1267,7 +1273,7 @@
 									}
 								],
 								"name": "addComponent",
-								"endline": 99
+								"endline": 108
 							}
 						],
 						"parameters": [
@@ -1280,14 +1286,14 @@
 					},
 					{
 						"kind": "template",
-						"line": 101,
+						"line": 110,
 						"members": [
 							{
 								"kind": "function",
-								"line": 101,
+								"line": 110,
 								"type": "T()",
 								"name": "getComponent",
-								"endline": 104
+								"endline": 113
 							}
 						],
 						"parameters": [
@@ -1300,12 +1306,12 @@
 					},
 					{
 						"kind": "mixin",
-						"line": 106,
+						"line": 115,
 						"name": "Signal!(string, string)"
 					},
 					{
 						"kind": "variable",
-						"line": 109,
+						"line": 118,
 						"protection": "private",
 						"deco": "HC14TypeInfo_ClassC10components10icomponent10IComponent",
 						"name": "componentList",
@@ -1314,7 +1320,7 @@
 					},
 					{
 						"kind": "destructor",
-						"line": 42,
+						"line": 51,
 						"deco": "FZv",
 						"name": "~this"
 					}
@@ -1322,7 +1328,8 @@
 				"name": "GameObject"
 			}
 		],
-		"name": "core.gameobject"
+		"name": "core.gameobject",
+		"comment": "\n Defines the GameObject class, to be subclassed by scripts and instantiated for static objects.\n \n"
 	},
 	{
 		"kind": "module",
@@ -1462,11 +1469,11 @@
 		"members": [
 			{
 				"kind": "template",
-				"line": 12,
+				"line": 17,
 				"members": [
 					{
 						"kind": "variable",
-						"line": 14,
+						"line": 19,
 						"init": "Field!(type, name) ~ Getter!(type, name) ~ Setter!(setterAccess, type, name, checkExpr) ~ \"\\x0a\"",
 						"type": "char[]",
 						"name": "Property"
@@ -1501,11 +1508,11 @@
 			},
 			{
 				"kind": "template",
-				"line": 30,
+				"line": 35,
 				"members": [
 					{
 						"kind": "variable",
-						"line": 32,
+						"line": 37,
 						"init": "Getter!(type, name, field) ~ Setter!(setterAccess, type, name, checkExpr, field) ~ \"\\x0a\"",
 						"type": "char[]",
 						"name": "BackedProperty"
@@ -1545,11 +1552,11 @@
 			},
 			{
 				"kind": "template",
-				"line": 46,
+				"line": 51,
 				"members": [
 					{
 						"kind": "variable",
-						"line": 48,
+						"line": 53,
 						"init": "Field!(type, name) ~ Getter!(type, name) ~ EmmittingSetter!(setterAccess, type, name, checkExpr) ~ \"\\x0a\"",
 						"type": "char[]",
 						"name": "EmmittingProperty"
@@ -1584,11 +1591,11 @@
 			},
 			{
 				"kind": "template",
-				"line": 64,
+				"line": 69,
 				"members": [
 					{
 						"kind": "variable",
-						"line": 66,
+						"line": 71,
 						"init": "Getter!(type, name, field) ~ EmmittingSetter!(setterAccess, type, name, checkExpr, field) ~ \"\\x0a\"",
 						"type": "char[]",
 						"name": "EmmittingBackedProperty"
@@ -1628,11 +1635,11 @@
 			},
 			{
 				"kind": "template",
-				"line": 81,
+				"line": 86,
 				"members": [
 					{
 						"kind": "variable",
-						"line": 83,
+						"line": 88,
 						"init": "Field!(type, name) ~ IsDirtyField!name ~ DirtyGetter!(type, name, updateFunc) ~ Setter!(setterAccess, type, name, checkExpr) ~ \"\\x0a\"",
 						"type": "char[]",
 						"name": "DirtyProperty"
@@ -1672,11 +1679,11 @@
 			},
 			{
 				"kind": "template",
-				"line": 101,
+				"line": 106,
 				"members": [
 					{
 						"kind": "variable",
-						"line": 103,
+						"line": 108,
 						"init": "IsDirtyField!name ~ DirtyGetter!(type, name, updateFunc, field) ~ Setter!(setterAccess, type, name, checkExpr, field) ~ \"\\x0a\"",
 						"type": "char[]",
 						"name": "BackedDirtyProperty"
@@ -1721,11 +1728,11 @@
 			},
 			{
 				"kind": "template",
-				"line": 119,
+				"line": 124,
 				"members": [
 					{
 						"kind": "variable",
-						"line": 121,
+						"line": 126,
 						"init": "Field!(type, name) ~ IsDirtyField!name ~ DirtyGetter!(type, name, updateFunc) ~ EmmittingSetter!(setterAccess, type, name, checkExpr) ~ \"\\x0a\"",
 						"type": "char[]",
 						"name": "EmmittingDirtyProperty"
@@ -1765,11 +1772,11 @@
 			},
 			{
 				"kind": "template",
-				"line": 139,
+				"line": 144,
 				"members": [
 					{
 						"kind": "variable",
-						"line": 141,
+						"line": 146,
 						"init": "IsDirtyField!name ~ DirtyGetter!(type, name, updateFunc, field) ~ EmmittingSetter!(setterAccess, type, name, checkExpr, field) ~ \"\\x0a\"",
 						"type": "char[]",
 						"name": "EmmittingDirtyProperty"
@@ -1814,11 +1821,11 @@
 			},
 			{
 				"kind": "template",
-				"line": 157,
+				"line": 162,
 				"members": [
 					{
 						"kind": "variable",
-						"line": 159,
+						"line": 164,
 						"init": "Field!(type, name) ~ Getter!(type, name) ~ DirtySetter!(setterAccess, type, name, dirtyField, setCond) ~ \"\\x0a\"",
 						"type": "char[]",
 						"name": "PropertySetDirty"
@@ -1858,11 +1865,11 @@
 			},
 			{
 				"kind": "template",
-				"line": 175,
+				"line": 180,
 				"members": [
 					{
 						"kind": "variable",
-						"line": 177,
+						"line": 182,
 						"init": "Field!(type, name) ~ Getter!(type, name) ~ EmmittingDirtySetter!(setterAccess, type, name, dirtyProp, checkExpr) ~ \"\\x0a\"",
 						"type": "char[]",
 						"name": "EmmittingPropertySetDirty"
@@ -1902,11 +1909,11 @@
 			},
 			{
 				"kind": "template",
-				"line": 194,
+				"line": 199,
 				"members": [
 					{
 						"kind": "variable",
-						"line": 196,
+						"line": 201,
 						"init": "Getter!(type, name, field) ~ DirtySetter!(setterAccess, type, name, dirtyField, checkExpr, field) ~ \"\\x0a\"",
 						"type": "char[]",
 						"name": "PropertySetDirty"
@@ -1951,11 +1958,11 @@
 			},
 			{
 				"kind": "template",
-				"line": 212,
+				"line": 217,
 				"members": [
 					{
 						"kind": "variable",
-						"line": 214,
+						"line": 219,
 						"init": "Getter!(type, name, field) ~ EmmittingDirtySetter!(setterAccess, type, name, dirtyField, checkExpr, field) ~ \"\\x0a\"",
 						"type": "char[]",
 						"name": "EmmittingPropertySetDirty"
@@ -2000,12 +2007,12 @@
 			},
 			{
 				"kind": "template",
-				"line": 221,
+				"line": 226,
 				"protection": "private",
 				"members": [
 					{
 						"kind": "variable",
-						"line": 223,
+						"line": 228,
 						"init": "field.length ? field : \"_\" ~ name",
 						"type": "char[]",
 						"name": "FieldName"
@@ -2028,12 +2035,12 @@
 			},
 			{
 				"kind": "template",
-				"line": 225,
+				"line": 230,
 				"protection": "private",
 				"members": [
 					{
 						"kind": "variable",
-						"line": 227,
+						"line": 232,
 						"init": "\"private \" ~ type ~ \" \" ~ FieldName!name ~ \";\"",
 						"type": "char[]",
 						"name": "Field"
@@ -2055,12 +2062,12 @@
 			},
 			{
 				"kind": "template",
-				"line": 230,
+				"line": 235,
 				"protection": "private",
 				"members": [
 					{
 						"kind": "variable",
-						"line": 232,
+						"line": 237,
 						"init": "FieldName!name ~ \"IsDirty\"",
 						"type": "char[]",
 						"name": "DirtyFieldName"
@@ -2077,12 +2084,12 @@
 			},
 			{
 				"kind": "template",
-				"line": 234,
+				"line": 239,
 				"protection": "private",
 				"members": [
 					{
 						"kind": "variable",
-						"line": 236,
+						"line": 241,
 						"init": "\"public bool \" ~ DirtyFieldName!name ~ \" = false;\"",
 						"type": "char[]",
 						"name": "IsDirtyField"
@@ -2099,12 +2106,12 @@
 			},
 			{
 				"kind": "template",
-				"line": 239,
+				"line": 244,
 				"protection": "private",
 				"members": [
 					{
 						"kind": "variable",
-						"line": 241,
+						"line": 246,
 						"init": "\"public @property \" ~ type ~ \" \" ~ name ~ \"(){\" ~ \"return \" ~ FieldName!(name, fieldName) ~ \"; }\"",
 						"type": "char[]",
 						"name": "Getter"
@@ -2132,12 +2139,12 @@
 			},
 			{
 				"kind": "template",
-				"line": 245,
+				"line": 250,
 				"protection": "private",
 				"members": [
 					{
 						"kind": "variable",
-						"line": 247,
+						"line": 252,
 						"init": "\"public @property \" ~ type ~ \" \" ~ name ~ \"() {\" ~ \"if( \" ~ DirtyFieldName!name ~ \" ) {\" ~ dirtyUpdateFunc ~ \"();\" ~ DirtyFieldName!name ~ \" = false; }\" ~ \"return \" ~ FieldName!(name, fieldName) ~ \"; }\"",
 						"type": "char[]",
 						"name": "DirtyGetter"
@@ -2170,12 +2177,12 @@
 			},
 			{
 				"kind": "template",
-				"line": 254,
+				"line": 259,
 				"protection": "private",
 				"members": [
 					{
 						"kind": "variable",
-						"line": 256,
+						"line": 261,
 						"init": "access ~ \" @property void \" ~ name ~ \"( \" ~ type ~ \" _newVal ) {\"",
 						"type": "char[]",
 						"name": "SetterHeader"
@@ -2202,12 +2209,12 @@
 			},
 			{
 				"kind": "template",
-				"line": 258,
+				"line": 263,
 				"protection": "private",
 				"members": [
 					{
 						"kind": "variable",
-						"line": 260,
+						"line": 265,
 						"init": "FieldName!(name, fieldName) ~ \" = _newVal;\"",
 						"type": "char[]",
 						"name": "SetterAssignment"
@@ -2230,12 +2237,12 @@
 			},
 			{
 				"kind": "template",
-				"line": 262,
+				"line": 267,
 				"protection": "private",
 				"members": [
 					{
 						"kind": "variable",
-						"line": 264,
+						"line": 269,
 						"init": "setCond ~ \" && _newVal != \" ~ FieldName!(name, fieldName)",
 						"type": "char[]",
 						"name": "SetterCond"
@@ -2262,12 +2269,12 @@
 			},
 			{
 				"kind": "template",
-				"line": 266,
+				"line": 271,
 				"protection": "private",
 				"members": [
 					{
 						"kind": "variable",
-						"line": 268,
+						"line": 273,
 						"init": "\"emit( \\\"\" ~ name ~ \"\\\", to!string( _newVal ) );\"",
 						"type": "char[]",
 						"name": "SetterEmit"
@@ -2284,12 +2291,12 @@
 			},
 			{
 				"kind": "template",
-				"line": 270,
+				"line": 275,
 				"protection": "private",
 				"members": [
 					{
 						"kind": "variable",
-						"line": 272,
+						"line": 277,
 						"init": "SetterHeader!(access, type, name) ~ \"if( \" ~ SetterCond!(setCond, name, fieldName) ~ \" ) { \" ~ SetterAssignment!(name, fieldName) ~ \" } }\"",
 						"type": "char[]",
 						"name": "Setter"
@@ -2327,12 +2334,12 @@
 			},
 			{
 				"kind": "template",
-				"line": 277,
+				"line": 282,
 				"protection": "private",
 				"members": [
 					{
 						"kind": "variable",
-						"line": 279,
+						"line": 284,
 						"init": "SetterHeader!(access, type, name) ~ \"if( \" ~ SetterCond!(setCond, name, fieldName) ~ \" ) { \" ~ SetterAssignment!(name, fieldName) ~ SetterEmit!name ~ \" } }\"",
 						"type": "char[]",
 						"name": "EmmittingSetter"
@@ -2370,12 +2377,12 @@
 			},
 			{
 				"kind": "template",
-				"line": 285,
+				"line": 290,
 				"protection": "private",
 				"members": [
 					{
 						"kind": "variable",
-						"line": 287,
+						"line": 292,
 						"init": "SetterHeader!(access, type, name) ~ \"if( \" ~ SetterCond!(setCond, name, fieldName) ~ \" ) { \" ~ SetterAssignment!(name, fieldName) ~ DirtyFieldName!dirtyField ~ \" = true; } }\"",
 						"type": "char[]",
 						"name": "DirtySetter"
@@ -2418,12 +2425,12 @@
 			},
 			{
 				"kind": "template",
-				"line": 293,
+				"line": 298,
 				"protection": "private",
 				"members": [
 					{
 						"kind": "variable",
-						"line": 295,
+						"line": 300,
 						"init": "SetterHeader!(access, type, name) ~ \"if( \" ~ SetterCond!(setCond, name, fieldName) ~ \" ) { \" ~ SetterAssignment!(name, fieldName) ~ SetterEmit!name ~ DirtyFieldName!dirtyField ~ \" = true; } }\"",
 						"type": "char[]",
 						"name": "EmmittingDirtySetter"
@@ -2465,7 +2472,8 @@
 				"name": "EmmittingDirtySetter"
 			}
 		],
-		"name": "core.properties"
+		"name": "core.properties",
+		"comment": "\n Defineds template mixins for defining properties in classes.\n\n Authors: Colden Cullen, ColdenCullen@gmail.com\n \n"
 	},
 	{
 		"kind": "module",

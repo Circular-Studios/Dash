@@ -107,6 +107,21 @@
 				<a href="../../utility/time.html">utility.time</a>
 			</li>
 			</ul>
+			<noscript>
+				<p style="color: red">The search functionality needs JavaScript enabled</p>
+			</noscript>
+			<div id="symbolSearchPane" style="display: none">
+				<p>
+					<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+				</p>
+				<ul id="symbolSearchResults" style="display: none"></ul>
+				<script type="application/javascript" src="../../symbols.js"></script>
+				<script type="application/javascript">
+					//<![CDATA[
+					var symbolSearchRootDir = "../../";					$('#symbolSearchPane').show();
+					//]]>
+				</script>
+			</div>
 		</nav>
 		<div id="main-contents">
 			<h1>Field FilePath.Resources.Config</h1><!-- using block body in layout.dt--><!-- using block ddox.description in ddox.layout.dt-->

@@ -107,6 +107,21 @@
 				<a href="./utility/time.html">utility.time</a>
 			</li>
 			</ul>
+			<noscript>
+				<p style="color: red">The search functionality needs JavaScript enabled</p>
+			</noscript>
+			<div id="symbolSearchPane" style="display: none">
+				<p>
+					<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+				</p>
+				<ul id="symbolSearchResults" style="display: none"></ul>
+				<script type="application/javascript" src="./symbols.js"></script>
+				<script type="application/javascript">
+					//<![CDATA[
+					var symbolSearchRootDir = "./";					$('#symbolSearchPane').show();
+					//]]>
+				</script>
+			</div>
 		</nav>
 		<div id="main-contents">
 			<h1>API documentation</h1><!-- using block body in layout.dt--><!-- Default block ddox.description in ddox.layout.dt--><!-- Default block ddox.sections in ddox.layout.dt--><!-- using block ddox.members in ddox.layout.dt-->
@@ -121,6 +136,7 @@
 					<a href="./components/assets.html">components.assets</a>
 				</td>
 				<td>
+ Defines <a href="./components/assets/Assets.html"><code class="prettyprint lang-d">Assets</code></a>, a static class which manages all textures, meshes, etc...
 
 				</td>
 			</tr>
@@ -129,6 +145,7 @@
 					<a href="./components/camera.html">components.camera</a>
 				</td>
 				<td>
+ Defines the <a href="./components/camera/Camera.html"><code class="prettyprint lang-d">Camera</code></a> class, which controls the view matrix for the world.
 
 				</td>
 			</tr>
@@ -137,6 +154,7 @@
 					<a href="./components/icomponent.html">components.icomponent</a>
 				</td>
 				<td>
+ Defines the <a href="./components/icomponent/IComponent.html"><code class="prettyprint lang-d">IComponent</code></a> abstract class, which is the base for all components.
 
 				</td>
 			</tr>
@@ -145,6 +163,7 @@
 					<a href="./components/mesh.html">components.mesh</a>
 				</td>
 				<td>
+ Defines the <a href="./components/mesh/Mesh.html"><code class="prettyprint lang-d">Mesh</code></a> class, which controls all meshes loaded into the world.
 
 				</td>
 			</tr>
@@ -153,6 +172,7 @@
 					<a href="./components/texture.html">components.texture</a>
 				</td>
 				<td>
+ Defines <a href="./components/texture/Texture.html"><code class="prettyprint lang-d">Texture</code></a>, which contains info for a texture loaded into the world.
 
 				</td>
 			</tr>
@@ -161,6 +181,7 @@
 					<a href="./core/dgame.html">core.dgame</a>
 				</td>
 				<td>
+ Defines <a href="./core/dgame/DGame.html"><code class="prettyprint lang-d">DGame</code></a>, the base class for all game logic.
 
 				</td>
 			</tr>
@@ -169,6 +190,7 @@
 					<a href="./core/gameobject.html">core.gameobject</a>
 				</td>
 				<td>
+ Defines the <a href="./core/gameobject/GameObject.html"><code class="prettyprint lang-d">GameObject</code></a> class, to be subclassed by scripts and instantiated for static objects.
 
 				</td>
 			</tr>
@@ -185,6 +207,7 @@
 					<a href="./core/properties.html">core.properties</a>
 				</td>
 				<td>
+ Defineds template mixins for defining properties in classes.
 
 				</td>
 			</tr>

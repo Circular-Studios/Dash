@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/><!-- using block title in layout.dt--><!-- using block ddox.defs in ddox.layout.dt--><!-- using block ddox.title in ddox.layout.dt-->
-		<title>Method Mesh.vertexSize</title>
+		<title>Field Mesh.VertexSize</title>
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
@@ -107,17 +107,37 @@
 				<a href="../../utility/time.html">utility.time</a>
 			</li>
 			</ul>
+			<noscript>
+				<p style="color: red">The search functionality needs JavaScript enabled</p>
+			</noscript>
+			<div id="symbolSearchPane" style="display: none">
+				<p>
+					<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+				</p>
+				<ul id="symbolSearchResults" style="display: none"></ul>
+				<script type="application/javascript" src="../../symbols.js"></script>
+				<script type="application/javascript">
+					//<![CDATA[
+					var symbolSearchRootDir = "../../";					$('#symbolSearchPane').show();
+					//]]>
+				</script>
+			</div>
 		</nav>
 		<div id="main-contents">
-			<h1>Method Mesh.vertexSize</h1><!-- using block body in layout.dt--><!-- Default block ddox.description in ddox.layout.dt--><!-- Default block ddox.sections in ddox.layout.dt--><!-- using block ddox.members in ddox.layout.dt-->
+			<h1>Field Mesh.VertexSize</h1><!-- using block body in layout.dt--><!-- using block ddox.description in ddox.layout.dt-->
 			<p></p>
 
 			<section>
-				<h2>Prototype</h2>
+				<h2>Declaration</h2>
 				<pre class="code prettyprint lang-d prototype">
-uint vertexSize() @property static;</pre>
-			</section>
-
+class <a href="../../components/mesh/Mesh.html">Mesh</a>
+{
+	// ...
+	<code class="prettyprint lang-d">uint</code> VertexSize;
+	// ...
+}</pre>
+			</section><!-- using block ddox.sections in ddox.layout.dt-->
+<!-- Default block ddox.members in ddox.layout.dt-->
 			<section>
 				<h2>Authors</h2><!-- using block ddox.authors in ddox.layout.dt-->
 

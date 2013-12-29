@@ -107,10 +107,28 @@
 				<a href="../utility/time.html">utility.time</a>
 			</li>
 			</ul>
+			<noscript>
+				<p style="color: red">The search functionality needs JavaScript enabled</p>
+			</noscript>
+			<div id="symbolSearchPane" style="display: none">
+				<p>
+					<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+				</p>
+				<ul id="symbolSearchResults" style="display: none"></ul>
+				<script type="application/javascript" src="../symbols.js"></script>
+				<script type="application/javascript">
+					//<![CDATA[
+					var symbolSearchRootDir = "../";					$('#symbolSearchPane').show();
+					//]]>
+				</script>
+			</div>
 		</nav>
 		<div id="main-contents">
 			<h1>Module components.icomponent</h1><!-- using block body in layout.dt--><!-- using block ddox.description in ddox.layout.dt-->
-			<p></p>
+			<p> Defines the <a href="../components/icomponent/IComponent.html"><code class="prettyprint lang-d">IComponent</code></a> abstract class, which is the base for all components.
+</p>
+<section>
+</section>
 <!-- using block ddox.sections in ddox.layout.dt-->
 			<section></section><!-- using block ddox.members in ddox.layout.dt-->
 			<section>

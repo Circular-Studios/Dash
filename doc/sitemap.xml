@@ -41,7 +41,7 @@
 <url><loc>http://127.0.0.1/components/mesh/Mesh.shutdown.html</loc></url>
 <url><loc>http://127.0.0.1/components/mesh/Mesh.this.html</loc></url>
 <url><loc>http://127.0.0.1/components/mesh/Mesh.update.html</loc></url>
-<url><loc>http://127.0.0.1/components/mesh/Mesh.vertexSize.html</loc></url>
+<url><loc>http://127.0.0.1/components/mesh/Mesh.VertexSize.html</loc></url>
 <url><loc>http://127.0.0.1/components/icomponent/IComponent.owner.html</loc></url>
 <url><loc>http://127.0.0.1/components/icomponent/IComponent.owner.html</loc></url>
 <url><loc>http://127.0.0.1/components/mesh/Mesh.glIndexBuffer.html</loc></url>

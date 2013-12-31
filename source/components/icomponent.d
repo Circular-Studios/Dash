@@ -31,5 +31,5 @@ abstract class IComponent
 	/**
 	 * The GameObject that owns this component.
 	 */
-	mixin( Property!( "GameObject", "owner", "protected" ) );
+	mixin Property!( "GameObject", "owner", "protected" );
 }

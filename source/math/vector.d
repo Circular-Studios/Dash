@@ -149,16 +149,16 @@ public:
 
 	static if( S >= 2 )
 	{
-		mixin( EmmittingBackedProperty!( "float", "values[0]", "x", "public" ) );
-		mixin( EmmittingBackedProperty!( "float", "values[1]", "y", "public" ) );
+		mixin EmmittingBackedProperty!( "float", "values[0]", "x", "public" );
+		mixin EmmittingBackedProperty!( "float", "values[1]", "y", "public" );
 	}
 	static if( S >= 3 )
 	{
-		mixin( EmmittingBackedProperty!( "float", "values[2]", "z", "public" ) );
+		mixin EmmittingBackedProperty!( "float", "values[2]", "z", "public" );
 	}
 	static if( S >= 4 )
 	{
-		mixin( EmmittingBackedProperty!( "float", "values[3]", "w", "public" ) );
+		mixin EmmittingBackedProperty!( "float", "values[3]", "w", "public" );
 	}
 
 	static if( S == 2 )

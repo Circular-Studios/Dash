@@ -57,9 +57,9 @@ public:
 
 	}
 
-	mixin( EmmittingProperty!( "Vector!3", "position" ) );
-	mixin( EmmittingProperty!( "Quaternion", "rotation" ) );
-	mixin( EmmittingProperty!( "Vector!3", "scale" ) );
+	mixin EmmittingProperty!( "Vector!3", "position" );
+	mixin EmmittingProperty!( "Quaternion", "rotation" );
+	mixin EmmittingProperty!( "Vector!3", "scale" );
 
 	mixin Signal!( string, string );
 }

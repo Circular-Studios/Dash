@@ -14,11 +14,11 @@ import std.stdio, std.stream;
 class Mesh : IComponent
 {
 public:
-	mixin( Property!( "uint", "glVertexArray" ) );
-	mixin( Property!( "uint", "numVertices" ) );
-	mixin( Property!( "uint", "numIndices" ) );
-	mixin( BackedProperty!( "uint", "_glIndexBuffer", "glIndexBuffer" ) );
-	mixin( BackedProperty!( "uint", "_glVertexBuffer", "glVertexBuffer" ) );
+	mixin Property!( "uint", "glVertexArray" );
+	mixin Property!( "uint", "numVertices" );
+	mixin Property!( "uint", "numIndices" );
+	mixin BackedProperty!( "uint", "_glIndexBuffer", "glIndexBuffer" );
+	mixin BackedProperty!( "uint", "_glVertexBuffer", "glVertexBuffer" );
 	enum VertexSize = float.sizeof * 8u;
 
 	this( string filePath )

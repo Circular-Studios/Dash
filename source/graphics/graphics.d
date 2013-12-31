@@ -12,7 +12,7 @@ public:
 	/**
 	 * The currently active adapter type.
 	 */
-	mixin( Property!( "GraphicsAdapter", "activeAdapter" ) );
+	mixin Property!( "GraphicsAdapter", "activeAdapter" );
 
 	/**
 	 * A pointer to the currently active adapter.

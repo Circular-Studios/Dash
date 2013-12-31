@@ -16,11 +16,11 @@ public:
 	/**
 	 * The shader this object uses to draw.
 	 */
-	mixin( Property!( "IShader", "shader", "public" ) );
+	mixin Property!( "IShader", "shader", "public" );
 	/**
 	 * The current transform of the object.
 	 */
-	mixin( Property!( "Transform", "transform", "public" ) );
+	mixin Property!( "Transform", "transform", "public" );
 	mixin Signal!( string, string );
 
 	/**

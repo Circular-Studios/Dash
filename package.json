@@ -25,7 +25,7 @@
 					"targetType": "dynamicLibrary",
 					"mainSourceFile": "source/app.d",
 					"libs": [
-						"gdi32", "user32",
+						"phobos", "gdi32", "user32",
 						"ole32", "kernel32", "user32", "comctl32", "comdlg32" 
 					]
 				},
@@ -42,7 +42,6 @@
 			"name": "bootstrapper",
 			"targetPath": "bin/",
 			"targetName": "bootstrapper",
-			"libs": [ "phobos" ],
 			"versions": [ "Bootstrapper" ],
 			"sourcePaths": [ "source/bootstrapper" ],
 			"importPaths": [ "source/bootstrapper" ],

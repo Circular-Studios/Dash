@@ -2,6 +2,7 @@ module graphics.adapters.opengl.opengl;
 import core.properties;
 import graphics.graphics;
 import graphics.adapters.adapter;
+import utility.config;
 
 import derelict.opengl3.gl3;
 
@@ -34,7 +35,7 @@ public:
 		resize();
 
         // Enable back face culling
-        //if( Config.getData!bool( "graphics.backfaceculling" ) )
+		if( Config.get!bool( "Graphics.BackfaceCulling" ) )
         {
 			glEnable( GL_CULL_FACE );
 			glCullFace( GL_BACK );

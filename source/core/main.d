@@ -37,14 +37,10 @@ else version( Posix )
 
 export uint DGameEntry()
 {
-	writeln( "DGameEntry()" );
-
-	/*
 	if( !mainGame )
 		mainGame = new DGame;
 
 	mainGame.run();
-	*/
 
 	return 0;
 }

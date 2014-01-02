@@ -12,7 +12,7 @@ void main()
 
 	do
 	{
-		auto lib = Runtime.loadLibrary( "dvelop_d.dll" );
+		auto lib = Runtime.loadLibrary( "dvelop.dll" );
 
 		version( Windows )
 		{

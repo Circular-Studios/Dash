@@ -5,7 +5,6 @@ module core.gameobject;
 import core.properties;
 import components.icomponent;
 import graphics.shaders.ishader;
-import scripting.scripts;
 import utility.config;
 import math.transform;
 
@@ -37,8 +36,8 @@ public:
 		string className = Config.get!string( "Script.ClassName", yamlObject );
 		if( className is null )
 			obj = new GameObject;
-		else
-			obj = Scripts.callCtor!GameObject( className );
+		//else
+		//	obj = Scripts.callCtor!GameObject( className );
 
 		return obj;
 	}

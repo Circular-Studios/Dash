@@ -9,6 +9,6 @@ import utility.output;
 		Output.printMessage( OutputType.Info, "Initializing..." );
 	}
 	override void update() { }
-	override void draw()	{ }
+	override void draw() { }
 	override void shutdown() { }
 }

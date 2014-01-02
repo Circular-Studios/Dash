@@ -5,7 +5,6 @@ module core.dgame;
 import core.gameobjectcollection;
 import components.assets;
 import graphics.graphics;
-import scripting.scripts;
 import utility.time, utility.config, utility.output;
 
 enum GameState { Menu = 0, Game = 1, Reset = 2, Quit = 3 };
@@ -117,7 +116,6 @@ private:
 
 		Config.initialize();
 		Output.initialize();
-		Scripts.initialize();
 		Graphics.initialize();
 		Assets.initialize();
 		//Physics.initialize();

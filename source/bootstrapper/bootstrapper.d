@@ -1,0 +1,6 @@
+module bootstrapper;
+
+void main()
+{
+
+}

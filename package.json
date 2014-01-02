@@ -3,31 +3,50 @@
 	"description": "Helps you make vidja games.",
 	"copyright": "Copyright © 2013",
 	"authors": [ "Colden Cullen" ],
-	"dependencies": {
-		"derelict-gl3": "~master",
-		"derelict-fi": "~master",
-		"dyaml": "~master"
-	},
-	"importPaths": [
-		"source/",
-		"third_party/DWinProgramming/WindowsAPI"
-	],
-	"configurations": [
+	"subPackages": [
 		{
-			"name": "windows-app",
-			"targetType": "executable",
-			"mainSourceFile": "source/app.d",
-			"libs": [
-				"gdi32", "user32",
-				"ole32", "kernel32", "user32", "comctl32", "comdlg32" 
-			]
+			"name": "engine",
+			"importPaths": [ "source" ],
+			"targetPath": "bin/",
+			"targetName": "dvelop",
+			"dependencies": {
+				"derelict-gl3": "~master",
+				"derelict-fi": "~master",
+				"dyaml": "~master"
+			},
+			"sourcePaths": [ "source" ],
+			"importPaths": [
+				"source/",
+				"third_party/DWinProgramming/WindowsAPI"
+			],
+			"configurations": [
+				{
+					"name": "windows",
+					"targetType": "library",
+					"mainSourceFile": "source/app.d",
+					"libs": [
+						"gdi32", "user32",
+						"ole32", "kernel32", "user32", "comctl32", "comdlg32" 
+					]
+				},
+				{
+					"name": "osx",
+					"platforms": [ "osx" ],
+					"targetType": "library",
+					"mainSourceFile": "source/app.d"
+				}
+			],
+			"mainSourceFile": "source/app.d"
 		},
 		{
-			"name": "osx-app",
-			"platforms": [ "osx" ],
-			"targetName": "Dvelop",
-			"targetType": "executable",
-			"mainSourceFile": "source/app.d"
+			"name": "bootstrapper",
+			"targetPath": "bin/",
+			"targetName": "bootstrapper",
+			"libs": [ "phobos" ],
+			"versions": [ "Bootstrapper" ],
+			"sourcePaths": [ "source/bootstrapper" ],
+			"importPaths": [ "source/bootstrapper" ],
+			"mainSourceFile": "source/bootstrapper/bootstrapper.d"
 		}
 	],
 	"buildTypes": {
@@ -44,6 +63,5 @@
 				"rm -f doc/__dummy.html doc/doc.json"
 			]
 		}
-	},
-	"targetPath": "bin/"
+	}
 }

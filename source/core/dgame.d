@@ -10,6 +10,8 @@ import utility.time, utility.config, utility.output;
 
 enum GameState { Menu = 0, Game = 1, Reset = 2, Quit = 3 };
 
+DGame mainGame;
+
 class DGame
 {
 public:
@@ -147,5 +149,13 @@ private:
 		Assets.initialize();
 
 		initialize();
+	}
+}
+
+struct Game( T )
+{
+	static this()
+	{
+		mainGame = new T;
 	}
 }

@@ -14,15 +14,15 @@
 				"derelict-fi": "~master",
 				"dyaml": "~master"
 			},
-			"sourcePaths": [ "source" ],
 			"importPaths": [
 				"source/",
 				"third_party/DWinProgramming/WindowsAPI"
 			],
+			"excludedSourceFiles": [ "source/bootstrapper/*" ],
 			"configurations": [
 				{
 					"name": "windows",
-					"targetType": "library",
+					"targetType": "dynamicLibrary",
 					"mainSourceFile": "source/app.d",
 					"libs": [
 						"gdi32", "user32",

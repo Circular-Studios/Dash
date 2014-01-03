@@ -26,12 +26,12 @@ public:
 
 	mixin Signal!( string, string );
 
-	mixin( EmmittingPropertySetDirty!( "float", "x", "matrix", "public" ) );
-	mixin( EmmittingPropertySetDirty!( "float", "y", "matrix", "public" ) );
-	mixin( EmmittingPropertySetDirty!( "float", "z", "matrix", "public" ) );
-	mixin( EmmittingPropertySetDirty!( "float", "w", "matrix", "public" ) );
+	mixin EmmittingPropertySetDirty!( "float", "x", "matrix", "public" );
+	mixin EmmittingPropertySetDirty!( "float", "y", "matrix", "public" );
+	mixin EmmittingPropertySetDirty!( "float", "z", "matrix", "public" );
+	mixin EmmittingPropertySetDirty!( "float", "w", "matrix", "public" );
 
-	mixin( DirtyProperty!( "Matrix!4", "matrix", "updateMatrix" ) );
+	mixin DirtyProperty!( "Matrix!4", "matrix", "updateMatrix" );
 
 	Quaternion opBinary( string op ) ( Quaternion rhs )
 	{

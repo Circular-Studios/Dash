@@ -12,8 +12,8 @@ import derelict.freeimage.freeimage;
 class Texture : IComponent
 {
 public:
-	mixin( Property!( "uint", "width" ) );
-	mixin( Property!( "uint", "height" ) );
+	mixin Property!( "uint", "width" );
+	mixin Property!( "uint", "height" );
 
 	this( string filePath )
 	{	
@@ -74,7 +74,7 @@ public:
 		}
 	}
 
-	mixin( BackedProperty!( "uint", "_glId", "glId" ) );
+	mixin BackedProperty!( "uint", "_glId", "glId" );
 
 	union
 	{

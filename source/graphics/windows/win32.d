@@ -68,8 +68,8 @@ public:
 		return opengl;
 	}
 
-	mixin( Property!( "HWND", "hWnd" ) );
-	mixin( Property!( "HINSTANCE", "hInstance" ) );
+	mixin Property!( "HWND", "hWnd" );
+	mixin Property!( "HINSTANCE", "hInstance" );
 
 	override void initialize()
 	{

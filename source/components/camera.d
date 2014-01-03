@@ -15,7 +15,7 @@ public:
 	/**
 	 * The view matrix of the camera.
 	 */
-	mixin( Property!( "Matrix!4", "viewMatrix" ) );
+	mixin Property!( "Matrix!4", "viewMatrix" );
 	
 	mixin Signal!( string, string );
 

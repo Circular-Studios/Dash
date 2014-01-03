@@ -14,13 +14,11 @@ public:
  * 		setterAccess =	[private] The access modifier of the setter.
  * 		checkExpr =		[true] The expression to evaluate when setting the property.
  */
-template Property( string type, string name, string setterAccess = "private", string checkExpr = "true" )
+mixin template Property( string type, string name, string setterAccess = "private", string checkExpr = "true" )
 {
-	immutable char[] Property =
-		Field!( type, name ) ~
-		Getter!( type, name ) ~
-		Setter!( setterAccess, type, name, checkExpr ) ~
-		"\n";
+	mixin( Field!( type, name ) );
+	mixin( Getter!( type, name ) );
+	mixin( Setter!( setterAccess, type, name, checkExpr ) );
 }
 
 /**
@@ -32,12 +30,10 @@ template Property( string type, string name, string setterAccess = "private", st
  * 		setterAccess =	[private] The access modifier of the setter.
  * 		checkExpr =		[true] The expression to evaluate when setting the property.
  */
-template BackedProperty( string type, string field, string name, string setterAccess = "private", string checkExpr = "true" )
+mixin template BackedProperty( string type, string field, string name, string setterAccess = "private", string checkExpr = "true" )
 {
-	immutable char[] BackedProperty = 
-		Getter!( type, name, field ) ~
-		Setter!( setterAccess, type, name, checkExpr, field ) ~
-		"\n";
+	mixin( Getter!( type, name, field ) );
+	mixin( Setter!( setterAccess, type, name, checkExpr, field ) );
 }
 
 /**
@@ -48,13 +44,11 @@ template BackedProperty( string type, string field, string name, string setterAc
  * 		setterAccess =	[private] The access modifier of the setter.
  * 		checkExpr =		[true] The expression to evaluate when setting the property.
  */
-template EmmittingProperty( string type, string name, string setterAccess = "private", string checkExpr = "true" )
+mixin template EmmittingProperty( string type, string name, string setterAccess = "private", string checkExpr = "true" )
 {
-	immutable char[] EmmittingProperty = 
-		Field!( type, name ) ~
-		Getter!( type, name ) ~
-		EmmittingSetter!( setterAccess, type, name, checkExpr ) ~
-		"\n";
+	mixin( Field!( type, name ) );
+	mixin( Getter!( type, name ) );
+	mixin( EmmittingSetter!( setterAccess, type, name, checkExpr ) );
 }
 
 /**
@@ -66,12 +60,10 @@ template EmmittingProperty( string type, string name, string setterAccess = "pri
  * 		setterAccess =	[private] The access modifier of the setter.
  * 		checkExpr =		[true] The expression to evaluate when setting the property.
  */
-template EmmittingBackedProperty( string type, string field, string name, string setterAccess = "private", string checkExpr = "true" )
+mixin template EmmittingBackedProperty( string type, string field, string name, string setterAccess = "private", string checkExpr = "true" )
 {
-	immutable char[] EmmittingBackedProperty = 
-		Getter!( type, name, field ) ~
-		EmmittingSetter!( setterAccess, type, name, checkExpr, field ) ~
-		"\n";
+	mixin( Getter!( type, name, field ) );
+	mixin( EmmittingSetter!( setterAccess, type, name, checkExpr, field ) );
 }
 
 /**
@@ -83,14 +75,12 @@ template EmmittingBackedProperty( string type, string field, string name, string
  * 		setterAccess =	[private] The access modifier of the setter.
  * 		checkExpr =		[true] The expression to evaluate when setting the property.
  */
-template DirtyProperty( string type, string name, string updateFunc, string setterAccess = "private", string checkExpr = "true" )
+mixin template DirtyProperty( string type, string name, string updateFunc, string setterAccess = "private", string checkExpr = "true" )
 {
-	immutable char[] DirtyProperty =
-		Field!( type, name ) ~
-		IsDirtyField!name ~
-		DirtyGetter!( type, name, updateFunc ) ~
-		Setter!( setterAccess, type, name, checkExpr ) ~
-		"\n";
+	mixin( Field!( type, name ) );
+	mixin( IsDirtyField!name );
+	mixin( DirtyGetter!( type, name, updateFunc ) );
+	mixin( Setter!( setterAccess, type, name, checkExpr ) );
 }
 
 /**
@@ -103,13 +93,11 @@ template DirtyProperty( string type, string name, string updateFunc, string sett
  * 		setterAccess =	[private] The access modifier of the setter.
  * 		checkExpr =		[true] The expression to evaluate when setting the property.
  */
-template BackedDirtyProperty( string type, string field, string name, string updateFunc, string setterAccess = "private", string checkExpr = "true" )
+mixin template BackedDirtyProperty( string type, string field, string name, string updateFunc, string setterAccess = "private", string checkExpr = "true" )
 {
-	immutable char[] BackedDirtyProperty =
-		IsDirtyField!name ~
-		DirtyGetter!( type, name, updateFunc, field ) ~
-		Setter!( setterAccess, type, name, checkExpr, field ) ~
-		"\n";
+	mixin( IsDirtyField!name );
+	mixin( DirtyGetter!( type, name, updateFunc, field ) );
+	mixin( Setter!( setterAccess, type, name, checkExpr, field ) );
 }
 
 /**
@@ -121,14 +109,12 @@ template BackedDirtyProperty( string type, string field, string name, string upd
  * 		setterAccess =	[private] The access modifier of the setter.
  * 		checkExpr =		[true] The expression to evaluate when setting the property.
  */
-template EmmittingDirtyProperty( string type, string name, string updateFunc, string setterAccess = "private", string checkExpr = "true" )
+mixin template EmmittingDirtyProperty( string type, string name, string updateFunc, string setterAccess = "private", string checkExpr = "true" )
 {
-	immutable char[] EmmittingDirtyProperty =
-		Field!( type, name ) ~
-		IsDirtyField!name ~
-		DirtyGetter!( type, name, updateFunc ) ~
-		EmmittingSetter!( setterAccess, type, name, checkExpr ) ~
-		"\n";
+	mixin( Field!( type, name ) );
+	mixin( IsDirtyField!name );
+	mixin( DirtyGetter!( type, name, updateFunc ) );
+	mixin( EmmittingSetter!( setterAccess, type, name, checkExpr ) );
 }
 
 /**
@@ -141,13 +127,11 @@ template EmmittingDirtyProperty( string type, string name, string updateFunc, st
  * 		setterAccess =	[private] The access modifier of the setter.
  * 		checkExpr =		[true] The expression to evaluate when setting the property.
  */
-template BackedEmmittingDirtyProperty( string type, string field, string name, string updateFunc, string setterAccess = "private", string checkExpr = "true" )
+mixin template BackedEmmittingDirtyProperty( string type, string field, string name, string updateFunc, string setterAccess = "private", string checkExpr = "true" )
 {
-	immutable char[] EmmittingDirtyProperty =
-		IsDirtyField!name ~
-		DirtyGetter!( type, name, updateFunc, field ) ~
-		EmmittingSetter!( setterAccess, type, name, checkExpr, field ) ~
-		"\n";
+	mixin( IsDirtyField!name );
+	mixin( DirtyGetter!( type, name, updateFunc, field ) );
+	mixin( EmmittingSetter!( setterAccess, type, name, checkExpr, field ) );
 }
 
 /**
@@ -159,13 +143,11 @@ template BackedEmmittingDirtyProperty( string type, string field, string name, s
  * 		setterAccess =	[private] The access modifier of the setter.
  * 		checkExpr =		[true] The expression to evaluate when setting the property.
  */
-template PropertySetDirty( string type, string name, string dirtyProp, string setterAccess = "private", string checkExpr = "true" )
+mixin template PropertySetDirty( string type, string name, string dirtyProp, string setterAccess = "private", string checkExpr = "true" )
 {
-	immutable char[] PropertySetDirty =
-		Field!( type, name ) ~
-		Getter!( type, name ) ~
-		DirtySetter!( setterAccess, type, name, dirtyField, setCond ) ~
-		"\n";
+	mixin( Field!( type, name ) );
+	mixin( Getter!( type, name ) );
+	mixin( DirtySetter!( setterAccess, type, name, dirtyField, setCond ) );
 }
 
 /**
@@ -177,13 +159,11 @@ template PropertySetDirty( string type, string name, string dirtyProp, string se
  * 		setterAccess =	[private] The access modifier of the setter.
  * 		checkExpr =		[true] The expression to evaluate when setting the property.
  */
-template EmmittingPropertySetDirty( string type, string name, string dirtyProp, string setterAccess = "private", string checkExpr = "true" )
+mixin template EmmittingPropertySetDirty( string type, string name, string dirtyProp, string setterAccess = "private", string checkExpr = "true" )
 {
-	immutable char[] EmmittingPropertySetDirty =
-		Field!( type, name ) ~
-		Getter!( type, name ) ~
-		EmmittingDirtySetter!( setterAccess, type, name, dirtyProp, checkExpr ) ~
-		"\n";
+	mixin( Field!( type, name ) );
+	mixin( Getter!( type, name ) );
+	mixin( EmmittingDirtySetter!( setterAccess, type, name, dirtyProp, checkExpr ) );
 }
 
 /**
@@ -196,12 +176,10 @@ template EmmittingPropertySetDirty( string type, string name, string dirtyProp, 
  * 		setterAccess =	[private] The access modifier of the setter.
  * 		checkExpr =		[true] The expression to evaluate when setting the property.
  */
-template BackedPropertySetDirty( string type, string field, string name, string dirtyProp, string setterAccess = "private", string checkExpr = "true" )
+mixin template BackedPropertySetDirty( string type, string field, string name, string dirtyProp, string setterAccess = "private", string checkExpr = "true" )
 {
-	immutable char[] PropertySetDirty =
-		Getter!( type, name, field ) ~
-		DirtySetter!( setterAccess, type, name, dirtyField, checkExpr, field ) ~
-		"\n";
+	mixin( Getter!( type, name, field ) );
+	mixin( DirtySetter!( setterAccess, type, name, dirtyField, checkExpr, field ) );
 }
 
 /**
@@ -214,15 +192,13 @@ template BackedPropertySetDirty( string type, string field, string name, string 
  * 		setterAccess =	[private] The access modifier of the setter.
  * 		checkExpr =		[true] The expression to evaluate when setting the property.
  */
-template BackedEmmittingPropertySetDirty( string type, string field, string name, string dirtyProp, string setterAccess = "private", string checkExpr = "true" )
+mixin template BackedEmmittingPropertySetDirty( string type, string field, string name, string dirtyProp, string setterAccess = "private", string checkExpr = "true" )
 {
-	immutable char[] EmmittingPropertySetDirty =
-		Getter!( type, name, field ) ~
-		EmmittingDirtySetter!( setterAccess, type, name, dirtyField, checkExpr, field ) ~
-		"\n";
+	mixin( Getter!( type, name, field ) );
+	mixin( EmmittingDirtySetter!( setterAccess, type, name, dirtyField, checkExpr, field ) );
 }
 
-private:
+//private:
 template FieldName( string name, string field = "" )
 {
 	immutable char[] FieldName = field.length ? field : "_" ~ name;

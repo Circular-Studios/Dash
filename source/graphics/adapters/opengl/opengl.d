@@ -23,7 +23,7 @@ else
 abstract class OpenGL : Adapter
 {
 public:
-	mixin( Property!( "GLRenderContext", "renderContext", "protected" ) );
+	mixin Property!( "GLRenderContext", "renderContext", "protected" );
 
 	override void resize()
 	{

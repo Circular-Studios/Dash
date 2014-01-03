@@ -9,15 +9,23 @@ import std.c.windows.windows;
 void main()
 {
 	uint result;
+	string libPath = "dvelop.dll";
 
 	do
 	{
-		auto lib = Runtime.loadLibrary( "dvelop.dll" );
+		auto lib = Runtime.loadLibrary( libPath );
+
+		if( lib is null )
+		{
+			writeln( "Unable to find library: ", libPath );
+			break;
+		}
+
+		writeln( "About to run game..." );
 
 		version( Windows )
 		{
-			auto func = ( cast(uint function())GetProcAddress( lib, "_D4core4main10DGameEntryFZk" ) );
-			result = func();
+			result = ( cast(uint function())GetProcAddress( lib, "_D4core4main10DGameEntryFZk" ) )();
 		}
 		else version( Posix )
 		{
@@ -26,7 +34,7 @@ void main()
 
 		writeln( "Finished running. Result = ", result );
 
-		//writeln( "Module unloaded. Result = ", Runtime.unloadLibrary( lib ) );
+		writeln( "Module unloaded. Result = ", Runtime.unloadLibrary( lib ) );
 
 		final switch( result )
 		{

@@ -55,7 +55,6 @@
 		},
 		{
 			"name": "bootstrapper",
-			"targetPath": "bin/",
 			"targetName": "bootstrapper",
 			"versions": [ "Bootstrapper" ],
 			"sourcePaths": [ "source/bootstrapper" ],

@@ -182,7 +182,10 @@ test-results/
 # ========================
 
 .dub/
-output/
-third_party/
 *.sln
 *.visualdproj
+*.dproj
+*.exe
+*.exe_cv
+*.dll
+*.dll_cv

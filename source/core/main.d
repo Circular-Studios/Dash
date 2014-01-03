@@ -1,9 +1,5 @@
 module core.main;
 import core.dgame;
-import utility.output;
-
-import std.stdio;
-
 import core.runtime;
 
 version( Windows )

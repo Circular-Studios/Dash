@@ -13,7 +13,7 @@ public:
 	/**
 	 * The path to the resources home folder.
 	 */
-	enum ResourceHome = "./Game";
+	enum ResourceHome = ".";
 
 	/**
 	 * Paths to the different resource files.

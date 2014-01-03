@@ -1,0 +1,14 @@
+{
+	"name": "game",
+	"description": "A D game built with Dvelop.",
+	"copyright": "Copyright © 2014, Colden Cullen",
+	"authors": [ "Colden Cullen" ],
+	"dependencies": {
+		"dvelop:engine": "~master",
+		"dvelop:bootstrapper": "~master"
+	},
+	"sourcePaths": [ "Scripts/" ],
+	"importPaths": [ "Scripts/" ],
+	"targetType": "dynamicLibrary",
+	"targetName": "dvelop"
+}

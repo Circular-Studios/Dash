@@ -86,19 +86,19 @@ protected:
 	/**
 	 * To be overridden, logic for when the game is being initalized.
 	 */
-	void initialize() { }
+	void onInitialize() { }
 	/**
 	 * To be overridden, called once per frame during the update cycle.
 	 */
-	void update() { }
+	void onUpdate() { }
 	/**
 	 * To be overridden, called once per frame during the draw cycle.
 	 */
-	void draw()	{ }
+	void onDraw() { }
 	/**
 	 * To be overridden, called when the came is closing.
 	 */
-	void shutdown() { }
+	void onShutdown() { }
 
 	//UserInterface ui;
 

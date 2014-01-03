@@ -12,7 +12,7 @@ import yaml;
 
 import std.signals, std.conv;
 
-final class GameObject
+class GameObject
 {
 public:
 	/**

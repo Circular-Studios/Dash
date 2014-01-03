@@ -8,22 +8,28 @@ import std.c.windows.windows;
 {
 	GameObjectCollection goc;
 	
-	override void initialize()
+	override void onInitialize()
 	{
 		Output.printMessage( OutputType.Info, "Initializing..." );
 
 		Input.addKeyDownEvent( VK_ESCAPE, ( uint kc ) { currentState = GameState.Quit; } );
 
-		//goc = new GameObjectCollection;
-		//goc.loadObjects;
-		//currentState = GameState.Quit;
+		goc = new GameObjectCollection;
+		goc.loadObjects;
 	}
 	
-	override void update()
+	override void onUpdate()
 	{
-		//goc.callFunction( go => go.update() );
+		goc.apply( go => go.update() );
 	}
 	
-	override void draw() { }
-	override void shutdown() { }
+	override void onDraw()
+	{
+		goc.apply( go => go.draw() );
+	}
+
+	override void onShutdown()
+	{
+		goc.apply( go => go.shutdown() );
+	}
 }

@@ -67,10 +67,10 @@ public:
 	 * 
 	 * Examples:
 	 * ---
-	 * goc.callFunction( go => go.update() );
+	 * goc.apply( go => go.update() );
 	 * ---
 	 */
-	void callFunction( void function( GameObject ) func )
+	void apply( void function( GameObject ) func )
 	{
 		foreach( value; objects.values )
 			func( value );
@@ -81,7 +81,7 @@ public:
 	 */
 	void update()
 	{
-		callFunction( go => go.update() );
+		apply( go => go.update() );
 	}
 
 	/**
@@ -89,7 +89,7 @@ public:
 	 */
 	void draw()
 	{
-		callFunction( go => go.draw() );
+		apply( go => go.draw() );
 	}
 
 private:

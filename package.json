@@ -19,6 +19,7 @@
 				"third_party/DWinProgramming/WindowsAPI"
 			],
 			"excludedSourceFiles": [ "source/bootstrapper/*" ],
+			"mainSourceFile": "source/app.d",
 			"configurations": [
 				{
 					"name": "windows",
@@ -36,7 +37,21 @@
 					"mainSourceFile": "source/app.d"
 				}
 			],
-			"mainSourceFile": "source/app.d"
+			"buildTypes": {
+				"doc": {
+					"buildOptions": [
+						"syntaxOnly"
+					],
+					"dflags": [
+						"-Dfdoc/__dummy.html", "-Xfdoc/doc.json"
+					],
+					"postBuildCommands": [
+						"dub run ddox -- filter doc/doc.json filter --ex dyaml --ex yaml --ex ddox --ex vibe --ex derelict",
+						"dub run ddox -- generate-html doc/doc.json doc/",
+						"rm -f doc/__dummy.html"
+					]
+				}
+			}
 		},
 		{
 			"name": "bootstrapper",
@@ -47,20 +62,5 @@
 			"importPaths": [ "source/bootstrapper" ],
 			"mainSourceFile": "source/bootstrapper/bootstrapper.d"
 		}
-	],
-	"buildTypes": {
-		"doc": {
-			"buildOptions": [
-				"syntaxOnly"
-			],
-			"dflags": [
-				"-Dfdoc/__dummy.html", "-Xfdoc/doc.json"
-			],
-			"postBuildCommands": [
-				"dub run ddox -- filter doc/doc.json filter --ex dyaml --ex yaml --ex ddox --ex vibe --ex derelict",
-				"dub run ddox -- generate-html doc/doc.json doc/",
-				"rm -f doc/__dummy.html doc/doc.json"
-			]
-		}
-	}
+	]
 }

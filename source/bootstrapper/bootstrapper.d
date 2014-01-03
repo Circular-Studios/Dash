@@ -21,8 +21,6 @@ void main()
 			break;
 		}
 
-		writeln( "About to run game..." );
-
 		version( Windows )
 		{
 			result = ( cast(uint function())GetProcAddress( lib, "_D4core4main10DGameEntryFZk" ) )();

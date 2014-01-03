@@ -5,6 +5,8 @@ module components.assets;
 import components.icomponent, components.mesh, components.texture;
 import utility.filepath;
 
+import derelict.freeimage.freeimage;
+
 static class Assets
 {
 static:
@@ -22,6 +24,8 @@ public:
 	 */
 	void initialize()
 	{
+		DerelictFI.load( "bin/FreeImage.dll" );
+
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Meshes ) )
 		{
 			componentShelf[ file.baseFileName ] = new Mesh( file.fullPath );

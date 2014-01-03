@@ -1,6 +1,6 @@
 module core.main;
 import core.dgame;
-import core.runtime;
+import core.runtime, core.memory;
 
 version( Windows )
 {
@@ -37,6 +37,8 @@ export uint DGameEntry()
 		mainGame = new DGame;
 
 	mainGame.run();
+
+	GC.collect();
 
 	return 0;
 }

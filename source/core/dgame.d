@@ -52,7 +52,7 @@ public:
 				//	PhysicsController.stepPhysics( Time.deltaTime );
 
 				// Do the updating of the child class.
-				update();
+				onUpdate();
 
 				//////////////////////////////////////////////////////////////////////////
 				// Draw
@@ -62,7 +62,7 @@ public:
 				Graphics.adapter.beginDraw();
 
 				// Draw in child class
-				draw();
+				onDraw();
 
 				// End drawing
 				Graphics.adapter.endDraw();
@@ -119,7 +119,7 @@ private:
 
         //ui = new UserInterface( this );
 
-        initialize();
+        onInitialize();
 	}
 
 	/**
@@ -136,7 +136,7 @@ private:
 	 */
 	void reset()
 	{
-		shutdown();
+		onShutdown();
 
 		// Stop controllers
 		Assets.shutdown();
@@ -144,7 +144,7 @@ private:
 		// Reinitialize controllers
 		Assets.initialize();
 
-		initialize();
+		onInitialize();
 	}
 }
 

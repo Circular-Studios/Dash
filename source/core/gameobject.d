@@ -36,8 +36,8 @@ public:
 		string className = Config.get!string( "Script.ClassName", yamlObject );
 		if( className is null )
 			obj = new GameObject;
-		//else
-		//	obj = Scripts.callCtor!GameObject( className );
+		else
+			obj = cast(GameObject)Object.factory( className );
 
 		return obj;
 	}

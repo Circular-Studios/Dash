@@ -7,7 +7,7 @@ class TestObject : GameObject
 	// Overridables
 	override void onUpdate()
 	{
-		Output.printMessage( OutputType.Info, "It's working!! IT'S WORKING!!!" );
+
 	}
 
 	/// Called on the draw cycle.

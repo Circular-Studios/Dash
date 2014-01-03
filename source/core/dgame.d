@@ -26,9 +26,6 @@ public:
 
         start();
 
-		auto goc = new GameObjectCollection;
-		goc.loadObjects;
-
         // Loop until there is a quit message from the window or the user.
         while( currentState != GameState.Quit )
         {

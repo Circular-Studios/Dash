@@ -104,6 +104,7 @@ public:
 		renderContext = null;
 		ReleaseDC( Win32.get().hWnd, glDeviceContext );
 		glDeviceContext = null;
+		Graphics.window.shutdown();
 	}
 
 	override void endDraw()

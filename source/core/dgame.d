@@ -5,7 +5,7 @@ module core.dgame;
 import core.gameobjectcollection;
 import components.assets;
 import graphics.graphics;
-import utility.time, utility.config, utility.output;
+import utility.time, utility.config, utility.output, utility.input;
 
 enum GameState { Menu = 0, Game = 1, Reset = 2, Quit = 3 };
 
@@ -45,7 +45,7 @@ public:
 				Time.update();
 
 				// Update input
-				//Input.update();
+				Input.update();
 
 				// Update physics
 				//if( currentState == GameState.Game )
@@ -128,6 +128,7 @@ private:
 	void stop()
 	{
 		Assets.shutdown();
+		Graphics.shutdown();
 	}
 
 	/**

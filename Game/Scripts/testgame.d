@@ -13,6 +13,7 @@ import std.c.windows.windows;
 		Output.printMessage( OutputType.Info, "Initializing..." );
 
 		Input.addKeyDownEvent( VK_ESCAPE, ( uint kc ) { currentState = GameState.Quit; } );
+		Input.addKeyDownEvent( VK_F5, ( uint kc ) { currentState = GameState.Reset; } );
 
 		goc = new GameObjectCollection;
 		goc.loadObjects;
@@ -30,6 +31,12 @@ import std.c.windows.windows;
 
 	override void onShutdown()
 	{
+		Output.printMessage( OutputType.Info, "Shutting down..." );
 		goc.apply( go => go.shutdown() );
+	}
+
+	override void onSaveState()
+	{
+		Output.printMessage( OutputType.Info, "Resetting..." );
 	}
 }

@@ -49,6 +49,7 @@ void main()
 				break;
 			case RunResult.Reset:
 				// Need to reset;
+				write( "Press enter to continue resetting." );
 				readln();
 				break;
 		}

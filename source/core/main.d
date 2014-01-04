@@ -4,6 +4,21 @@ import core.dgame;
 import std.stdio;
 import core.runtime, core.memory;
 
+export uint DGameEntry()
+{
+	if( !mainGame )
+		mainGame = new DGame;
+
+	mainGame.run();
+
+	GC.collect();
+
+	if( mainGame.currentState == GameState.Reset )
+		return 1;
+	else
+		return 0;
+}
+
 version( Windows )
 {
 	import std.c.windows.windows;
@@ -33,16 +48,4 @@ version( Windows )
 else version( Posix )
 {
 
-}
-
-export uint DGameEntry()
-{
-	if( !mainGame )
-		mainGame = new DGame;
-
-	mainGame.run();
-
-	GC.collect();
-
-	return 0;
 }

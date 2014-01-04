@@ -27,11 +27,8 @@ public:
         start();
 
         // Loop until there is a quit message from the window or the user.
-        while( currentState != GameState.Quit )
+        while( currentState != GameState.Quit && currentState != GameState.Reset )
         {
-			if( currentState == GameState.Reset )
-				reset();
-
 			//////////////////////////////////////////////////////////////////////////
 			// Update
 			//////////////////////////////////////////////////////////////////////////
@@ -66,6 +63,9 @@ public:
 			Graphics.adapter.endDraw();
         }
 
+		if( currentState == GameState.Reset )
+			saveState();
+
         stop();
 	}
 
@@ -88,6 +88,10 @@ protected:
 	 * To be overridden, called when the came is closing.
 	 */
 	void onShutdown() { }
+	/**
+	 * To be overridden, called when resetting and the state must be saved.
+	 */
+	void onSaveState() { }
 
 	//UserInterface ui;
 
@@ -116,6 +120,7 @@ private:
 	 */
 	void stop()
 	{
+		onShutdown();
 		Assets.shutdown();
 		Graphics.shutdown();
 	}
@@ -123,17 +128,9 @@ private:
 	/**
 	 * Called when engine is resetting.
 	 */
-	void reset()
+	void saveState()
 	{
-		onShutdown();
-
-		// Stop controllers
-		Assets.shutdown();
-
-		// Reinitialize controllers
-		Assets.initialize();
-
-		onInitialize();
+		onSaveState();
 	}
 }
 

@@ -56,7 +56,7 @@ public:
 
 	override int opCmp( Object o )
 	{
-		if( o.classinfo != this.classinfo )
+		if( typeid(o) != typeid(this) )
 			return 1;
 
 		auto other = cast(Vector!S)o;

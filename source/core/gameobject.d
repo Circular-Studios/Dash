@@ -3,14 +3,14 @@
  */
 module core.gameobject;
 import core.properties, core.main;
-import components.icomponent;
+import components.icomponent, components.assets, components.texture, components.mesh;
 import graphics.shaders.ishader;
 import utility.config;
-import math.transform;
+import math.transform, math.vector;
 
 import yaml;
 
-import std.signals, std.conv;
+import std.signals, std.conv, std.variant;
 
 class GameObject
 {
@@ -28,22 +28,49 @@ public:
 	/**
 	 * Create a GameObject from a Yaml node.
 	 */
-	static GameObject createFromYaml( Node yamlObject )
+	static GameObject createFromYaml( Node yamlObj )
 	{
 		GameObject obj;
+		Variant prop;
+		Node innerNode;
 
 		// Try to get from script
-		string className = Config.get!string( "Script.ClassName", yamlObject );
-		if( className is null )
-			obj = new GameObject;
+		if( Config.tryGet!string( "Script.ClassName", prop, yamlObj ) )
+			obj = cast(GameObject)Object.factory( prop.get!string );
 		else
-			obj = cast(GameObject)Object.factory( className );
+			obj = new GameObject;
+
+		if( Config.tryGet!string( "Camera", prop, yamlObj ) )
+		{
+			//TODO: Setup camera
+		}
+
+		if( Config.tryGet!string( "Texture", prop, yamlObj ) )
+			obj.addComponent( Assets.getAsset!Texture( prop.get!string ) );
+
+		if( Config.tryGet!string( "AwesomiumView", prop, yamlObj ) )
+		{
+			//TODO: Initialize Awesomium view
+		}
+
+		if( Config.tryGet!string( "Mesh", prop, yamlObj ) )
+			obj.addComponent( Assets.getAsset!Mesh( prop.get!string ) );
+
+		if( Config.tryGet( "Transform", innerNode, yamlObj ) )
+		{
+			Vector!3 transVec;
+			if( Config.tryGet( "Scale", transVec, innerNode ) )
+				obj.transform.scale = transVec;
+			if( Config.tryGet( "Position", transVec, innerNode ) )
+				obj.transform.position = transVec;
+			//TODO: Quaternion from Euler angles
+			//if( Config.tryGet( "Rotation", transVec, innerNode ) )
+			//	obj.transform.rotation = transVec;
+		}
 
 		return obj;
 	}
 
-	/**
-	 * Crea
 	/**
 	 * Creates basic GameObject with transform and connection to transform's emitter.
 	 */

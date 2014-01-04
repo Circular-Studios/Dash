@@ -4,10 +4,11 @@
 module utility.config;
 import utility.filepath;
 
-import math.vector;
+// Imports for conversions
 import core.dgame : GameState;
 import graphics.graphics : GraphicsAdapter;
 import utility.output : Verbosity;
+import math.vector, math.quaternion;
 
 import yaml;
 
@@ -20,16 +21,16 @@ static class Config
 {
 static:
 public:
-	/**
-	 * Initialize the configuration settings.
-	 */
 	void initialize()
 	{
 		constructor = new Constructor;
+
 		constructor.addConstructorScalar( "!Vector2", &constructVector2 );
 		constructor.addConstructorMapping( "!Vector2-Map", &constructVector2 );
 		constructor.addConstructorScalar( "!Vector3", &constructVector3 );
 		constructor.addConstructorMapping( "!Vector3-Map", &constructVector2 );
+		constructor.addConstructorScalar( "!Quaternion", &constructQuaternion );
+		constructor.addConstructorMapping( "!Quaternion-Map", &constructQuaternion );
 		constructor.addConstructorScalar( "!GameState", &constructConv!GameState );
 		constructor.addConstructorScalar( "!Adapter", &constructConv!GraphicsAdapter );
 		constructor.addConstructorScalar( "!Verbosity", &constructConv!Verbosity );
@@ -50,66 +51,83 @@ public:
 	/**
 	 * Get the element, cast to the given type, at the given path, in the given node.
 	 */
-	Nullable!T get( T )( string path, Node node = config )
+	T get( T )( string path, Node node = config )
+	{
+		Node current = node;
+		string left;
+		string right = path;
+
+		while( true )
+		{
+			uint split = right.indexOf( '.' );
+			if( split == -1 )
+			{
+				return current[ right ].get!T;
+			}
+			else
+			{
+				left = right[ 0..split ];
+				right = right[ split + 1..$ ];
+				current = current[ left ];
+			}
+		}
+	}
+
+	/**
+	* Try to get the value at path, assign to result, and return success.
+	*/
+	bool tryGet( T )( string path, ref T result, Node node = config )
+	{
+		Node res;
+		bool found = tryGet( path, res, node );
+		if( found )
+			result = res.get!T;
+		return found;
+	}
+
+	/// ditto
+	bool tryGet( T: Node )( string path, ref T result, Node node = config )
 	{
 		Node current;
 		string left;
 		string right = path;
 
-		try
+		for( current = node; right.length; )
 		{
-			for( current = node; right.length; )
+			int split = right.indexOf( '.' );
+
+			if( split == -1 )
 			{
-				uint split = right.indexOf( '.' );
-				if( split == -1 )
-				{
-					current = current[ right ];
-					right = "";
-					break;
-				}
-				else
-				{
-					left = right[ 0..split ];
-					right = right[ split + 1..$ ];
-					current = current[ left ];
-				}
+				left = right;
+				right.length = 0;
 			}
-		}
-		catch
-		{
-			return Nullable!T();
-		}
-		
-		return Nullable!T( current.as!T );
-	}
+			else
+			{
+				left = right[ 0..split ];
+				right = right[ split + 1..$ ];
+			}
 
-	/**
-	 * Try to get the value at path, assign to result, and return success.
-	 */
-	bool tryGet( T )( string path, ref T result, Node node = config )
-	{
-		auto gotten = get!T( path );
+			if( !current.containsKey( left ) )
+				return false;
 
-		if( !gotten.isNull )
-		{
-			result = gotten.get;
-			return true;
+			current = current[ left ];
 		}
-		else
-		{
-			return false;
-		}
+
+		result = current;
+		return true;
 	}
 
 	/// ditto
-	bool tryGet( T = string )( string path, ref Variant result, Node node = config )
+	bool tryGet( T = Node )( string path, ref Variant result, Node node = config )
 	{
 		// Get the value
 		T temp;
 		bool found = tryGet!T( path, temp, node );
 
 		// Assign and return results
-		result = temp;
+		if( found )
+			result = temp;
+
 		return found;
 	}
 
@@ -175,6 +193,35 @@ Vector!3 constructVector3( ref Node node )
 		result.x = vals[ 0 ].to!float;
 		result.y = vals[ 1 ].to!float;
 		result.z = vals[ 2 ].to!float;
+	}
+
+	return result;
+}
+
+Quaternion constructQuaternion( ref Node node )
+{
+	Quaternion result;
+
+	if( node.isMapping )
+	{
+		result.x = node[ "x" ].as!float;
+		result.y = node[ "y" ].as!float;
+		result.z = node[ "z" ].as!float;
+		result.w = node[ "w" ].as!float;
+	}
+	else if( node.isScalar )
+	{
+		string[] vals = node.as!string.split();
+
+		if( vals.length != 3 )
+		{
+			throw new Exception( "Invalid number of values: " ~ node.as!string );
+		}
+
+		result.x = vals[ 0 ].to!float;
+		result.y = vals[ 1 ].to!float;
+		result.z = vals[ 2 ].to!float;
+		result.w = vals[ 3 ].to!float;
 	}
 
 	return result;

@@ -47,19 +47,9 @@ public:
 
 	}
 
-	void translate( Vector!3 displacement )
-	{
-		translate( displacement.x, displacement.y, displacement.z );
-	}
-
-	void translate( const float x, const float y, const float z )
-	{
-
-	}
-
-	mixin EmmittingProperty!( "Vector!3", "position" );
-	mixin EmmittingProperty!( "Quaternion", "rotation" );
-	mixin EmmittingProperty!( "Vector!3", "scale" );
+	mixin EmmittingProperty!( "Vector!3", "position", "public" );
+	mixin EmmittingProperty!( "Quaternion", "rotation", "public" );
+	mixin EmmittingProperty!( "Vector!3", "scale", "public" );
 
 	mixin Signal!( string, string );
 }

@@ -13,6 +13,8 @@ import std.path;
 class GameObjectCollection
 {
 public:
+	alias objects this;
+
 	/**
 	 * Load all objects inside the specified folder in FilePath.Objects.
 	 */
@@ -35,22 +37,6 @@ public:
 			else
 				addObject( object );
 		}
-	}
-
-	/**
-	 * Get the object with the given name.
-	 */
-	GameObject opIndex( string name )
-	{
-		return objects[ name ];
-	}
-
-	/**
-	 * Remove the object with the given name.
-	 */
-	void removeObject( string name )
-	{
-		objects.remove( name );
 	}
 
 	/**

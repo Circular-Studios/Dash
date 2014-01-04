@@ -6,10 +6,19 @@ import std.stdio;
 version( Windows )
 import std.c.windows.windows;
 
+enum RunResult : uint
+{
+	Exit = 0,
+	Reset = 1
+}
+
 void main()
 {
-	uint result;
+	RunResult result;
 	string libPath = "dvelop.dll";
+
+	write( "If you want to debug, attach to bootstrapper.exe, then press any key." );
+	readln();
 
 	do
 	{
@@ -23,26 +32,24 @@ void main()
 
 		version( Windows )
 		{
-			result = ( cast(uint function())GetProcAddress( lib, "_D4core4main10DGameEntryFZk" ) )();
+			result = cast(RunResult)( cast(uint function())GetProcAddress( lib, "_D4core4main10DGameEntryFZk" ) )();
 		}
 		else version( Posix )
 		{
 			result = ( cast(uint function())dlsym( lib, "_D4core4main10DGameEntryFZk" ) )();
 		}
 
-		writeln( "Finished running. Result = ", result );
-
 		Runtime.unloadLibrary( lib );
 
 		final switch( result )
 		{
-			case 0:
+			case RunResult.Exit:
 				// Exited successfully.
 				break;
-			case 1:
+			case RunResult.Reset:
 				// Need to reset;
 				readln();
 				break;
 		}
-	} while( result == 1 );
+	} while( result == RunResult.Reset );
 }

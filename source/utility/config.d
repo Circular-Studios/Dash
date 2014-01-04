@@ -11,7 +11,7 @@ import utility.output : Verbosity;
 
 import yaml;
 
-import std.array, std.conv, std.string, std.path, std.typecons;
+import std.array, std.conv, std.string, std.path, std.typecons, std.variant;
 
 /**
  * Static class which handles the configuration options and YAML interactions.
@@ -50,7 +50,7 @@ public:
 	/**
 	 * Get the element, cast to the given type, at the given path, in the given node.
 	 */
-	T get( T )( string path, Node node = config )
+	Nullable!T get( T )( string path, Node node = config )
 	{
 		Node current;
 		string left;
@@ -82,6 +82,38 @@ public:
 		
 		return Nullable!T( current.as!T );
 	}
+
+	/**
+	 * Try to get the value at path, assign to result, and return success.
+	 */
+	bool tryGet( T )( string path, ref T result, Node node = config )
+	{
+		auto gotten = get!T( path );
+
+		if( !gotten.isNull )
+		{
+			result = gotten.get;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	/// ditto
+	bool tryGet( T = string )( string path, ref Variant result, Node node = config )
+	{
+		// Get the value
+		T temp;
+		bool found = tryGet!T( path, temp, node );
+
+		// Assign and return results
+		result = temp;
+		return found;
+	}
+
+	@disable bool tryGet( T: Variant )( string path, ref T result, Node node = config );
 
 	/**
 	 * Get element as a file path.

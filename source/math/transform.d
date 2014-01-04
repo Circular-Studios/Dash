@@ -18,6 +18,8 @@ public:
 		position.connect( &emit );
 		rotation.connect( &emit );
 		scale.connect( &emit );
+
+		connect( &setMatrixDirty );
 	}
 
 	~this()
@@ -50,6 +52,32 @@ public:
 	mixin EmmittingProperty!( "Vector!3", "position", "public" );
 	mixin EmmittingProperty!( "Quaternion", "rotation", "public" );
 	mixin EmmittingProperty!( "Vector!3", "scale", "public" );
+	mixin DirtyProperty!( "Matrix!4", "matrix", "updateMatrix" );
 
 	mixin Signal!( string, string );
+
+private:
+	void setMatrixDirty( string prop, string newVal )
+	{
+		_matrixIsDirty = true;
+	}
+
+	void updateMatrix()
+	{
+		auto newMatrix = new Matrix!4;
+
+		// Scale
+		newMatrix.matrix[ 0 ][ 0 ] = scale.x;
+		newMatrix.matrix[ 1 ][ 1 ] = scale.y;
+		newMatrix.matrix[ 2 ][ 2 ] = scale.z;
+		newMatrix.matrix[ 3 ][ 3 ] = 1.0f;
+
+		// Translate
+		newMatrix.matrix[ 3 ][ 0 ] = position.x;
+		newMatrix.matrix[ 3 ][ 1 ] = position.y;
+		newMatrix.matrix[ 3 ][ 2 ] = position.z;
+
+		// Rotate
+		matrix = newMatrix.multiply( rotation.matrix );
+	}
 }

@@ -84,11 +84,6 @@ public:
 		else static assert ( 0, "Operator " ~ op ~ " not implemented for assign " );
 	}
 
-	Matrix!4 ToRotationMatrix() 
-	{
-		return new Matrix!4( /* TO DO */ );
-	}
-
 private:
 	void updateMatrix()
 	{

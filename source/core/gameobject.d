@@ -6,7 +6,7 @@ import core.properties, core.main;
 import components.icomponent, components.assets, components.texture, components.mesh;
 import graphics.shaders.ishader;
 import utility.config;
-import math.transform, math.vector;
+import math.transform, math.vector, math.quaternion;
 
 import yaml;
 
@@ -63,9 +63,8 @@ public:
 				obj.transform.scale = transVec;
 			if( Config.tryGet( "Position", transVec, innerNode ) )
 				obj.transform.position = transVec;
-			//TODO: Quaternion from Euler angles
-			//if( Config.tryGet( "Rotation", transVec, innerNode ) )
-			//	obj.transform.rotation = transVec;
+			if( Config.tryGet( "Rotation", transVec, innerNode ) )
+				obj.transform.rotation = Quaternion.fromEulerAngles( transVec );
 		}
 
 		return obj;

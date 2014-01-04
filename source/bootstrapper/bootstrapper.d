@@ -18,7 +18,7 @@ void main()
 	RunResult result;
 	string libPath = "dvelop.dll";
 
-	write( "If you want to debug, attach to bootstrapper.exe, then press any key." );
+	write( "If you want to debug, attach to bootstrapper.exe, then press enter." );
 	readln();
 
 	do

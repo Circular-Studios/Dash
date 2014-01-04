@@ -29,52 +29,41 @@ public:
         // Loop until there is a quit message from the window or the user.
         while( currentState != GameState.Quit )
         {
-			//try
-			{
-				if( currentState == GameState.Reset )
-					reset();
+			if( currentState == GameState.Reset )
+				reset();
 
-				//////////////////////////////////////////////////////////////////////////
-				// Update
-				//////////////////////////////////////////////////////////////////////////
+			//////////////////////////////////////////////////////////////////////////
+			// Update
+			//////////////////////////////////////////////////////////////////////////
 
-				// Platform specific program stuff
-				Graphics.window.messageLoop();
+			// Platform specific program stuff
+			Graphics.window.messageLoop();
 
-				// Update time
-				Time.update();
+			// Update time
+			Time.update();
 
-				// Update input
-				Input.update();
+			// Update input
+			Input.update();
 
-				// Update physics
-				//if( currentState == GameState.Game )
-				//	PhysicsController.stepPhysics( Time.deltaTime );
+			// Update physics
+			//if( currentState == GameState.Game )
+			//	PhysicsController.stepPhysics( Time.deltaTime );
 
-				// Do the updating of the child class.
-				onUpdate();
+			// Do the updating of the child class.
+			onUpdate();
 
-				//////////////////////////////////////////////////////////////////////////
-				// Draw
-				//////////////////////////////////////////////////////////////////////////
+			//////////////////////////////////////////////////////////////////////////
+			// Draw
+			//////////////////////////////////////////////////////////////////////////
 
-				// Begin drawing
-				Graphics.adapter.beginDraw();
+			// Begin drawing
+			Graphics.adapter.beginDraw();
 
-				// Draw in child class
-				onDraw();
+			// Draw in child class
+			onDraw();
 
-				// End drawing
-				Graphics.adapter.endDraw();
-			}
-			/*
-			catch (std::exception e)
-			{
-			OutputController::PrintMessage( OutputType::OT_ERROR, e.what() );
-			system( "pause" );
-			break;
-			}
-			*/
+			// End drawing
+			Graphics.adapter.endDraw();
         }
 
         stop();

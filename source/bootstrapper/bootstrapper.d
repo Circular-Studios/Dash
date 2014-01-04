@@ -1,6 +1,7 @@
 module bootstrapper;
-import core.runtime;
+version( Bootstrapper ):
 
+import core.runtime;
 import std.stdio;
 
 version( Windows )

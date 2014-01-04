@@ -27,7 +27,7 @@ public:
 		Objects = ResourceHome ~ "/Objects",
 		Shaders = ResourceHome ~ "/Shaders",
 		UI = ResourceHome ~ "/UI",
-		Config = ResourceHome ~ "/Config.yaml"
+		Config = ResourceHome ~ "/Config.yml"
 	}
 
 	/**

@@ -1,58 +1,57 @@
 {
 	"name": "dvelop",
 	"description": "Helps you make vidja games.",
-	"copyright": "Copyright © 2013",
+	"copyright": "Copyright © 2013-2014",
 	"authors": [ "Colden Cullen" ],
-	"subPackages": [
+	"targetName": "dvelop",
+	"dependencies": {
+		"derelict-gl3": "~master",
+		"derelict-fi": "~master",
+		"dyaml": "~master"
+	},
+	"sourcePaths": [
+		"source/"
+	],
+	"importPaths": [
+		"source/",
+		"third_party/DWinProgramming/WindowsAPI"
+	],
+	"configurations": [
 		{
-			"name": "engine",
-			"importPaths": [ "source" ],
-			"targetPath": "bin/",
-			"targetName": "dvelop",
-			"dependencies": {
-				"derelict-gl3": "~master",
-				"derelict-fi": "~master",
-				"dyaml": "~master"
-			},
-			"importPaths": [
-				"source/",
-				"third_party/DWinProgramming/WindowsAPI"
-			],
-			"excludedSourceFiles": [ "source/bootstrapper/*" ],
-			"mainSourceFile": "source/app.d",
-			"configurations": [
-				{
-					"name": "windows",
-					"targetType": "dynamicLibrary",
-					"mainSourceFile": "source/app.d",
-					"libs": [
-						"phobos", "gdi32", "user32",
-						"ole32", "kernel32", "user32", "comctl32", "comdlg32" 
-					]
-				},
-				{
-					"name": "osx",
-					"platforms": [ "osx" ],
-					"targetType": "library",
-					"mainSourceFile": "source/app.d"
-				}
-			],
-			"buildTypes": {
-				"doc": {
-					"buildOptions": [
-						"syntaxOnly"
-					],
-					"dflags": [
-						"-Dfdoc/__dummy.html", "-Xfdoc/doc.json"
-					],
-					"postBuildCommands": [
-						"dub run ddox -- filter doc/doc.json filter --ex dyaml --ex yaml --ex ddox --ex vibe --ex derelict",
-						"dub run ddox -- generate-html doc/doc.json doc/",
-						"rm -f doc/__dummy.html"
-					]
-				}
-			}
+			"name": "windows",
+			"platforms": [ "windows" ],
+			"targetType": "dynamicLibrary",
+			"libs": [
+				"phobos", "gdi32", "user32",
+				"ole32", "kernel32", "user32", "comctl32", "comdlg32" 
+			]
 		},
+		{
+			"name": "osx",
+			"platforms": [ "osx" ],
+			"targetType": "dynamicLibrary",
+			"libs": [
+				"phobos"
+			]
+		}
+	],
+	"buildTypes": {
+		"doc": {
+			"buildOptions": [
+				"syntaxOnly"
+			],
+			"dflags": [
+				"-Dfdoc/__dummy.html",
+				"-Xfdoc/doc.json"
+			],
+			"postBuildCommands": [
+				"dub run ddox -- filter doc/doc.json filter --ex dyaml --ex yaml --ex ddox --ex vibe --ex derelict",
+				"dub run ddox -- generate-html doc/doc.json doc/",
+				"rm -f doc/__dummy.html"
+			]
+		}
+	},
+	"subPackages": [
 		{
 			"name": "bootstrapper",
 			"targetName": "bootstrapper",

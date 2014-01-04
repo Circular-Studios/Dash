@@ -4,8 +4,7 @@
 	"copyright": "Copyright © 2014, Colden Cullen",
 	"authors": [ "Colden Cullen" ],
 	"dependencies": {
-		"dvelop": "~master",
-		"dvelop:bootstrapper": "~master"
+		"dvelop": "~master"
 	},
 	"sourcePaths": [ "Scripts/" ],
 	"importPaths": [ "Scripts/" ],

@@ -20,6 +20,23 @@ public:
 	}
 
 	/**
+	 * Returns a swizzled vector
+	 */
+	auto opDispatch( string prop )()
+	{
+		static assert( prop.length > 1 && prop.length < S, "Invalid swizzle length." );
+
+		auto result = new Vector!( prop.length );
+
+		foreach( index, letter; prop )
+		{
+			mixin( "result.values[ index ] = " ~ prop );
+		}
+
+		return result;
+	}
+
+	/**
 		Calls other operators, and assigns results back to itself
 	*/
 	Vector!S opOpAssign( string op )( const Vector!S other ) @safe

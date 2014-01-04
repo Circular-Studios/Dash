@@ -10,7 +10,10 @@ class Quaternion
 public:
 	this()
 	{
-		this( 0.0f, 0.0f, 0.0f, 1.0f );
+		_w = 1.0f;
+		_x = 0.0f;
+		_y = 0.0f;
+		_z = 0.0f;
 	}
 
 	this( const float x, const float y, const float z, const float angle )

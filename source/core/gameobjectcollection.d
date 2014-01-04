@@ -25,7 +25,7 @@ public:
 			objects[ name ] = GameObject.createFromYaml( object );
 		}
 
-		foreach( file; FilePath.scanDirectory( buildNormalizedPath( FilePath.ResourceHome, objectPath ), "*.yml" ) )
+		foreach( file; FilePath.scanDirectory( buildNormalizedPath( FilePath.Resources.Objects, objectPath ), "*.yml" ) )
 		{
 			auto object = Config.loadYaml( file.fullPath );
 

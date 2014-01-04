@@ -32,7 +32,7 @@ void main()
 
 		writeln( "Finished running. Result = ", result );
 
-		writeln( "Module unloaded. Result = ", Runtime.unloadLibrary( lib ) );
+		Runtime.unloadLibrary( lib );
 
 		final switch( result )
 		{

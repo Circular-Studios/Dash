@@ -1,5 +1,7 @@
 module core.main;
 import core.dgame;
+
+import std.stdio;
 import core.runtime, core.memory;
 
 version( Windows )
@@ -9,6 +11,8 @@ version( Windows )
 	extern( Windows )
 	BOOL DllMain(HINSTANCE hInstance, ULONG ulReason, LPVOID pvReserved)
 	{
+		_fcloseallp = null;
+
 		final switch (ulReason)
 		{
 			case DLL_PROCESS_ATTACH:

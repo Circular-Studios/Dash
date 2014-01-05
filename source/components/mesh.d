@@ -9,7 +9,7 @@ import math.vector;
 
 import derelict.opengl3.gl3;
 
-import std.stdio, std.stream;
+import std.stdio, std.stream, std.format;
 
 class Mesh : IComponent
 {
@@ -31,7 +31,7 @@ public:
 
 		float[] outputData;
 
-		Stream file = new BufferedFile( filePath );
+		auto file = new BufferedFile( filePath );
 
 		foreach( ulong index, char[] line; file )
 		{
@@ -39,7 +39,8 @@ public:
 			{
 				float x, y, z;
 
-				sscanf( line.ptr, "v %f %f %f\n", &x, &y, &z );
+				formattedRead( line, "v %s %s %s",
+							   &x, &y, &z );
 
 				vertices ~= new Vector!3( x, y, z );
 			}
@@ -47,7 +48,8 @@ public:
 			{
 				float x, y;
 
-				sscanf( line.ptr, "vt %f %f\n", &x, &y );
+				formattedRead( line, "vt %s %s",
+							   &x, &y );
 
 				uvs ~= new Vector!2( x, y );
 			}
@@ -55,7 +57,8 @@ public:
 			{
 				float x, y, z;
 
-				sscanf( line.ptr, "vn %f %f %f\n", &x, &y, &z );
+				formattedRead( line, "vn %s %s %s",
+							   &x, &y, &z );
 
 				normals ~= new Vector!3( x, y, z );
 			}
@@ -65,10 +68,10 @@ public:
 				uint uvIndex[ 3 ];
 				uint normalIndex[ 3 ];
 
-				sscanf( line.ptr, "f %d/%d/%d %d/%d/%d %d/%d/%d\n",
-						&vertexIndex[ 0 ], &uvIndex[ 0 ], &normalIndex[ 0 ],
-						&vertexIndex[ 1 ], &uvIndex[ 1 ], &normalIndex[ 1 ],
-						&vertexIndex[ 2 ], &uvIndex[ 2 ], &normalIndex[ 2 ] );
+				formattedRead( line, "f %s/%s/%s %s/%s/%s %s/%s/%s",
+							   &vertexIndex[ 0 ], &uvIndex[ 0 ], &normalIndex[ 0 ],
+							   &vertexIndex[ 1 ], &uvIndex[ 1 ], &normalIndex[ 1 ],
+							   &vertexIndex[ 2 ], &uvIndex[ 2 ], &normalIndex[ 2 ] );
 
 				for( uint ii = 0; ii < 3; ++ii )
 				{

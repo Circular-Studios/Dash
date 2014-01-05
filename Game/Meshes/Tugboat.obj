@@ -1,8 +1,3 @@
-
-<!-- saved from url=(0087)https://raw.github.com/ColdenCullen/Project-192/master/Game/Assets/Meshes/Tugboat_1.obj -->
-<html><script type="text/javascript">window["_gaUserPrefs"] = { ioo : function() { return true; } }</script><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style id="stylish-1" class="stylish" type="text/css">@namespace url(http://www.w3.org/1999/xhtml);
-@namespace svg url(http://www.w3.org/2000/svg);</style><style type="text/css"></style></head><body style=""><pre style="word-wrap: break-word; white-space: pre-wrap;"># This file uses centimeters as units for non-parametric coordinates.
-
 v -0.000000 0.137145 0.396883
 v -0.000000 0.244819 0.449911
 v 0.071436 0.137145 0.389067
@@ -3700,4 +3695,3 @@ f 433/624/1319 374/623/1248 393/629/1320
 s 260
 f 84/183/1321 82/184/1322 76/175/1323
 f 76/175/1323 82/184/1322 78/177/1324
-</pre></body></html>

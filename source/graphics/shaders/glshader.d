@@ -2,7 +2,7 @@ module graphics.shaders.glshader;
 import components.mesh, components.texture;
 import graphics.shaders.shader;
 
-class GLShader : Shader
+package class GLShader : Shader
 {
 public:
 	this( string vertexPath, string fragmentPath )

@@ -26,6 +26,8 @@ public:
 		Prefabs = ResourceHome ~ "/Prefabs",
 		Objects = ResourceHome ~ "/Objects",
 		Shaders = ResourceHome ~ "/Shaders",
+		GLSLShaders = Shaders ~ "/glsl",
+		HLSLShaders = Shaders ~ "/hlsl",
 		UI = ResourceHome ~ "/UI",
 		Config = ResourceHome ~ "/Config.yml"
 	}
@@ -71,7 +73,7 @@ public:
 	/// The name of the file with its extension.
 	@property string fileName()		{ return std.path.baseName( _fullPath ); }
 	/// The name of the file without its extension.
-	@property string baseFileName()	{ return std.path.stripExtension( _fullPath ); }
+	@property string baseFileName()	{ return std.path.stripExtension( fileName ); }
 	/// The path to the directory containing the file.
 	@property string directory()	{ return std.path.dirName( _fullPath ); }
 	/// The extensino of the file.

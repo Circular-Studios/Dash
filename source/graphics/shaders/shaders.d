@@ -1,5 +1,5 @@
 module graphics.shaders.shaders;
-import graphics.shaders.shader, graphics.shaders.glshader, graphics.shaders.dxshader;
+import graphics.graphics, graphics.shaders.shader, graphics.shaders.glshader, graphics.shaders.dxshader;
 import utility.filepath;
 
 import std.string;
@@ -10,23 +10,30 @@ static:
 public:
 	void initialize()
 	{
-		foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders ) )
+		string path, blob;
+		if( Graphics.activeAdapter == GraphicsAdapter.OpenGL )
 		{
-			Shader shader;
-			string name = file.baseFileName.chomp( ".vs" ).chomp( ".fs" );
+			path = FilePath.Resources.GLSLShaders;
+			blob = "*.fs.glsl";
+		}
+		else if( Graphics.activeAdapter == GraphicsAdapter.DirectX )
+		{
+			path = FilePath.Resources.HLSLShaders;
+			blob = "*.fs.hlsl";
+		}
 
-			if( file.fileName.indexOf( "*.fs.glsl" ) != -1 )
-			{
-				shader = new GLShader( file.directory ~ name ~ ".vs.glsl",
-									   file.directory ~ name ~ ".fs.glsl" );
-			}
-			else if( file.fileName.indexOf( "*.fs.hlsl" ) != -1 )
-			{
-				shader = new DXShader( file.directory ~ name ~ ".vs.glsl",
-									   file.directory ~ name ~ ".fs.glsl" );
-			}
+		foreach( file; FilePath.scanDirectory( path, blob ) )
+		{
+			string name = file.baseFileName.chomp( ".fs" );
 
-			shaders[ name ] = shader;
+			if( file.fileName.indexOf( ".fs.glsl" ) != -1 )
+			{
+				shaders[ name ] = new GLShader( file.directory ~ name ~ ".vs.glsl", file.fullPath );
+			}
+			else if( file.fileName.indexOf( ".fs.hlsl" ) != -1 )
+			{
+				shaders[ name ] = new DXShader( file.directory ~ name ~ ".vs.hlsl", file.fullPath );
+			}
 		}
 	}
 
@@ -34,17 +41,21 @@ public:
 	{
 		foreach( name, shader; shaders )
 		{
-			shader.shutdown();
-			shaders.remove( name );
+			//TEMP: Somehow, other stuff is getting in here.
+			if( cast(Shader)shader )
+			{
+				shader.shutdown();
+				shaders.remove( name );
+			}
 		}
 	}
 
 	Shader opIndex( string name )
 	{
-		return getShader( name );
+		return get( name );
 	}
 
-	Shader getShader( string name )
+	Shader get( string name )
 	{
 		return shaders[ name ];
 	}

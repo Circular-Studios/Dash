@@ -3,13 +3,13 @@
  */
 module components.texture;
 import core.properties;
-import components.icomponent;
-import graphics.graphics, graphics.shaders.ishader;
+import components.component;
+import graphics.graphics, graphics.shaders.shader;
 
 import derelict.opengl3.gl3;
 import derelict.freeimage.freeimage;
 
-class Texture : IComponent
+class Texture : Component
 {
 public:
 	mixin Property!( "uint", "width" );
@@ -55,7 +55,7 @@ public:
 
 	}
 
-	override void draw( IShader shader )
+	override void draw( Shader shader )
 	{
 		shader.bindTexture( this );
 	}

@@ -3,7 +3,7 @@
  */
 module core.gameobjectcollection;
 import core.gameobject;
-import graphics.shaders.ishader;
+import graphics.shaders.shader;
 import utility.filepath, utility.config;
 
 import yaml;

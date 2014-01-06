@@ -1,8 +1,8 @@
 module graphics.shaders.dxshader;
 import components.mesh, components.texture;
-import graphics.shaders.ishader;
+import graphics.shaders.shader;
 
-class DxShader : IShader
+class DXShader : Shader
 {
 public:
 	this( string vertexPath, string pixelPath )

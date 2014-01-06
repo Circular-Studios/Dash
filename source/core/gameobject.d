@@ -3,8 +3,8 @@
  */
 module core.gameobject;
 import core.properties, core.main;
-import components.icomponent, components.assets, components.texture, components.mesh;
-import graphics.shaders.ishader;
+import components.component, components.assets, components.texture, components.mesh;
+import graphics.shaders.shader;
 import utility.config;
 import math.transform, math.vector, math.quaternion;
 
@@ -18,7 +18,7 @@ public:
 	/**
 	 * The shader this object uses to draw.
 	 */
-	mixin Property!( "IShader", "shader", "public" );
+	mixin Property!( "Shader", "shader", "public" );
 	/**
 	 * The current transform of the object.
 	 */
@@ -82,7 +82,7 @@ public:
 	/**
 	 * Initializes GameObject with shader
 	 */
-	this( IShader shader )
+	this( Shader shader )
 	{
 		this();
 		this.shader = shader;
@@ -115,10 +115,10 @@ public:
 	 */
 	final void draw()
 	{
+		onDraw();
+
 		foreach( ci, component; componentList )
 			component.draw( shader );
-
-		onDraw();
 	}
 
 	/**
@@ -160,5 +160,5 @@ public:
 	void onCollision( GameObject other ) { }
 
 private:
-	IComponent[ClassInfo] componentList;
+	Component[ClassInfo] componentList;
 }

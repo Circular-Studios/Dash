@@ -1,8 +1,8 @@
 module graphics.shaders.glshader;
 import components.mesh, components.texture;
-import graphics.shaders.ishader;
+import graphics.shaders.shader;
 
-class GlShader : IShader
+class GLShader : Shader
 {
 public:
 	this( string vertexPath, string fragmentPath )

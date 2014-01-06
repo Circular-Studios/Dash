@@ -1,6 +1,7 @@
 module graphics.shaders.shaders;
-import graphics.shaders.ishader, graphics.shaders.glshader, graphics.shaders.dxshader;
+import graphics.shaders.shader, graphics.shaders.glshader, graphics.shaders.dxshader;
 import utility.filepath;
+
 import std.string;
 
 static class Shaders
@@ -11,17 +12,17 @@ public:
 	{
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders ) )
 		{
-			IShader shader;
+			Shader shader;
 			string name = file.baseFileName.chomp( ".vs" ).chomp( ".fs" );
 
 			if( file.fileName.indexOf( "*.fs.glsl" ) != -1 )
 			{
-				shader = new GlShader( file.directory ~ name ~ ".vs.glsl",
+				shader = new GLShader( file.directory ~ name ~ ".vs.glsl",
 									   file.directory ~ name ~ ".fs.glsl" );
 			}
 			else if( file.fileName.indexOf( "*.fs.hlsl" ) != -1 )
 			{
-				shader = new DxShader( file.directory ~ name ~ ".vs.glsl",
+				shader = new DXShader( file.directory ~ name ~ ".vs.glsl",
 									   file.directory ~ name ~ ".fs.glsl" );
 			}
 
@@ -38,16 +39,16 @@ public:
 		}
 	}
 
-	IShader opIndex( string name )
+	Shader opIndex( string name )
 	{
 		return getShader( name );
 	}
 
-	IShader getShader( string name )
+	Shader getShader( string name )
 	{
 		return shaders[ name ];
 	}
 
 private:
-	IShader[ string ] shaders;
+	Shader[ string ] shaders;
 }

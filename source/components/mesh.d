@@ -3,15 +3,15 @@
  */
 module components.mesh;
 import core.properties;
-import components.icomponent;
-import graphics.graphics, graphics.shaders.ishader;
+import components.component;
+import graphics.graphics, graphics.shaders.shader;
 import math.vector;
 
 import derelict.opengl3.gl3;
 
 import std.stdio, std.stream, std.format;
 
-class Mesh : IComponent
+class Mesh : Component
 {
 public:
 	mixin Property!( "uint", "glVertexArray" );
@@ -147,7 +147,7 @@ public:
 
 	}
 
-	override void draw( IShader shader )
+	override void draw( Shader shader )
 	{
 		shader.drawMesh( this );
 	}

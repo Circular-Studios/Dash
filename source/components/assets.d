@@ -2,7 +2,7 @@
  * Defines the static Assets class, a static class which manages all textures, meshes, etc...
  */
 module components.assets;
-import components.icomponent, components.mesh, components.texture;
+import components.component, components.mesh, components.texture;
 import utility.filepath;
 
 import derelict.freeimage.freeimage;
@@ -49,5 +49,5 @@ public:
 	}
 
 private:
-	IComponent[string] componentShelf;
+	Component[string] componentShelf;
 }

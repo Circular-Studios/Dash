@@ -1,4 +1,5 @@
 Name: TestObject
+Shader: !Shader texture
 Script:
     ClassName: testobject.TestObject
 Transform:

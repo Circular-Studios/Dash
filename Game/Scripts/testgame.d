@@ -12,8 +12,8 @@ import std.c.windows.windows;
 	{
 		Output.printMessage( OutputType.Info, "Initializing..." );
 
-		Input.addKeyDownEvent( VK_ESCAPE, ( uint kc ) { currentState = GameState.Quit; } );
-		Input.addKeyDownEvent( VK_F5, ( uint kc ) { currentState = GameState.Reset; } );
+		Input.addKeyDownEvent( Keys.Escape, ( uint kc ) { currentState = GameState.Quit; } );
+		Input.addKeyDownEvent( Keys.F5, ( uint kc ) { currentState = GameState.Reset; } );
 
 		goc = new GameObjectCollection;
 		goc.loadObjects;

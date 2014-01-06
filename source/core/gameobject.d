@@ -104,10 +104,10 @@ public:
 	 */
 	final void update()
 	{
+		onUpdate();
+
 		foreach( ci, component; componentList )
 			component.update();
-
-		onUpdate();
 	}
 
 	/**

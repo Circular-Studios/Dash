@@ -42,9 +42,10 @@ public:
 	 */
 	void shutdown()
 	{
-		foreach( key; componentShelf.keys )
+		foreach( name, asset; componentShelf )
 		{
-			componentShelf.remove( key );
+			asset.shutdown();
+			componentShelf.remove( name );
 		}
 	}
 

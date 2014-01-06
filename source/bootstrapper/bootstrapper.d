@@ -5,7 +5,9 @@ import core.runtime;
 import std.stdio;
 
 version( Windows )
-import std.c.windows.windows;
+	import std.c.windows.windows;
+else
+	import core.sys.posix.dlfcn;
 
 enum RunResult : uint
 {
@@ -16,7 +18,12 @@ enum RunResult : uint
 void main()
 {
 	RunResult result;
-	string libPath = "dvelop.dll";
+	string libPath;
+
+	version( Windows )
+		libPath = "dvelop.dll";
+	else
+		libPath = "libdvelop.so";
 
 	write( "If you want to debug, attach to bootstrapper.exe, then press enter." );
 	readln();
@@ -31,14 +38,18 @@ void main()
 			break;
 		}
 
+		uint function() dGameEntry;
+
 		version( Windows )
 		{
-			result = cast(RunResult)( cast(uint function())GetProcAddress( lib, "_D4core4main10DGameEntryFZk" ) )();
+			dGameEntry = cast(uint function())GetProcAddress( lib, "_D4core4main10DGameEntryFZk" );
 		}
 		else version( Posix )
 		{
-			result = ( cast(uint function())dlsym( lib, "_D4core4main10DGameEntryFZk" ) )();
+			dGameEntry = cast(uint function())dlsym( lib, "_D4core4main10DGameEntryFZk" );
 		}
+
+		result = cast(RunResult)dGameEntry();
 
 		Runtime.unloadLibrary( lib );
 

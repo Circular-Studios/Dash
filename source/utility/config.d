@@ -59,7 +59,7 @@ public:
 
 		while( true )
 		{
-			uint split = right.indexOf( '.' );
+			auto split = right.indexOf( '.' );
 			if( split == -1 )
 			{
 				return current[ right ].get!T;
@@ -94,7 +94,7 @@ public:
 
 		for( current = node; right.length; )
 		{
-			int split = right.indexOf( '.' );
+			auto split = right.indexOf( '.' );
 
 			if( split == -1 )
 			{

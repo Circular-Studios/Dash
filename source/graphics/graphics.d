@@ -20,17 +20,20 @@ public:
 	@property Adapter adapter()
 	{
 		static OpenGL gl;
-		static DirectX dx;
 
 		if( activeAdapter == GraphicsAdapter.OpenGL )
 		{
 			return window.gl;
 		}
-		if( activeAdapter == GraphicsAdapter.DirectX )
+		version( Windows )
 		{
-			if( dx is null )
-				dx = new DirectX();
-			return dx;
+			static DirectX dx;
+			if( activeAdapter == GraphicsAdapter.DirectX )
+			{
+				if( dx is null )
+					dx = new DirectX();
+				return dx;
+			}
 		}
 
 		return null;

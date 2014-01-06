@@ -47,5 +47,8 @@ version( Windows )
 }
 else version( Posix )
 {
-
+	void main()
+	{
+		
+	}
 }

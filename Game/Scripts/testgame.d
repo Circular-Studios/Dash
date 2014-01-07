@@ -33,6 +33,7 @@ import std.c.windows.windows;
 	{
 		Output.printMessage( OutputType.Info, "Shutting down..." );
 		goc.apply( go => go.shutdown() );
+		goc.clearObjects();
 	}
 
 	override void onSaveState()

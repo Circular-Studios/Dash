@@ -35,6 +35,8 @@ public:
 		{
 			componentShelf[ file.baseFileName ] = new Texture( file.fullPath );
 		}
+
+		componentShelf.rehash();
 	}
 
 	/**

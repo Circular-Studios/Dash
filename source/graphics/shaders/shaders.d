@@ -35,6 +35,8 @@ public:
 				shaders[ name ] = new DXShader( file.directory ~ name ~ ".vs.hlsl", file.fullPath );
 			}
 		}
+
+		shaders.rehash();
 	}
 
 	void shutdown()

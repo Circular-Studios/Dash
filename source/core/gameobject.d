@@ -129,9 +129,10 @@ public:
 		onShutdown();
 
 		foreach( ci, component; componentList )
+		{
 			component.shutdown();
-		foreach( key; componentList.keys )
-			componentList.remove( key );
+			componentList.remove( ci );
+		}
 	}
 
 	/**

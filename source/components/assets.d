@@ -14,7 +14,7 @@ public:
 	/**
 	 * Get the asset with the given type and name.
 	 */
-	T getAsset( T )( string name )
+	T get( T )( string name ) if( is( T : Component ) )
 	{
 		return cast(T)componentShelf[ name ];
 	}

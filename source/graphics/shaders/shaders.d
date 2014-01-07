@@ -63,5 +63,5 @@ public:
 	}
 
 private:
-	Shader[ string ] shaders;
+	Shader[string] shaders;
 }

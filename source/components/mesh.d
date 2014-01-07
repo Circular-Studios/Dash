@@ -94,7 +94,7 @@ public:
 
 		uint[] indices = new uint[ numIndices ];
 
-		for( uint ii = 0; ii < indices.length; ++ii )
+		foreach( ii; 0..numIndices )
 			indices[ ii ] = ii;
 
 		if( Graphics.activeAdapter == GraphicsAdapter.OpenGL )

@@ -46,7 +46,7 @@ public:
 		}
 
 		if( Config.tryGet!string( "Texture", prop, yamlObj ) )
-			obj.addComponent( Assets.getAsset!Texture( prop.get!string ) );
+			obj.addComponent( Assets.get!Texture( prop.get!string ) );
 
 		if( Config.tryGet!string( "AwesomiumView", prop, yamlObj ) )
 		{
@@ -54,7 +54,7 @@ public:
 		}
 
 		if( Config.tryGet!string( "Mesh", prop, yamlObj ) )
-			obj.addComponent( Assets.getAsset!Mesh( prop.get!string ) );
+			obj.addComponent( Assets.get!Mesh( prop.get!string ) );
 
 		if( Config.tryGet( "Transform", innerNode, yamlObj ) )
 		{
@@ -138,7 +138,7 @@ public:
 	/**
 	 * Adds a component to the object.
 	 */
-	final void addComponent( T )( T newComponent )
+	final void addComponent( T )( T newComponent ) if( is( T : Component ) )
 	{
 		componentList[ T.classinfo ] = newComponent;
 	}
@@ -146,12 +146,12 @@ public:
 	/**
 	 * Gets a component of the given type.
 	 */
-	final T getComponent( T )()
+	final T getComponent( T )() if( is( T : Component ) )
 	{
 		return componentList[ T.classinfo ];
 	}
 
-	// Overridables
+	/// Called on the update cycle.
 	void onUpdate() { }
 	/// Called on the draw cycle.
 	void onDraw() { }

@@ -134,7 +134,7 @@ private:
 	}
 }
 
-struct Game( T )
+struct Game( T ) if( is( T : DGame ) )
 {
 	static this()
 	{

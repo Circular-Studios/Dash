@@ -2,18 +2,21 @@
  * Defines the DGame class, the base class for all game logic.
  */
 module core.dgame;
-import core.gameobjectcollection;
+import core.properties;
 import components.assets;
 import graphics.graphics;
 import utility.time, utility.config, utility.output, utility.input;
 
 enum GameState { Menu = 0, Game = 1, Reset = 2, Quit = 3 };
 
-DGame mainGame;
-
 class DGame
 {
 public:
+	static
+	{
+		mixin Property!( "DGame", "instance" );
+	}
+
 	GameState currentState;
 
 	/**
@@ -138,6 +141,6 @@ struct Game( T )
 {
 	static this()
 	{
-		mainGame = new T;
+		DGame.instance = new T;
 	}
 }

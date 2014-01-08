@@ -41,11 +41,17 @@ public:
 
 	void shutdown()
 	{
-		foreach( name, shader; shaders )
+		foreach_reverse( index; 0 .. shaders.length )
+		{
+			auto name = shaders.keys[ index ];
+			shaders[ name ].shutdown();
+			shaders.remove( name );
+		}
+		/*foreach( name, shader; shaders )
 		{
 			shader.shutdown();
 			shaders.remove( name );
-		}
+		}*/
 	}
 
 	Shader opIndex( string name )

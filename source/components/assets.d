@@ -44,11 +44,17 @@ public:
 	 */
 	void shutdown()
 	{
-		foreach( name, asset; componentShelf )
+		foreach_reverse( index; 0 .. componentShelf.length )
+		{
+			auto name = componentShelf.keys[ index ];
+			componentShelf[ name ].shutdown();
+			componentShelf.remove( name );
+		}
+		/*foreach( name, asset; componentShelf )
 		{
 			asset.shutdown();
 			componentShelf.remove( name );
-		}
+		}*/
 	}
 
 private:

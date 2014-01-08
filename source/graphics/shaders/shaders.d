@@ -43,12 +43,8 @@ public:
 	{
 		foreach( name, shader; shaders )
 		{
-			//TEMP: Somehow, other stuff is getting in here.
-			if( cast(Shader)shader )
-			{
-				shader.shutdown();
-				shaders.remove( name );
-			}
+			shader.shutdown();
+			shaders.remove( name );
 		}
 	}
 

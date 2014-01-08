@@ -54,13 +54,13 @@ public:
 			//////////////////////////////////////////////////////////////////////////
 
 			// Begin drawing
-			Graphics.adapter.beginDraw();
+			//Graphics.adapter.beginDraw();
 
 			// Draw in child class
 			onDraw();
 
 			// End drawing
-			Graphics.adapter.endDraw();
+			//Graphics.adapter.endDraw();
         }
 
 		if( currentState == GameState.Reset )

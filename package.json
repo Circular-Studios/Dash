@@ -20,7 +20,6 @@
 		{
 			"name": "windows",
 			"platforms": [ "windows" ],
-			"targetType": "dynamicLibrary",
 			"libs": [
 				"phobos", "gdi32", "user32",
 				"ole32", "kernel32", "user32", "comctl32", "comdlg32" 
@@ -28,11 +27,7 @@
 		},
 		{
 			"name": "osx",
-			"platforms": [ "osx" ],
-			"targetType": "dynamicLibrary",
-			"libs": [
-				"phobos2"
-			]
+			"platforms": [ "osx" ]
 		}
 	],
 	"buildTypes": {

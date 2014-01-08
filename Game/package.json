@@ -8,6 +8,5 @@
 	},
 	"sourcePaths": [ "Scripts/" ],
 	"importPaths": [ "Scripts/" ],
-	"targetType": "dynamicLibrary",
-	"targetName": "dvelop"
+	"targetType": "executable"
 }

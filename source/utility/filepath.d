@@ -3,6 +3,7 @@
  */
 module utility.filepath;
 static import std.file, std.path;
+import std.stdio;
 
 /**
  * A class which stores default resource paths, and handles path manipulation.
@@ -69,15 +70,53 @@ public:
 	/// The full path to the file.
 	@property string fullPath()		{ return _fullPath; }
 	/// The relative path from the executable to the file.
-	@property string relativePath()	{ return std.path.relativePath( _fullPath ); }
+	@property string relativePath()
+	{
+		if( !_relativePath )
+			_relativePath = std.path.relativePath( _fullPath );
+
+		return _relativePath;
+	}
 	/// The name of the file with its extension.
-	@property string fileName()		{ return std.path.baseName( _fullPath ); }
+	@property string fileName()
+	{
+		if( !_fileName )
+			_fileName = std.path.baseName( _fullPath );
+
+		return _fileName;
+	}
 	/// The name of the file without its extension.
-	@property string baseFileName()	{ return std.path.stripExtension( fileName ); }
+	@property string baseFileName()
+	{
+		if( !_baseFileName )
+			_baseFileName = std.path.stripExtension( fileName );
+
+		return _baseFileName;
+	}
 	/// The path to the directory containing the file.
-	@property string directory()	{ return std.path.dirName( _fullPath ); }
+	@property string directory()
+	{
+		if( !_directory )
+			_directory = std.path.dirName( _fullPath );
+
+		return _directory;
+	}
 	/// The extensino of the file.
-	@property string extension()	{ return std.path.extension( _fullPath ); }
+	@property ref string extension()
+	{
+		if( !_extension )
+			_extension = std.path.extension( _fullPath );
+
+		return _extension;
+	}
+	/// Converts to a std.stdio.File
+	File* toFile( string mode = "r" )
+	{
+		if( !file )
+			file = new File( _fullPath, mode );
+
+		return file;
+	}
 
 	/**
 	 * Create an instance based on a given file path.
@@ -90,6 +129,21 @@ public:
 			throw new Exception( "Invalid file name." );
 	}
 
+	/**
+	 * Shuts down the File if it was instantiated.
+	 */
+	~this()
+	{
+		if( file.isOpen )
+			file.close();
+	}
+
 private:
 	string _fullPath;
+	string _relativePath;
+	string _fileName;
+	string _baseFileName;
+	string _directory;
+	string _extension;
+	File* file;
 }

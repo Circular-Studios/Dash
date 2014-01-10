@@ -8,13 +8,15 @@ import utility.filepath, utility.config;
 
 import yaml;
 
+import std.path;
+
 class GameObjectCollection
 {
 public:
 	/**
 	 * Load all objects inside the specified folder in FilePath.Objects.
 	 */
-	void loadObjects( string objectPath )
+	void loadObjects( string objectPath = "" )
 	{
 		void addObject( Node object )
 		{
@@ -23,7 +25,7 @@ public:
 			objects[ name ] = GameObject.createFromYaml( object );
 		}
 
-		foreach( file; FilePath.scanDirectory( objectPath ) )
+		foreach( file; FilePath.scanDirectory( buildNormalizedPath( FilePath.Resources.Objects, objectPath ), "*.yml" ) )
 		{
 			auto object = Config.loadYaml( file.fullPath );
 
@@ -65,10 +67,10 @@ public:
 	 * 
 	 * Examples:
 	 * ---
-	 * goc.callFunction( go => go.update() );
+	 * goc.apply( go => go.update() );
 	 * ---
 	 */
-	void callFunction( void function( GameObject ) func )
+	void apply( void function( GameObject ) func )
 	{
 		foreach( value; objects.values )
 			func( value );
@@ -79,7 +81,7 @@ public:
 	 */
 	void update()
 	{
-		callFunction( go => go.update() );
+		apply( go => go.update() );
 	}
 
 	/**
@@ -87,7 +89,7 @@ public:
 	 */
 	void draw()
 	{
-		callFunction( go => go.draw() );
+		apply( go => go.draw() );
 	}
 
 private:

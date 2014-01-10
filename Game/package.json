@@ -1,0 +1,12 @@
+{
+	"name": "game",
+	"description": "A D game built with Dvelop.",
+	"copyright": "Copyright © 2014, Colden Cullen",
+	"authors": [ "Colden Cullen" ],
+	"dependencies": {
+		"dvelop": "~master"
+	},
+	"sourcePaths": [ "Scripts/" ],
+	"importPaths": [ "Scripts/" ],
+	"targetType": "executable"
+}

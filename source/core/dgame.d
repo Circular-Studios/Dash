@@ -2,15 +2,21 @@
  * Defines the DGame class, the base class for all game logic.
  */
 module core.dgame;
+import core.properties;
 import components.assets;
 import graphics.graphics;
-import utility.time, utility.config, utility.output;
+import utility.time, utility.config, utility.output, utility.input;
 
 enum GameState { Menu = 0, Game = 1, Reset = 2, Quit = 3 };
 
 class DGame
 {
 public:
+	static
+	{
+		mixin Property!( "DGame", "instance" );
+	}
+
 	GameState currentState;
 
 	/**
@@ -24,55 +30,44 @@ public:
         start();
 
         // Loop until there is a quit message from the window or the user.
-        while( currentState != GameState.Quit )
+        while( currentState != GameState.Quit && currentState != GameState.Reset )
         {
-			//try
-			{
-				if( currentState == GameState.Reset )
-					reset();
+			//////////////////////////////////////////////////////////////////////////
+			// Update
+			//////////////////////////////////////////////////////////////////////////
 
-				//////////////////////////////////////////////////////////////////////////
-				// Update
-				//////////////////////////////////////////////////////////////////////////
+			// Platform specific program stuff
+			Graphics.window.messageLoop();
 
-				// Platform specific program stuff
-				Graphics.window.messageLoop();
+			// Update time
+			Time.update();
 
-				// Update time
-				Time.update();
+			// Update input
+			Input.update();
 
-				// Update input
-				//Input.update();
+			// Update physics
+			//if( currentState == GameState.Game )
+			//	PhysicsController.stepPhysics( Time.deltaTime );
 
-				// Update physics
-				//if( currentState == GameState.Game )
-				//	PhysicsController.stepPhysics( Time.deltaTime );
+			// Do the updating of the child class.
+			onUpdate();
 
-				// Do the updating of the child class.
-				update();
+			//////////////////////////////////////////////////////////////////////////
+			// Draw
+			//////////////////////////////////////////////////////////////////////////
 
-				//////////////////////////////////////////////////////////////////////////
-				// Draw
-				//////////////////////////////////////////////////////////////////////////
+			// Begin drawing
+			Graphics.adapter.beginDraw();
 
-				// Begin drawing
-				Graphics.adapter.beginDraw();
+			// Draw in child class
+			onDraw();
 
-				// Draw in child class
-				draw();
-
-				// End drawing
-				Graphics.adapter.endDraw();
-			}
-			/*
-			catch (std::exception e)
-			{
-			OutputController::PrintMessage( OutputType::OT_ERROR, e.what() );
-			system( "pause" );
-			break;
-			}
-			*/
+			// End drawing
+			Graphics.adapter.endDraw();
         }
+
+		if( currentState == GameState.Reset )
+			saveState();
 
         stop();
 	}
@@ -83,19 +78,23 @@ protected:
 	/**
 	 * To be overridden, logic for when the game is being initalized.
 	 */
-	void initialize() { }
+	void onInitialize() { }
 	/**
 	 * To be overridden, called once per frame during the update cycle.
 	 */
-	void update() { }
+	void onUpdate() { }
 	/**
 	 * To be overridden, called once per frame during the draw cycle.
 	 */
-	void draw()	{ }
+	void onDraw() { }
 	/**
 	 * To be overridden, called when the came is closing.
 	 */
-	void shutdown() { }
+	void onShutdown() { }
+	/**
+	 * To be overridden, called when resetting and the state must be saved.
+	 */
+	void onSaveState() { }
 
 	//UserInterface ui;
 
@@ -116,7 +115,7 @@ private:
 
         //ui = new UserInterface( this );
 
-        initialize();
+        onInitialize();
 	}
 
 	/**
@@ -124,22 +123,24 @@ private:
 	 */
 	void stop()
 	{
+		onShutdown();
 		Assets.shutdown();
+		Graphics.shutdown();
 	}
 
 	/**
 	 * Called when engine is resetting.
 	 */
-	void reset()
+	void saveState()
 	{
-		shutdown();
+		onSaveState();
+	}
+}
 
-		// Stop controllers
-		Assets.shutdown();
-
-		// Reinitialize controllers
-		Assets.initialize();
-
-		initialize();
+struct Game( T )
+{
+	static this()
+	{
+		DGame.instance = new T;
 	}
 }

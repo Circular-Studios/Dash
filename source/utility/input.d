@@ -16,7 +16,7 @@ public:
 	alias void delegate( uint ) KeyStateEvent;
 
 	/**
-	 * Updates the key states.
+	 * Updates the key states, and calls all key events.
 	 */
 	void update()
 	{
@@ -27,8 +27,9 @@ public:
 		staging.reset();
 
 		foreach( state; diff )
-			foreach( event; keyEvents[ state[ 0 ] ] )
-				event( state[ 0 ], state[ 1 ] );
+			if( auto keyEvent = state[ 0 ] in keyEvents )
+				foreach( event; *keyEvent )
+					event( state[ 0 ], state[ 1 ] );
 	}
 
 	/**

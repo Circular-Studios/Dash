@@ -13,7 +13,7 @@ public:
 	/**
 	 * The path to the resources home folder.
 	 */
-	enum ResourceHome = "./Game";
+	enum ResourceHome = ".";
 
 	/**
 	 * Paths to the different resource files.
@@ -27,7 +27,7 @@ public:
 		Objects = ResourceHome ~ "/Objects",
 		Shaders = ResourceHome ~ "/Shaders",
 		UI = ResourceHome ~ "/UI",
-		Config = ResourceHome ~ "/Config.yaml"
+		Config = ResourceHome ~ "/Config.yml"
 	}
 
 	/**

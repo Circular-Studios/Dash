@@ -15,26 +15,25 @@
 		"derelict-fi": "~master",
 		"dyaml": "~master"
 	},
+	"sourcePaths": [
+		"source/"
+	],
 	"importPaths": [
 		"source/",
 		"third_party/DWinProgramming/WindowsAPI"
 	],
 	"configurations": [
 		{
-			"name": "windows-app",
-			"targetType": "executable",
-			"mainSourceFile": "source/app.d",
+			"name": "windows",
+			"platforms": [ "windows" ],
 			"libs": [
-				"gdi32", "user32",
+				"phobos", "gdi32", "user32",
 				"ole32", "kernel32", "user32", "comctl32", "comdlg32" 
 			]
 		},
 		{
-			"name": "osx-app",
-			"platforms": [ "osx" ],
-			"targetName": "Dvelop",
-			"targetType": "executable",
-			"mainSourceFile": "source/app.d"
+			"name": "osx",
+			"targetType": "dynamicLibrary"
 		}
 	],
 	"buildTypes": {
@@ -43,14 +42,24 @@
 				"syntaxOnly"
 			],
 			"dflags": [
-				"-Dfdoc/__dummy.html", "-Xfdoc/doc.json"
+				"-Dfdoc/__dummy.html",
+				"-Xfdoc/doc.json"
 			],
 			"postBuildCommands": [
 				"dub run ddox -- filter doc/doc.json filter --ex dyaml --ex yaml --ex ddox --ex vibe --ex derelict",
 				"dub run ddox -- generate-html doc/doc.json doc/",
-				"rm -f doc/__dummy.html doc/doc.json"
+				"rm -f doc/__dummy.html"
 			]
 		}
 	},
-	"targetPath": "bin/"
+	"subPackages": [
+		{
+			"name": "bootstrapper",
+			"targetName": "bootstrapper",
+			"versions": [ "Bootstrapper" ],
+			"sourcePaths": [ "source/bootstrapper" ],
+			"importPaths": [ "source/bootstrapper" ],
+			"mainSourceFile": "source/bootstrapper/bootstrapper.d"
+		}
+	]
 }

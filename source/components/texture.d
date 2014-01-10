@@ -21,8 +21,6 @@ public:
 
 		if( Graphics.activeAdapter == GraphicsAdapter.OpenGL )
 		{
-			DerelictFI.load();
-
 			FIBITMAP* imageData = FreeImage_ConvertTo32Bits( FreeImage_Load( FreeImage_GetFileType( filePath.ptr, 0 ), filePath.ptr, 0 ) );
 
 			width = FreeImage_GetWidth( imageData );

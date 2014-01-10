@@ -68,4 +68,12 @@ public:
 		adapter.initialize();
 		//Shaders.initialize();
 	}
+
+	/**
+	 * Shutdown the adapter and shaders.
+	 */
+	void shutdown()
+	{
+		adapter.shutdown();
+	}
 }

@@ -11,7 +11,7 @@ import utility.output : Verbosity;
 
 import yaml;
 
-import std.array, std.conv, std.string, std.path;
+import std.array, std.conv, std.string, std.path, std.typecons;
 
 /**
  * Static class which handles the configuration options and YAML interactions.
@@ -55,25 +55,32 @@ public:
 		Node current;
 		string left;
 		string right = path;
-		
-		for( current = node; right.length; )
+
+		try
 		{
-			uint split = right.indexOf( '.' );
-			if( split == -1 )
+			for( current = node; right.length; )
 			{
-				current = current[ right ];
-				right = "";
-				break;
-			}
-			else
-			{
-				left = right[ 0..split ];
-				right = right[ split + 1..$ ];
-				current = current[ left ];
+				uint split = right.indexOf( '.' );
+				if( split == -1 )
+				{
+					current = current[ right ];
+					right = "";
+					break;
+				}
+				else
+				{
+					left = right[ 0..split ];
+					right = right[ split + 1..$ ];
+					current = current[ left ];
+				}
 			}
 		}
+		catch
+		{
+			return Nullable!T();
+		}
 		
-		return current.as!T;
+		return Nullable!T( current.as!T );
 	}
 
 	/**
@@ -81,7 +88,7 @@ public:
 	 */
 	string getPath( string path )
 	{
-		return buildNormalizedPath( FilePath.ResourceHome, get!string( path ) );
+		return FilePath.ResourceHome ~ get!string( path );//buildNormalizedPath( FilePath.ResourceHome, get!string( path ) );;
 	}
 
 private:

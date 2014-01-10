@@ -11,8 +11,6 @@ Graphics:
     VSync: false
 Physics:
     Gravity: !Vector3 0.0 -10.0 0.0
-Scripts:
-    FilePath: "GameBin/gamebin.dll"
 UserInterface:
     FilePath: "/UI/index.html"
     Scale: !Vector2 1.0 1.0

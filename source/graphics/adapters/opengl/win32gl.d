@@ -5,6 +5,7 @@ version( Windows ):
 import graphics.graphics;
 import graphics.adapters.opengl.opengl;
 import graphics.windows.win32;
+import utility.output;
 
 import win32.windef, win32.winuser;
 import win32.wingdi : PIXELFORMATDESCRIPTOR, SetPixelFormat, SwapBuffers;
@@ -31,6 +32,13 @@ public:
 		wglMakeCurrent( glDeviceContext, renderContext );
 		
 		DerelictGL3.reload();
+		
+		if( DerelictGL3.loadedVersion < GLVersion.GL40 )
+		{
+			Output.printValue( OutputType.Error, "Your version of OpenGL is unsupported. Required: GL40 Yours", DerelictGL3.loadedVersion );
+			//throw new Exception( "Unsupported version of OpenGL." );
+			return;
+		}
 		
 		Graphics.window.closeWindow();
 		Graphics.window.openWindow();
@@ -96,6 +104,7 @@ public:
 		renderContext = null;
 		ReleaseDC( Win32.get().hWnd, glDeviceContext );
 		glDeviceContext = null;
+		Graphics.window.shutdown();
 	}
 
 	override void endDraw()

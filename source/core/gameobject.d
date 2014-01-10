@@ -5,12 +5,14 @@ module core.gameobject;
 import core.properties;
 import components.icomponent;
 import graphics.shaders.ishader;
+import utility.config;
 import math.transform;
 
 import yaml;
+
 import std.signals, std.conv;
 
-final class GameObject
+class GameObject
 {
 public:
 	/**
@@ -30,9 +32,18 @@ public:
 	{
 		GameObject obj;
 
+		// Try to get from script
+		string className = Config.get!string( "Script.ClassName", yamlObject );
+		if( className is null )
+			obj = new GameObject;
+		else
+			obj = cast(GameObject)Object.factory( className );
+
 		return obj;
 	}
 
+	/**
+	 * Crea
 	/**
 	 * Creates basic GameObject with transform and connection to transform's emitter.
 	 */
@@ -113,7 +124,7 @@ public:
 		return componentList[ T.classinfo ];
 	}
 
-	/// Called on the update cycle.
+	// Overridables
 	void onUpdate() { }
 	/// Called on the draw cycle.
 	void onDraw() { }

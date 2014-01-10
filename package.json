@@ -15,6 +15,9 @@
 		"derelict-fi": "~master",
 		"dyaml": "~master"
 	},
+	"targetName": "dvelop",
+	"targetType": "executable",
+	"mainSourceFile": "source/app.d",
 	"sourcePaths": [
 		"source/"
 	],

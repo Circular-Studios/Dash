@@ -1,6 +1,7 @@
 module graphics.shaders.shaders;
-import graphics.shaders.ishader, graphics.shaders.glshader, graphics.shaders.dxshader;
+import graphics.graphics, graphics.shaders.shader, graphics.shaders.glshader, graphics.shaders.dxshader;
 import utility.filepath;
+
 import std.string;
 
 static class Shaders
@@ -9,45 +10,60 @@ static:
 public:
 	void initialize()
 	{
-		foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders ) )
+		string path, blob;
+		if( Graphics.activeAdapter == GraphicsAdapter.OpenGL )
 		{
-			IShader shader;
-			string name = file.baseFileName.chomp( ".vs" ).chomp( ".fs" );
-
-			if( file.fileName.indexOf( "*.fs.glsl" ) != -1 )
-			{
-				shader = new GlShader( file.directory ~ name ~ ".vs.glsl",
-									   file.directory ~ name ~ ".fs.glsl" );
-			}
-			else if( file.fileName.indexOf( "*.fs.hlsl" ) != -1 )
-			{
-				shader = new DxShader( file.directory ~ name ~ ".vs.glsl",
-									   file.directory ~ name ~ ".fs.glsl" );
-			}
-
-			shaders[ name ] = shader;
+			path = FilePath.Resources.GLSLShaders;
+			blob = "*.fs.glsl";
 		}
+		else if( Graphics.activeAdapter == GraphicsAdapter.DirectX )
+		{
+			path = FilePath.Resources.HLSLShaders;
+			blob = "*.fs.hlsl";
+		}
+
+		foreach( file; FilePath.scanDirectory( path, blob ) )
+		{
+			string name = file.baseFileName.chomp( ".fs" );
+
+			if( file.fileName.indexOf( ".fs.glsl" ) != -1 )
+			{
+				shaders[ name ] = new GLShader( file.directory ~ name ~ ".vs.glsl", file.fullPath );
+			}
+			else if( file.fileName.indexOf( ".fs.hlsl" ) != -1 )
+			{
+				shaders[ name ] = new DXShader( file.directory ~ name ~ ".vs.hlsl", file.fullPath );
+			}
+		}
+
+		shaders.rehash();
 	}
 
 	void shutdown()
 	{
-		foreach( name, shader; shaders )
+		foreach_reverse( index; 0 .. shaders.length )
+		{
+			auto name = shaders.keys[ index ];
+			shaders[ name ].shutdown();
+			shaders.remove( name );
+		}
+		/*foreach( name, shader; shaders )
 		{
 			shader.shutdown();
 			shaders.remove( name );
-		}
+		}*/
 	}
 
-	IShader opIndex( string name )
+	Shader opIndex( string name )
 	{
-		return getShader( name );
+		return get( name );
 	}
 
-	IShader getShader( string name )
+	Shader get( string name )
 	{
 		return shaders[ name ];
 	}
 
 private:
-	IShader[ string ] shaders;
+	Shader[string] shaders;
 }

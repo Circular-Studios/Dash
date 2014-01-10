@@ -1,8 +1,8 @@
-module graphics.shaders.ishader;
+module graphics.shaders.shader;
 import components.texture, components.mesh;
 import math.matrix;
 
-abstract class IShader
+abstract class Shader
 {
 public:
 	void bindTexture( Texture texture );

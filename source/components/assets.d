@@ -2,7 +2,7 @@
  * Defines the static Assets class, a static class which manages all textures, meshes, etc...
  */
 module components.assets;
-import components.icomponent, components.mesh, components.texture;
+import components.component, components.mesh, components.texture;
 import utility.filepath;
 
 import derelict.freeimage.freeimage;
@@ -14,7 +14,7 @@ public:
 	/**
 	 * Get the asset with the given type and name.
 	 */
-	T getAsset( T )( string name )
+	T get( T )( string name ) if( is( T : Component ) )
 	{
 		return cast(T)componentShelf[ name ];
 	}
@@ -35,6 +35,8 @@ public:
 		{
 			componentShelf[ file.baseFileName ] = new Texture( file.fullPath );
 		}
+
+		componentShelf.rehash();
 	}
 
 	/**
@@ -42,12 +44,19 @@ public:
 	 */
 	void shutdown()
 	{
-		foreach( key; componentShelf.keys )
+		foreach_reverse( index; 0 .. componentShelf.length )
 		{
-			componentShelf.remove( key );
+			auto name = componentShelf.keys[ index ];
+			componentShelf[ name ].shutdown();
+			componentShelf.remove( name );
 		}
+		/*foreach( name, asset; componentShelf )
+		{
+			asset.shutdown();
+			componentShelf.remove( name );
+		}*/
 	}
 
 private:
-	IComponent[string] componentShelf;
+	Component[string] componentShelf;
 }

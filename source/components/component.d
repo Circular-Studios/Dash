@@ -1,14 +1,14 @@
 /**
- * Defines the IComponent abstract class, which is the base for all components.
+ * Defines the Component abstract class, which is the base for all components.
  */
-module components.icomponent;
+module components.component;
 import core.properties, core.gameobject;
-import graphics.shaders.ishader;
+import graphics.shaders.shader;
 
 /**
  * Interface for components to implement.
  */
-abstract class IComponent
+abstract class Component
 {
 	this( GameObject owner )
 	{
@@ -22,7 +22,7 @@ abstract class IComponent
 	/**
 	 * Function calledn on draw.
 	 */
-	abstract void draw( IShader shader );
+	abstract void draw( Shader shader );
 	/**
 	 * Function called on shutdown.
 	 */

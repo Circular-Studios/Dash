@@ -1,6 +1,6 @@
 module math.quaternion;
 import core.properties;
-import math.matrix;
+import math.matrix, math.vector;
 
 import std.signals, std.conv;
 import std.math;
@@ -10,7 +10,10 @@ class Quaternion
 public:
 	this()
 	{
-		this( 0.0f, 0.0f, 0.0f, 1.0f );
+		_w = 1.0f;
+		_x = 0.0f;
+		_y = 0.0f;
+		_z = 0.0f;
 	}
 
 	this( const float x, const float y, const float z, const float angle )
@@ -22,6 +25,31 @@ public:
 		_x = fSin * x;
 		_y = fSin * y;
 		_z = fSin * z;
+	}
+
+	static Quaternion fromEulerAngles( Vector!3 angles )
+	{
+		return fromEulerAngles( angles.x, angles.y, angles.z );
+	}
+	
+	static Quaternion fromEulerAngles( const float x, const float y, const float z )
+	{
+		auto res = new Quaternion;
+
+		float cosHalfX = cos( x / 2 );
+		float cosHalfY = cos( y / 2 );
+		float cosHalfZ = cos( z / 2 );
+		float sinHalfX = sin( x / 2 );
+		float sinHalfY = sin( y / 2 );
+		float sinHalfZ = sin( z / 2 );
+		
+		// From here: http://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Conversion
+		res._x = ( cosHalfZ * cosHalfY * cosHalfX ) + ( sinHalfZ * sinHalfY * sinHalfX );
+		res._y = ( sinHalfZ * cosHalfY * cosHalfX ) - ( cosHalfZ * sinHalfY * sinHalfX );
+		res._z = ( cosHalfZ * sinHalfY * cosHalfX ) + ( sinHalfZ * cosHalfY * sinHalfX );
+		res._w = ( cosHalfZ * cosHalfY * sinHalfX ) - ( sinHalfZ * sinHalfX * cosHalfX );
+
+		return res;
 	}
 
 	mixin Signal!( string, string );
@@ -54,11 +82,6 @@ public:
 			return this;
 		}
 		else static assert ( 0, "Operator " ~ op ~ " not implemented for assign " );
-	}
-
-	Matrix!4 ToRotationMatrix() 
-	{
-		return new Matrix!4( /* TO DO */ );
 	}
 
 private:

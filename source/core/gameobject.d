@@ -3,14 +3,14 @@
  */
 module core.gameobject;
 import core.properties;
-import components.icomponent;
-import graphics.shaders.ishader;
+import components.component, components.assets, components.texture, components.mesh;
+import graphics.shaders.shader;
 import utility.config;
-import math.transform;
+import math.transform, math.vector, math.quaternion;
 
 import yaml;
 
-import std.signals, std.conv;
+import std.signals, std.conv, std.variant;
 
 class GameObject
 {
@@ -18,7 +18,7 @@ public:
 	/**
 	 * The shader this object uses to draw.
 	 */
-	mixin Property!( "IShader", "shader", "public" );
+	mixin Property!( "Shader", "shader", "public" );
 	/**
 	 * The current transform of the object.
 	 */
@@ -28,22 +28,48 @@ public:
 	/**
 	 * Create a GameObject from a Yaml node.
 	 */
-	static GameObject createFromYaml( Node yamlObject )
+	static GameObject createFromYaml( Node yamlObj )
 	{
 		GameObject obj;
+		Variant prop;
+		Node innerNode;
 
 		// Try to get from script
-		string className = Config.get!string( "Script.ClassName", yamlObject );
-		if( className is null )
-			obj = new GameObject;
+		if( Config.tryGet!string( "Script.ClassName", prop, yamlObj ) )
+			obj = cast(GameObject)Object.factory( prop.get!string );
 		else
-			obj = cast(GameObject)Object.factory( className );
+			obj = new GameObject;
+
+		if( Config.tryGet!string( "Camera", prop, yamlObj ) )
+		{
+			//TODO: Setup camera
+		}
+
+		if( Config.tryGet!string( "Texture", prop, yamlObj ) )
+			obj.addComponent( Assets.get!Texture( prop.get!string ) );
+
+		if( Config.tryGet!string( "AwesomiumView", prop, yamlObj ) )
+		{
+			//TODO: Initialize Awesomium view
+		}
+
+		if( Config.tryGet!string( "Mesh", prop, yamlObj ) )
+			obj.addComponent( Assets.get!Mesh( prop.get!string ) );
+
+		if( Config.tryGet( "Transform", innerNode, yamlObj ) )
+		{
+			Vector!3 transVec;
+			if( Config.tryGet( "Scale", transVec, innerNode ) )
+				obj.transform.scale = transVec;
+			if( Config.tryGet( "Position", transVec, innerNode ) )
+				obj.transform.position = transVec;
+			if( Config.tryGet( "Rotation", transVec, innerNode ) )
+				obj.transform.rotation = Quaternion.fromEulerAngles( transVec );
+		}
 
 		return obj;
 	}
 
-	/**
-	 * Crea
 	/**
 	 * Creates basic GameObject with transform and connection to transform's emitter.
 	 */
@@ -56,7 +82,7 @@ public:
 	/**
 	 * Initializes GameObject with shader
 	 */
-	this( IShader shader )
+	this( Shader shader )
 	{
 		this();
 		this.shader = shader;
@@ -78,10 +104,10 @@ public:
 	 */
 	final void update()
 	{
+		onUpdate();
+
 		foreach( ci, component; componentList )
 			component.update();
-
-		onUpdate();
 	}
 
 	/**
@@ -89,10 +115,10 @@ public:
 	 */
 	final void draw()
 	{
+		onDraw();
+
 		foreach( ci, component; componentList )
 			component.draw( shader );
-
-		onDraw();
 	}
 
 	/**
@@ -103,15 +129,16 @@ public:
 		onShutdown();
 
 		foreach( ci, component; componentList )
+		{
 			component.shutdown();
-		foreach( key; componentList.keys )
-			componentList.remove( key );
+			componentList.remove( ci );
+		}
 	}
 
 	/**
 	 * Adds a component to the object.
 	 */
-	final void addComponent( T )( T newComponent )
+	final void addComponent( T )( T newComponent ) if( is( T : Component ) )
 	{
 		componentList[ T.classinfo ] = newComponent;
 	}
@@ -119,12 +146,12 @@ public:
 	/**
 	 * Gets a component of the given type.
 	 */
-	final T getComponent( T )()
+	final T getComponent( T )() if( is( T : Component ) )
 	{
 		return componentList[ T.classinfo ];
 	}
 
-	// Overridables
+	/// Called on the update cycle.
 	void onUpdate() { }
 	/// Called on the draw cycle.
 	void onDraw() { }
@@ -134,5 +161,5 @@ public:
 	void onCollision( GameObject other ) { }
 
 private:
-	IComponent[ClassInfo] componentList;
+	Component[ClassInfo] componentList;
 }

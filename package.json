@@ -33,7 +33,7 @@
 		},
 		{
 			"name": "osx",
-			"targetType": "dynamicLibrary"
+			"platforms": [ "osx" ]
 		}
 	],
 	"buildTypes": {

@@ -2,7 +2,7 @@ module math.vector;
 import core.properties;
 
 import std.math;
-import std.signals, std.conv;
+import std.signals, std.conv, std.typetuple;
 
 class Vector( uint S = 3 )
 {
@@ -17,6 +17,31 @@ public:
 	{
 		for( uint ii = 0; ii < S; ++ii )
 			values[ ii ] = arg[ ii ];
+	}
+
+	/**
+	 * Returns a swizzled vector
+	 */
+	auto opDispatch( string prop )() if( prop.length > 1 )
+	{
+		auto result = new Vector!( prop.length );
+
+		foreach( index; staticIota!( 0, prop.length ) )
+		{
+			mixin( "result.values[ index ] = " ~ prop[ index ] ~ ";" );
+		}
+
+		return result;
+	}
+	unittest
+	{
+		auto vec1 = new Vector!3( 1.0f, 2.0f, 3.0f );
+
+		auto vec2 = vec1.opDispatch!"zyx"();
+
+		assert( vec2.x == vec1.z );
+		assert( vec2.y == vec1.y );
+		assert( vec2.z == vec1.x );
 	}
 
 	/**
@@ -56,7 +81,7 @@ public:
 
 	override int opCmp( Object o )
 	{
-		if( o.classinfo != this.classinfo )
+		if( typeid(o) != typeid(this) )
 			return 1;
 
 		auto other = cast(Vector!S)o;
@@ -187,4 +212,15 @@ public:
 	float[ S ] values;
 
 	mixin Signal!( string, string );
+}
+
+// Creates a range from start inclusive to end exclusive.
+private template staticIota(size_t start, size_t end)
+{
+    static if(start == end)
+		alias TypeTuple!() staticIota;
+    else static if(start < end)
+		alias TypeTuple!(start, staticIota!(start + 1, end)) staticIota;
+    else
+		static assert(0, "start cannot be greater then end!");
 }

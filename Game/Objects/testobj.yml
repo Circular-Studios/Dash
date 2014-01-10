@@ -1,3 +1,6 @@
 Name: TestObject
+Shader: !Shader texture
 Script:
     ClassName: testobject.TestObject
+Transform:
+    Position: !Vector3 1.0 1.0 1.0

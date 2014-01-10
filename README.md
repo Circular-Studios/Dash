@@ -1,4 +1,4 @@
 Dvelop
 ======
 
-Helps you make vidja games.
+Helps ya make vidja games.

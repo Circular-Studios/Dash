@@ -24,7 +24,8 @@ public:
 
 		foreach( file; FilePath.scanDirectory( path, blob ) )
 		{
-			string name = file.baseFileName.chomp( ".fs" );
+			// Strip .fs from file name
+			string name = file.baseFileName[ 0..$-4 ];
 
 			if( file.fileName.indexOf( ".fs.glsl" ) != -1 )
 			{
@@ -61,7 +62,8 @@ public:
 
 	Shader get( string name )
 	{
-		return shaders[ name ];
+		auto shader = name in shaders;
+		return shader is null ? null : *shader;
 	}
 
 private:

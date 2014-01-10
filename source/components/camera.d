@@ -15,7 +15,7 @@ public:
 	/**
 	 * The view matrix of the camera.
 	 */
-	mixin Property!( "Matrix!4", "viewMatrix" );
+	mixin DirtyProperty!( "Matrix!4", "viewMatrix", "updateViewMatrix" );
 	
 	mixin Signal!( string, string );
 
@@ -23,11 +23,19 @@ public:
 	{
 		super( owner );
 
-		owner.transform.connect( &this.updateViewMatrix );
+		owner.transform.connect( &this.setMatrixDirty );
 	}
 
+	override void update() { }
+	override void draw( Shader shader ) { }
+	override void shutdown() { }
+
 private:
-	void updateViewMatrix( string name, string newValue )
+	void setMatrixDirty( string prop, string newVal )
+	{
+		_viewMatrixIsDirty = true;
+	}
+	void updateViewMatrix()
 	{
 		auto up = owner.transform.rotation.matrix * Vector!3.up;
 		auto lookAt = ( owner.transform.rotation.matrix * Vector!3.forward ) + owner.transform.position;

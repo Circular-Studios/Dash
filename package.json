@@ -1,8 +1,15 @@
 {
 	"name": "dvelop",
 	"description": "Helps you make vidja games.",
-	"copyright": "Copyright © 2013",
-	"authors": [ "Colden Cullen" ],
+	"copyright": "2013 - 2014",
+	"authors": [ 
+		"Colden Cullen",
+		"Brandon Littell",
+		"Eric Christenson",
+		"Tyler Wozniak",
+		"Sean Brennan",
+		"Timothy Reynolds"
+		],
 	"dependencies": {
 		"derelict-gl3": "~master",
 		"derelict-fi": "~master",

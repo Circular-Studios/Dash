@@ -73,7 +73,7 @@ public:
 	@property string relativePath()
 	{
 		if( !_relativePath )
-			_relativePath = std.path.relativePath( _fullPath );
+			_relativePath = std.path.relativePath( _fullPath ) ~ '\0';
 
 		return _relativePath;
 	}
@@ -81,7 +81,7 @@ public:
 	@property string fileName()
 	{
 		if( !_fileName )
-			_fileName = std.path.baseName( _fullPath );
+			_fileName = std.path.baseName( _fullPath ) ~ '\0';
 
 		return _fileName;
 	}
@@ -89,7 +89,7 @@ public:
 	@property string baseFileName()
 	{
 		if( !_baseFileName )
-			_baseFileName = std.path.stripExtension( fileName );
+			_baseFileName = std.path.stripExtension( fileName ) ~ '\0';
 
 		return _baseFileName;
 	}
@@ -97,7 +97,7 @@ public:
 	@property string directory()
 	{
 		if( !_directory )
-			_directory = std.path.dirName( _fullPath );
+			_directory = std.path.dirName( _fullPath ) ~ '\0';
 
 		return _directory;
 	}
@@ -105,7 +105,7 @@ public:
 	@property ref string extension()
 	{
 		if( !_extension )
-			_extension = std.path.extension( _fullPath );
+			_extension = std.path.extension( _fullPath ) ~ '\0';
 
 		return _extension;
 	}

@@ -1,5 +1,5 @@
 language: cpp
 install:
- - sudo apt-get instal dmd dub
+ - sudo apt-get install dmd dub
  - git submodule update --init
 script: dub run --build=unittest

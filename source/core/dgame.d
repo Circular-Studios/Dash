@@ -2,19 +2,21 @@
  * Defines the DGame class, the base class for all game logic.
  */
 module core.dgame;
-import core.gameobjectcollection;
+import core.properties;
 import components.assets;
 import graphics.graphics;
-import scripting.scripts;
 import utility.time, utility.config, utility.output, utility.input;
 
 enum GameState { Menu = 0, Game = 1, Reset = 2, Quit = 3 };
 
-DGame mainGame;
-
 class DGame
 {
 public:
+	static
+	{
+		mixin Property!( "DGame", "instance" );
+	}
+
 	GameState currentState;
 
 	/**
@@ -105,8 +107,8 @@ private:
 		currentState = GameState.Menu;
         //camera = null;
 
+		Config.initialize();
 		Output.initialize();
-		Scripts.initialize();
 		Graphics.initialize();
 		Assets.initialize();
 		//Physics.initialize();
@@ -122,7 +124,6 @@ private:
 	void stop()
 	{
 		onShutdown();
-		Scripts.shutdown();
 		Assets.shutdown();
 		Graphics.shutdown();
 	}
@@ -140,6 +141,6 @@ struct Game( T ) if( is( T : DGame ) )
 {
 	static this()
 	{
-		mainGame = new T;
+		DGame.instance = new T;
 	}
 }

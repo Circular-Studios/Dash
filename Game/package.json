@@ -8,5 +8,6 @@
 	},
 	"sourcePaths": [ "Scripts/" ],
 	"importPaths": [ "Scripts/" ],
-	"targetType": "executable"
+	"targetType": "executable",
+	"libs": [ "gdi32" ]
 }

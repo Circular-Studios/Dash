@@ -52,11 +52,11 @@ public:
 				win = new Win32();
 			return win;
 		}
-		version( Linux )
+		else version( OSX )
 		{
 			return null;
 		}
-		version( OSX )
+		else
 		{
 			return null;
 		}

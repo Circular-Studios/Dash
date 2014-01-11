@@ -22,7 +22,7 @@ static class Config
 {
 static:
 public:
-	void initialize()
+	static this()
 	{
 		constructor = new Constructor;
 

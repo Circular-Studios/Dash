@@ -2,6 +2,8 @@
  * Defines the static Time class, which manages all game time related things.
  */
 module utility.time;
+import utility.output;
+
 import std.datetime;
 
 /**
@@ -26,7 +28,8 @@ public:
 	static this()
 	{
 		cur = prev = Clock.currTime;
-		total = delta = 0.0f;
+		second = total = delta = 0.0f;
+		frameCount = 0;
 	}
 
 	/**
@@ -34,8 +37,19 @@ public:
 	 */
 	void update()
 	{
-		delta = ( cur - prev ).get!"seconds";
+		delta = ( cur - prev ).fracSec.nsecs / 1_000_000_000.0f;
 		total += delta;
+
+		debug
+		{
+			++frameCount;
+			second += delta;
+			if( second >= 1.0f )
+			{
+				Output.printValue( OutputType.Info, "Framerate", frameCount );
+				second = frameCount = 0;
+			}
+		}
 
 		prev = cur;
 		cur = Clock.currTime;
@@ -46,4 +60,6 @@ private:
 	SysTime prev;
 	float delta;
 	float total;
+	float second;
+	int frameCount;
 }

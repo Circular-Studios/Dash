@@ -202,7 +202,7 @@ Vector!3 constructVector3( ref Node node )
 
 Quaternion constructQuaternion( ref Node node )
 {
-	Quaternion result;
+	Quaternion result = new Quaternion;
 
 	if( node.isMapping )
 	{

@@ -3,13 +3,23 @@ import core.dgame;
 
 import std.stdio;
 
-void main()
+version( unittest )
 {
-	if( !DGame.instance )
+	void main()
 	{
-		writeln( "No game supplied." );
-		return;
+		writeln( "Finished running unit tests." );
 	}
+}
+else
+{
+	void main()
+	{
+		if( !DGame.instance )
+		{
+			writeln( "No game supplied." );
+			return;
+		}
 
-	DGame.instance.run();
+		DGame.instance.run();
+	}
 }

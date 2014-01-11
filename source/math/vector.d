@@ -37,7 +37,7 @@ public:
 	{
 		auto vec1 = new Vector!3( 1.0f, 2.0f, 3.0f );
 
-		auto vec2 = vec1.opDispatch!"zyx"();
+		auto vec2 = vec1.zyx;
 
 		assert( vec2.x == vec1.z );
 		assert( vec2.y == vec1.y );

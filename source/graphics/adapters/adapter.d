@@ -5,10 +5,12 @@ import graphics.adapters.opengl;
 abstract class Adapter
 {
 public:
-	@property void* glDevice() { return _glDevice; }
-	@property void* dxDevice() { return _dxDevice; }
-	@property GLDeviceContext glDeviceContext() { return _glDeviceContext; }
-	@property void* dxDeviceContext() { return _dxDeviceContext; }
+	mixin BackedProperty!( "void*", "_glDevice", "glDevice", "protected" );
+	mixin BackedProperty!( "void*", "_dxDevice", "dxDevice", "protected" );
+	mixin BackedProperty!( "GLDeviceContext", "_glDeviceContext", "glDeviceContext", "protected" );
+	mixin BackedProperty!( "void*", "_dxDeviceContext", "dxDeviceContext", "protected" );
+	mixin BackedProperty!( "GLRenderContext", "_glRenderContext", "glRenderContext", "protected" );
+	mixin BackedProperty!( "void*", "_dxRenderContext", "dxRenderContext", "protected" );
 
 	abstract void initialize();
 	abstract void shutdown();
@@ -17,12 +19,6 @@ public:
 
 	abstract void beginDraw();
 	abstract void endDraw();
-
-protected:
-	@property void glDevice( void* val ) { _glDevice = val; }
-	@property void dxDevice( void* val ) { _dxDevice = val; }
-	@property void glDeviceContext( GLDeviceContext val ) { _glDeviceContext = val; }
-	@property void dxDeviceContext( void* val ) { _dxDeviceContext = val; }
 
 private:
 	union
@@ -35,5 +31,11 @@ private:
 	{
 		GLDeviceContext _glDeviceContext;
 		void* _dxDeviceContext;
+	}
+
+	union
+	{
+		GLRenderContext _glRenderContext;
+		void* _dxRenderContext;
 	}
 }

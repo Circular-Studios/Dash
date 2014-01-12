@@ -11,7 +11,7 @@ import win32.windef, win32.winuser;
 import win32.wingdi : PIXELFORMATDESCRIPTOR, SetPixelFormat, SwapBuffers;
 import derelict.opengl3.gl3, derelict.opengl3.wgl, derelict.opengl3.wglext;
 
-class Win32Gl : OpenGL
+class Win32GL : OpenGL
 {
 public:
 	override void initialize()
@@ -26,7 +26,7 @@ public:
 
 		HGLRC handle;
 		
-		glDeviceContext = GetDC( Win32.get().hWnd );		
+		glDeviceContext = GetDC( Win32.get.hWnd );		
 		SetPixelFormat( glDeviceContext, 1, &pfd );
 		renderContext = wglCreateContext( glDeviceContext );
 		wglMakeCurrent( glDeviceContext, renderContext );

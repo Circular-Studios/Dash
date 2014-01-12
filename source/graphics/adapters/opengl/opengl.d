@@ -13,18 +13,25 @@ version( Windows )
 	alias HGLRC GLRenderContext;
 	alias HDC GLDeviceContext;
 }
+else version( OSX )
+{
+	import derelict.opengl3.gl3, derelict.opengl3.cgl;
+
+	alias CGLContextObj GLRenderContext;
+	alias uint GLDeviceContext;
+}
 else
 {
+	import derelict.opengl3.glx, derelict.opengl3.glxext;;
+
 	//alias OpenGLRenderContext GLRenderContext;
-	alias uint GLRenderContext;
+	alias GLXContext GLRenderContext;
 	alias uint GLDeviceContext;
 }
 
 abstract class OpenGL : Adapter
 {
 public:
-	mixin Property!( "GLRenderContext", "renderContext", "protected" );
-
 	override void resize()
 	{
 		glViewport( 0, 0, Graphics.window.width, Graphics.window.height );
@@ -49,7 +56,4 @@ public:
 	{
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	}
-
-private:
-
 }

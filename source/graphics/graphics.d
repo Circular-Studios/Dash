@@ -19,8 +19,6 @@ public:
 	 */
 	@property Adapter adapter()
 	{
-		static OpenGL gl;
-
 		if( activeAdapter == GraphicsAdapter.OpenGL )
 		{
 			return window.gl;
@@ -49,12 +47,15 @@ public:
 		{
 			static Windows win;
 			if( win is null )
-				win = new Win32();
+				win = new Win32;
 			return win;
 		}
 		else version( OSX )
 		{
-			return null;
+			static MacX11 x11;
+			if( x11 is null )
+				x11 = new MacX11;
+			return x11;
 		}
 		else
 		{

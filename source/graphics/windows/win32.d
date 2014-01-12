@@ -59,9 +59,9 @@ class Win32 : Windows
 public:
 	static @property Win32 get() { return cast(Win32)Graphics.window; }
 
-	override @property OpenGL gl()
+	override @property Win32GL gl()
 	{
-		static Win32Gl opengl;
+		static Win32GL opengl;
 		if( opengl is null )
 			opengl = new Win32Gl;
 
@@ -73,6 +73,9 @@ public:
 
 	override void initialize()
 	{
+		screenWidth = GetSystemMetrics( SM_CXSCREEN );
+		screenHeight = GetSystemMetrics( SM_CYSCREEN );
+
 		hInstance = GetModuleHandle( null );
 
 		WNDCLASSEX wcex = {
@@ -102,11 +105,7 @@ public:
 	{
 		LONG style = GetWindowLong( hWnd, GWL_STYLE ) & ~( DWS_FULLSCREEN | DWS_WINDOWED );
 
-		screenWidth = GetSystemMetrics( SM_CXSCREEN );
-		screenHeight = GetSystemMetrics( SM_CYSCREEN );
-
-		//fullScreen = Config.GetData!bool( "Display.Fullscreen" );
-		fullscreen = false;
+		fullScreen = Config.get!bool( "Display.Fullscreen" );
 
 		if( fullscreen )
 		{
@@ -116,8 +115,8 @@ public:
 		}
 		else
 		{
-			width = 1280;//Config.GetData!uint( "Display.Width" );
-			height = 720;//Config.GetData!uint( "Display.Height" );
+			width = Config.get!uint( "Display.Width" );
+			height = Config.get!uint( "Display.Height" );
 			style |= DWS_WINDOWED;
 		}
 

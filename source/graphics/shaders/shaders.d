@@ -10,31 +10,11 @@ static:
 public:
 	void initialize()
 	{
-		string path, blob;
-		if( Graphics.activeAdapter == GraphicsAdapter.OpenGL )
-		{
-			path = FilePath.Resources.GLSLShaders;
-			blob = "*.fs.glsl";
-		}
-		else if( Graphics.activeAdapter == GraphicsAdapter.DirectX )
-		{
-			path = FilePath.Resources.HLSLShaders;
-			blob = "*.fs.hlsl";
-		}
-
-		foreach( file; FilePath.scanDirectory( path, blob ) )
+		foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders, "*.fs.glsl" ) )
 		{
 			// Strip .fs from file name
 			string name = file.baseFileName[ 0..$-4 ];
-
-			if( file.fileName.indexOf( ".fs.glsl" ) != -1 )
-			{
-				shaders[ name ] = new GLShader( file.directory ~ name ~ ".vs.glsl", file.fullPath );
-			}
-			else if( file.fileName.indexOf( ".fs.hlsl" ) != -1 )
-			{
-				shaders[ name ] = new DXShader( file.directory ~ name ~ ".vs.hlsl", file.fullPath );
-			}
+			shaders[ name ] = new GLShader( file.directory ~ name ~ ".vs.glsl", file.fullPath );
 		}
 
 		shaders.rehash();

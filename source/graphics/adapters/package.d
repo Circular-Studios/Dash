@@ -1,5 +1,5 @@
 module graphics.adapters;
 public:
 import graphics.adapters.adapter;
-import graphics.adapters.opengl;
-import graphics.adapters.directx;
+import graphics.adapters.win32;
+import graphics.adapters.mac;

@@ -19,35 +19,27 @@ public:
 	{	
 		super( null );
 
-		if( Graphics.activeAdapter == GraphicsAdapter.OpenGL )
-		{
-			FIBITMAP* imageData = FreeImage_ConvertTo32Bits( FreeImage_Load( FreeImage_GetFileType( filePath.ptr, 0 ), filePath.ptr, 0 ) );
+		FIBITMAP* imageData = FreeImage_ConvertTo32Bits( FreeImage_Load( FreeImage_GetFileType( filePath.ptr, 0 ), filePath.ptr, 0 ) );
 
-			width = FreeImage_GetWidth( imageData );
-			height = FreeImage_GetHeight( imageData );
+		width = FreeImage_GetWidth( imageData );
+		height = FreeImage_GetHeight( imageData );
 
-			glGenTextures( 1, &_glId );
-			glBindTexture( GL_TEXTURE_2D, glId );
-			glTexImage2D(
-				GL_TEXTURE_2D,
-				0,
-				GL_RGBA,
-				width,
-				height,
-				0,
-				GL_BGRA,
-				GL_UNSIGNED_BYTE,
-				cast(GLvoid*)FreeImage_GetBits( imageData ) );
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+		glGenTextures( 1, &_glId );
+		glBindTexture( GL_TEXTURE_2D, glId );
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_RGBA,
+			width,
+			height,
+			0,
+			GL_BGRA,
+			GL_UNSIGNED_BYTE,
+			cast(GLvoid*)FreeImage_GetBits( imageData ) );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 
-			FreeImage_Unload( imageData );
-			glBindTexture( GL_TEXTURE_2D, 0 );
-		}
-		version( Windows )
-		if( Graphics.activeAdapter == GraphicsAdapter.DirectX )
-		{
-			
-		}
+		FreeImage_Unload( imageData );
+		glBindTexture( GL_TEXTURE_2D, 0 );
 	}
 
 	override void update()
@@ -62,22 +54,9 @@ public:
 
 	override void shutdown()
 	{
-		if( Graphics.activeAdapter == GraphicsAdapter.OpenGL )
-		{
-			glBindTexture( GL_TEXTURE_2D, 0 );
-			glDeleteBuffers( 1, &_glId );
-		}
-		version( Windows )
-		if( Graphics.activeAdapter == GraphicsAdapter.DirectX )
-		{
-
-		}
+		glBindTexture( GL_TEXTURE_2D, 0 );
+		glDeleteBuffers( 1, &_glId );
 	}
 
-	mixin BackedProperty!( "uint", "_glId", "glId" );
-
-	union
-	{
-		uint _glId;
-	}
+	mixin Property!( "uint", "glId" );
 }

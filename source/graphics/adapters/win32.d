@@ -1,0 +1,267 @@
+module graphics.adapters.win32;
+
+version( Windows ):
+
+import core.properties;
+import graphics.graphics;
+import graphics.adapters.adapter;
+import utility.input;
+
+import win32.windef, win32.winuser, win32.winbase;
+
+enum DWS_FULLSCREEN = WS_POPUP | WS_SYSMENU;
+enum DWS_WINDOWED = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
+
+extern( Windows )
+LRESULT WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
+{
+	switch( message )
+	{
+        case WM_CLOSE:
+        case WM_DESTROY:
+        case WM_QUIT:
+			PostQuitMessage( 0 );
+			break;
+			// If key down, send it to input
+        case WM_KEYDOWN:
+			Input.setKeyState( cast(uint)wParam, true );
+			break;
+			// If key up, send it to input
+        case WM_KEYUP:
+			Input.setKeyState( cast(uint)wParam, false );
+			break;
+			// On Mouse Event
+        case WM_RBUTTONDOWN:
+			Input.setKeyState( VK_RBUTTON, true );
+			break;
+			// On Mouse Event
+        case WM_RBUTTONUP:
+			Input.setKeyState( VK_RBUTTON, false );
+			break;
+			// On Mouse Event
+        case WM_LBUTTONDOWN:
+			Input.setKeyState( VK_LBUTTON, true );
+			break;
+			// On Mouse Event
+        case WM_LBUTTONUP:
+			Input.setKeyState( VK_LBUTTON, false );
+			break;
+			// If no change, send to default windows handler
+        default:
+			return DefWindowProc( hWnd, message, wParam, lParam );
+	}
+	return 0;
+}
+
+class Win32 : Adapter
+{
+public:
+	static @property Win32 get() { return cast(Win32)Graphics.window; }
+
+	mixin Property!( "HWND", "hWnd" );
+	mixin Property!( "HINSTANCE", "hInstance" );
+
+	override void initialize()
+	{
+		// Setup the window
+		screenWidth = GetSystemMetrics( SM_CXSCREEN );
+		screenHeight = GetSystemMetrics( SM_CYSCREEN );
+		
+		hInstance = GetModuleHandle( null );
+		
+		WNDCLASSEX wcex = {
+			WNDCLASSEX.sizeof,
+				CS_HREDRAW | CS_VREDRAW,// | CS_OWNDC,
+				&WndProc,
+				0,
+				0,
+				hInstance,
+				null,
+				LoadCursor( null, IDC_ARROW ),
+				cast(HBRUSH)( COLOR_WINDOW + 1 ),
+				null,
+				"Dvelop",
+				null
+		};
+		
+		RegisterClassEx( &wcex );
+		openWindow();
+
+		// Setup opengl
+		DerelictGL3.load();
+		
+		uint formatCount;
+		int pixelFormat;
+		PIXELFORMATDESCRIPTOR pfd;
+		
+		HGLRC handle;
+		
+		glDeviceContext = GetDC( hWnd );		
+		SetPixelFormat( glDeviceContext, 1, &pfd );
+		renderContext = wglCreateContext( glDeviceContext );
+		wglMakeCurrent( glDeviceContext, renderContext );
+		
+		DerelictGL3.reload();
+		
+		if( DerelictGL3.loadedVersion < GLVersion.GL40 )
+		{
+			Output.printValue( OutputType.Error, "Your version of OpenGL is unsupported. Required: GL40 Yours", DerelictGL3.loadedVersion );
+			//throw new Exception( "Unsupported version of OpenGL." );
+			return;
+		}
+		
+		closeWindow();
+		openWindow();
+		
+		// Set attributes list
+		const(int)[ 19 ] attributeList = [
+			WGL_SUPPORT_OPENGL_ARB,	TRUE,						// Support for OpenGL rendering
+			WGL_DRAW_TO_WINDOW_ARB,	TRUE,						// Support for rendering window
+			WGL_ACCELERATION_ARB,	WGL_FULL_ACCELERATION_ARB,	// Support for hardware acceleration
+			WGL_COLOR_BITS_ARB,		24,							// Support for 24bit color
+			WGL_DEPTH_BITS_ARB,		24,							// Support for 24bit depth buffer
+			WGL_DOUBLE_BUFFER_ARB,	TRUE,						// Support for double buffer
+			WGL_SWAP_METHOD_ARB,	WGL_SWAP_EXCHANGE_ARB,		// Support for swapping buffers
+			WGL_PIXEL_TYPE_ARB,		WGL_TYPE_RGBA_ARB,			// Support for RGBA pixel type
+			WGL_STENCIL_BITS_ARB,	8,							// Support for 8 bit stencil buffer
+			0													// Null terminate
+		];
+		
+		// Set version to 4.0
+		const(int)[ 5 ] versionInfo = [
+			WGL_CONTEXT_MAJOR_VERSION_ARB, 4,
+			WGL_CONTEXT_MINOR_VERSION_ARB, 0,
+			0
+		];
+		
+		// Get new Device Context
+		glDeviceContext = GetDC( hWnd );
+		
+		// Query pixel format
+		wglChoosePixelFormatARB( glDeviceContext, attributeList.ptr, null, 1, &pixelFormat, &formatCount );
+		
+		// Set the pixel format
+		SetPixelFormat( glDeviceContext, pixelFormat, &pfd );
+		
+		// Create OpenGL rendering context
+		renderContext = wglCreateContextAttribsARB( glDeviceContext, null, versionInfo.ptr );
+		
+		// Set current context
+		wglMakeCurrent( glDeviceContext, renderContext );
+		
+		// Set depth buffer
+		glClearDepth( 1.0f );
+		
+		// Enable depth testing
+		glEnable( GL_DEPTH_TEST );
+		
+		// Enable transparency
+		glEnable( GL_BLEND );
+		glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+		
+		// Set front face
+		glFrontFace( GL_CW );
+		
+		reload();
+		
+		glClearColor( 0.5f, 0.5f, 0.5f, 1.0f );
+	}
+
+	override void shutdown()
+	{
+		wglMakeCurrent( null, null );
+		wglDeleteContext( renderContext );
+		renderContext = null;
+		ReleaseDC( hWnd, glDeviceContext );
+		glDeviceContext = null;
+		closeWindow();
+	}
+
+	override void resize()
+	{
+		LONG style = GetWindowLong( hWnd, GWL_STYLE ) & ~( DWS_FULLSCREEN | DWS_WINDOWED );
+
+		fullScreen = Config.get!bool( "Display.Fullscreen" );
+
+		if( fullscreen )
+		{
+			width = screenWidth;
+			height = screenHeight;
+			style |= DWS_FULLSCREEN;
+		}
+		else
+		{
+			width = Config.get!uint( "Display.Width" );
+			height = Config.get!uint( "Display.Height" );
+			style |= DWS_WINDOWED;
+		}
+
+		SetWindowLong( hWnd, GWL_STYLE, style );
+		SetWindowPos( hWnd, null, ( screenWidth - width ) / 2, ( screenHeight - height ) / 2,
+					  width + ( 2 * GetSystemMetrics( SM_CYBORDER ) ),
+					  height + GetSystemMetrics( SM_CYCAPTION ) + GetSystemMetrics( SM_CYBORDER ),
+					  SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED );
+
+		glViewport( 0, 0, Graphics.window.width, Graphics.window.height );
+		// update matricies
+	}
+
+	override void reload()
+	{
+		resize();
+		
+		// Enable back face culling
+		if( Config.get!bool( "Graphics.BackfaceCulling" ) )
+		{
+			glEnable( GL_CULL_FACE );
+			glCullFace( GL_BACK );
+		}
+		
+		// Turn on of off the v sync
+		wglSwapIntervalEXT( Config.get!bool( "Graphics.VSync" ) );
+	}
+
+	override void beginDraw()
+	{
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	}
+
+	override void endDraw()
+	{
+		SwapBuffers( glDeviceContext );
+	}
+
+	override void openWindow()
+	{
+		resize();
+
+		hWnd = CreateWindowEx( 0, "Dvelop", "Dvelop", fullscreen ? DWS_FULLSCREEN : DWS_WINDOWED,
+							 ( screenWidth - width ) / 2, ( screenHeight - height ) / 2, width, height,
+							 null, null, hInstance, null );
+
+		assert( hWnd );
+
+		ShowWindow( hWnd, SW_NORMAL );
+	}
+
+	override void closeWindow()
+	{
+		DestroyWindow( hWnd );
+		hWnd = null;
+	}
+
+	override void messageLoop()
+	{
+		MSG msg;
+
+		// Initialize the message structure.
+		( cast(byte*)&msg )[ 0 .. msg.sizeof ] = 0;
+
+		// Handle the windows messages.
+		while( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )
+		{
+			TranslateMessage( &msg );
+			DispatchMessage( &msg );
+		}
+	}
+}

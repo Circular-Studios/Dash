@@ -1,16 +1,42 @@
 module graphics.adapters.adapter;
 import core.properties;
-import graphics.adapters.opengl;
+
+version( Windows )
+{
+	import win32.windef;
+	
+	alias HGLRC GLRenderContext;
+	alias HDC GLDeviceContext;
+}
+else version( OSX )
+{
+	import derelict.opengl3.gl3, derelict.opengl3.cgl;
+	
+	alias CGLContextObj GLRenderContext;
+	alias uint GLDeviceContext;
+}
+else
+{
+	import derelict.opengl3.glx, derelict.opengl3.glxext;;
+	
+	//alias OpenGLRenderContext GLRenderContext;
+	alias GLXContext GLRenderContext;
+	alias uint GLDeviceContext;
+}
 
 abstract class Adapter
 {
 public:
-	mixin BackedProperty!( "void*", "_glDevice", "glDevice", "protected" );
-	mixin BackedProperty!( "void*", "_dxDevice", "dxDevice", "protected" );
-	mixin BackedProperty!( "GLDeviceContext", "_glDeviceContext", "glDeviceContext", "protected" );
-	mixin BackedProperty!( "void*", "_dxDeviceContext", "dxDeviceContext", "protected" );
-	mixin BackedProperty!( "GLRenderContext", "_glRenderContext", "glRenderContext", "protected" );
-	mixin BackedProperty!( "void*", "_dxRenderContext", "dxRenderContext", "protected" );
+	// Graphics contexts
+	mixin Property!( "void*", "glDevice", "protected" );
+	mixin Property!( "GLDeviceContext", "glDeviceContext", "protected" );
+	mixin Property!( "GLRenderContext", "glRenderContext", "protected" );
+
+	mixin Property!( "uint", "width", "protected" );
+	mixin Property!( "uint", "screenWidth", "protected" );
+	mixin Property!( "uint", "height", "protected" );
+	mixin Property!( "uint", "screenHeight", "protected" );
+	mixin Property!( "bool", "fullscreen", "protected" );
 
 	abstract void initialize();
 	abstract void shutdown();
@@ -20,22 +46,8 @@ public:
 	abstract void beginDraw();
 	abstract void endDraw();
 
-private:
-	union
-	{
-		void* _glDevice;
-		void* _dxDevice;
-	}
-
-	union
-	{
-		GLDeviceContext _glDeviceContext;
-		void* _dxDeviceContext;
-	}
-
-	union
-	{
-		GLRenderContext _glRenderContext;
-		void* _dxRenderContext;
-	}
+	abstract void openWindow();
+	abstract void closeWindow();
+	
+	abstract void messageLoop();
 }

@@ -6,7 +6,6 @@ import utility.filepath;
 
 // Imports for conversions
 import core.dgame : GameState;
-import graphics.graphics : GraphicsAdapter;
 import graphics.shaders.shaders;
 import utility.output : Verbosity;
 import math.vector, math.quaternion;
@@ -33,7 +32,6 @@ public:
 		constructor.addConstructorScalar( "!Quaternion", &constructQuaternion );
 		constructor.addConstructorMapping( "!Quaternion-Map", &constructQuaternion );
 		constructor.addConstructorScalar( "!GameState", &constructConv!GameState );
-		constructor.addConstructorScalar( "!Adapter", &constructConv!GraphicsAdapter );
 		constructor.addConstructorScalar( "!Verbosity", &constructConv!Verbosity );
 		constructor.addConstructorScalar( "!Shader", ( ref Node node ) => Shaders.get( node.get!string ) );
 

@@ -37,7 +37,7 @@ public:
 			//////////////////////////////////////////////////////////////////////////
 
 			// Platform specific program stuff
-			Graphics.window.messageLoop();
+			Graphics.messageLoop();
 
 			// Update time
 			Time.update();
@@ -57,13 +57,13 @@ public:
 			//////////////////////////////////////////////////////////////////////////
 
 			// Begin drawing
-			//Graphics.adapter.beginDraw();
+			Graphics.beginDraw();
 
 			// Draw in child class
 			onDraw();
 
 			// End drawing
-			//Graphics.adapter.endDraw();
+			Graphics.endDraw();
         }
 
 		if( currentState == GameState.Reset )

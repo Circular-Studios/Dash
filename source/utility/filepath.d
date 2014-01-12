@@ -27,8 +27,6 @@ public:
 		Prefabs = ResourceHome ~ "/Prefabs",
 		Objects = ResourceHome ~ "/Objects",
 		Shaders = ResourceHome ~ "/Shaders",
-		GLSLShaders = Shaders ~ "/glsl",
-		HLSLShaders = Shaders ~ "/hlsl",
 		UI = ResourceHome ~ "/UI",
 		Config = ResourceHome ~ "/Config.yml"
 	}

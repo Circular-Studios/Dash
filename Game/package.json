@@ -9,5 +9,18 @@
 	"sourcePaths": [ "Scripts/" ],
 	"importPaths": [ "Scripts/" ],
 	"targetType": "executable",
-	"libs": [ "gdi32" ]
+	"configurations": [
+		{
+			"name": "windows",
+			"platforms": [ "windows" ],
+			"libs": [
+				"gdi32", "ole32", "kernel32",
+				"user32", "comctl32", "comdlg32"
+			]
+		},
+		{
+			"name": "osx",
+			"platforms": [ "osx" ]
+		}
+	],
 }

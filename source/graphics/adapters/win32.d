@@ -5,9 +5,11 @@ version( Windows ):
 import core.properties;
 import graphics.graphics;
 import graphics.adapters.adapter;
-import utility.input;
+import utility.input, utility.output, utility.config;
 
 import win32.windef, win32.winuser, win32.winbase;
+import win32.wingdi : PIXELFORMATDESCRIPTOR, SetPixelFormat, SwapBuffers;
+import derelict.opengl3.gl3, derelict.opengl3.wgl, derelict.opengl3.wglext;
 
 enum DWS_FULLSCREEN = WS_POPUP | WS_SYSMENU;
 enum DWS_WINDOWED = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
@@ -56,13 +58,16 @@ LRESULT WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 class Win32 : Adapter
 {
 public:
-	static @property Win32 get() { return cast(Win32)Graphics.window; }
+	static @property Win32 get() { return cast(Win32)Graphics.adapter; }
 
 	mixin Property!( "HWND", "hWnd" );
 	mixin Property!( "HINSTANCE", "hInstance" );
 
 	override void initialize()
 	{
+		// Load opengl functions
+		DerelictGL3.load();
+
 		// Setup the window
 		screenWidth = GetSystemMetrics( SM_CXSCREEN );
 		screenHeight = GetSystemMetrics( SM_CYSCREEN );
@@ -87,19 +92,17 @@ public:
 		RegisterClassEx( &wcex );
 		openWindow();
 
-		// Setup opengl
-		DerelictGL3.load();
-		
+		// Setup opengl		
 		uint formatCount;
 		int pixelFormat;
 		PIXELFORMATDESCRIPTOR pfd;
 		
 		HGLRC handle;
 		
-		glDeviceContext = GetDC( hWnd );		
-		SetPixelFormat( glDeviceContext, 1, &pfd );
-		renderContext = wglCreateContext( glDeviceContext );
-		wglMakeCurrent( glDeviceContext, renderContext );
+		deviceContext = GetDC( hWnd );		
+		SetPixelFormat( deviceContext, 1, &pfd );
+		renderContext = wglCreateContext( deviceContext );
+		wglMakeCurrent( deviceContext, renderContext );
 		
 		DerelictGL3.reload();
 		
@@ -135,19 +138,19 @@ public:
 		];
 		
 		// Get new Device Context
-		glDeviceContext = GetDC( hWnd );
+		deviceContext = GetDC( hWnd );
 		
 		// Query pixel format
-		wglChoosePixelFormatARB( glDeviceContext, attributeList.ptr, null, 1, &pixelFormat, &formatCount );
+		wglChoosePixelFormatARB( deviceContext, attributeList.ptr, null, 1, &pixelFormat, &formatCount );
 		
 		// Set the pixel format
-		SetPixelFormat( glDeviceContext, pixelFormat, &pfd );
+		SetPixelFormat( deviceContext, pixelFormat, &pfd );
 		
 		// Create OpenGL rendering context
-		renderContext = wglCreateContextAttribsARB( glDeviceContext, null, versionInfo.ptr );
+		renderContext = wglCreateContextAttribsARB( deviceContext, null, versionInfo.ptr );
 		
 		// Set current context
-		wglMakeCurrent( glDeviceContext, renderContext );
+		wglMakeCurrent( deviceContext, renderContext );
 		
 		// Set depth buffer
 		glClearDepth( 1.0f );
@@ -172,8 +175,8 @@ public:
 		wglMakeCurrent( null, null );
 		wglDeleteContext( renderContext );
 		renderContext = null;
-		ReleaseDC( hWnd, glDeviceContext );
-		glDeviceContext = null;
+		ReleaseDC( hWnd, deviceContext );
+		deviceContext = null;
 		closeWindow();
 	}
 
@@ -181,7 +184,7 @@ public:
 	{
 		LONG style = GetWindowLong( hWnd, GWL_STYLE ) & ~( DWS_FULLSCREEN | DWS_WINDOWED );
 
-		fullScreen = Config.get!bool( "Display.Fullscreen" );
+		fullscreen = Config.get!bool( "Display.Fullscreen" );
 
 		if( fullscreen )
 		{
@@ -202,7 +205,7 @@ public:
 					  height + GetSystemMetrics( SM_CYCAPTION ) + GetSystemMetrics( SM_CYBORDER ),
 					  SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED );
 
-		glViewport( 0, 0, Graphics.window.width, Graphics.window.height );
+		glViewport( 0, 0, width, height );
 		// update matricies
 	}
 
@@ -228,18 +231,18 @@ public:
 
 	override void endDraw()
 	{
-		SwapBuffers( glDeviceContext );
+		SwapBuffers( deviceContext );
 	}
 
 	override void openWindow()
 	{
-		resize();
-
 		hWnd = CreateWindowEx( 0, "Dvelop", "Dvelop", fullscreen ? DWS_FULLSCREEN : DWS_WINDOWED,
 							 ( screenWidth - width ) / 2, ( screenHeight - height ) / 2, width, height,
 							 null, null, hInstance, null );
 
 		assert( hWnd );
+
+		resize();
 
 		ShowWindow( hWnd, SW_NORMAL );
 	}

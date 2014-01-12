@@ -13,8 +13,7 @@
 	"dependencies": {
 		"derelict-gl3": "~master",
 		"derelict-fi": "~master",
-		"dyaml": "~master",
-		"x11": "~master"
+		"dyaml": "~master"
 	},
 	"targetName": "dvelop",
 	"targetType": "executable",

@@ -28,9 +28,8 @@ abstract class Adapter
 {
 public:
 	// Graphics contexts
-	mixin Property!( "void*", "glDevice", "protected" );
-	mixin Property!( "GLDeviceContext", "glDeviceContext", "protected" );
-	mixin Property!( "GLRenderContext", "glRenderContext", "protected" );
+	mixin Property!( "GLDeviceContext", "deviceContext", "protected" );
+	mixin Property!( "GLRenderContext", "renderContext", "protected" );
 
 	mixin Property!( "uint", "width", "protected" );
 	mixin Property!( "uint", "screenWidth", "protected" );

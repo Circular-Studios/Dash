@@ -3,10 +3,9 @@ Game:
     Verbosity: !Verbosity High
 Display:
     Fullscreen: false
-    height: 720
-    width: 1280
+    Height: 720
+    Width: 1280
 Graphics:
-    Adapter: !Adapter OpenGL
     BackfaceCulling: true
     VSync: false
 Physics:

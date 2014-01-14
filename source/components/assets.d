@@ -24,7 +24,7 @@ public:
 	 */
 	void initialize()
 	{
-		DerelictFI.load( "bin/FreeImage.dll" );
+		DerelictFI.load();
 
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Meshes ) )
 		{

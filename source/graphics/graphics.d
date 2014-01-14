@@ -21,6 +21,10 @@ public:
 		{
 			adapter = new Mac;
 		}
+		else version( linux )
+		{
+			adapter = new Linux;
+		}
 		else
 		{
 			adapter = null;

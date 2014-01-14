@@ -1,5 +1,6 @@
 module graphics.adapters.adapter;
 import core.properties;
+import utility.config;
 
 version( Windows )
 {
@@ -36,6 +37,8 @@ public:
 	mixin Property!( "uint", "height", "protected" );
 	mixin Property!( "uint", "screenHeight", "protected" );
 	mixin Property!( "bool", "fullscreen", "protected" );
+	mixin Property!( "bool", "backfaceCulling", "protected" );
+	mixin Property!( "bool", "vsync", "protected" );
 
 	abstract void initialize();
 	abstract void shutdown();
@@ -49,4 +52,23 @@ public:
 	abstract void closeWindow();
 	
 	abstract void messageLoop();
+
+protected:
+	void loadProperties()
+	{
+		fullscreen = Config.get!bool( "Display.Fullscreen" );
+		if( fullscreen )
+		{
+			width = screenWidth;
+			height = screenHeight;
+		}
+		else
+		{
+			width = Config.get!uint( "Display.Width" );
+			height = Config.get!uint( "Display.Height" );
+		}
+
+		backfaceCulling = Config.get!bool( "Graphics.BackfaceCulling" );
+		vsync = Config.get!bool( "Graphics.VSync" );
+	}
 }

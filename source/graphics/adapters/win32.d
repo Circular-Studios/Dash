@@ -5,7 +5,7 @@ version( Windows ):
 import core.properties;
 import graphics.graphics;
 import graphics.adapters.adapter;
-import utility.input, utility.output, utility.config;
+import utility.input, utility.output;
 
 import win32.windef, win32.winuser, win32.winbase;
 import win32.wingdi : PIXELFORMATDESCRIPTOR, SetPixelFormat, SwapBuffers;
@@ -85,7 +85,7 @@ public:
 				LoadCursor( null, IDC_ARROW ),
 				cast(HBRUSH)( COLOR_WINDOW + 1 ),
 				null,
-				"Dvelop",
+				"Dash",
 				null
 		};
 		
@@ -184,7 +184,7 @@ public:
 	{
 		LONG style = GetWindowLong( hWnd, GWL_STYLE ) & ~( DWS_FULLSCREEN | DWS_WINDOWED );
 
-		fullscreen = Config.get!bool( "Display.Fullscreen" );
+		loadProperties();
 
 		if( fullscreen )
 		{
@@ -194,8 +194,6 @@ public:
 		}
 		else
 		{
-			width = Config.get!uint( "Display.Width" );
-			height = Config.get!uint( "Display.Height" );
 			style |= DWS_WINDOWED;
 		}
 
@@ -214,14 +212,14 @@ public:
 		resize();
 		
 		// Enable back face culling
-		if( Config.get!bool( "Graphics.BackfaceCulling" ) )
+		if( backfaceCulling )
 		{
 			glEnable( GL_CULL_FACE );
 			glCullFace( GL_BACK );
 		}
 		
 		// Turn on of off the v sync
-		wglSwapIntervalEXT( Config.get!bool( "Graphics.VSync" ) );
+		wglSwapIntervalEXT( vsync );
 	}
 
 	override void beginDraw()
@@ -236,7 +234,7 @@ public:
 
 	override void openWindow()
 	{
-		hWnd = CreateWindowEx( 0, "Dvelop", "Dvelop", fullscreen ? DWS_FULLSCREEN : DWS_WINDOWED,
+		hWnd = CreateWindowEx( 0, "Dash", "Dash", fullscreen ? DWS_FULLSCREEN : DWS_WINDOWED,
 							 ( screenWidth - width ) / 2, ( screenHeight - height ) / 2, width, height,
 							 null, null, hInstance, null );
 

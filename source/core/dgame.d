@@ -20,6 +20,14 @@ public:
 	GameState currentState;
 
 	/**
+	 * Overrideable. Returns the name of the window.
+	 */
+	@property string title()
+	{
+		return "Dash";
+	}
+
+	/**
 	 * Main Game loop.
 	 */
 	final void run()

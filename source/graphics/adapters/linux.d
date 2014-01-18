@@ -2,6 +2,7 @@
 
 version( linux ):
 
+import core.dgame;
 import graphics.graphics, graphics.adapters.adapter;
 import utility.output;
 
@@ -134,7 +135,7 @@ public:
 			CWColormap | CWEventMask, &windowAttributes );
 		
 		XMapWindow( display, window );
-		XStoreName( display, window, "Dash\0".dup.ptr );
+		XStoreName( display, window, DGame.instance.title.dup.ptr );
 		
 		context = glXCreateContext( display, glvi, null, GL_TRUE );
 		glXMakeCurrent( display, cast(uint)window, context );

@@ -2,7 +2,7 @@ module graphics.adapters.win32;
 
 version( Windows ):
 
-import core.properties;
+import core.dgame, core.properties;
 import graphics.graphics;
 import graphics.adapters.adapter;
 import utility.input, utility.output;
@@ -85,7 +85,7 @@ public:
 				LoadCursor( null, IDC_ARROW ),
 				cast(HBRUSH)( COLOR_WINDOW + 1 ),
 				null,
-				"Dash",
+				DGame.instance.title.dup.ptr,
 				null
 		};
 		

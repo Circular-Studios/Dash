@@ -78,11 +78,11 @@ public:
 	{
 		static if ( op == "*" )
 		{
-			x = 0;
-			y = 0;
-			z = 0;
-			w = 0;
-			/* TO DO */
+			x = x * other.w + y * other.z - z * other.y + w * other.x;
+			y = -x * other.z + y * other.w + z * other.x + w * other.y;
+			z = x * other.y - y * other.x + z * other.w + w * other.z;
+			w = -x * other.x - y * other.y - z * other.z + w * other.w;
+
 			return this;
 		}
 		else static assert ( 0, "Operator " ~ op ~ " not implemented for assign " );

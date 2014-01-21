@@ -6,6 +6,7 @@ install:
  - sudo apt-get update
  - sudo apt-get install dub
  - sudo apt-get install dmd-bin
+ - sudo dub install x11
 script: dub run --build=unittest
 
 # For pushing results to gitter.im

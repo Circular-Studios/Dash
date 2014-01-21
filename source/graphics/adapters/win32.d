@@ -85,7 +85,7 @@ public:
 				LoadCursor( null, IDC_ARROW ),
 				cast(HBRUSH)( COLOR_WINDOW + 1 ),
 				null,
-				DGame.instance.title.dup.ptr,
+				DGame.instance.title.ptr,
 				null
 		};
 		

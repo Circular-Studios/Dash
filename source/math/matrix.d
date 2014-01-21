@@ -1,6 +1,6 @@
 module math.matrix;
 import math.vector;
-import std.math, std.range;
+import std.math, std.numeric, std.traits;
 
 class Matrix( uint S = 4 ) if( S > 1 && S < 5 )
 {
@@ -55,9 +55,14 @@ static
 		return this;
 	}
 
-	auto opBinary( string op, T )( T other )
+	alias opBinary!"*" multiply;
+
+	/**
+	* Responsible for all math functions related to Matrix.
+	*/
+	auto opBinary( string op, T = Matrix!S )( T other )
 	{
-		static if ( is( T == Matrix!S ) )
+		static if ( is( Unqual!T == Matrix!S ) )
 		{
 			static if ( op == "*" )
 			{
@@ -70,7 +75,7 @@ static
 					foreach ( i, bi; other.matrix )
 						aux[ i ] = bi[ j ];
 					foreach ( i, ai; matrix )
-						result[ i ][ j ] = dotProduct( ai, aux );
+						result.matrix[ i ][ j ] = dotProduct( ai, aux );
 				}
 
 				return result;
@@ -83,19 +88,9 @@ static
 					foreach ( xx; 0..S )
 						result.matrix[ xx ][ yy ] = matrix[ xx ][ yy ] + other.matrix[ xx ][ yy ];
 			}
-			else static assert ( 0, "Operator " ~ op ~ " not implemented." );
+			else static assert( 0, "Operator " ~ op ~ " not implemented." );
 		}
-		else static if ( is( T == Vector!S ) )
-		{
-			auto result = new Vector!S;
-
-			for( uint ii = 0; ii < S; ++ii )
-				for( uint jj = 0; jj < S; ++jj )
-					result.values[ ii ] += matrix[ jj ][ ii ] * other.values[ jj ];
-
-			return result;
-		}
-		else static if ( is( T == float ) )
+		else static if ( is( Unqual!T == float ) )
 		{
 			static if ( op == "*" )
 			{
@@ -108,7 +103,33 @@ static
 				return result;
 			}
 		}
-		else static assert ( 0, "Operator " ~ op ~ " not implemented for type " ~ T.stringof ~ "." );
+		// Is vector?
+		else static if ( __traits(compiles, T.length) && T.length <= S )
+		{
+			// Deduce Vector length
+			foreach( VS; staticIota!( 0, S ) )
+			{
+				static if ( __traits(compiles, T.length) && VS == T.length && is( Unqual!T == Vector!VS ) )
+				{
+					static if ( op == "*" )
+					{
+						auto result = new Vector!VS;
+
+						for( uint ii = 0; ii < VS; ++ii )
+							for( uint jj = 0; jj < VS; ++jj )
+								result.values[ ii ] += matrix[ jj ][ ii ] * other.values[ jj ];
+
+						return result;
+					}
+					else static assert( 0, "Operator " ~ op ~ " not implemented." );
+				}
+			}
+
+			// Incase of fall though, break at run time.
+			// This shouldn't ever get hit.
+			assert( false );
+		}
+		else static assert( 0, "Operator " ~ op ~ " not implemented." );
 	}
 
 	Matrix!S opUnary( string op : "-" )() pure @safe

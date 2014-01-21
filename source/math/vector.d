@@ -2,11 +2,13 @@ module math.vector;
 import core.properties;
 
 import std.math;
-import std.signals, std.conv, std.typetuple;
+import std.signals, std.conv, std.typetuple, std.traits;
 
 class Vector( uint S = 3 )
 {
 public:
+	enum length = S;
+
 	this( float def = 0.0f ) @safe
 	{
 		for( uint ii = 0; ii < S; ++ii )
@@ -24,17 +26,6 @@ public:
 	 */
 	auto opDispatch( string prop )() if( prop.length > 1 )
 	{
-		// Creates a range from start inclusive to end exclusive.
-		template staticIota(size_t start, size_t end)
-		{
-			static if(start == end)
-				alias TypeTuple!() staticIota;
-			else static if(start < end)
-				alias TypeTuple!(start, staticIota!(start + 1, end)) staticIota;
-			else
-				static assert(0, "start cannot be greater then end!");
-		}
-
 		auto result = new Vector!( prop.length );
 
 		foreach( index; staticIota!( 0, prop.length ) )
@@ -94,7 +85,7 @@ public:
 	 */
 	auto opBinary( string op, T = Vector!S )( T other )
 	{
-		static if ( is( T == Vector!S ) )
+		static if ( is( Unqual!T == Vector!S ) )
 		{
 			static if ( op == "*" )
 			{
@@ -133,9 +124,9 @@ public:
 
 				return result;
 			}
-			else static assert ( 0, "Operator " ~ op ~ " not implemented." );
+			else static assert( 0, "Operator " ~ op ~ " not implemented." );
 		}
-		else static if( is( T == float ) )
+		else static if( is( Unqual!T == float ) )
 		{
 			static if ( op == "*" )
 			{
@@ -146,9 +137,9 @@ public:
 
 				return result;
 			}
-			else static assert ( 0, "Operator " ~ op ~ " not implemented." );
+			else static assert( 0, "Operator " ~ op ~ " not implemented." );
 		}
-		else static assert ( 0, "Operator " ~ op ~ " not implemented for type " ~ T.stringof ~ "." );
+		else static assert( 0, "Operator " ~ op ~ " not implemented for type " ~ T.stringof ~ "." );
 	}
 
 	Vector!S opUnary( string op )() pure @safe
@@ -220,4 +211,15 @@ public:
 	float[ S ] values;
 
 	mixin Signal!( string, string );
+}
+
+// Creates a range from start inclusive to end exclusive.
+template staticIota(size_t start, size_t end)
+{
+	static if(start == end)
+		alias TypeTuple!() staticIota;
+	else static if(start < end)
+		alias TypeTuple!(start, staticIota!(start + 1, end)) staticIota;
+	else
+		static assert(0, "start cannot be greater then end!");
 }

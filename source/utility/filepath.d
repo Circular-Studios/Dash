@@ -145,3 +145,15 @@ private:
 	string _extension;
 	File* file;
 }
+
+unittest
+{
+	import std.stdio;
+	writeln( "Dash FilePath properties unittest" );
+
+	auto fp = new FilePath( FilePath.Resources.Config );
+
+	assert( fp.fileName == "Config.yml", "FilePath.fileName error." );
+	assert( fp.baseFileName == "Config", "FilePath.baseFileName error." );
+	assert( fp.extension == ".yml", "FilePath.extension error." );
+}

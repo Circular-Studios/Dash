@@ -238,3 +238,31 @@ T constructConv( T )( ref Node node ) if( is( T == enum ) )
 		throw new Exception( "Enum must be represented as a scalar." );
 	}
 }
+
+unittest
+{
+	import std.stdio;
+	writeln( "Dash Config get unittest" );
+
+	auto n1 = Node( [ "test1": 10 ] );
+
+	assert( Config.get!int( "test1", n1 ) == 10, "Config.get error." );
+
+	try
+	{
+		Config.get!int( "dontexist", n1 );
+		assert( false, "Config.get didn't throw." );
+	}
+	catch { }
+}
+unittest
+{
+	import std.stdio;
+	writeln( "Dash Config tryGet unittest" );
+
+	auto n1 = Node( [ "test1": 10 ] );
+
+	int val;
+	assert( Config.tryGet( "test1", val, n1 ), "Config.tryGet failed." );
+	assert( !Config.tryGet( "dontexist", val, n1 ), "Config.tryGet returned true." );
+}

@@ -4,7 +4,7 @@
 module core.gameobject;
 import core.properties;
 import components.component, components.assets, components.texture, components.mesh;
-import graphics.shaders.shader;
+import graphics.graphics, graphics.shaders.shader;
 import utility.config;
 import math.transform, math.vector, math.quaternion;
 
@@ -126,8 +126,7 @@ public:
 	{
 		onDraw();
 
-		foreach( ci, component; componentList )
-			component.draw( shader );
+		Graphics.drawObject( this );
 	}
 
 	/**

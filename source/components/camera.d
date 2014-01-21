@@ -43,7 +43,7 @@ private:
 		Vector!3[3] axes;
 		axes[ 2 ] = ( lookAt - owner.transform.position ).normalize();
 		axes[ 0 ] = up.cross( axes[ 2 ] ).normalize();
-		axes[ 1 ] = axes[ 2 ].cross( axes[ 0 ] );
+		axes[ 1 ] = axes[ 2 ].cross( axes[ 0 ] ).normalize();
 		
 		for( uint ii = 0; ii < 3; ++ii )
 		{

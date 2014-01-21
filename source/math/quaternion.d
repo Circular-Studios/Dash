@@ -65,7 +65,7 @@ public:
 	{
 		static if ( op  == "*" )
 		{
-			return Quaternion(
+			return new Quaternion(
 				x * other.w + y * other.z - z * other.y + w * other.x,
 				-x * other.z + y * other.w + z * other.x + w * other.y,
 				x * other.y - y * other.x + z * other.w + w * other.z,
@@ -85,7 +85,7 @@ public:
 
 			return this;
 		}
-		else static assert ( 0, "Operator " ~ op ~ " not implemented for assign " );
+		else static assert ( 0, "Operator " ~ op ~ " not implemented for assign." );
 	}
 
 private:

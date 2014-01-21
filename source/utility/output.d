@@ -33,6 +33,11 @@ enum Verbosity
 	Off
 }
 
+/// Alias for Output.printMessage
+alias Output.printMessage log;
+/// Alias for Output.printValue
+alias Output.printValue logValue;
+
 /**
  * Static class for handling interactions with the console.
  */
@@ -51,10 +56,17 @@ public:
 	/**
 	 * Print a generic message to the console.
 	 */
-	void printMessage( OutputType type, string message )
+	void printMessage( A... )( OutputType type, A messages )
 	{
 		if( shouldPrint( type ) )
-			writefln( "%s %s", getHeader( type ), message );
+		{
+			write( getHeader( type ) );
+
+			foreach( msg; messages )
+				write( msg );
+
+			writeln();
+		}
 	}
 
 	/**

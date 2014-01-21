@@ -23,6 +23,15 @@ public:
 	 * The current transform of the object.
 	 */
 	mixin Property!( "Transform", "transform", "public" );
+	/**
+	 * The Texture belonging to the object
+	 */
+	mixin Property!( "Texture", "diffuse", "public" );
+	/**
+	 * The Mesh belonging to the object
+	 */
+	mixin Property!( "Mesh", "mesh", "public" );
+
 	mixin Signal!( string, string );
 
 	/**
@@ -141,6 +150,12 @@ public:
 	final void addComponent( T )( T newComponent ) if( is( T : Component ) )
 	{
 		componentList[ T.classinfo ] = newComponent;
+
+		// Add component to proper property
+		if( typeid( newComponent ) == typeid( Texture ) )
+			diffuse = cast(Texture)newComponent;
+		else if( typeid( newComponent ) == typeid( Mesh ) )
+			mesh = cast(Mesh)newComponent;
 	}
 
 	/**

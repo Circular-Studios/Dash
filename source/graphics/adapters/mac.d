@@ -2,6 +2,7 @@ module graphics.adapters.mac;
 
 version( OSX ):
 
+import core.gameobject;
 import graphics.graphics;
 import graphics.adapters.adapter;
 
@@ -33,6 +34,11 @@ public:
 	}
 	
 	override void beginDraw()
+	{
+
+	}
+
+	override void drawObject( GameObject obj )
 	{
 
 	}

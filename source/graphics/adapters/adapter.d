@@ -1,5 +1,5 @@
 module graphics.adapters.adapter;
-import core.properties;
+import core.gameobject, core.properties;
 import utility.config;
 
 version( Windows )
@@ -46,6 +46,7 @@ public:
 	abstract void reload();
 
 	abstract void beginDraw();
+	abstract void drawObject( GameObject obj );
 	abstract void endDraw();
 
 	abstract void openWindow();

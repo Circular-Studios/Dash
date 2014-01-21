@@ -2,7 +2,7 @@
 
 version( linux ):
 
-import core.dgame;
+import core.gameobject, core.dgame;
 import graphics.graphics, graphics.adapters.adapter;
 import utility.output;
 
@@ -119,6 +119,11 @@ public:
 	override void beginDraw()
 	{
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	}
+
+	override void drawObject( GameObject obj )
+	{
+
 	}
 	
 	override void endDraw()

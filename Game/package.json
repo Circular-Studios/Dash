@@ -9,6 +9,7 @@
 	"sourcePaths": [ "Scripts/" ],
 	"importPaths": [ "Scripts/" ],
 	"targetType": "executable",
+	"targetPath": "Binaries/",
 
 	"libs-windows": [
 		"gdi32", "ole32", "kernel32",

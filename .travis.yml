@@ -7,7 +7,9 @@ install:
  - sudo apt-get install dub
  - sudo apt-get install dmd-bin
  - sudo dub install x11
-script: sudo dub run --build=unittest
+script:
+ - cd Game
+ - sudo dub run --build=unittest
 
 # For pushing results to gitter.im
 notifications:

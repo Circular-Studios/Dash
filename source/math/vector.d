@@ -148,7 +148,7 @@ public:
 			}
 			else static assert ( 0, "Operator " ~ op ~ " not implemented." );
 		}
-		else static assert ( 0, "Operator " ~ op ~ " not implemented." );
+		else static assert ( 0, "Operator " ~ op ~ " not implemented for type " ~ T.stringof ~ "." );
 	}
 
 	Vector!S opUnary( string op )() pure @safe

@@ -1,6 +1,6 @@
 module math.matrix;
 import math.vector;
-import std.math;
+import std.math, std.range;
 
 class Matrix( uint S = 4 ) if( S > 1 && S < 5 )
 {
@@ -35,7 +35,7 @@ static
 	}
 }
 
-	this()
+	this() pure @safe
 	{
 		for( uint ii = 0; ii < S; ++ii )
 		{
@@ -55,70 +55,72 @@ static
 		return this;
 	}
 
-	Matrix!S opBinary( string op : "*" )( const Matrix!S other ) pure
+	auto opBinary( string op, T )( T other )
 	{
-		return mulitiply( other );
-	}
-	Matrix!S multiply( const Matrix!S other ) pure
-	{
-		auto result = new Matrix!S;
-
-		for( uint yy = 0; yy < S; ++yy )
+		static if ( is( T == Matrix!S ) )
 		{
-			for( uint xx = 0; xx < S; ++xx )
+			static if ( op == "*" )
 			{
-				float value = 0;
+				// From here: http://rosettacode.org/wiki/Matrix_multiplication#Stronger_Statically_Typed_Version
+				auto result = new Matrix!S;
+				float[ S ] aux;
 
-				for( uint ii = 0; ii < S; ++ii )
-					value += matrix[ ii ][ yy ] * other.matrix[ xx ][ ii ];
+				foreach ( j; 0..S )
+				{
+					foreach ( i, bi; other.matrix )
+						aux[ i ] = bi[ j ];
+					foreach ( i, ai; matrix )
+						result[ i ][ j ] = dotProduct( ai, aux );
+				}
 
-				result.matrix[ xx ][ yy ] = value;
+				return result;
+			}
+			else static if ( op == "+" )
+			{
+				auto result = new Matrix!S;
+				
+				foreach ( yy; 0..S )
+					foreach ( xx; 0..S )
+						result.matrix[ xx ][ yy ] = matrix[ xx ][ yy ] + other.matrix[ xx ][ yy ];
+			}
+			else static assert ( 0, "Operator " ~ op ~ " not implemented." );
+		}
+		else static if ( is( T == Vector!S ) )
+		{
+			auto result = new Vector!S;
+
+			for( uint ii = 0; ii < S; ++ii )
+				for( uint jj = 0; jj < S; ++jj )
+					result.values[ ii ] += matrix[ jj ][ ii ] * other.values[ jj ];
+
+			return result;
+		}
+		else static if ( is( T == float ) )
+		{
+			static if ( op == "*" )
+			{
+				auto result = Matrix!S;
+
+				foreach ( yy, row; matrix )
+					foreach ( xx, element; row )
+						result.matrix[ xx ][ yy ] = element * other;
+				
+				return result;
 			}
 		}
-
-		return result;
+		else static assert ( 0, "Operator " ~ op ~ " not implemented for type " ~ T.stringof ~ "." );
 	}
 
-	Vector!T opBinary( string op : "*", uint T )( const Vector!T other ) pure
-	{
-		return multiply( other );
-	}
-	Vector!T multiply( uint T )( const Vector!T other ) pure
-	{
-		auto result = new Vector!T;
-
-		for( uint ii = 0; ii < T; ++ii )
-			for( uint jj = 0; jj < T; ++jj )
-				result.values[ ii ] += matrix[ jj ][ ii ] * other.values[ jj ];
-
-		return result;
-	}
-
-	Matrix!S opBinary( string op : "+" )( const Matrix!S other ) pure
-	{
-		return add( other );
-	}
-	Matrix!S add( const Matrix!S other ) pure
-	{
-		auto result = new Matrix!S;
-
-		for( uint yy = 0; yy < S; ++yy )
-			for( uint xx = 0; xx < S; ++xx )
-				result.matrix[ xx ][ yy ] = matrix[ xx ][ yy ] + other.matrix[ xx ][ yy ];
-
-		return result;
-	}
-
-	Matrix!S opUnary( string op : "-" )() pure
+	Matrix!S opUnary( string op : "-" )() pure @safe
 	{
 		return inverse();
 	}
-	Matrix!S inverse() pure
+	Matrix!S inverse() pure @safe
 	{
 		return new Matrix!S;
 	}
 
-	Matrix!S transpose() pure
+	Matrix!S transpose() pure @safe
 	{
 		auto result = new Matrix!S;
 
@@ -128,11 +130,6 @@ static
 
 		return result;
 	}
-
-	/*Vector!S multiply() pure
-	{
-
-	}*/
 	
 	float[ S ][ S ]	matrix;
 }

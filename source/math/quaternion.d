@@ -65,9 +65,13 @@ public:
 	{
 		static if ( op  == "*" )
 		{
-			return Quaternion( /* TO DO */ );
+			return Quaternion(
+				x * other.w + y * other.z - z * other.y + w * other.x,
+				-x * other.z + y * other.w + z * other.x + w * other.y,
+				x * other.y - y * other.x + z * other.w + w * other.z,
+				-x * other.x - y * other.y - z * other.z + w * other.w );
 		}
-		else static assert ( 0, "Operator " ~ op ~ " not implemented " );
+		else static assert ( 0, "Operator " ~ op ~ " not implemented." );
 	}
 
 	ref Quaternion opOpAssign( string op ) ( Quaternion rhs )

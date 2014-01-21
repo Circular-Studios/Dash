@@ -28,7 +28,11 @@
 	],
 
 	"dependencies-linux": {
-		"x11": "~master"
+		"x11": 
+			{
+				"version": "~master",
+				"optional": true
+			}
 	},
 
 	"buildTypes": {

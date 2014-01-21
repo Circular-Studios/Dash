@@ -90,7 +90,7 @@ public:
 		};
 		
 		RegisterClassEx( &wcex );
-		openWindow();
+		openWindow( false );
 
 		// Setup opengl		
 		uint formatCount;
@@ -239,15 +239,20 @@ public:
 
 	override void openWindow()
 	{
-		hWnd = CreateWindowEx( 0, "Dash", "Dash", fullscreen ? DWS_FULLSCREEN : DWS_WINDOWED,
-							 ( screenWidth - width ) / 2, ( screenHeight - height ) / 2, width, height,
-							 null, null, hInstance, null );
+		openWindow( true );
+	}
+
+	void openWindow( bool showWindow )
+	{
+		hWnd = CreateWindowEx( 0, DGame.instance.title.ptr, DGame.instance.title.ptr, fullscreen ? DWS_FULLSCREEN : DWS_WINDOWED,
+							   ( screenWidth - width ) / 2, ( screenHeight - height ) / 2, width, height,
+							  null, null, hInstance, null );
 
 		assert( hWnd );
 
 		resize();
 
-		ShowWindow( hWnd, SW_NORMAL );
+		ShowWindow( hWnd, showWindow ? SW_NORMAL : SW_HIDE );
 	}
 
 	override void closeWindow()

@@ -35,16 +35,6 @@ public:
 
 		return result;
 	}
-	unittest
-	{
-		auto vec1 = new Vector!3( 1.0f, 2.0f, 3.0f );
-
-		auto vec2 = vec1.zyx;
-
-		assert( vec2.x == vec1.z );
-		assert( vec2.y == vec1.y );
-		assert( vec2.z == vec1.x );
-	}
 
 	/**
 	 * Calls other operators, and assigns results back to itself
@@ -222,4 +212,32 @@ template staticIota(size_t start, size_t end)
 		alias TypeTuple!(start, staticIota!(start + 1, end)) staticIota;
 	else
 		static assert(0, "start cannot be greater then end!");
+}
+
+unittest
+{
+	import std.stdio;
+	writeln( "Dash Vector opDispatch unittest" );
+
+	auto vec1 = new Vector!3( 1.0f, 2.0f, 3.0f );
+
+	auto vec2 = vec1.zyx;
+
+	assert( vec2.x == vec1.z );
+	assert( vec2.y == vec1.y );
+	assert( vec2.z == vec1.x );
+}
+unittest
+{
+	import std.stdio;
+	writeln( "Dash Vector magnitude unittest" );
+
+	auto vec2 = new Vector!2( 1.0f, 0.0f );
+	assert( vec2.magnitude == 1.0f );
+
+	auto vec3 = new Vector!3( 0.0f, 2.0f, 0.0f );
+	assert( vec3.magnitude == 2.0f );
+
+	auto vec4 = new Vector!4( 0.0f, 0.0f, 3.0f, 0.0f );
+	assert( vec4.magnitude == 3.0f );
 }

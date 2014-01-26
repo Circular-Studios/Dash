@@ -31,6 +31,7 @@ public:
 		}
 
 		adapter.initialize();
+		adapter.initializeDeferredRendering();
 		Shaders.initialize();
 	}
 

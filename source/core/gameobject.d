@@ -28,7 +28,7 @@ public:
 	 */
 	mixin Property!( "Texture", "diffuse", "public" );
 	/**
-	* The Texture belonging to the object
+	* The Normal Texture belonging to the object
 	*/
 	mixin Property!( "Texture", "normal", "public" );
 	/**

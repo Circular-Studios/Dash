@@ -116,6 +116,11 @@ public:
 		return file;
 	}
 
+	string getContents()
+	{
+		return cast(string)std.file.read(_fullPath);
+	}
+
 	/**
 	 * Create an instance based on a given file path.
 	 */

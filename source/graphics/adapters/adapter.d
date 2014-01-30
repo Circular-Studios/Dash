@@ -46,8 +46,6 @@ public:
 	mixin Property!( "uint", "diffuseRenderTexture", "protected" ); //Alpha channel stores Specular color
 	mixin Property!( "uint", "normalRenderTexture", "protected" ); //Alpha channel stores Specular power
 	mixin Property!( "uint", "depthRenderTexture", "protected" );
-	mixin Property!( "Shader", "preRenderVertexShader", "protected" );
-	mixin Property!( "Shader", "preRenderFragmentShader", "protected" );
 
 	abstract void initialize();
 	abstract void shutdown();

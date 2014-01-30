@@ -167,7 +167,7 @@ public:
 		
 		reload();
 		
-		glClearColor( 0.5f, 0.5f, 0.5f, 1.0f );
+		glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
 	}
 
 	override void shutdown()
@@ -224,8 +224,8 @@ public:
 
 	override void beginDraw()
 	{
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	}
 
 	override void drawObject( GameObject object )
@@ -237,6 +237,7 @@ public:
 	{
 		//This line switches back to the default framebuffer
 		glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		SwapBuffers( deviceContext );
 	}
 

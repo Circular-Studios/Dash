@@ -5,6 +5,7 @@ version( Windows ):
 import core.dgame, core.gameobject, core.properties;
 import graphics.graphics;
 import graphics.adapters.adapter;
+import graphics.shaders.shaders, graphics.shaders.glshader;
 import utility.input, utility.output;
 
 import win32.windef, win32.winuser, win32.winbase;
@@ -230,7 +231,20 @@ public:
 
 	override void drawObject( GameObject object )
 	{
-		
+		GLShader shader = cast(GLShader)Shaders["DeferredShader"];
+		glUseProgram( shader.programID );
+
+		//This is finding the uniform for the given texture, and setting that texture to the appropriate one for the object
+		GLint textureLocation = glGetUniformLocation( shader.vertexShaderID, "diffuse" );
+		glUniform1i( textureLocation, 0 );
+		glActiveTexture( GL_TEXTURE0 );
+		glBindTexture( GL_TEXTURE_2D, object.diffuse.glID );
+
+		textureLocation = glGetUniformLocation( shader.vertexShaderID, "normal" );
+		glUniform1i( textureLocation, 1 );
+		glActiveTexture( GL_TEXTURE1 );
+		glBindTexture( GL_TEXTURE_2D, object.normal.glID );
+
 	}
 
 	override void endDraw()

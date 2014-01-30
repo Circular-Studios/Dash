@@ -15,13 +15,4 @@ public:
 
 	}
 
-	override void bindTexture( Texture texture )
-	{
-
-	}
-
-	override void drawMesh( Mesh mesh )
-	{
-
-	}
 }

@@ -14,6 +14,7 @@ class Texture : Component
 public:
 	mixin Property!( "uint", "width" );
 	mixin Property!( "uint", "height" );
+	mixin Property!( "uint", "glID" );
 
 	this( string filePath )
 	{	
@@ -24,8 +25,8 @@ public:
 		width = FreeImage_GetWidth( imageData );
 		height = FreeImage_GetHeight( imageData );
 
-		glGenTextures( 1, &_glId );
-		glBindTexture( GL_TEXTURE_2D, glId );
+		glGenTextures( 1, &_glID );
+		glBindTexture( GL_TEXTURE_2D, glID );
 		glTexImage2D(
 			GL_TEXTURE_2D,
 			0,
@@ -49,14 +50,13 @@ public:
 
 	override void draw( Shader shader )
 	{
-		shader.bindTexture( this );
+		//shader.bindTexture( this );
 	}
 
 	override void shutdown()
 	{
 		glBindTexture( GL_TEXTURE_2D, 0 );
-		glDeleteBuffers( 1, &_glId );
+		glDeleteBuffers( 1, &_glID );
 	}
 
-	mixin Property!( "uint", "glId" );
 }

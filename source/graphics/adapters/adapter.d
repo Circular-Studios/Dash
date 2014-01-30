@@ -1,6 +1,6 @@
 module graphics.adapters.adapter;
 import core.gameobject, core.properties;
-import graphics.shaders.shader;
+import graphics.shaders.shader, graphics.shaders.shaders;
 import utility.config, utility.output;
 
 import derelict.opengl3.gl3;

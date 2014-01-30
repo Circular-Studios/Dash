@@ -141,7 +141,7 @@ public:
 
 	override void draw( Shader shader )
 	{
-		shader.drawMesh( this );
+		//shader.drawMesh( this );
 	}
 
 	override void shutdown()

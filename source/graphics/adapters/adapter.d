@@ -1,5 +1,6 @@
 module graphics.adapters.adapter;
 import core.gameobject, core.properties;
+import graphics.shaders.shader;
 import utility.config, utility.output;
 
 import derelict.opengl3.gl3;
@@ -41,10 +42,12 @@ public:
 	mixin Property!( "bool", "fullscreen", "protected" );
 	mixin Property!( "bool", "backfaceCulling", "protected" );
 	mixin Property!( "bool", "vsync", "protected" );
-	mixin Property!( "uint", "frameBufferName", "protected" );
+	mixin Property!( "uint", "deferredFrameBuffer", "protected" );
 	mixin Property!( "uint", "diffuseRenderTexture", "protected" ); //Alpha channel stores Specular color
 	mixin Property!( "uint", "normalRenderTexture", "protected" ); //Alpha channel stores Specular power
 	mixin Property!( "uint", "depthRenderTexture", "protected" );
+	mixin Property!( "Shader", "preRenderVertexShader", "protected" );
+	mixin Property!( "Shader", "preRenderFragmentShader", "protected" );
 
 	abstract void initialize();
 	abstract void shutdown();
@@ -65,9 +68,9 @@ public:
 		//http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
 
 		//Create the frame buffer, which will contain the textures to render to
-		frameBufferName = 0;
-		glGenFramebuffers( 1, &_frameBufferName );
-		glBindFramebuffer( GL_FRAMEBUFFER, frameBufferName );
+		deferredFrameBuffer = 0;
+		glGenFramebuffers( 1, &_deferredFrameBuffer );
+		glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
 
 		//Generate our 3 textures
 		glGenTextures( 1, &_diffuseRenderTexture );

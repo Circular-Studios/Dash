@@ -28,6 +28,10 @@ public:
 	 */
 	mixin Property!( "Texture", "diffuse", "public" );
 	/**
+	* The Texture belonging to the object
+	*/
+	mixin Property!( "Texture", "normal", "public" );
+	/**
 	 * The Mesh belonging to the object
 	 */
 	mixin Property!( "Mesh", "mesh", "public" );

@@ -225,7 +225,7 @@ public:
 	override void beginDraw()
 	{
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
+		glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
 	}
 
 	override void drawObject( GameObject object )
@@ -235,6 +235,8 @@ public:
 
 	override void endDraw()
 	{
+		//This line switches back to the default framebuffer
+		glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 		SwapBuffers( deviceContext );
 	}
 

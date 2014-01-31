@@ -1,3 +1,5 @@
+#version 400
+
 // In vars
 in vec2 fUV;
 

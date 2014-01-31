@@ -231,7 +231,8 @@ public:
 
 	override void drawObject( GameObject object )
 	{
-		GLShader shader = cast(GLShader)Shaders["DeferredShader"];
+		
+		GLShader shader = cast(GLShader)Shaders["texture"];
 		glUseProgram( shader.programID );
 
 		//This is finding the uniform for the given texture, and setting that texture to the appropriate one for the object
@@ -244,7 +245,7 @@ public:
 		glUniform1i( textureLocation, 1 );
 		glActiveTexture( GL_TEXTURE1 );
 		glBindTexture( GL_TEXTURE_2D, object.normal.glID );
-
+		
 	}
 
 	override void endDraw()

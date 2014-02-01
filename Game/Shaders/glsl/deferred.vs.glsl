@@ -22,8 +22,8 @@ void main( void )
 	// gl_Position is like SV_Position
 	fPosition = worldViewProj * inPosition;
 	gl_Position = fPosition;
-	fNormal = normalize( world * inNormal );
+	fNormal = normalize( world * vec4( inNormal, 1.0f ) ;
 	fUV = inUV;
-	fTangent = normalize( world * inTangent );
-	fBinormal = normalize( world * inBinormal );
+	fTangent = normalize( world * vec4( inTangent, 1.0f ) );
+	fBinormal = normalize( world * vec4( inBinormal, 1.0f ) );
 }

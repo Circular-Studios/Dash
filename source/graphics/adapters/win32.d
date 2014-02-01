@@ -3,9 +3,8 @@ module graphics.adapters.win32;
 version( Windows ):
 
 import core.dgame, core.gameobject, core.properties;
-import graphics.graphics;
-import graphics.adapters.adapter;
-import graphics.shaders.shaders, graphics.shaders.glshader;
+import components.mesh;
+import graphics.graphics, graphics.adapters.adapter, graphics.shaders.shaders, graphics.shaders.glshader;
 import utility.input, utility.output;
 
 import win32.windef, win32.winuser, win32.winbase;
@@ -227,25 +226,28 @@ public:
 	{
 		glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+		//Set the shader and program for all draw calls for the first pass
+		glUseProgram( (cast(GLShader)Shaders["PreDeferred"]).programID );
 	}
 
 	override void drawObject( GameObject object )
 	{
-		
-		GLShader shader = cast(GLShader)Shaders["texture"];
-		glUseProgram( shader.programID );
-
+		GLShader shader = cast(GLShader)Shaders["PreDeferred"];
 		//This is finding the uniform for the given texture, and setting that texture to the appropriate one for the object
-		GLint textureLocation = glGetUniformLocation( shader.vertexShaderID, "diffuse" );
+		GLint textureLocation = glGetUniformLocation( shader.fragmentShaderID, "diffuseTexture" );
 		glUniform1i( textureLocation, 0 );
 		glActiveTexture( GL_TEXTURE0 );
 		glBindTexture( GL_TEXTURE_2D, object.diffuse.glID );
 
-		textureLocation = glGetUniformLocation( shader.vertexShaderID, "normal" );
+		textureLocation = glGetUniformLocation( shader.fragmentShaderID, "normalTexture" );
 		glUniform1i( textureLocation, 1 );
 		glActiveTexture( GL_TEXTURE1 );
 		glBindTexture( GL_TEXTURE_2D, object.normal.glID );
 		
+		glBindVertexArray( object.mesh.glVertexArray );
+		
+		glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, 0 );
 	}
 
 	override void endDraw()
@@ -253,6 +255,29 @@ public:
 		//This line switches back to the default framebuffer
 		glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+		GLShader shader = cast(GLShader)Shaders["Deferred"];
+		glUseProgram( shader.programID );
+
+		GLint textureLocation = glGetUniformLocation( shader.fragmentShaderID, "diffuseTexture" );
+		glUniform1i( textureLocation, 0 );
+		glActiveTexture( GL_TEXTURE0 );
+		glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
+
+		textureLocation = glGetUniformLocation( shader.fragmentShaderID, "normalTexture" );
+		glUniform1i( textureLocation, 1 );
+		glActiveTexture( GL_TEXTURE1 );
+		glBindTexture( GL_TEXTURE_2D, normalRenderTexture );
+
+		textureLocation = glGetUniformLocation( shader.fragmentShaderID, "depthTexture" );
+		glUniform1i( textureLocation, 2 );
+		glActiveTexture( GL_TEXTURE2 );
+		glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
+
+		//glBindVertexArray( whateverWindowMesh we have );
+
+		//glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
+
 		SwapBuffers( deviceContext );
 	}
 

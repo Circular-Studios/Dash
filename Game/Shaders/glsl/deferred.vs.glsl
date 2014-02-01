@@ -20,10 +20,10 @@ uniform int windowHeight;
 void main( void )
 {
 	// gl_Position is like SV_Position
-	fPosition = worldViewProj * inPosition;
-	gl_Position = fPosition;
-	fNormal = normalize( world * vec4( inNormal, 1.0f ) ;
+	fPosition = ( worldViewProj * vec4( inPosition, 1.0f ) ).xyz;
+	gl_Position = vec4( fPosition, 1.0f );
+	fNormal = normalize( world * vec4( inNormal, 1.0f ) ).xyz;
 	fUV = inUV;
-	fTangent = normalize( world * vec4( inTangent, 1.0f ) );
-	fBinormal = normalize( world * vec4( inBinormal, 1.0f ) );
+	fTangent = normalize( world * vec4( inTangent, 1.0f ) ).xyz;
+	fBinormal = normalize( world * vec4( inBinormal, 1.0f ) ).xyz;
 }

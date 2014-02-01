@@ -2,7 +2,7 @@
  * Defines the static Assets class, a static class which manages all textures, meshes, etc...
  */
 module components.assets;
-import components.component, components.mesh, components.texture;
+import components.component, components.objmesh, components.texture;
 import utility.filepath;
 
 import derelict.freeimage.freeimage;
@@ -28,7 +28,8 @@ public:
 
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Meshes ) )
 		{
-			componentShelf[ file.baseFileName ] = new Mesh( file.fullPath );
+			// (If check for checking type of file loading)
+			componentShelf[ file.baseFileName ] = new ObjMesh( file.fullPath );
 		}
 
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Textures ) )

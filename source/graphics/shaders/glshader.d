@@ -37,9 +37,9 @@ public:
 		if( compileStatus != GL_TRUE )
 		{
 			log( OutputType.Error, "Vertex Shader compile error" );
-			char[1000] errorLog;
+			char[2000] errorLog;
 			auto info = errorLog.ptr;
-			glGetShaderInfoLog( vertexShaderID, 1000, null, info );
+			glGetShaderInfoLog( vertexShaderID, 2000, null, info );
 			log( OutputType.Error, errorLog );
 			assert(false);
 		}

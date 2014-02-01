@@ -228,12 +228,12 @@ public:
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 		//Set the shader and program for all draw calls for the first pass
-		glUseProgram( (cast(GLShader)Shaders["PreDeferred"]).programID );
+		glUseProgram( (cast(GLShader)Shaders["Deferred"]).programID );
 	}
 
 	override void drawObject( GameObject object )
 	{
-		GLShader shader = cast(GLShader)Shaders["PreDeferred"];
+		GLShader shader = cast(GLShader)Shaders["Deferred"];
 		//This is finding the uniform for the given texture, and setting that texture to the appropriate one for the object
 		GLint textureLocation = glGetUniformLocation( shader.fragmentShaderID, "diffuseTexture" );
 		glUniform1i( textureLocation, 0 );
@@ -245,9 +245,9 @@ public:
 		glActiveTexture( GL_TEXTURE1 );
 		glBindTexture( GL_TEXTURE_2D, object.normal.glID );
 		
-		glBindVertexArray( object.mesh.glVertexArray );
+		//glBindVertexArray( object.mesh.glVertexArray );
 		
-		glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, 0 );
+		//glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, 0 );
 	}
 
 	override void endDraw()
@@ -256,7 +256,7 @@ public:
 		glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-		GLShader shader = cast(GLShader)Shaders["Deferred"];
+		/*GLShader shader = cast(GLShader)Shaders["Deferred"];
 		glUseProgram( shader.programID );
 
 		GLint textureLocation = glGetUniformLocation( shader.fragmentShaderID, "diffuseTexture" );
@@ -272,7 +272,7 @@ public:
 		textureLocation = glGetUniformLocation( shader.fragmentShaderID, "depthTexture" );
 		glUniform1i( textureLocation, 2 );
 		glActiveTexture( GL_TEXTURE2 );
-		glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
+		glBindTexture( GL_TEXTURE_2D, depthRenderTexture );*/
 
 		//glBindVertexArray( whateverWindowMesh we have );
 

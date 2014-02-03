@@ -13,7 +13,7 @@ public:
 	{
 		position = new Vector!3;
 		rotation = new Quaternion;
-		scale = new Vector!3;
+		scale = new Vector!3( 1.0, 1.0, 1.0);
 
 		position.connect( &emit );
 		rotation.connect( &emit );

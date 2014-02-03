@@ -3,6 +3,7 @@ import core.properties;
 import components.mesh, components.texture;
 import graphics.shaders.shader;
 import utility.filepath, utility.output;
+import math.matrix;
 import derelict.opengl3.gl3;
 
 package class GLShader : Shader
@@ -67,6 +68,20 @@ public:
 			log( OutputType.Error, "Shader program linking error" );
 			assert(false);
 		}
+	}
+
+	void setUniform( string name, const float value )
+	{
+		auto currentUniform = glGetUniformLocation( programID, (name ~ "\0").ptr );
+		
+		glUniform1f( currentUniform, value );
+	}
+
+	void setUniformMatrix( string name, const Matrix!4 matrix )
+	{
+		auto currentUniform = glGetUniformLocation( programID, (name ~ "\0").ptr );
+
+		glUniformMatrix4fv( currentUniform, 1, false, matrix.matrix.ptr.ptr );
 	}
 
 	override void shutdown()

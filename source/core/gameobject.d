@@ -124,11 +124,11 @@ public:
 	{
 		onShutdown();
 
-		foreach( ci, component; componentList )
+		/*foreach_reverse( ci, component; componentList )
 		{
 			component.shutdown();
 			componentList.remove( ci );
-		}
+		}*/
 	}
 
 	/**

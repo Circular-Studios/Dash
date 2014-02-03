@@ -19,8 +19,9 @@ public:
 	this( string filePath )
 	{	
 		super( null );
-
-		FIBITMAP* imageData = FreeImage_ConvertTo32Bits( FreeImage_Load( FreeImage_GetFileType( filePath.ptr, 0 ), filePath.ptr, 0 ) );
+		
+		filePath ~= "\0";
+		auto imageData = FreeImage_ConvertTo32Bits( FreeImage_Load( FreeImage_GetFileType( filePath.ptr, 0 ), filePath.ptr, 0 ) );
 
 		width = FreeImage_GetWidth( imageData );
 		height = FreeImage_GetHeight( imageData );

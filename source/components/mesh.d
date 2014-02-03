@@ -156,6 +156,7 @@ public:
 		glBindVertexArray( 0 );
 	}
 
+	/// Calculates two magic numbers (tangent and binormal) which are necessary for normal mapping
 	Vector!3[2] calculateTangentBinormal( Vector!3[3] vertices, Vector!2[3] uvs )
 	{
 		Vector!3[2] tangentBinormal;
@@ -175,6 +176,8 @@ public:
 
 		//Calculate the UV space vectors
 		uvector = new Vector!2();
+		vvector = new Vector!2();
+
 		uvector.x = uvs[1].x - uvs[0].x;
 		vvector.x = uvs[1].y - uvs[0].y;
 

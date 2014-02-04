@@ -3,10 +3,10 @@ module graphics.adapters.win32;
 version( Windows ):
 
 import core.dgame, core.gameobject, core.properties;
-import components.mesh, components.assets;
+import components.mesh, components.assets, components.camera;
 import graphics.graphics, graphics.adapters.adapter, graphics.shaders.shaders, graphics.shaders.glshader;
 import utility.input, utility.output;
-import math.matrix;
+import math.matrix, math.vector;
 
 import win32.windef, win32.winuser, win32.winbase;
 import win32.wingdi : PIXELFORMATDESCRIPTOR, SetPixelFormat, SwapBuffers;
@@ -237,8 +237,12 @@ public:
 		glBindVertexArray( object.mesh.glVertexArray );
 
 		GLShader shader = cast(GLShader)Shaders["deferred"];
-		shader.setUniformMatrix( "world", object.transform.matrix );
-		shader.setUniformMatrix( "worldViewProj", object.transform.matrix * Matrix!4.buildPerspective( 90, width / height, 0, 100 ) );
+		auto world = object.transform.matrix;
+		auto view = Camera.lookAtLH( new Vector!3(0,0,0), object.transform.position, new Vector!3(0,1,0) );
+		auto proj = Matrix!4.buildPerspective( 90, cast(float)width / cast(float)height, 1, 1000 );
+		auto wvp = world * view * proj;
+		shader.setUniformMatrix( "world", world );
+		shader.setUniformMatrix( "worldViewProj", wvp );
 
 		//This is finding the uniform for the given texture, and setting that texture to the appropriate one for the object
 		GLint textureLocation = glGetUniformLocation( shader.programID, "diffuseTexture" );

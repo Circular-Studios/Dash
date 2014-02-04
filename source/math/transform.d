@@ -72,12 +72,12 @@ private:
 		newMatrix.matrix[ 2 ][ 2 ] = scale.z;
 		newMatrix.matrix[ 3 ][ 3 ] = 1.0f;
 
-		// Translate
-		newMatrix.matrix[ 3 ][ 0 ] = position.x;
-		newMatrix.matrix[ 3 ][ 1 ] = position.y;
-		newMatrix.matrix[ 3 ][ 2 ] = position.z;
-
 		// Rotate
-		matrix = newMatrix.multiply( rotation.matrix );
+		_matrix = newMatrix * rotation.matrix;
+
+		// Translate
+		_matrix.matrix[ 3 ][ 0 ] = position.x;
+		_matrix.matrix[ 3 ][ 1 ] = position.y;
+		_matrix.matrix[ 3 ][ 2 ] = position.z;
 	}
 }

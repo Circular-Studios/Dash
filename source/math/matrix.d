@@ -11,9 +11,11 @@ static
 	Matrix!4 buildPerspective( const float fov, const float screenAspect, const float near, const float depth )
 	{
 		auto toReturn = new Matrix!4;
+		auto yScale = 1 / tan( fov / 2 );
+		auto xScale = yScale / screenAspect;
 
-		toReturn.matrix[ 0 ][ 0 ] = 1.0f / ( screenAspect * tan( fov / 2.0f ) );
-		toReturn.matrix[ 1 ][ 1 ] = 1.0f / tan( fov / 2.0f );
+		toReturn.matrix[ 0 ][ 0 ] = xScale;
+		toReturn.matrix[ 1 ][ 1 ] = yScale;
 		toReturn.matrix[ 2 ][ 2 ] = depth / ( depth - near );
 		toReturn.matrix[ 2 ][ 3 ] = 1.0f;
 		toReturn.matrix[ 3 ][ 2 ] = ( -near * depth ) / ( depth - near );

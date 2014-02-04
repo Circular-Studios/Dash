@@ -62,12 +62,24 @@ public:
         glAttachShader( programID, fragmentShaderID );
 		glLinkProgram( programID );
 
+		bindInputs( vertexBody );
+
 		glGetProgramiv( programID, GL_LINK_STATUS, &compileStatus );
         if( compileStatus != GL_TRUE )
         {
 			log( OutputType.Error, "Shader program linking error" );
 			assert(false);
 		}
+	}
+
+	void bindInputs( string vertexBody )
+	{
+		//Make this generic later plx
+		glBindAttribLocation( programID, 0, "inPosition" );
+		glBindAttribLocation( programID, 1, "inUV" );
+		glBindAttribLocation( programID, 2, "inNormal" );
+		glBindAttribLocation( programID, 3, "inTangent" );
+		glBindAttribLocation( programID, 4, "inBinormal" );
 	}
 
 	void setUniform( string name, const float value )

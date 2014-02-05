@@ -67,7 +67,7 @@ public:
 		glGetProgramiv( programID, GL_LINK_STATUS, &compileStatus );
         if( compileStatus != GL_TRUE )
         {
-			log( OutputType.Error, "Shader program linking error" );
+			log( OutputType.Error, "Shader program linking error", vertexPath );
 			assert(false);
 		}
 	}
@@ -75,11 +75,11 @@ public:
 	void bindInputs( string vertexBody )
 	{
 		//Make this generic later plx
-		glBindAttribLocation( programID, 0, "inPosition" );
-		glBindAttribLocation( programID, 1, "inUV" );
-		glBindAttribLocation( programID, 2, "inNormal" );
-		glBindAttribLocation( programID, 3, "inTangent" );
-		glBindAttribLocation( programID, 4, "inBinormal" );
+		glBindAttribLocation( programID, 0, "inPosition\0" );
+		glBindAttribLocation( programID, 1, "inUV\0" );
+		glBindAttribLocation( programID, 2, "inNormal\0" );
+		glBindAttribLocation( programID, 3, "inTangent\0" );
+		glBindAttribLocation( programID, 4, "inBinormal\0" );
 	}
 
 	void setUniform( string name, const float value )

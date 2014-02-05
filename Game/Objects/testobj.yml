@@ -2,7 +2,7 @@ Name: TestObject
 Script:
     ClassName: testobject.TestObject
 Transform:
-    Position: !Vector3 0.0 -35.0 100.0
+    Position: !Vector3 0.0 -35.0 -100.0
     Scale: !Vector3 5 5 5
 Mesh: object
 Diffuse: gadget_dDo_d

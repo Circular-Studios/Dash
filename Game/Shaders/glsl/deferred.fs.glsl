@@ -1,6 +1,6 @@
 #version 400
 
-in vec3 fPosition;
+in vec4 fPosition;
 in vec3 fNormal;
 in vec2 fUV;
 in vec3 fTangent;

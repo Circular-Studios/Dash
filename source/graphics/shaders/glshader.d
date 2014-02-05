@@ -68,6 +68,10 @@ public:
         if( compileStatus != GL_TRUE )
         {
 			log( OutputType.Error, "Shader program linking error", vertexPath );
+			char[1000] errorLog;
+			auto info = errorLog.ptr;
+			glGetProgramInfoLog( programID, 1000, null, info );
+			log( OutputType.Error, errorLog );
 			assert(false);
 		}
 	}

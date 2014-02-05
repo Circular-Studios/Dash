@@ -17,6 +17,7 @@ void main( void )
 	vec4 textureColor = texture( diffuseTexture, fUV );
 	color = textureColor;
 	vec4 normalMap = texture( normalTexture, fUV );
-	normalMap = -( (normalMap * 2.0f) - 1.0f );
-	normal = vec4( normalize( fNormal + ( normalMap.x * fTangent ) + ( normalMap.y * fBinormal ) ), 1.0f );
+	
+	normalMap = ( (normalMap * 2.0f) - 1.0f );
+	normal = normalMap; //vec4( normalize( fNormal + ( normalMap.x * fTangent ) + ( normalMap.y * fBinormal ) ), 1.0f );
 }

@@ -235,11 +235,11 @@ public:
 	override void drawObject( GameObject object )
 	{
 		// set the shader
-		glUseProgram( (cast(GLShader)Shaders["deferred"]).programID );
+		GLShader shader = cast(GLShader)Shaders["deferred"];
+		glUseProgram( shader.programID );
 
 		glBindVertexArray( object.mesh.glVertexArray );
 
-		GLShader shader = cast(GLShader)Shaders["deferred"];
 		auto world = object.transform.matrix;
 		auto view = Camera.lookAtLH( new Vector!3(0,0,0), object.transform.position, new Vector!3(0,1,0) );
 		auto proj = Matrix!4.buildPerspective( std.math.PI_4, cast(float)width / cast(float)height, 1, 1000 );

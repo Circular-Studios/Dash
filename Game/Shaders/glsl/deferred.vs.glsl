@@ -14,8 +14,6 @@ out vec3 fBinormal;
 
 uniform mat4 world;
 uniform mat4 worldViewProj;
-uniform int windowWidth;
-uniform int windowHeight;
 
 void main( void )
 {

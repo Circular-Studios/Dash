@@ -17,7 +17,7 @@ void main( void )
 
 	// temp vars until we get lights in
 	vec4 lightDirection = vec4( -1.0f, -1.0f, 1.0f, 1.0f );
-	vec4 diffuseColor = vec4( 0.1f, 0.1f, 0.1f, 1.0f );
+	vec4 diffuseColor = vec4( 1.0f, 1.0f, 1.0f, 1.0f );
 
 	float diffuseIntensity = clamp( dot( normal, normalize(lightDirection) ), 0.0f, 1.0f );
 	color = clamp( diffuseIntensity * diffuseColor, 0.0f, 1.0f );

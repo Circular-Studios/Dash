@@ -1,6 +1,8 @@
 module graphics.adapters.adapter;
 import core.gameobject, core.properties;
-import graphics.shaders.shader, graphics.shaders.shaders;
+import components.assets, components.mesh, components.camera;
+import graphics.shaders.shader, graphics.shaders.shaders, graphics.shaders.glshader;
+import math.vector, math.matrix;
 import utility.config, utility.output;
 
 import derelict.opengl3.gl3;
@@ -46,15 +48,19 @@ public:
 	mixin Property!( "uint", "diffuseRenderTexture", "protected" ); //Alpha channel stores Specular color
 	mixin Property!( "uint", "normalRenderTexture", "protected" ); //Alpha channel stores Specular power
 	mixin Property!( "uint", "depthRenderTexture", "protected" );
+	
+	enum : string 
+	{
+		GeometryShader = "geometry",
+		LightingShader = "lighting",
+		WindowMesh = "WindowMesh"
+	}
 
 	abstract void initialize();
 	abstract void shutdown();
 	abstract void resize();
 	abstract void reload();
-
-	abstract void beginDraw();
-	abstract void drawObject( GameObject obj );
-	abstract void endDraw();
+	abstract void swapBuffers();
 
 	abstract void openWindow();
 	abstract void closeWindow();
@@ -111,6 +117,74 @@ public:
 			log( OutputType.Error, "Deffered rendering Frame Buffer was not initialized correctly.");
 			assert(false);
 		}
+	}
+
+	void beginDraw()
+	{
+		glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+		glUseProgram( (cast(GLShader)Shaders[GeometryShader]).programID );
+	}
+
+	void drawObject( GameObject object )
+	{
+		// set the shader
+		GLShader shader = cast(GLShader)Shaders[GeometryShader];
+		glBindVertexArray( object.mesh.glVertexArray );
+
+		shader.setUniformMatrix( "world", object.transform.matrix );
+		shader.setUniformMatrix( "worldViewProj", object.transform.matrix *
+								 Camera.lookAtLH( new Vector!3( 0, 0, 0), object.transform.position, new Vector!3( 0, 1, 0 ) ) *
+								 Matrix!4.buildPerspective( std.math.PI_2, cast(float)width / cast(float)height, 1, 1000 ) );
+
+		//This is finding the uniform for the given texture, and setting that texture to the appropriate one for the object
+		GLint textureLocation = glGetUniformLocation( shader.programID, "diffuseTexture\0" );
+		glUniform1i( textureLocation, 0 );
+		glActiveTexture( GL_TEXTURE0 );
+		glBindTexture( GL_TEXTURE_2D, object.diffuse.glID );
+
+		textureLocation = glGetUniformLocation( shader.programID, "normalTexture\0" );
+		glUniform1i( textureLocation, 1 );
+		glActiveTexture( GL_TEXTURE1 );
+		glBindTexture( GL_TEXTURE_2D, object.normal.glID );
+
+		glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
+
+		glBindVertexArray(0);
+	}
+
+	void endDraw()
+	{
+		//This line switches back to the default framebuffer
+		glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+		GLShader shader = cast(GLShader)Shaders[LightingShader];
+		glUseProgram( shader.programID );
+
+		GLint textureLocation = glGetUniformLocation( shader.programID, "diffuseTexture\0" );
+		glUniform1i( textureLocation, 0 );
+		glActiveTexture( GL_TEXTURE0 );
+		glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
+
+		textureLocation = glGetUniformLocation( shader.programID, "normalTexture\0" );
+		glUniform1i( textureLocation, 1 );
+		glActiveTexture( GL_TEXTURE1 );
+		glBindTexture( GL_TEXTURE_2D, normalRenderTexture );
+
+		textureLocation = glGetUniformLocation( shader.programID, "depthTexture\0" );
+		glUniform1i( textureLocation, 2 );
+		glActiveTexture( GL_TEXTURE2 );
+		glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
+
+		glBindVertexArray( Assets.get!Mesh( WindowMesh ).glVertexArray );
+
+		glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, null );
+
+		glBindVertexArray(0);
+		glUseProgram(0);
+
+		swapBuffers();
 	}
 
 protected:

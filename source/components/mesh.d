@@ -16,9 +16,9 @@ import std.stdio, std.stream, std.format, std.math;
 class Mesh : Component
 {
 public:
-	mixin Property!( "uint", "glVertexArray" );
-	mixin Property!( "uint", "numVertices" );
-	mixin Property!( "uint", "numIndices" );
+	mixin Property!( "uint", "glVertexArray", "protected" );
+	mixin Property!( "uint", "numVertices", "protected" );
+	mixin Property!( "uint", "numIndices", "protected" );
 	mixin BackedProperty!( "uint", "_glIndexBuffer", "glIndexBuffer" );
 	mixin BackedProperty!( "uint", "_glVertexBuffer", "glVertexBuffer" );
 	enum VertexSize = float.sizeof * 14u;

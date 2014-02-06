@@ -3,7 +3,7 @@
  */
 module core.gameobject;
 import core.properties;
-import components.component, components.assets, components.texture, components.mesh;
+import components.component, components.assets, components.texture, components.objmesh;
 import graphics.graphics, graphics.shaders.shader;
 import utility.config;
 import math.transform, math.vector, math.quaternion;
@@ -30,7 +30,7 @@ public:
 	/**
 	 * The Mesh belonging to the object
 	 */
-	mixin Property!( "Mesh", "mesh", "public" );
+	mixin Property!( "ObjMesh", "mesh", "public" );
 
 	mixin Signal!( string, string );
 
@@ -66,7 +66,7 @@ public:
 		}
 
 		if( Config.tryGet!string( "Mesh", prop, yamlObj ) )
-			obj.addComponent( Assets.get!Mesh( prop.get!string ) );
+			obj.addComponent( Assets.get!ObjMesh( prop.get!string ) );
 
 		if( Config.tryGet( "Transform", innerNode, yamlObj ) )
 		{
@@ -141,8 +141,8 @@ public:
 		// Add component to proper property
 		if( typeid( newComponent ) == typeid( Texture ) )
 			diffuse = cast(Texture)newComponent;
-		else if( typeid( newComponent ) == typeid( Mesh ) )
-			mesh = cast(Mesh)newComponent;
+		else if( typeid( newComponent ) == typeid( ObjMesh ) )
+			mesh = cast(ObjMesh)newComponent;
 	}
 
 	/**

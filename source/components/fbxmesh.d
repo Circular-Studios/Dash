@@ -16,7 +16,7 @@ public:
 		
 
 		// Call mesh.d to setup mesh based on .obj data
-		super( outputData, indices );
+		super( null );
 	}
 
 	override void update()

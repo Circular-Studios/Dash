@@ -116,17 +116,7 @@ public:
 		glXSwapIntervalEXT( display, glXGetCurrentDrawable(), vsync );
 	}
 	
-	override void beginDraw()
-	{
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-	}
-
-	override void drawObject( GameObject obj )
-	{
-
-	}
-	
-	override void endDraw()
+	override void swapBuffers()
 	{
 		glXSwapBuffers( display, cast(uint)window );
 	}

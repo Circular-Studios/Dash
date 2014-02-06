@@ -3,8 +3,7 @@ module graphics.adapters.win32;
 version( Windows ):
 
 import core.dgame, core.gameobject, core.properties;
-import graphics.graphics;
-import graphics.adapters.adapter;
+import graphics.graphics, graphics.adapters.adapter;
 import utility.input, utility.output;
 
 import win32.windef, win32.winuser, win32.winbase;
@@ -167,7 +166,7 @@ public:
 		
 		reload();
 		
-		glClearColor( 0.5f, 0.5f, 0.5f, 1.0f );
+		glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
 	}
 
 	override void shutdown()
@@ -222,18 +221,7 @@ public:
 		wglSwapIntervalEXT( vsync );
 	}
 
-	override void beginDraw()
-	{
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-	}
-
-	override void drawObject( GameObject object )
-	{
-		
-	}
-
-	override void endDraw()
+	override void swapBuffers()
 	{
 		SwapBuffers( deviceContext );
 	}

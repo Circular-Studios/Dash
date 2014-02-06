@@ -1,3 +1,5 @@
+#version 400
+
 // Input variables
 in vec3 iPosition;
 in vec2 iUV;

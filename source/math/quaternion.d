@@ -14,6 +14,8 @@ public:
 		_x = 0.0f;
 		_y = 0.0f;
 		_z = 0.0f;
+		matrix = new Matrix!4();
+		updateMatrix();
 	}
 
 	this( const float x, const float y, const float z, const float angle )
@@ -25,6 +27,8 @@ public:
 		_x = fSin * x;
 		_y = fSin * y;
 		_z = fSin * z;
+		matrix = new Matrix!4();
+		updateMatrix();
 	}
 
 	static Quaternion fromEulerAngles( Vector!3 angles )

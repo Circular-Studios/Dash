@@ -13,8 +13,8 @@ public:
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders, "*.fs.glsl" ) )
 		{
 			// Strip .fs from file name
-			string name = file.baseFileName[ 0..$-4 ];
-			shaders[ name ] = new GLShader( file.directory ~ name ~ ".vs.glsl", file.fullPath );
+			string name = file.baseFileName[ 0..$-3 ];
+			shaders[ name ] = new GLShader( file.directory ~ "\\" ~ name ~ ".vs.glsl", file.fullPath );
 		}
 
 		shaders.rehash();

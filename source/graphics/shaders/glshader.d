@@ -26,8 +26,8 @@ public:
 		string fragmentBody = fragmentFile.getContents();
 		auto vertexCBody = vertexBody.ptr;
 		auto fragmentCBody = fragmentBody.ptr;
-		int vertexSize = vertexBody.length;
-		int fragmentSize = fragmentBody.length;
+		int vertexSize = cast(int)vertexBody.length;
+		int fragmentSize = cast(int)fragmentBody.length;
 
 		glShaderSource( vertexShaderID, 1, &vertexCBody, &vertexSize );
 		glShaderSource( fragmentShaderID, 1, &fragmentCBody, &fragmentSize );

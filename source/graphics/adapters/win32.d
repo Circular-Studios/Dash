@@ -3,10 +3,8 @@ module graphics.adapters.win32;
 version( Windows ):
 
 import core.dgame, core.gameobject, core.properties;
-import components.mesh, components.assets, components.camera;
-import graphics.graphics, graphics.adapters.adapter, graphics.shaders.shaders, graphics.shaders.glshader;
+import graphics.graphics, graphics.adapters.adapter;
 import utility.input, utility.output;
-import math.matrix, math.vector;
 
 import win32.windef, win32.winuser, win32.winbase;
 import win32.wingdi : PIXELFORMATDESCRIPTOR, SetPixelFormat, SwapBuffers;
@@ -223,80 +221,9 @@ public:
 		wglSwapIntervalEXT( vsync );
 	}
 
-	override void beginDraw()
+	override void swapBuffers()
 	{
-		glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-		//Set the shader and program for all draw calls for the first pass
-		
-	}
-
-	override void drawObject( GameObject object )
-	{
-		// set the shader
-		GLShader shader = cast(GLShader)Shaders["deferred"];
-		glUseProgram( shader.programID );
-
-		glBindVertexArray( object.mesh.glVertexArray );
-
-		auto world = object.transform.matrix;
-		auto view = Camera.lookAtLH( new Vector!3(0,0,0), object.transform.position, new Vector!3(0,1,0) );
-		auto proj = Matrix!4.buildPerspective( std.math.PI_4, cast(float)width / cast(float)height, 1, 1000 );
-		auto wvp = world * view * proj;
-		shader.setUniformMatrix( "world", world );
-		shader.setUniformMatrix( "worldViewProj", wvp );
-
-		//This is finding the uniform for the given texture, and setting that texture to the appropriate one for the object
-		GLint textureLocation = glGetUniformLocation( shader.programID, "diffuseTexture\0" );
-		glUniform1i( textureLocation, 0 );
-		glActiveTexture( GL_TEXTURE0 );
-		glBindTexture( GL_TEXTURE_2D, object.diffuse.glID );
-
-		textureLocation = glGetUniformLocation( shader.programID, "normalTexture\0" );
-		glUniform1i( textureLocation, 1 );
-		glActiveTexture( GL_TEXTURE1 );
-		glBindTexture( GL_TEXTURE_2D, object.normal.glID );
-		
-		glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
-
-		glBindVertexArray(0);
-		glUseProgram(0);
-	}
-
-	override void endDraw()
-	{
-		
-		//This line switches back to the default framebuffer
-		glBindFramebuffer( GL_FRAMEBUFFER, 0 );
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-		GLShader shader = cast(GLShader)Shaders["deferredpass2"];
-		glUseProgram( shader.programID );
-
-		GLint textureLocation = glGetUniformLocation( shader.programID, "diffuseTexture\0" );
-		glUniform1i( textureLocation, 0 );
-		glActiveTexture( GL_TEXTURE0 );
-		glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
-
-		textureLocation = glGetUniformLocation( shader.programID, "normalTexture\0" );
-		glUniform1i( textureLocation, 1 );
-		glActiveTexture( GL_TEXTURE1 );
-		glBindTexture( GL_TEXTURE_2D, normalRenderTexture );
-
-		textureLocation = glGetUniformLocation( shader.programID, "depthTexture\0" );
-		glUniform1i( textureLocation, 2 );
-		glActiveTexture( GL_TEXTURE2 );
-		glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
-
-		glBindVertexArray( Assets.get!Mesh( "WindowMesh" ).glVertexArray );
-
-		glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, null );
-
 		SwapBuffers( deviceContext );
-
-		glBindVertexArray(0);
-		glUseProgram(0);
 	}
 
 	override void openWindow()

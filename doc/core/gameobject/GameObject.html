@@ -1,0 +1,381 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/><!-- using block title in layout.dt--><!-- using block ddox.defs in ddox.layout.dt--><!-- using block ddox.title in ddox.layout.dt-->
+		<title>Class GameObject</title>
+		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav"><!-- using block navigation in layout.dt-->
+			<ul>
+			<li>
+				<a href="../../components/assets.html">components.assets</a>
+			</li>
+			<li>
+				<a href="../../components/camera.html">components.camera</a>
+			</li>
+			<li>
+				<a href="../../components/icomponent.html">components.icomponent</a>
+			</li>
+			<li>
+				<a href="../../components/mesh.html">components.mesh</a>
+			</li>
+			<li>
+				<a href="../../components/texture.html">components.texture</a>
+			</li>
+			<li>
+				<a href="../../core/dgame.html">core.dgame</a>
+			</li>
+			<li>
+				<a href="../../core/gameobject.html">core.gameobject</a>
+			</li>
+			<li>
+				<a href="../../core/gameobjectcollection.html">core.gameobjectcollection</a>
+			</li>
+			<li>
+				<a href="../../core/properties.html">core.properties</a>
+			</li>
+			<li>
+				<a href="../../graphics/adapters/opengl/opengl.html">graphics.adapters.opengl.opengl</a>
+			</li>
+			<li>
+				<a href="../../graphics/adapters/opengl/win32gl.html">graphics.adapters.opengl.win32gl</a>
+			</li>
+			<li>
+				<a href="../../graphics/adapters/adapter.html">graphics.adapters.adapter</a>
+			</li>
+			<li>
+				<a href="../../graphics/adapters/directx.html">graphics.adapters.directx</a>
+			</li>
+			<li>
+				<a href="../../graphics/adapters/opengl.html">graphics.adapters.opengl</a>
+			</li>
+			<li>
+				<a href="../../graphics/shaders/dxshader.html">graphics.shaders.dxshader</a>
+			</li>
+			<li>
+				<a href="../../graphics/shaders/glshader.html">graphics.shaders.glshader</a>
+			</li>
+			<li>
+				<a href="../../graphics/shaders/ishader.html">graphics.shaders.ishader</a>
+			</li>
+			<li>
+				<a href="../../graphics/shaders/shaders.html">graphics.shaders.shaders</a>
+			</li>
+			<li>
+				<a href="../../graphics/windows/win32.html">graphics.windows.win32</a>
+			</li>
+			<li>
+				<a href="../../graphics/windows/windows.html">graphics.windows.windows</a>
+			</li>
+			<li>
+				<a href="../../graphics/adapters.html">graphics.adapters</a>
+			</li>
+			<li>
+				<a href="../../graphics/graphics.html">graphics.graphics</a>
+			</li>
+			<li>
+				<a href="../../graphics/windows.html">graphics.windows</a>
+			</li>
+			<li>
+				<a href="../../math/matrix.html">math.matrix</a>
+			</li>
+			<li>
+				<a href="../../math/quaternion.html">math.quaternion</a>
+			</li>
+			<li>
+				<a href="../../math/transform.html">math.transform</a>
+			</li>
+			<li>
+				<a href="../../math/vector.html">math.vector</a>
+			</li>
+			<li>
+				<a href="../../scripting/scripts.html">scripting.scripts</a>
+			</li>
+			<li>
+				<a href="../../utility/config.html">utility.config</a>
+			</li>
+			<li>
+				<a href="../../utility/filepath.html">utility.filepath</a>
+			</li>
+			<li>
+				<a href="../../utility/input.html">utility.input</a>
+			</li>
+			<li>
+				<a href="../../utility/output.html">utility.output</a>
+			</li>
+			<li>
+				<a href="../../utility/time.html">utility.time</a>
+			</li>
+			</ul>
+			<noscript>
+				<p style="color: red">The search functionality needs JavaScript enabled</p>
+			</noscript>
+			<div id="symbolSearchPane" style="display: none">
+				<p>
+					<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+				</p>
+				<ul id="symbolSearchResults" style="display: none"></ul>
+				<script type="application/javascript" src="../../symbols.js"></script>
+				<script type="application/javascript">
+					//<![CDATA[
+					var symbolSearchRootDir = "../../";					$('#symbolSearchPane').show();
+					//]]>
+				</script>
+			</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Class GameObject</h1><!-- using block body in layout.dt--><!-- using block ddox.description in ddox.layout.dt-->
+			<p></p>
+
+			<section>
+				<h2>Inherits from</h2>
+				<ul>
+					<li>
+						<code class="prettyprint lang-d"><code class="prettyprint lang-d">Object</code></code>
+ (base class)
+					</li>
+				</ul>
+			</section><!-- using block ddox.sections in ddox.layout.dt-->
+<!-- using block ddox.members in ddox.layout.dt-->
+			<section>
+				<h2>Constructors</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject.this.html" class="public">
+								<code>this</code>
+							</a>
+						</td>
+						<td> Creates basic <a href="../../core/gameobject/GameObject.html"><code class="prettyprint lang-d">GameObject</code></a> with <a href="../../core/gameobject/GameObject.transform.html"><code class="prettyprint lang-d">transform</code></a> and connection to <a href="../../core/gameobject/GameObject.transform.html"><code class="prettyprint lang-d">transform</code></a>'s emitter.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject.this.html" class="public">
+								<code>this</code>
+							</a>
+						</td>
+						<td> Initializes <a href="../../core/gameobject/GameObject.html"><code class="prettyprint lang-d">GameObject</code></a> with <a href="../../core/gameobject/GameObject.this.html#shader"><code class="prettyprint lang-d">shader</code></a>
+</td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Fields</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject.componentList.html" class="private"><code>componentList</code></a>
+						</td>
+						<td><code class="prettyprint lang-d"><a href="../../components/icomponent/IComponent.html">IComponent</a>[TypeInfo_Class]</code></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject._shader.html" class="private"><code>_shader</code></a>
+						</td>
+						<td><code class="prettyprint lang-d"><a href="../../graphics/shaders/ishader/IShader.html">IShader</a></code></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject._transform.html" class="private"><code>_transform</code></a>
+						</td>
+						<td><code class="prettyprint lang-d"><a href="../../math/transform/Transform.html">Transform</a></code></td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Properties</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject.shader.html" class="public property"><code>shader</code></a>
+							<span class="tableEntryAnnotation">[get]</span>
+						</td>
+						<td><code class="prettyprint lang-d"><a href="../../graphics/shaders/ishader/IShader.html">IShader</a></code></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject.shader.html" class="public property"><code>shader</code></a>
+							<span class="tableEntryAnnotation">[set]</span>
+						</td>
+						<td><code class="prettyprint lang-d"><a href="../../graphics/shaders/ishader/IShader.html">IShader</a></code></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject.transform.html" class="public property"><code>transform</code></a>
+							<span class="tableEntryAnnotation">[get]</span>
+						</td>
+						<td><code class="prettyprint lang-d"><a href="../../math/transform/Transform.html">Transform</a></code></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject.transform.html" class="public property"><code>transform</code></a>
+							<span class="tableEntryAnnotation">[set]</span>
+						</td>
+						<td><code class="prettyprint lang-d"><a href="../../math/transform/Transform.html">Transform</a></code></td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Methods</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject.addComponent.html" class="public">
+								<code>addComponent</code>
+							</a>
+						</td>
+						<td> Adds a component to the object.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject.createFromYaml.html" class="public">
+								<code>createFromYaml</code>
+							</a>
+						</td>
+						<td> Create a <a href="../../core/gameobject/GameObject.html"><code class="prettyprint lang-d">GameObject</code></a> from a Yaml node.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject.draw.html" class="public">
+								<code>draw</code>
+							</a>
+						</td>
+						<td> Called once per frame to <code class="prettyprint lang-d">draw</code> all components.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject.getComponent.html" class="public">
+								<code>getComponent</code>
+							</a>
+						</td>
+						<td> Gets a component of the given type.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject.onCollision.html" class="public">
+								<code>onCollision</code>
+							</a>
+						</td>
+						<td> Called when the object collides with another object.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject.onDraw.html" class="public">
+								<code>onDraw</code>
+							</a>
+						</td>
+						<td> Called on the <a href="../../core/gameobject/GameObject.draw.html"><code class="prettyprint lang-d">draw</code></a> cycle.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject.onShutdown.html" class="public">
+								<code>onShutdown</code>
+							</a>
+						</td>
+						<td> Called on <a href="../../core/gameobject/GameObject.shutdown.html"><code class="prettyprint lang-d">shutdown</code></a>.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject.onUpdate.html" class="public">
+								<code>onUpdate</code>
+							</a>
+						</td>
+						<td> Called on the <a href="../../core/gameobject/GameObject.update.html"><code class="prettyprint lang-d">update</code></a> cycle.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject.shutdown.html" class="public">
+								<code>shutdown</code>
+							</a>
+						</td>
+						<td> Called when the game is shutting down, to <code class="prettyprint lang-d">shutdown</code> all components.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject.update.html" class="public">
+								<code>update</code>
+							</a>
+						</td>
+						<td> Called once per frame to <code class="prettyprint lang-d">update</code> all components.
+</td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Templates</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a href="../../core/gameobject/GameObject.Signal!(string, string).html" class="public">
+								<code>Signal!(string, string)</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Authors</h2><!-- using block ddox.authors in ddox.layout.dt-->
+
+			</section>
+			<section>
+				<h2>Copyright</h2><!-- using block ddox.copyright in ddox.layout.dt-->
+
+			</section>
+			<section>
+				<h2>License</h2><!-- using block ddox.license in ddox.layout.dt-->
+
+			</section>
+		</div>
+	</body>
+</html>

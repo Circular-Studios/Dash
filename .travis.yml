@@ -1,0 +1,21 @@
+language: dlang
+install:
+ - sudo wget http://netcologne.dl.sourceforge.net/project/d-apt/files/d-apt.list -O /etc/apt/sources.list.d/d-apt.list
+ - sudo apt-get update
+ - sudo apt-get -y --allow-unauthenticated install --reinstall d-apt-keyring 
+ - sudo apt-get update
+ - sudo apt-get install dub
+ - sudo apt-get install dmd-bin
+ - sudo dub install x11
+ - sudo dub add-local . ~master
+ - cd Game
+script: sudo dub run --build=unittest
+
+# For pushing results to gitter.im
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/84c64564ba5f757a2733
+    on_success: change  # options: [always|never|change] default: always
+    on_failure: always  # options: [always|never|change] default: always
+    on_start: false     # default: false

@@ -1,0 +1,3 @@
+[submodule "third_party/DWinProgramming"]
+	path = third_party/DWinProgramming
+	url = https://github.com/AndrejMitrovic/DWinProgramming.git

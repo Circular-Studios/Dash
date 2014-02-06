@@ -1,0 +1,64 @@
+{
+	"name": "dvelop",
+	"description": "Helps you make vidja games.",
+	"copyright": "2013 - 2014",
+	"authors": [ 
+		"Colden Cullen",
+		"Brandon Littell",
+		"Eric Christenson",
+		"Tyler Wozniak",
+		"Sean Brennan",
+		"Timothy Reynolds"
+		],
+	"dependencies": {
+		"derelict-gl3": "~master",
+		"derelict-fi": "~master",
+		"dyaml": "~master"
+	},
+	"targetName": "dvelop",
+	"targetType": "executable",
+	"mainSourceFile": "source/app.d",
+	"sourcePaths": [ "source/" ],
+	"importPaths": [ "source/" ],
+
+	"importPaths-windows": [ "third_party/DWinProgramming/WindowsAPI" ],
+	"libs-windows": [
+		"gdi32", "ole32", "kernel32",
+		"user32", "comctl32", "comdlg32" 
+	],
+
+	"dependencies-linux": {
+		"x11": 
+			{
+				"version": "~master",
+				"optional": true
+			}
+	},
+
+	"buildTypes": {
+		"doc": {
+			"buildOptions": [
+				"syntaxOnly"
+			],
+			"dflags": [
+				"-Dfdoc/__dummy.html",
+				"-Xfdoc/doc.json"
+			],
+			"postBuildCommands": [
+				"dub run ddox -- filter doc/doc.json filter --ex dyaml --ex yaml --ex ddox --ex vibe --ex derelict",
+				"dub run ddox -- generate-html doc/doc.json doc/",
+				"rm -f doc/__dummy.html"
+			]
+		}
+	},
+	"subPackages": [
+		{
+			"name": "bootstrapper",
+			"targetName": "bootstrapper",
+			"versions": [ "Bootstrapper" ],
+			"sourcePaths": [ "source/bootstrapper" ],
+			"importPaths": [ "source/bootstrapper" ],
+			"mainSourceFile": "source/bootstrapper/bootstrapper.d"
+		}
+	]
+}

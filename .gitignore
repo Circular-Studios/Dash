@@ -27,7 +27,6 @@ build/
 *_p.c
 *.ilk
 *.meta
-*.obj
 *.pch
 *.pdb
 *.pgc
@@ -156,13 +155,25 @@ $RECYCLE.BIN/
 # Mac crap
 .DS_Store
 
-### Windows ###
-# Windows image file caches
-Thumbs.db
-ehthumbs.db
+### MonoDevelop ###
+#User Specific
+*.userprefs
+*.usertasks
 
-# Folder config file
-Desktop.ini
+#Mono Project Files
+*.pidb
+*.resources
+test-results/
 
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
+# ========================
+# Dvelop stuffs
+# ========================
+
+.dub/
+*.sln
+*.visualdproj
+*.dproj
+*.exe
+*.exe_cv
+*.dll
+*.dll_cv

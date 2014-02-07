@@ -13,6 +13,7 @@
 	"dependencies": {
 		"derelict-gl3": "~master",
 		"derelict-fi": "~master",
+		"derelict-assimp3": "~master",
 		"dyaml": "~master"
 	},
 	"targetName": "dvelop",

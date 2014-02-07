@@ -1,5 +1,6 @@
 module components.objmesh;
 
+import derelict.assimp3.assimp;
 import components.mesh;
 import graphics.shaders.shader;
 import math.vector;
@@ -12,6 +13,8 @@ public:
 
 	this( string filePath )
 	{
+		DerelictASSIMP3.load();
+
 		Vector!3[] vertices;
 		Vector!2[] uvs;
 		Vector!3[] normals;

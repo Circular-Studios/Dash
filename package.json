@@ -1,5 +1,5 @@
 {
-	"name": "dvelop",
+	"name": "dash",
 	"description": "Helps you make vidja games.",
 	"copyright": "2013 - 2014",
 	"authors": [ 
@@ -15,7 +15,7 @@
 		"derelict-fi": "~master",
 		"dyaml": "~master"
 	},
-	"targetName": "dvelop",
+	"targetName": "dash",
 	"targetType": "executable",
 	"mainSourceFile": "source/app.d",
 	"sourcePaths": [ "source/" ],

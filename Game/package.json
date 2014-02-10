@@ -1,10 +1,10 @@
 {
 	"name": "game",
-	"description": "A D game built with Dvelop.",
+	"description": "A D game built with Dash.",
 	"copyright": "Copyright © 2014, Colden Cullen",
 	"authors": [ "Colden Cullen" ],
 	"dependencies": {
-		"dvelop": { "version": "~master", "path": "../" }
+		"dash": { "version": "~master", "path": "../" }
 	},
 	"sourcePaths": [ "Scripts/" ],
 	"importPaths": [ "Scripts/" ],

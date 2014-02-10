@@ -10,10 +10,18 @@ uniform sampler2D depthTexture;
 // https://stackoverflow.com/questions/9222217/how-does-the-fragment-shader-know-what-variable-to-use-for-the-color-of-a-pixel
 out vec4 color;
 
+vec3 decode( vec2 enc )
+{
+	float t = ( ( enc.x * enc.x ) + ( enc.y * enc.y ) ) / 4;
+	float ti = sqrt( 1 - t );
+	return vec3( ti * enc.x, ti * enc.y, -1 + t * 2 );
+}
+
 void main( void )
 {
 	vec4 textureColor = texture( diffuseTexture, fUV );
 	vec4 normal = texture( normalTexture, fUV );
+	normal = vec4( decode( normal.xy ), 1.0f);
 
 	// temp vars until we get lights in
 	vec4 lightDirection = vec4( -1.0f, -1.0f, 1.0f, 1.0f );
@@ -21,6 +29,5 @@ void main( void )
 
 	float diffuseIntensity = clamp( dot( normal, normalize(lightDirection) ), 0.0f, 1.0f );
 	color = clamp( diffuseIntensity * diffuseColor, 0.0f, 1.0f );
-	color = color * textureColor;
-
+	color = normal;
 }

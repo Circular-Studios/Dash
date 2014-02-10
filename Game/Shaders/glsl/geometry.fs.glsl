@@ -12,12 +12,18 @@ layout( location = 1 ) out vec4 normal;
 uniform sampler2D diffuseTexture;
 uniform sampler2D normalTexture;
 
+vec2 encode( vec3 normal )
+{
+	float t = sqrt( 2 / 1 - normal.z );
+	return normal.xy * t;
+}
+
 void main( void )
 {
 	vec4 textureColor = texture( diffuseTexture, fUV );
 	color = textureColor;
 	vec4 normalMap = texture( normalTexture, fUV );
 	
-	normalMap = ( (normalMap * 2.0f) - 1.0f );
-	normal = normalMap; //vec4( normalize( fNormal + ( normalMap.x * fTangent ) + ( normalMap.y * fBinormal ) ), 1.0f );
+	normal = vec4( encode( normalMap.xyz ), 1.0f, 1.0f ); //vec4( normalize( fNormal + ( normalMap.x * fTangent ) + ( normalMap.y * fBinormal ) ), 1.0f );
 }
+

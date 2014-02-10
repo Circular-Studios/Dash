@@ -6,12 +6,24 @@ import utility.filepath, utility.output;
 import math.matrix;
 import derelict.opengl3.gl3;
 
+import std.traits;
+
+public enum ShaderUniform 
+{
+	World = "world",
+	WorldViewProjection = "worldViewProj",
+	DiffuseTexture = "diffuseTexture",
+	NormalTexture = "normalTexture",
+	DepthTexture = "depthTexture"
+}
+
 package class GLShader : Shader
 {
 public:
 	mixin Property!( "uint", "programID", "protected" );
 	mixin Property!( "uint", "vertexShaderID", "protected" );
 	mixin Property!( "uint", "fragmentShaderID", "protected" );
+	protected int[string] uniformLocations;
 
 	this( string vertexPath, string fragmentPath )
 	{
@@ -62,7 +74,7 @@ public:
         glAttachShader( programID, fragmentShaderID );
 		glLinkProgram( programID );
 
-		bindInputs( vertexBody );
+		bindUniforms();
 
 		glGetProgramiv( programID, GL_LINK_STATUS, &compileStatus );
         if( compileStatus != GL_TRUE )
@@ -76,26 +88,33 @@ public:
 		}
 	}
 
-	void bindInputs( string vertexBody )
+	void bindUniforms()
 	{
-		//Make this generic later plx
-		glBindAttribLocation( programID, 0, "inPosition\0" );
-		glBindAttribLocation( programID, 1, "inUV\0" );
-		glBindAttribLocation( programID, 2, "inNormal\0" );
-		glBindAttribLocation( programID, 3, "inTangent\0" );
-		glBindAttribLocation( programID, 4, "inBinormal\0" );
+		//uniform is the *name* of the enum member not it's value
+		foreach( uniform; [ EnumMembers!ShaderUniform ] )
+		{
+			//thus we use the mixin to get the value at compile time
+			int uniformLocation = glGetUniformLocation( programID, uniform.ptr );
+
+			uniformLocations[ uniform ] = uniformLocation;
+		}
 	}
 
-	void setUniform( string name, const float value )
+	int getUniformLocation( ShaderUniform uniform )
 	{
-		auto currentUniform = glGetUniformLocation( programID, (name ~ "\0").ptr );
+		return uniformLocations[ uniform ];
+	}
+
+	void setUniform( ShaderUniform uniform, const float value )
+	{
+		auto currentUniform = getUniformLocation( uniform );
 		
 		glUniform1f( currentUniform, value );
 	}
 
-	void setUniformMatrix( string name, const Matrix!4 matrix )
+	void setUniformMatrix( ShaderUniform uniform, const Matrix!4 matrix )
 	{
-		auto currentUniform = glGetUniformLocation( programID, (name ~ "\0").ptr );
+		auto currentUniform = getUniformLocation( uniform );
 
 		glUniformMatrix4fv( currentUniform, 1, false, matrix.matrix.ptr.ptr );
 	}

@@ -16,10 +16,6 @@ class GameObject
 {
 public:
 	/**
-	 * The shader this object uses to draw.
-	 */
-	mixin Property!( "Shader", "shader", "public" );
-	/**
 	 * The current transform of the object.
 	 */
 	mixin Property!( "Transform", "transform", "public" );
@@ -27,6 +23,10 @@ public:
 	 * The Texture belonging to the object
 	 */
 	mixin Property!( "Texture", "diffuse", "public" );
+	/**
+	* The Normal Texture belonging to the object
+	*/
+	mixin Property!( "Texture", "normal", "public" );
 	/**
 	 * The Mesh belonging to the object
 	 */
@@ -56,8 +56,11 @@ public:
 			//TODO: Setup camera
 		}
 
-		if( Config.tryGet!string( "Texture", prop, yamlObj ) )
-			obj.addComponent( Assets.get!Texture( prop.get!string ) );
+		if( Config.tryGet!string( "Diffuse", prop, yamlObj ) )
+			obj.diffuse = Assets.get!Texture( prop.get!string );
+
+		if( Config.tryGet!string( "Normal", prop, yamlObj ) )
+			obj.normal = Assets.get!Texture( prop.get!string );
 
 		if( Config.tryGet!string( "AwesomiumView", prop, yamlObj ) )
 		{
@@ -90,24 +93,9 @@ public:
 		transform.connect( &emit );
 	}
 
-	/**
-	 * Initializes GameObject with shader
-	 */
-	this( Shader shader )
-	{
-		this();
-		this.shader = shader;
-	}
-
 	~this()
 	{
 		destroy( transform );
-
-		if( shader )
-		{
-			destroy( shader );
-			shader = null;
-		}
 	}
 
 	/**
@@ -138,11 +126,11 @@ public:
 	{
 		onShutdown();
 
-		foreach( ci, component; componentList )
+		/*foreach_reverse( ci, component; componentList )
 		{
 			component.shutdown();
 			componentList.remove( ci );
-		}
+		}*/
 	}
 
 	/**

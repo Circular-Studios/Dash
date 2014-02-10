@@ -116,6 +116,11 @@ public:
 		return file;
 	}
 
+	string getContents()
+	{
+		return cast(string)std.file.read(_fullPath);
+	}
+
 	/**
 	 * Create an instance based on a given file path.
 	 */
@@ -144,4 +149,16 @@ private:
 	string _directory;
 	string _extension;
 	File* file;
+}
+
+unittest
+{
+	import std.stdio;
+	writeln( "Dash FilePath properties unittest" );
+
+	auto fp = new FilePath( FilePath.Resources.Config );
+
+	assert( fp.fileName == "Config.yml", "FilePath.fileName error." );
+	assert( fp.baseFileName == "Config", "FilePath.baseFileName error." );
+	assert( fp.extension == ".yml", "FilePath.extension error." );
 }

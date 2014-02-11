@@ -52,6 +52,9 @@ public:
 		return loader.load();
 	}
 
+	/**
+	 * Process all yaml files in a directory, and call the callback with all the root level nodes.
+	 */
 	void processYamlDirectory( string folder, void delegate( Node ) callback )
 	{
 		foreach( file; FilePath.scanDirectory( folder, "*.yml" ) )

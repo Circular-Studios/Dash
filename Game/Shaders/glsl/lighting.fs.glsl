@@ -21,7 +21,7 @@ void main( void )
 {
 	vec4 textureColor = texture( diffuseTexture, fUV );
 	vec4 normal = texture( normalTexture, fUV );
-	normal = vec4( decode( normal.xy ), 1.0f);
+	//normal = vec4( decode( normal.xy ), 1.0f);
 
 	// temp vars until we get lights in
 	vec4 lightDirection = vec4( -1.0f, -1.0f, 1.0f, 1.0f );

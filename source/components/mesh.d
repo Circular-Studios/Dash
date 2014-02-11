@@ -21,7 +21,7 @@ public:
 	mixin Property!( "uint", "numIndices" );
 	mixin BackedProperty!( "uint", "_glIndexBuffer", "glIndexBuffer" );
 	mixin BackedProperty!( "uint", "_glVertexBuffer", "glVertexBuffer" );
-	enum VertexSize = float.sizeof * 12u;
+	enum VertexSize = float.sizeof * 11u;
 
 	this( string filePath )
 	{
@@ -92,30 +92,16 @@ public:
 					outputData ~= normals[ normalIndex[ ii ] - 1 ].x;
 					outputData ~= normals[ normalIndex[ ii ] - 1 ].y;
 					outputData ~= normals[ normalIndex[ ii ] - 1 ].z;
-					
-					//Orthogonalize the tangent against the normal, by doing ( t - n * dot(n, t) )
-					Vector!3 tangentOrth = ( tangentBinormals[ 0 ] - ( normals[ normalIndex[ ii ] - 1 ] * ( normals[ normalIndex[ ii ] - 1 ] * tangentBinormals[0] ) ) );
-					float determinant = ( ( normals[ normalIndex[ ii ] - 1 ] % tangentBinormals[ 0 ] ) * tangentBinormals[ 1 ] );
-					if( determinant < 0.0f )
-					{
-						determinant = -1.0f;
-					}
-					else
-					{
-						determinant = 1.0f;
-					}
-
-					outputData ~= tangentOrth.x;
-					outputData ~= tangentOrth.y;
-					outputData ~= tangentOrth.z;
-					outputData ~= determinant;
+                    outputData ~= tangentBinormals[ 0 ].x;
+                    outputData ~= tangentBinormals[ 0 ].y;
+                    outputData ~= tangentBinormals[ 0 ].z;
 				}
 			}
 		}
 
 		file.close();
 
-		_numVertices = cast(uint)( outputData.length / 12 );  // 12 is num floats per vertex
+		_numVertices = cast(uint)( outputData.length / 11 );  // 11 is num floats per vertex
 		_numIndices = numVertices;
 
 		uint[] indices = new uint[ numIndices ];
@@ -150,7 +136,7 @@ public:
 		glVertexAttribPointer( NORMAL_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, VertexSize, cast(char*)0 + ( GLfloat.sizeof * 5 ) );
 		// Connect the tangent to the vertex shader
 		glEnableVertexAttribArray( TANGENT_ATTRIBUTE );
-		glVertexAttribPointer( TANGENT_ATTRIBUTE, 4, GL_FLOAT, GL_FALSE, VertexSize, cast(char*)0 + ( GLfloat.sizeof * 8 ) );
+		glVertexAttribPointer( TANGENT_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, VertexSize, cast(char*)0 + ( GLfloat.sizeof * 8 ) );
 
 		// Generate index buffer
 		glGenBuffers( 1, &_glIndexBuffer );

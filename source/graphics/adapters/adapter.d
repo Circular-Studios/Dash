@@ -133,6 +133,8 @@ public:
 		glBindVertexArray( object.mesh.glVertexArray );
 
 		shader.setUniformMatrix( ShaderUniform.World , object.transform.matrix );
+		shader.setUniformMatrix( ShaderUniform.WorldView, object.transform.matrix * 
+								 Camera.lookAtLH( new Vector!3( 0, 0, 0), object.transform.position, new Vector!3( 0, 1, 0 ) ) );
 		shader.setUniformMatrix( ShaderUniform.WorldViewProjection , object.transform.matrix *
 								 Camera.lookAtLH( new Vector!3( 0, 0, 0), object.transform.position, new Vector!3( 0, 1, 0 ) ) *
 								 Matrix!4.buildPerspective( std.math.PI_2, cast(float)width / cast(float)height, 1, 1000 ) );

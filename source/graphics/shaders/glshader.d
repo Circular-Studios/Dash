@@ -11,6 +11,7 @@ import std.traits;
 public enum ShaderUniform 
 {
 	World = "world",
+	WorldView = "worldView",
 	WorldViewProjection = "worldViewProj",
 	DiffuseTexture = "diffuseTexture",
 	NormalTexture = "normalTexture",

@@ -123,7 +123,7 @@ public:
 				auto result = new Vector!S;
 
 				for( uint ii = 0; ii < S; ++ii )
-					result.values[ ii ] += values[ ii ] * other.values[ ii ];
+					result.values[ ii ] += values[ ii ] * other;
 
 				return result;
 			}

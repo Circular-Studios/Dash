@@ -6,6 +6,7 @@ import utility.filepath;
 
 // Imports for conversions
 import core.dgame : GameState;
+import components.assets;
 import graphics.shaders.shaders;
 import utility.output : Verbosity;
 import math.vector, math.quaternion;
@@ -34,6 +35,9 @@ public:
 		constructor.addConstructorScalar( "!GameState", &constructConv!GameState );
 		constructor.addConstructorScalar( "!Verbosity", &constructConv!Verbosity );
 		constructor.addConstructorScalar( "!Shader", ( ref Node node ) => Shaders.get( node.get!string ) );
+		//constructor.addConstructorScalar( "!Texture", ( ref Node node ) => Assets.get!Texture( node.get!string ) );
+		//constructor.addConstructorScalar( "!Mesh", ( ref Node node ) => Assets.get!Mesh( node.get!string ) );
+		//constructor.addConstructorScalar( "!Material", ( ref Node node ) => Assets.get!Material( node.get!string ) );
 
 		config = loadYaml( FilePath.Resources.Config );
 	}
@@ -46,6 +50,20 @@ public:
 		auto loader = Loader( path );
 		loader.constructor = constructor;
 		return loader.load();
+	}
+
+	void processYamlDirectory( string folder, void delegate( Node ) callback )
+	{
+		foreach( file; FilePath.scanDirectory( folder, "*.yml" ) )
+		{
+			auto object = Config.loadYaml( file.fullPath );
+
+			if( object.isSequence() )
+				foreach( Node innerObj; object )
+					callback( innerObj );
+			else
+				callback( object );
+		}
 	}
 
 	/**
@@ -266,3 +284,4 @@ unittest
 	assert( Config.tryGet( "test1", val, n1 ), "Config.tryGet failed." );
 	assert( !Config.tryGet( "dontexist", val, n1 ), "Config.tryGet returned true." );
 }
+

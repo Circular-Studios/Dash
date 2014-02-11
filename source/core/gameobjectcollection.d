@@ -20,23 +20,14 @@ public:
 	 */
 	void loadObjects( string objectPath = "" )
 	{
-		void addObject( Node object )
-		{
-			auto name = object[ "Name" ].as!string;
+		Config.processYamlDirectory(
+			buildNormalizedPath( FilePath.Resources.Objects, objectPath ),
+			( Node object )
+			{
+				auto name = object[ "Name" ].as!string;
 
-			objects[ name ] = GameObject.createFromYaml( object );
-		}
-
-		foreach( file; FilePath.scanDirectory( buildNormalizedPath( FilePath.Resources.Objects, objectPath ), "*.yml" ) )
-		{
-			auto object = Config.loadYaml( file.fullPath );
-
-			if( object.isSequence() )
-				foreach( Node innerObj; object )
-					addObject( innerObj );
-			else
-				addObject( object );
-		}
+				objects[ name ] = GameObject.createFromYaml( object );
+			} );
 	}
 
 	/**

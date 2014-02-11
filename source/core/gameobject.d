@@ -60,7 +60,7 @@ public:
 
 		if( Config.tryGet!string( "Material", prop, yamlObj ) )
 		{
-			obj.material = Assets.get!Material( prop.get!string );
+			obj.addComponent( Assets.get!Material( prop.get!string ) );
 		}
 
 		if( Config.tryGet!string( "Mesh", prop, yamlObj ) )

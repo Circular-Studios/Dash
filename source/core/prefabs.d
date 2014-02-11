@@ -107,6 +107,8 @@ public:
 		foreach( cpncls; componentCreations )
 			result.addComponent( cast(Component)cpncls.create() );
 
+		result.transform.updateMatrix();
+
 		return result;
 	}
 

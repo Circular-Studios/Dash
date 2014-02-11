@@ -21,6 +21,7 @@ public:
 	 */
 	enum Resources : string
 	{
+		Materials = ResourceHome ~ "/Materials",
 		Meshes = ResourceHome ~ "/Meshes",
 		Textures = ResourceHome ~ "/Textures",
 		Scripts = ResourceHome ~ "/Scripts",
@@ -28,7 +29,7 @@ public:
 		Objects = ResourceHome ~ "/Objects",
 		Shaders = ResourceHome ~ "/Shaders",
 		UI = ResourceHome ~ "/UI",
-		Config = ResourceHome ~ "/Config.yml"
+		Config = ResourceHome ~ "/Config.yml",
 	}
 
 	/**

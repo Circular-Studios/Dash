@@ -1,6 +1,6 @@
 module core.prefabs;
 import core.gameobject;
-import components.component, components.assets, components.texture, components.mesh;
+import components;
 import math.transform, math.vector, math.quaternion;
 import utility.filepath, utility.config;
 
@@ -56,8 +56,8 @@ public:
 			//TODO: Setup camera
 		}
 
-		if( Config.tryGet!string( "Texture", prop, yml ) )
-			componentReferences ~= Assets.get!Texture( prop.get!string );
+		if( Config.tryGet!string( "Material", prop, yml ) )
+			componentReferences ~= Assets.get!Material( prop.get!string );
 
 		if( Config.tryGet!string( "AwesomiumView", prop, yml ) )
 		{

@@ -19,6 +19,8 @@ public:
 		rotation.connect( &emit );
 		scale.connect( &emit );
 
+		updateMatrix();
+
 		connect( &setMatrixDirty );
 	}
 

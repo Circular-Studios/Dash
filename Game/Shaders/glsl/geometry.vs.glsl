@@ -4,7 +4,6 @@ layout(location = 0) in vec3 vPosition_m;
 layout(location = 1) in vec2 vUV;
 layout(location = 2) in vec3 vNormal_m;
 layout(location = 3) in vec3 vTangent_m;
-layout(location = 4) in vec3 vBitangent_m;
 
 out vec4 fPosition_s;
 out vec3 fNormal_w;
@@ -25,5 +24,4 @@ void main( void )
 
 	fNormal_w = ( world * vec4( vNormal_m, 0.0f ) ).xyz;
 	fTangent_w =  ( world * vec4( vTangent_m, 0.0f ) ).xyz;
-	fBitangent_w = ( world * vec4( vBitangent_m, 0.0f ) ).xyz;
 }

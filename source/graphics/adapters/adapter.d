@@ -90,7 +90,7 @@ public:
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 
 		glBindTexture( GL_TEXTURE_2D, normalRenderTexture );
-		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, null );
+		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, null );
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
@@ -132,18 +132,20 @@ public:
 		GLShader shader = cast(GLShader)Shaders[GeometryShader];
 		glBindVertexArray( object.mesh.glVertexArray );
 
-		shader.setUniformMatrix( ShaderUniform.World, object.transform.matrix );
-		shader.setUniformMatrix( ShaderUniform.WorldViewProjection, object.transform.matrix *
-								 Matrix!4.identity *
+		shader.setUniformMatrix( ShaderUniform.World , object.transform.matrix );
+		shader.setUniformMatrix( ShaderUniform.WorldView, object.transform.matrix * 
+								 Camera.lookAtLH( new Vector!3( 0, 0, 0), object.transform.position, new Vector!3( 0, 1, 0 ) ) );
+		shader.setUniformMatrix( ShaderUniform.WorldViewProjection , object.transform.matrix *
+								 Camera.lookAtLH( new Vector!3( 0, 0, 0), object.transform.position, new Vector!3( 0, 1, 0 ) ) *
 								 Matrix!4.buildPerspective( std.math.PI_2, cast(float)width / cast(float)height, 1, 1000 ) );
 
 		//This is finding the uniform for the given texture, and setting that texture to the appropriate one for the object
-		GLint textureLocation = glGetUniformLocation( shader.programID, "diffuseTexture\0" );
+		GLint textureLocation = shader.getUniformLocation( ShaderUniform.DiffuseTexture );
 		glUniform1i( textureLocation, 0 );
 		glActiveTexture( GL_TEXTURE0 );
 		glBindTexture( GL_TEXTURE_2D, object.diffuse.glID );
 
-		textureLocation = glGetUniformLocation( shader.programID, "normalTexture\0" );
+		textureLocation = shader.getUniformLocation( ShaderUniform.NormalTexture );
 		glUniform1i( textureLocation, 1 );
 		glActiveTexture( GL_TEXTURE1 );
 		glBindTexture( GL_TEXTURE_2D, object.normal.glID );
@@ -162,17 +164,17 @@ public:
 		GLShader shader = cast(GLShader)Shaders[LightingShader];
 		glUseProgram( shader.programID );
 
-		GLint textureLocation = glGetUniformLocation( shader.programID, "diffuseTexture\0" );
+		GLint textureLocation = shader.getUniformLocation( ShaderUniform.DiffuseTexture );
 		glUniform1i( textureLocation, 0 );
 		glActiveTexture( GL_TEXTURE0 );
 		glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
 
-		textureLocation = glGetUniformLocation( shader.programID, "normalTexture\0" );
+		textureLocation = shader.getUniformLocation( ShaderUniform.NormalTexture );
 		glUniform1i( textureLocation, 1 );
 		glActiveTexture( GL_TEXTURE1 );
 		glBindTexture( GL_TEXTURE_2D, normalRenderTexture );
 
-		textureLocation = glGetUniformLocation( shader.programID, "depthTexture\0" );
+		textureLocation = shader.getUniformLocation( ShaderUniform.DepthTexture );
 		glUniform1i( textureLocation, 2 );
 		glActiveTexture( GL_TEXTURE2 );
 		glBindTexture( GL_TEXTURE_2D, depthRenderTexture );

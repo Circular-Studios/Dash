@@ -20,14 +20,13 @@ vec3 decode( vec2 enc )
 void main( void )
 {
 	vec4 textureColor = texture( diffuseTexture, fUV );
-	vec4 normal = texture( normalTexture, fUV );
+	vec3 normal = texture( normalTexture, fUV ).xyz;
 	//normal = vec4( decode( normal.xy ), 1.0f);
 
 	// temp vars until we get lights in
-	vec4 lightDirection = vec4( -1.0f, -1.0f, 1.0f, 1.0f );
+	vec3 lightDirection = vec3( 0.0f, 1.0f, -1.0f );
 	vec4 diffuseColor = vec4( 1.0f, 1.0f, 1.0f, 1.0f );
 
-	float diffuseIntensity = clamp( dot( normal, normalize(lightDirection) ), 0.0f, 1.0f );
-	color = clamp( diffuseIntensity * diffuseColor, 0.0f, 1.0f );
-	color = normal;
+	float diffuseIntensity = clamp( dot( normal, -lightDirection ), 0, 1 );
+	color = vec4( normal, 1.0f );
 }

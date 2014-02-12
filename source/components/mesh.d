@@ -22,7 +22,7 @@ public:
 	mixin Property!( "uint", "numIndices", "protected" );
 	mixin BackedProperty!( "uint", "_glIndexBuffer", "glIndexBuffer" );
 	mixin BackedProperty!( "uint", "_glVertexBuffer", "glVertexBuffer" );
-	enum VertexSize = float.sizeof * 14u;
+	enum VertexSize = float.sizeof * 11u;
 
 	this( string filePath )
 	{
@@ -73,13 +73,13 @@ public:
 					outputData ~= tangent.x;
 					outputData ~= tangent.y;
 					outputData ~= tangent.z;
-					outputData ~= bitangent.x;
-					outputData ~= bitangent.y;
-					outputData ~= bitangent.z;
+					//outputData ~= bitangent.x;
+					//outputData ~= bitangent.y;
+					//outputData ~= bitangent.z;
 				}
 			}
 
-			numVertices = cast(uint)( outputData.length / 14 );  // 14 is num floats per vertex
+			numVertices = cast(uint)( outputData.length / 11 );  // 11 is num floats per vertex
 			numIndices = numVertices;
 
 			indices = new uint[ numIndices ];
@@ -119,8 +119,8 @@ public:
 		glEnableVertexAttribArray( TANGENT_ATTRIBUTE );
 		glVertexAttribPointer( TANGENT_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, VertexSize, cast(char*)0 + ( GLfloat.sizeof * 8 ) );
 		// Connect the binormal to the vertex shader
-		glEnableVertexAttribArray( BINORMAL_ATTRIBUTE );
-		glVertexAttribPointer( BINORMAL_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, VertexSize, cast(char*)0 + ( GLfloat.sizeof * 11 ) );
+		//glEnableVertexAttribArray( BINORMAL_ATTRIBUTE );
+		//glVertexAttribPointer( BINORMAL_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, VertexSize, cast(char*)0 + ( GLfloat.sizeof * 11 ) );
 
 		// Generate index buffer
 		glGenBuffers( 1, &_glIndexBuffer );

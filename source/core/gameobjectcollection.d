@@ -20,14 +20,31 @@ public:
 	 */
 	void loadObjects( string objectPath = "" )
 	{
+		string[GameObject] parents;
+
 		Config.processYamlDirectory(
 			buildNormalizedPath( FilePath.Resources.Objects, objectPath ),
-			( Node object )
+			( Node yml )
 			{
-				auto name = object[ "Name" ].as!string;
+				auto name = yml[ "Name" ].as!string;
 
-				objects[ name ] = GameObject.createFromYaml( object );
+				// Create the object
+				auto object = GameObject.createFromYaml( yml );
+				// Add to collection
+				objects[ name ] = object;
+
+				// If parent is specified, add it to the map
+				string parentName;
+				if( Config.tryGet( "Parent", parentName, yml ) )
+				{
+					parents[ object ] = parentName;
+				}
 			} );
+
+		foreach( object, parentName; parents )
+		{
+			objects[ parentName ].addChild( object );
+		}
 	}
 
 	/**

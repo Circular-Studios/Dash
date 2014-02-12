@@ -4,6 +4,10 @@ import core.properties;
 import std.math;
 import std.signals, std.conv, std.typetuple, std.traits;
 
+alias Vector!2 Vector2;
+alias Vector!3 Vector3;
+alias Vector!4 Vector4;
+
 class Vector( uint S = 3 )
 {
 public:

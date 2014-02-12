@@ -2,6 +2,9 @@ module math.matrix;
 import math.vector;
 import std.math, std.numeric, std.traits;
 
+alias Matrix!3 Matrix3;
+alias Matrix!4 Matrix4;
+
 class Matrix( uint S = 4 ) if( S > 1 && S < 5 )
 {
 public:

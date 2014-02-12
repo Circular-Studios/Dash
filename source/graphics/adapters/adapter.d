@@ -134,7 +134,7 @@ public:
 
 		shader.setUniformMatrix( "world", object.transform.matrix );
 		shader.setUniformMatrix( "worldViewProj", object.transform.matrix *
-								 Camera.lookAtLH( new Vector!3( 0, 0, 0), object.transform.position, new Vector!3( 0, 1, 0 ) ) *
+								 Matrix!4.identity *
 								 Matrix!4.buildPerspective( std.math.PI_2, cast(float)width / cast(float)height, 1, 1000 ) );
 
 		//This is finding the uniform for the given texture, and setting that texture to the appropriate one for the object

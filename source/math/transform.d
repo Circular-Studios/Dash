@@ -58,6 +58,28 @@ public:
 	mixin EmmittingProperty!( "Quaternion", "rotation", "public" );
 	mixin EmmittingProperty!( "Vector!3", "scale", "public" );
 
+	/**
+	 * This returns the object's position relative to the world origin, not the parent
+	 */
+	@property Vector!3 worldPosition()
+	{
+		if( owner.parent is null )
+			return position;
+		else
+			return owner.parent.transform.worldPosition + position;
+	}
+
+	/**
+	* This returns the object's rotation relative to the world origin, not the parent
+	*/
+	@property Quaternion worldRotation()
+	{
+		if( owner.parent is null )
+			return rotation;
+		else
+			return owner.parent.transform.worldRotation * rotation;
+	}
+
 	@property Matrix!4 matrix()
 	{
 		if( _matrixIsDirty )

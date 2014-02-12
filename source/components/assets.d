@@ -28,6 +28,7 @@ public:
 
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Meshes ) )
 		{
+			// (If check for checking type of file loading)
 			componentShelf[ file.baseFileName ] = new Mesh( file.fullPath );
 		}
 

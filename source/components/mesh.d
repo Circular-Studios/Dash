@@ -8,6 +8,7 @@ import components.component;
 import graphics.graphics, graphics.shaders.shader;
 import utility.output;
 import math.vector;
+import derelict.assimp3.assimp;
 
 import derelict.opengl3.gl3;
 
@@ -16,99 +17,78 @@ import std.stdio, std.stream, std.format, std.math;
 class Mesh : Component
 {
 public:
-	mixin Property!( "uint", "glVertexArray" );
-	mixin Property!( "uint", "numVertices" );
-	mixin Property!( "uint", "numIndices" );
+	mixin Property!( "uint", "glVertexArray", "protected" );
+	mixin Property!( "uint", "numVertices", "protected" );
+	mixin Property!( "uint", "numIndices", "protected" );
 	mixin BackedProperty!( "uint", "_glIndexBuffer", "glIndexBuffer" );
 	mixin BackedProperty!( "uint", "_glVertexBuffer", "glVertexBuffer" );
-	enum VertexSize = float.sizeof * 11u;
+	enum VertexSize = float.sizeof * 14u;
 
 	this( string filePath )
 	{
 		super( null );
 
-		Vector!3[] vertices;
-		Vector!2[] uvs;
-		Vector!3[] normals;
+		// Initial assimp start
+		DerelictASSIMP3.load();
 
+		// Load the scene via assimp
+		const aiScene* scene = aiImportFile(( filePath ~ "\0" ).ptr,
+											aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
+											aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
 		float[] outputData;
-
-		auto file = new BufferedFile( filePath );
-
-		foreach( ulong index, char[] line; file )
+		uint[] indices;
+		if(!scene)
 		{
-			if( !line.length )
-				continue;
+			// Did not load
+			Output.printValue( OutputType.Info, "Error", "Mesh not loaded." );
+		}
+		else
+		{
+			// Get the mesh
+			auto mesh = scene.mMeshes[0];
 
-			if( line[ 0..2 ] == "v " )
+			// For each vertex on each face
+ 			int meshFaces = mesh.mNumFaces;
+			for( int i = 0; i < meshFaces; i++ )
 			{
-				float x, y, z;
-
-				formattedRead( line, "v %s %s %s",
-							   &x, &y, &z );
-
-				vertices ~= new Vector!3( x, y, z );
-			}
-			else if( line[ 0..2 ] == "vt" )
-			{
-				float x, y;
-
-				formattedRead( line, "vt %s %s",
-							   &x, &y );
-
-				uvs ~= new Vector!2( x, y );
-			}
-			else if( line[ 0..2 ] == "vn" )
-			{
-				float x, y, z;
-
-				formattedRead( line, "vn %s %s %s",
-							   &x, &y, &z );
-
-				normals ~= new Vector!3( x, y, z );
-			}
-			else if( line[ 0..2 ] == "f " )
-			{
-				uint[ 3 ] vertexIndex;
-				uint[ 3 ] uvIndex;
-				uint[ 3 ] normalIndex;
-
-				formattedRead( line, "f %s/%s/%s %s/%s/%s %s/%s/%s",
-							   &vertexIndex[ 0 ], &uvIndex[ 0 ], &normalIndex[ 0 ],
-							   &vertexIndex[ 1 ], &uvIndex[ 1 ], &normalIndex[ 1 ],
-							   &vertexIndex[ 2 ], &uvIndex[ 2 ], &normalIndex[ 2 ] );
-
-				Vector!3[ 3 ] faceVerts = [ vertices[ vertexIndex[ 0 ] - 1 ], vertices[ vertexIndex[ 1 ] - 1 ], vertices[ vertexIndex[ 2 ] - 1 ] ];
-				Vector!2[ 3 ] faceUVs = [ uvs[ vertexIndex[ 0 ] - 1 ], uvs[ vertexIndex[ 0 ] - 1 ], uvs[ vertexIndex[ 0 ] - 1 ] ];
-				Vector!3[ 2 ] tangentBinormals = calculateTangentBinormal( faceVerts, faceUVs );
-
-				for( uint ii = 0; ii < 3; ++ii )
+				auto face = mesh.mFaces[i];
+				for( int j = 0; j < 3; j++ )
 				{
-					outputData ~= vertices[ vertexIndex[ ii ] - 1 ].x;
-					outputData ~= vertices[ vertexIndex[ ii ] - 1 ].y;
-					outputData ~= vertices[ vertexIndex[ ii ] - 1 ].z;
-					outputData ~= uvs[ uvIndex[ ii ] - 1 ].x;
-					outputData ~= uvs[ uvIndex[ ii ] - 1 ].y;
-					outputData ~= normals[ normalIndex[ ii ] - 1 ].x;
-					outputData ~= normals[ normalIndex[ ii ] - 1 ].y;
-					outputData ~= normals[ normalIndex[ ii ] - 1 ].z;
-                    outputData ~= tangentBinormals[ 0 ].x;
-                    outputData ~= tangentBinormals[ 0 ].y;
-                    outputData ~= tangentBinormals[ 0 ].z;
+					// Get the vertex data
+					aiVector3D pos = mesh.mVertices[ face.mIndices[ j ] ];
+					aiVector3D uv = mesh.mTextureCoords[ 0 ][ face.mIndices[ j ] ];
+					aiVector3D normal = mesh.mNormals[ face.mIndices[ j ] ];
+					aiVector3D tangent = mesh.mTangents[ face.mIndices[ j ] ];
+					aiVector3D bitangent = mesh.mBitangents[ face.mIndices[ j ] ];
+
+					// Append the data
+					outputData ~= pos.x;
+					outputData ~= pos.y;
+					outputData ~= pos.z;
+					outputData ~= uv.x;
+					outputData ~= uv.y;
+					outputData ~= normal.x;
+					outputData ~= normal.y;
+					outputData ~= normal.z;
+					outputData ~= tangent.x;
+					outputData ~= tangent.y;
+					outputData ~= tangent.z;
+					outputData ~= bitangent.x;
+					outputData ~= bitangent.y;
+					outputData ~= bitangent.z;
 				}
 			}
+
+			numVertices = cast(uint)( outputData.length / 14 );  // 14 is num floats per vertex
+			numIndices = numVertices;
+
+			indices = new uint[ numIndices ];
+			foreach( ii; 0..numIndices )
+				indices[ ii ] = ii;
 		}
 
-		file.close();
 
-		_numVertices = cast(uint)( outputData.length / 11 );  // 11 is num floats per vertex
-		_numIndices = numVertices;
-
-		uint[] indices = new uint[ numIndices ];
-
-		foreach( ii; 0..numIndices )
-			indices[ ii ] = ii;
-
+		
 		// make and bind the VAO
 		glGenVertexArrays( 1, &_glVertexArray );
 		glBindVertexArray( glVertexArray );
@@ -124,6 +104,7 @@ public:
 		uint UV_ATTRIBUTE = 1;
 		uint NORMAL_ATTRIBUTE = 2;
 		uint TANGENT_ATTRIBUTE = 3;
+		uint BINORMAL_ATTRIBUTE = 4;
 
 		// Connect the position to the inputPosition attribute of the vertex shader
 		glEnableVertexAttribArray( POSITION_ATTRIBUTE );
@@ -137,6 +118,9 @@ public:
 		// Connect the tangent to the vertex shader
 		glEnableVertexAttribArray( TANGENT_ATTRIBUTE );
 		glVertexAttribPointer( TANGENT_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, VertexSize, cast(char*)0 + ( GLfloat.sizeof * 8 ) );
+		// Connect the binormal to the vertex shader
+		glEnableVertexAttribArray( BINORMAL_ATTRIBUTE );
+		glVertexAttribPointer( BINORMAL_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, VertexSize, cast(char*)0 + ( GLfloat.sizeof * 11 ) );
 
 		// Generate index buffer
 		glGenBuffers( 1, &_glIndexBuffer );

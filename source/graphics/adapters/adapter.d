@@ -132,8 +132,8 @@ public:
 		GLShader shader = cast(GLShader)Shaders[GeometryShader];
 		glBindVertexArray( object.mesh.glVertexArray );
 
-		shader.setUniformMatrix( "world", object.transform.matrix );
-		shader.setUniformMatrix( "worldViewProj", object.transform.matrix *
+		shader.setUniformMatrix( ShaderUniform.World, object.transform.matrix );
+		shader.setUniformMatrix( ShaderUniform.WorldViewProjection, object.transform.matrix *
 								 Matrix!4.identity *
 								 Matrix!4.buildPerspective( std.math.PI_2, cast(float)width / cast(float)height, 1, 1000 ) );
 

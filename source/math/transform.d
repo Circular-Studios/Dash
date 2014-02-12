@@ -24,6 +24,7 @@ public:
 		position.connect( &setMatrixDirty );
 		rotation.connect( &setMatrixDirty );
 		scale.connect( &setMatrixDirty );
+		connect( &setMatrixDirty );
 	}
 
 	~this()
@@ -110,6 +111,8 @@ public:
 		_matrix.matrix[ 3 ][ 0 ] = position.x;
 		_matrix.matrix[ 3 ][ 1 ] = position.y;
 		_matrix.matrix[ 3 ][ 2 ] = position.z;
+
+		_matrixIsDirty = false;
 	}
 
 private:

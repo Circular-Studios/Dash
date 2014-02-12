@@ -3,7 +3,8 @@
     InstanceOf: SupaFab
 -
     Name: TestObject7
-    Parent: TestObject
     InstanceOf: SupaFab
+    Parent: TestObject
     Transform:
-        Position: !Vector3 -25.0 0 0
+        Position: !Vector3 -25 0 0
+        Scale: !Vector3 1 1 1

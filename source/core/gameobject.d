@@ -95,7 +95,7 @@ public:
 	 */
 	this()
 	{
-		transform = new Transform;
+		transform = new Transform( this );
 		transform.connect( &emit );
 	}
 

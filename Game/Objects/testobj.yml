@@ -5,3 +5,5 @@
     Name: TestObject7
     Parent: TestObject
     InstanceOf: SupaFab
+    Transform:
+        Position: !Vector3 -25.0 0 0

@@ -1,5 +1,5 @@
 module math.transform;
-import core.properties;
+import core.properties, core.gameobject;
 import math.vector, math.matrix, math.quaternion;
 
 import std.signals, std.conv;
@@ -7,10 +7,10 @@ import std.signals, std.conv;
 class Transform
 {
 public:
-	Transform parent;
-
-	this()
+	this( GameObject obj = null )
 	{
+		owner = obj;
+
 		position = new Vector!3;
 		rotation = new Quaternion;
 		scale = new Vector!3( 1.0, 1.0, 1.0);
@@ -53,10 +53,21 @@ public:
 
 	}
 
+	mixin Property!( "GameObject", "owner" );
 	mixin EmmittingProperty!( "Vector!3", "position", "public" );
 	mixin EmmittingProperty!( "Quaternion", "rotation", "public" );
 	mixin EmmittingProperty!( "Vector!3", "scale", "public" );
-	mixin DirtyProperty!( "Matrix!4", "matrix", "updateMatrix" );
+
+	@property Matrix!4 matrix()
+	{
+		if( _matrixIsDirty )
+			updateMatrix();
+
+		if( owner.parent is null )
+			return _matrix;
+		else
+			return owner.parent.transform.matrix * _matrix;
+	}
 
 	mixin Signal!( string, string );
 
@@ -80,6 +91,9 @@ public:
 	}
 
 private:
+	Matrix!4 _matrix;
+	bool _matrixIsDirty;
+
 	void setMatrixDirty( string prop, string newVal )
 	{
 		_matrixIsDirty = true;

@@ -1,2 +1,7 @@
-Name: TestObject
-InstanceOf: SupaFab
+-
+    Name: TestObject
+    InstanceOf: SupaFab
+-
+    Name: TestObject7
+    Parent: TestObject
+    InstanceOf: SupaFab

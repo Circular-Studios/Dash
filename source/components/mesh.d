@@ -8,6 +8,7 @@ import components.component;
 import graphics.graphics, graphics.shaders.shader;
 import utility.output;
 import math.vector;
+import derelict.assimp3.assimp;
 
 import derelict.opengl3.gl3;
 
@@ -26,12 +27,68 @@ public:
 	this( string filePath )
 	{
 		super( null );
-	}
 
-	this( float[] outputData, uint[] indices)
-	{
-		super( null );
+		// Initial assimp start
+		DerelictASSIMP3.load();
 
+		// Load the scene via assimp
+		const aiScene* scene = aiImportFile(( filePath ~ "\0" ).ptr,
+											aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
+											aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+		float[] outputData;
+		uint[] indices;
+		if(!scene)
+		{
+			// Did not load
+			Output.printValue( OutputType.Info, "Error", "Mesh not loaded." );
+		}
+		else
+		{
+			// Get the mesh
+			auto mesh = scene.mMeshes[0];
+
+			// For each vertex on each face
+ 			int meshFaces = mesh.mNumFaces;
+			for( int i = 0; i < meshFaces; i++ )
+			{
+				auto face = mesh.mFaces[i];
+				for( int j = 0; j < 3; j++ )
+				{
+					// Get the vertex data
+					aiVector3D pos = mesh.mVertices[ face.mIndices[ j ] ];
+					aiVector3D uv = mesh.mTextureCoords[ 0 ][ face.mIndices[ j ] ];
+					aiVector3D normal = mesh.mNormals[ face.mIndices[ j ] ];
+					aiVector3D tangent = mesh.mTangents[ face.mIndices[ j ] ];
+					aiVector3D bitangent = mesh.mBitangents[ face.mIndices[ j ] ];
+
+					// Append the data
+					outputData ~= pos.x;
+					outputData ~= pos.y;
+					outputData ~= pos.z;
+					outputData ~= uv.x;
+					outputData ~= uv.y;
+					outputData ~= normal.x;
+					outputData ~= normal.y;
+					outputData ~= normal.z;
+					outputData ~= tangent.x;
+					outputData ~= tangent.y;
+					outputData ~= tangent.z;
+					outputData ~= bitangent.x;
+					outputData ~= bitangent.y;
+					outputData ~= bitangent.z;
+				}
+			}
+
+			numVertices = cast(uint)( outputData.length / 14 );  // 14 is num floats per vertex
+			numIndices = numVertices;
+
+			indices = new uint[ numIndices ];
+			foreach( ii; 0..numIndices )
+				indices[ ii ] = ii;
+		}
+
+
+		
 		// make and bind the VAO
 		glGenVertexArrays( 1, &_glVertexArray );
 		glBindVertexArray( glVertexArray );

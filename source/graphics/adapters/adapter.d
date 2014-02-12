@@ -1,6 +1,6 @@
 module graphics.adapters.adapter;
 import core.gameobject, core.properties;
-import components.assets, components.objmesh, components.camera;
+import components.assets, components.mesh, components.camera;
 import graphics.shaders.shader, graphics.shaders.shaders, graphics.shaders.glshader;
 import math.vector, math.matrix;
 import utility.config, utility.output;
@@ -177,7 +177,7 @@ public:
 		glActiveTexture( GL_TEXTURE2 );
 		glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
 
-		glBindVertexArray( Assets.get!ObjMesh( WindowMesh ).glVertexArray );
+		glBindVertexArray( Assets.get!Mesh( WindowMesh ).glVertexArray );
 
 		glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, null );
 

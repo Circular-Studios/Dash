@@ -2,8 +2,6 @@ module testgame;
 import core.dgame, core.gameobjectcollection;
 import utility.output, utility.input;
 
-import std.c.windows.windows;
-
 @Game!TestGame class TestGame : DGame
 {
 	GameObjectCollection goc;
@@ -16,7 +14,7 @@ import std.c.windows.windows;
 		Input.addKeyDownEvent( Keys.F5, ( uint kc ) { currentState = GameState.Reset; } );
 
 		goc = new GameObjectCollection;
-		goc.loadObjects;
+		goc.loadObjects( "" );
 	}
 	
 	override void onUpdate()

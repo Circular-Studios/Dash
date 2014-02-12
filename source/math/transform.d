@@ -29,26 +29,6 @@ public:
 		destroy( scale );
 	}
 
-	void rotate( Quaternion rotation )
-	{
-
-	}
-
-	void rotate( const float x, const float y, const float z, const float angle )
-	{
-		rotate( new Quaternion( x, y, z, angle ) );
-	}
-
-	void rotate( Vector!3 eulerAngles )
-	{
-		rotate( eulerAngles.x, eulerAngles.y, eulerAngles.z );
-	}
-
-	void rotate( const float x, const float y, const float z )
-	{
-
-	}
-
 	mixin EmmittingProperty!( "Vector!3", "position", "public" );
 	mixin EmmittingProperty!( "Quaternion", "rotation", "public" );
 	mixin EmmittingProperty!( "Vector!3", "scale", "public" );

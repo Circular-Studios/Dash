@@ -38,7 +38,7 @@ public:
 			GL_BGRA, //FreeImage loads in BGR format because fuck you
 			GL_UNSIGNED_BYTE,
 			cast(GLvoid*)FreeImage_GetBits( imageData ) );
-		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 
 		FreeImage_Unload( imageData );
 		glBindTexture( GL_TEXTURE_2D, 0 );

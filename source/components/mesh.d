@@ -22,7 +22,8 @@ public:
 	mixin Property!( "uint", "numIndices", "protected" );
 	mixin BackedProperty!( "uint", "_glIndexBuffer", "glIndexBuffer" );
 	mixin BackedProperty!( "uint", "_glVertexBuffer", "glVertexBuffer" );
-	enum VertexSize = float.sizeof * 11u;
+	enum FloatsPerVertex = 11;
+	enum VertexSize = float.sizeof * FloatsPerVertex;
 
 	this( string filePath )
 	{
@@ -34,13 +35,14 @@ public:
 		// Load the scene via assimp
 		const aiScene* scene = aiImportFile(( filePath ~ "\0" ).ptr,
 											aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
-											aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+											aiProcess_JoinIdenticalVertices | aiProcess_SortByPType |
+											aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder );
 		float[] outputData;
 		uint[] indices;
 		if(!scene)
 		{
 			// Did not load
-			Output.printValue( OutputType.Info, "Error", "Mesh not loaded." );
+			Output.printValue( OutputType.Info, "Error", "Mesh at " ~ filePath ~ " not loaded." );
 		}
 		else
 		{
@@ -79,7 +81,7 @@ public:
 				}
 			}
 
-			numVertices = cast(uint)( outputData.length / 11 );  // 11 is num floats per vertex
+			numVertices = cast(uint)( outputData.length / FloatsPerVertex );  // 11 is num floats per vertex
 			numIndices = numVertices;
 
 			indices = new uint[ numIndices ];

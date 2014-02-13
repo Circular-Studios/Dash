@@ -26,11 +26,11 @@ vec3 calculateMappedNormal()
 	vec3 bitangent = cross( tangent, normal );
 	vec3 normalMap = ((texture( normalTexture, fUV ).xyz) * 2) - 1;
 	mat3 TBN = mat3( tangent, bitangent, normal );
-	return texture( normalTexture, fUV ).xyz;//normalize( TBN * normalMap );
+	return normalize( TBN * normalMap );
 }
 
 void main( void )
 {
 	color = texture( diffuseTexture, fUV );	
-	normal_w = vec4( encode( calculateMappedNormal() ), 1.0f, 1.0f );
+	normal_w = vec4( calculateMappedNormal(), 1.0f );
 }

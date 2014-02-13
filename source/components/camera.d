@@ -73,7 +73,7 @@ private:
 		for( uint ii = 0; ii < 3; ++ii )
 		{
 			for( uint jj = 0; jj < 3; ++jj )
-				viewMatrix.matrix[ jj ][ ii ] = axes[ ii ].values[ jj ];
+				viewMatrix.matrix[ jj ][ ii ] = axes[ ii ][ jj ];
 			viewMatrix.matrix[ 3 ][ ii ] = -axes[ ii ].dot( owner.transform.position );
 		}
 	}

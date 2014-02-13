@@ -34,7 +34,7 @@ public:
 
 		foreach( index; staticIota!( 0, prop.length ) )
 		{
-			mixin( "result.values[ index ] = " ~ prop[ index ] ~ ";" );
+			mixin( "result[ index ] = " ~ prop[ index ] ~ ";" );
 		}
 
 		return result;
@@ -58,9 +58,9 @@ public:
 
 		for( uint ii = 0; ii < S; ++ii )
 		{
-			if( values[ ii ] < other.values[ ii ] )
+			if( values[ ii ] < other[ ii ] )
 				return -1;
-			else if( values[ ii ] > other.values[ ii ] )
+			else if( values[ ii ] > other[ ii ] )
 				return 1;
 		}
 
@@ -86,7 +86,7 @@ public:
 				float result = 0;
 				
 				foreach ( ii; 0..S )
-					result += values[ ii ] * other.values[ ii ];
+					result += values[ ii ] * other[ ii ];
 
 				return result;
 			}
@@ -105,7 +105,7 @@ public:
 				auto result = new Vector!S;
 
 				for( uint ii = 0; ii < S; ++ii )
-					result.values[ ii ] = values[ ii ] + other.values[ ii ];
+					result[ ii ] = values[ ii ] + other[ ii ];
 
 				return result;
 			}
@@ -114,7 +114,7 @@ public:
 				auto result = new Vector!S;
 
 				for( uint ii = 0; ii < S; ++ii )
-					result.values[ ii ] = values[ ii ] - other.values[ ii ];
+					result[ ii ] = values[ ii ] - other[ ii ];
 
 				return result;
 			}
@@ -127,7 +127,7 @@ public:
 				auto result = new Vector!S;
 
 				for( uint ii = 0; ii < S; ++ii )
-					result.values[ ii ] += values[ ii ] * other.values[ ii ];
+					result[ ii ] += values[ ii ] * other[ ii ];
 
 				return result;
 			}
@@ -143,11 +143,21 @@ public:
 			auto result = new Vector!S;
 
 			for( uint ii = 0; ii < S; ++ii )
-				result.values[ ii ] = -values[ ii ];
+				result[ ii ] = -values[ ii ];
 
 			return result;
 		}
 		else static assert ( 0, "Operator " ~ op ~ " not implemented." );
+	}
+
+	final float opIndex( uint index )
+	{
+		return values[ index ];
+	}
+
+	final void opIndexAssign( float newVal, uint index )
+	{
+		values[ index ] = newVal;
 	}
 
 	final float magnitude() pure @safe
@@ -168,7 +178,7 @@ public:
 		auto mag = magnitude();
 
 		for( uint ii = 0; ii < S; ++ii )
-			result.values[ ii ] = values[ ii ] / mag;
+			result[ ii ] = values[ ii ] / mag;
 
 		return result;
 	}

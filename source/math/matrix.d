@@ -40,6 +40,8 @@ static
 	}
 }
 
+	alias matrix this;
+
 	this() pure @safe
 	{
 		for( uint ii = 0; ii < S; ++ii )

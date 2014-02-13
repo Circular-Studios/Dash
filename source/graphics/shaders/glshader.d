@@ -24,10 +24,12 @@ public:
 	mixin Property!( "uint", "programID", "protected" );
 	mixin Property!( "uint", "vertexShaderID", "protected" );
 	mixin Property!( "uint", "fragmentShaderID", "protected" );
+	mixin Property!( "string", "shaderName", "protected" );
 	protected int[string] uniformLocations;
 
-	this( string vertexPath, string fragmentPath )
+	this(string name, string vertexPath, string fragmentPath )
 	{
+		shaderName = name;
 		// Create shader
         vertexShaderID = glCreateShader( GL_VERTEX_SHADER );
         fragmentShaderID = glCreateShader( GL_FRAGMENT_SHADER );
@@ -50,7 +52,7 @@ public:
 		glGetShaderiv( vertexShaderID, GL_COMPILE_STATUS, &compileStatus );
 		if( compileStatus != GL_TRUE )
 		{
-			log( OutputType.Error, "Vertex Shader compile error" );
+			log( OutputType.Error, shaderName ~ " Vertex Shader compile error" );
 			char[1000] errorLog;
 			auto info = errorLog.ptr;
 			glGetShaderInfoLog( vertexShaderID, 1000, null, info );
@@ -62,7 +64,7 @@ public:
 		glGetShaderiv( fragmentShaderID, GL_COMPILE_STATUS, &compileStatus );
 		if( compileStatus != GL_TRUE )
 		{
-			log( OutputType.Error, "Fragment Shader compile error" );
+			log( OutputType.Error, shaderName ~ " Fragment Shader compile error" );
 			char[1000] errorLog;
 			auto info = errorLog.ptr;
 			glGetShaderInfoLog( fragmentShaderID, 1000, null, info );
@@ -80,7 +82,7 @@ public:
 		glGetProgramiv( programID, GL_LINK_STATUS, &compileStatus );
         if( compileStatus != GL_TRUE )
         {
-			log( OutputType.Error, "Shader program linking error", vertexPath );
+			log( OutputType.Error, shaderName ~ " Shader program linking error", vertexPath );
 			char[1000] errorLog;
 			auto info = errorLog.ptr;
 			glGetProgramInfoLog( programID, 1000, null, info );

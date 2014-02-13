@@ -14,7 +14,7 @@ public:
 		{
 			// Strip .fs from file name
 			string name = file.baseFileName[ 0..$-3 ];
-			shaders[ name ] = new GLShader( file.directory ~ "\\" ~ name ~ ".vs.glsl", file.fullPath );
+			shaders[ name ] = new GLShader( name, file.directory ~ "\\" ~ name ~ ".vs.glsl", file.fullPath );
 		}
 
 		shaders.rehash();

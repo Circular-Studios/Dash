@@ -32,5 +32,5 @@ vec3 calculateMappedNormal()
 void main( void )
 {
 	color = texture( diffuseTexture, fUV );	
-	normal_w = vec4( calculateMappedNormal(), 1.0f );
+	normal_w = vec4( encode( calculateMappedNormal() ), 1.0f, 1.0f );
 }

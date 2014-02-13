@@ -8,7 +8,7 @@ import yaml;
 import derelict.opengl3.gl3;
 import std.variant, std.conv;
 
-class Material : Component
+final class Material : Component
 {
 public:
 	mixin Property!( "Texture", "diffuse" );
@@ -44,7 +44,7 @@ public:
 	override void draw( Shader shader ) { }
 	override void shutdown() { }
 
-	void bind( Shader shader )
+	final void bind( Shader shader )
 	{
 		GLint textureLocation = glGetUniformLocation( (cast(GLShader)shader).programID, "diffuseTexture\0" );
 		glUniform1i( textureLocation, 0 );

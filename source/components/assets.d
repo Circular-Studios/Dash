@@ -8,14 +8,13 @@ import utility.filepath, utility.config;
 import yaml;
 import derelict.freeimage.freeimage;
 
-static class Assets
+final abstract class Assets
 {
-static:
-public:
+public static:
 	/**
 	 * Get the asset with the given type and name.
 	 */
-	T get( T )( string name ) if( is( T : Component ) )
+	final T get( T )( string name ) if( is( T : Component ) )
 	{
 		static if( is( T == Mesh ) )
 		{
@@ -35,7 +34,7 @@ public:
 	/**
 	 * Load all assets in the FilePath.ResourceHome folder.
 	 */
-	void initialize()
+	final void initialize()
 	{
 		DerelictFI.load();
 
@@ -66,7 +65,7 @@ public:
 	/**
 	 * Unload and destroy all stored assets.
 	 */
-	void shutdown()
+	final void shutdown()
 	{
 		foreach_reverse( index; 0 .. meshes.length )
 		{

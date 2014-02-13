@@ -110,7 +110,7 @@ private:
 	/**
 	 * Function called to initialize controllers.
 	 */
-	void start()
+	final void start()
 	{
 		currentState = GameState.Menu;
         //camera = null;
@@ -130,7 +130,7 @@ private:
 	/**
 	 * Function called to shutdown controllers.
 	 */
-	void stop()
+	final void stop()
 	{
 		onShutdown();
 		Assets.shutdown();
@@ -140,7 +140,7 @@ private:
 	/**
 	 * Called when engine is resetting.
 	 */
-	void saveState()
+	final void saveState()
 	{
 		onSaveState();
 	}

@@ -5,7 +5,7 @@ import math.matrix, math.vector;
 import std.signals, std.conv;
 import std.math;
 
-class Quaternion
+final class Quaternion
 {
 public:
 	this()
@@ -65,7 +65,7 @@ public:
 
 	mixin DirtyProperty!( "Matrix!4", "matrix", "updateMatrix" );
 
-	Quaternion opBinary( string op )( Quaternion other )
+	final Quaternion opBinary( string op )( Quaternion other )
 	{
 		static if ( op  == "*" )
 		{
@@ -78,7 +78,7 @@ public:
 		else static assert ( 0, "Operator " ~ op ~ " not implemented." );
 	}
 
-	ref Quaternion opOpAssign( string op )( Quaternion other )
+	final ref Quaternion opOpAssign( string op )( Quaternion other )
 	{
 		static if ( op == "*" )
 		{
@@ -93,7 +93,7 @@ public:
 	}
 
 private:
-	void updateMatrix()
+	final void updateMatrix()
 	{
 		matrix.matrix[ 0 ][ 0 ] = 1.0f - 2.0f * y * y - 2.0f * z * z;
 		matrix.matrix[ 0 ][ 1 ] = 2.0f * x * y - 2.0f * z * w;

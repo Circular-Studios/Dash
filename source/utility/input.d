@@ -5,10 +5,9 @@ module utility.input;
 
 import std.typecons;
 
-static class Input
+final abstract class Input
 {
-static:
-public:
+public static:
 	/**
 	 * Function called when key event triggers.
 	 */
@@ -18,7 +17,7 @@ public:
 	/**
 	 * Updates the key states, and calls all key events.
 	 */
-	void update()
+	final void update()
 	{
 		auto diff = staging - current;
 
@@ -39,7 +38,7 @@ public:
 	 * 		keyCode =	The code of the key to add the event to.
 	 * 		func =		The function to call when the key state changes.
 	 */
-	void addKeyEvent( uint keyCode, KeyEvent func )
+	final void addKeyEvent( uint keyCode, KeyEvent func )
 	{
 		keyEvents[ keyCode ] ~= func;
 	}
@@ -47,7 +46,7 @@ public:
 	/**
 	 * Add a key event only when the key is down.
 	 */
-	void addKeyDownEvent( uint keyCode, KeyStateEvent func )
+	final void addKeyDownEvent( uint keyCode, KeyStateEvent func )
 	{
 		keyEvents[ keyCode ] ~= ( uint keyCode, bool newState ) { if( newState ) func( newState ); };
 	}
@@ -55,7 +54,7 @@ public:
 	/**
 	 * Add a key event only when the key is up.
 	 */
-	void addKeyUpEvent( uint keyCode, KeyStateEvent func )
+	final void addKeyUpEvent( uint keyCode, KeyStateEvent func )
 	{
 		keyEvents[ keyCode ] ~= ( uint keyCode, bool newState ) { if( !newState ) func( keyCode ); };
 	}
@@ -67,7 +66,7 @@ public:
 	 * 		keyCode =		The code of the key to check.
 	 * 		checkPrevious =	Whether or not to make sure the key was down last frame.
 	 */
-	bool isKeyDown( uint keyCode, bool checkPrevious = false )
+	final bool isKeyDown( uint keyCode, bool checkPrevious = false )
 	{
 		return current[ keyCode ] && ( !checkPrevious || previous[ keyCode ] );
 	}
@@ -79,7 +78,7 @@ public:
 	 * 		keyCode =		The code of the key to check.
 	 * 		checkPrevious =	Whether or not to make sure the key was up last frame.
 	 */
-	bool isKeyUp( uint keyCode, bool checkPrevious = false )
+	final bool isKeyUp( uint keyCode, bool checkPrevious = false )
 	{
 		return !current[ keyCode ] && ( !checkPrevious || !previous[ keyCode ] );
 	}
@@ -88,7 +87,7 @@ public:
 	 * Sets the state of the key to be assigned at the beginning of next frame.
 	 * Should only be called from a window controller.
 	 */
-	void setKeyState( uint keyCode, bool newState )
+	final void setKeyState( uint keyCode, bool newState )
 	{
 		staging[ keyCode ] = newState;
 	}

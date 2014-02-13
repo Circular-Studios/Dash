@@ -7,7 +7,7 @@ import utility.filepath, utility.config;
 import yaml;
 import std.variant;
 
-abstract final class Prefabs
+final abstract class Prefabs
 {
 public static:
 	alias prefabs this;
@@ -85,7 +85,7 @@ public:
 		scriptClass = null;
 	}
 
-	GameObject createInstance()
+	final GameObject createInstance()
 	{
 		GameObject result;
 

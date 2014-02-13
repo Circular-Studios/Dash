@@ -10,7 +10,7 @@ import yaml;
 
 import std.path;
 
-class GameObjectCollection
+final class GameObjectCollection
 {
 public:
 	alias objects this;
@@ -18,7 +18,7 @@ public:
 	/**
 	 * Load all objects inside the specified folder in FilePath.Objects.
 	 */
-	void loadObjects( string objectPath = "" )
+	final void loadObjects( string objectPath = "" )
 	{
 		string[GameObject] parents;
 
@@ -50,7 +50,7 @@ public:
 	/**
 	 * Remove all objects from the collection.
 	 */
-	void clearObjects()
+	final void clearObjects()
 	{
 		foreach( key; objects.keys )
 			objects.remove( key );
@@ -64,7 +64,7 @@ public:
 	 * goc.apply( go => go.update() );
 	 * ---
 	 */
-	void apply( void function( GameObject ) func )
+	final void apply( void function( GameObject ) func )
 	{
 		foreach( value; objects.values )
 			func( value );
@@ -73,7 +73,7 @@ public:
 	/**
 	 * Update all game objects.
 	 */
-	void update()
+	final void update()
 	{
 		apply( go => go.update() );
 	}
@@ -81,7 +81,7 @@ public:
 	/**
 	 * Draw all game objects.
 	 */
-	void draw()
+	final void draw()
 	{
 		apply( go => go.draw() );
 	}

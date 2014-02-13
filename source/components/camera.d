@@ -9,7 +9,7 @@ import math.matrix, math.vector;
 
 import std.signals, std.conv;
 
-class Camera : Component
+final class Camera : Component
 {
 public:
 	/**
@@ -56,11 +56,11 @@ public:
 	}
 
 private:
-	void setMatrixDirty( string prop, string newVal )
+	final void setMatrixDirty( string prop, string newVal )
 	{
 		_viewMatrixIsDirty = true;
 	}
-	void updateViewMatrix()
+	final void updateViewMatrix()
 	{
 		auto up = owner.transform.rotation.matrix * Vector!3.up;
 		auto lookAt = ( owner.transform.rotation.matrix * Vector!3.forward ) + owner.transform.position;

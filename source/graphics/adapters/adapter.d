@@ -67,7 +67,7 @@ public:
 	
 	abstract void messageLoop();
 
-	void initializeDeferredRendering()
+	final void initializeDeferredRendering()
 	{
 		//http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
 
@@ -119,14 +119,14 @@ public:
 		}
 	}
 
-	void beginDraw()
+	final void beginDraw()
 	{
 		glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		glUseProgram( (cast(GLShader)Shaders[GeometryShader]).programID );
 	}
 
-	void drawObject( GameObject object )
+	final void drawObject( GameObject object )
 	{
 		// set the shader
 		GLShader shader = cast(GLShader)Shaders[GeometryShader];
@@ -145,7 +145,7 @@ public:
 		glBindVertexArray(0);
 	}
 
-	void endDraw()
+	final void endDraw()
 	{
 		//This line switches back to the default framebuffer
 		glBindFramebuffer( GL_FRAMEBUFFER, 0 );
@@ -180,7 +180,7 @@ public:
 	}
 
 protected:
-	void loadProperties()
+	final void loadProperties()
 	{
 		fullscreen = Config.get!bool( "Display.Fullscreen" );
 		if( fullscreen )

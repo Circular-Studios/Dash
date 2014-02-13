@@ -9,18 +9,17 @@ import std.datetime;
 /**
  * Manages time and delta time.
  */
-static class Time
+final abstract class Time
 {
-static:
-public:
+public static:
 	/**
 	 * Time since last frame, in seconds.
 	 */
-	@property float deltaTime() { return 0.016; }
+	final @property float deltaTime() { return 0.016; }
 	/**
 	 * Total time spent running, in seconds.
 	 */
-	@property float totalTime() { return 1.00f; }
+	final @property float totalTime() { return 1.00f; }
 
 	/**
 	 * Initialize the time controller with initial values.
@@ -35,7 +34,7 @@ public:
 	/**
 	 * Update the times. Only call once per frame!
 	 */
-	void update()
+	final void update()
 	{
 		delta = ( cur - prev ).fracSec.nsecs / 1_000_000_000.0f;
 		total += delta;

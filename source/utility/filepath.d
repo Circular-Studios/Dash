@@ -8,7 +8,7 @@ import std.stdio;
 /**
  * A class which stores default resource paths, and handles path manipulation.
  */
-class FilePath
+final class FilePath
 {
 public:
 	/**
@@ -35,7 +35,7 @@ public:
 	/**
 	 * Get all files in a given directory.
 	 */
-	static FilePath[] scanDirectory( string path, string pattern = "" )
+	final static FilePath[] scanDirectory( string path, string pattern = "" )
 	{
 		// Get absolute path to folder
 		string safePath = std.path.buildNormalizedPath( std.path.absolutePath( path ) );
@@ -67,9 +67,9 @@ public:
 	}
 
 	/// The full path to the file.
-	@property string fullPath()		{ return _fullPath; }
+	final @property string fullPath()		{ return _fullPath; }
 	/// The relative path from the executable to the file.
-	@property string relativePath()
+	final @property string relativePath()
 	{
 		if( !_relativePath )
 			_relativePath = std.path.relativePath( _fullPath );
@@ -77,7 +77,7 @@ public:
 		return _relativePath;
 	}
 	/// The name of the file with its extension.
-	@property string fileName()
+	final @property string fileName()
 	{
 		if( !_fileName )
 			_fileName = std.path.baseName( _fullPath );
@@ -85,7 +85,7 @@ public:
 		return _fileName;
 	}
 	/// The name of the file without its extension.
-	@property string baseFileName()
+	final @property string baseFileName()
 	{
 		if( !_baseFileName )
 			_baseFileName = std.path.stripExtension( fileName );
@@ -93,7 +93,7 @@ public:
 		return _baseFileName;
 	}
 	/// The path to the directory containing the file.
-	@property string directory()
+	final @property string directory()
 	{
 		if( !_directory )
 			_directory = std.path.dirName( _fullPath );
@@ -101,7 +101,7 @@ public:
 		return _directory;
 	}
 	/// The extensino of the file.
-	@property ref string extension()
+	final @property ref string extension()
 	{
 		if( !_extension )
 			_extension = std.path.extension( _fullPath );
@@ -109,7 +109,7 @@ public:
 		return _extension;
 	}
 	/// Converts to a std.stdio.File
-	File* toFile( string mode = "r" )
+	final File* toFile( string mode = "r" )
 	{
 		if( !file )
 			file = new File( _fullPath, mode );
@@ -117,7 +117,7 @@ public:
 		return file;
 	}
 
-	string getContents()
+	final string getContents()
 	{
 		return cast(string)std.file.read(_fullPath);
 	}

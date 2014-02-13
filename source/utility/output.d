@@ -41,14 +41,13 @@ alias Output.printValue logValue;
 /**
  * Static class for handling interactions with the console.
  */
-static class Output
+final abstract class Output
 {
-static:
-public:
+public static:
 	/**
 	 * Initialize the controller.
 	 */
-	void initialize()
+	final void initialize()
 	{
 		verbosity = Config.get!Verbosity( "Game.Verbosity" );
 	}
@@ -56,7 +55,7 @@ public:
 	/**
 	 * Print a generic message to the console.
 	 */
-	void printMessage( A... )( OutputType type, A messages )
+	final void printMessage( A... )( OutputType type, A messages )
 	{
 		if( shouldPrint( type ) )
 		{
@@ -72,7 +71,7 @@ public:
 	/**
 	 * Print the value of a variable.
 	 */
-	void printValue( T )( OutputType type, string varName, T value )
+	final void printValue( T )( OutputType type, string varName, T value )
 	{
 		if( shouldPrint( type ) )
 			writefln( "%s %s: %s", getHeader( type ), varName, value );
@@ -87,7 +86,7 @@ private:
 	/**
 	 * Gets the header for the given output type.
 	 */
-	string getHeader( OutputType type )
+	final string getHeader( OutputType type )
 	{
 		switch( type )
 		{
@@ -105,7 +104,7 @@ private:
 		}
 	}
 
-	bool shouldPrint( OutputType type )
+	final bool shouldPrint( OutputType type )
 	{
 		return type >= verbosity;
 	}

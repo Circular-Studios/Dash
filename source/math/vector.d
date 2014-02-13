@@ -28,7 +28,7 @@ public:
 	/**
 	 * Returns a swizzled vector
 	 */
-	auto opDispatch( string prop )() if( prop.length > 1 )
+	final auto opDispatch( string prop )() if( prop.length > 1 )
 	{
 		auto result = new Vector!( prop.length );
 
@@ -43,13 +43,13 @@ public:
 	/**
 	 * Calls other operators, and assigns results back to itself
 	 */
-	Vector!S opOpAssign( string op )( const Vector!S other ) @safe
+	final Vector!S opOpAssign( string op )( const Vector!S other ) @safe
 	{
 		values = opBinary!( op[ 0 ] )( other ).values;
 		return this;
 	}
 
-	override int opCmp( Object o )
+	final override int opCmp( Object o )
 	{
 		if( typeid(o) != typeid(this) )
 			return 1;
@@ -77,7 +77,7 @@ public:
 	/**
 	 * Responsible for all math functions related to Vector.
 	 */
-	auto opBinary( string op, T = Vector!S )( T other )
+	final auto opBinary( string op, T = Vector!S )( T other )
 	{
 		static if ( is( Unqual!T == Vector!S ) )
 		{
@@ -136,7 +136,7 @@ public:
 		else static assert( 0, "Operator " ~ op ~ " not implemented for type " ~ T.stringof ~ "." );
 	}
 
-	Vector!S opUnary( string op )() pure @safe
+	final Vector!S opUnary( string op )() pure @safe
 	{
 		static if ( op == "-" )
 		{
@@ -150,7 +150,7 @@ public:
 		else static assert ( 0, "Operator " ~ op ~ " not implemented." );
 	}
 
-	float magnitude() pure @safe
+	final float magnitude() pure @safe
 	{
 		float result = 0.0f;
 
@@ -162,7 +162,7 @@ public:
 		return result;
 	}
 
-	Vector!S normalize() pure @safe
+	final Vector!S normalize() pure @safe
 	{
 		auto result = new Vector!S;
 		auto mag = magnitude();

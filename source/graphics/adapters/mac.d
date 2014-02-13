@@ -8,7 +8,7 @@ import graphics.adapters.adapter;
 
 import derelict.opengl3.gl3, derelict.opengl3.cgl;
 
-class Mac : Adapter
+final class Mac : Adapter
 {
 public:
 	static @property Mac get() { return cast(Mac)Graphics.adapter; }

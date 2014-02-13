@@ -6,7 +6,7 @@ import utility.filepath, utility.output;
 import math.matrix;
 import derelict.opengl3.gl3;
 
-package class GLShader : Shader
+final package class GLShader : Shader
 {
 public:
 	mixin Property!( "uint", "programID", "protected" );
@@ -76,7 +76,7 @@ public:
 		}
 	}
 
-	void bindInputs( string vertexBody )
+	final void bindInputs( string vertexBody )
 	{
 		//Make this generic later plx
 		glBindAttribLocation( programID, 0, "inPosition\0" );
@@ -86,14 +86,14 @@ public:
 		glBindAttribLocation( programID, 4, "inBinormal\0" );
 	}
 
-	void setUniform( string name, const float value )
+	final void setUniform( string name, const float value )
 	{
 		auto currentUniform = glGetUniformLocation( programID, (name ~ "\0").ptr );
 		
 		glUniform1f( currentUniform, value );
 	}
 
-	void setUniformMatrix( string name, const Matrix!4 matrix )
+	final void setUniformMatrix( string name, const Matrix!4 matrix )
 	{
 		auto currentUniform = glGetUniformLocation( programID, (name ~ "\0").ptr );
 

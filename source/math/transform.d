@@ -42,7 +42,7 @@ public:
 	/**
 	 * This returns the object's position relative to the world origin, not the parent
 	 */
-	@property Vector!3 worldPosition()
+	final @property Vector!3 worldPosition()
 	{
 		if( owner.parent is null )
 			return position;
@@ -53,7 +53,7 @@ public:
 	/**
 	* This returns the object's rotation relative to the world origin, not the parent
 	*/
-	@property Quaternion worldRotation()
+	final @property Quaternion worldRotation()
 	{
 		if( owner.parent is null )
 			return rotation;
@@ -61,7 +61,7 @@ public:
 			return owner.parent.transform.worldRotation * rotation;
 	}
 
-	@property Matrix!4 matrix()
+	final @property Matrix!4 matrix()
 	{
 		if( _matrixIsDirty )
 			updateMatrix();
@@ -74,7 +74,7 @@ public:
 
 	mixin Signal!( string, string );
 
-	void updateMatrix()
+	final void updateMatrix()
 	{
 		auto newMatrix = new Matrix!4;
 
@@ -99,7 +99,7 @@ private:
 	Matrix!4 _matrix;
 	bool _matrixIsDirty;
 
-	void setMatrixDirty( string prop, string newVal )
+	final void setMatrixDirty( string prop, string newVal )
 	{
 		_matrixIsDirty = true;
 	}

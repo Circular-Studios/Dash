@@ -65,7 +65,7 @@ public:
 
 	mixin DirtyProperty!( "Matrix!4", "matrix", "updateMatrix" );
 
-	Quaternion opBinary( string op ) ( Quaternion rhs )
+	Quaternion opBinary( string op )( Quaternion other )
 	{
 		static if ( op  == "*" )
 		{
@@ -78,7 +78,7 @@ public:
 		else static assert ( 0, "Operator " ~ op ~ " not implemented." );
 	}
 
-	ref Quaternion opOpAssign( string op ) ( Quaternion rhs )
+	ref Quaternion opOpAssign( string op )( Quaternion other )
 	{
 		static if ( op == "*" )
 		{

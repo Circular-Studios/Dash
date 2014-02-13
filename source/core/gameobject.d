@@ -27,6 +27,14 @@ public:
 	 * The Mesh belonging to the object
 	 */
 	mixin Property!( "Mesh", "mesh", "public" );
+	/**
+	 * The object that this object belongs to
+	 */
+	mixin Property!( "GameObject", "parent" );
+	/**
+	 * All of the objects which list this as parent
+	 */
+	mixin Property!( "GameObject[]", "children" );
 
 	mixin Signal!( string, string );
 
@@ -87,7 +95,7 @@ public:
 	 */
 	this()
 	{
-		transform = new Transform;
+		transform = new Transform( this );
 		transform.connect( &emit );
 	}
 
@@ -151,6 +159,12 @@ public:
 	final T getComponent( T )() if( is( T : Component ) )
 	{
 		return componentList[ T.classinfo ];
+	}
+
+	final void addChild( GameObject object )
+	{
+		object._children ~= object;
+		object.parent = this;
 	}
 
 	/// Called on the update cycle.

@@ -19,7 +19,11 @@ public:
 		rotation.connect( &emit );
 		scale.connect( &emit );
 
-		connect( &setMatrixDirty );
+		updateMatrix();
+
+		position.connect( &setMatrixDirty );
+		rotation.connect( &setMatrixDirty );
+		scale.connect( &setMatrixDirty );
 	}
 
 	~this()
@@ -35,12 +39,6 @@ public:
 	mixin DirtyProperty!( "Matrix!4", "matrix", "updateMatrix" );
 
 	mixin Signal!( string, string );
-
-private:
-	void setMatrixDirty( string prop, string newVal )
-	{
-		_matrixIsDirty = true;
-	}
 
 	void updateMatrix()
 	{
@@ -59,5 +57,11 @@ private:
 		_matrix.matrix[ 3 ][ 0 ] = position.x;
 		_matrix.matrix[ 3 ][ 1 ] = position.y;
 		_matrix.matrix[ 3 ][ 2 ] = position.z;
+	}
+
+private:
+	void setMatrixDirty( string prop, string newVal )
+	{
+		_matrixIsDirty = true;
 	}
 }

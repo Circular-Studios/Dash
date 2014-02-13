@@ -2,7 +2,7 @@
  * Defines the GameObject class, to be subclassed by scripts and instantiated for static objects.
  */
 module core.gameobject;
-import core.properties;
+import core.prefabs, core.properties;
 import components;
 import graphics.graphics, graphics.shaders.shader;
 import utility.config;
@@ -44,6 +44,10 @@ public:
 		{
 			obj = cast(GameObject)Object.factory( prop.get!string );
 		}
+		else if( Config.tryGet!string( "InstanceOf", prop, yamlObj ) )
+		{
+			obj = Prefabs[ prop.get!string ].createInstance();
+		}
 		else
 		{
 			obj = new GameObject;
@@ -56,7 +60,7 @@ public:
 
 		if( Config.tryGet!string( "Material", prop, yamlObj ) )
 		{
-			obj.material = Assets.get!Material( prop.get!string );
+			obj.addComponent( Assets.get!Material( prop.get!string ) );
 		}
 
 		if( Config.tryGet!string( "Mesh", prop, yamlObj ) )

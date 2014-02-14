@@ -118,14 +118,27 @@ public:
 			assert(false);
 		}
 	}
-
+	
+	/**
+	 * sets up the rendering pipeline for the geometry pass
+	 */
 	void beginDraw()
 	{
 		glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		glUseProgram( (cast(GLShader)Shaders[GeometryShader]).programID );
+		
+		// glDepthMask( GL_TRUE );
+		// glEnable( GL_DEPTH_TEST );
+		// glDisable( GL_BLEND );
 	}
-
+	
+	/**
+	 * draws an object for the geometry pass
+	 * beginDraw must be called before any calls of this function
+	 * Params:
+	 *	object = the object to be drawn
+	 */
 	void drawObject( GameObject object )
 	{
 		// set the shader
@@ -153,9 +166,17 @@ public:
 
 		glBindVertexArray(0);
 	}
-
+	
+	/**
+	 * called after all desired objects are drawn
+	 * handles lighting and post processing
+	 */
 	void endDraw()
 	{
+		// disable geometry pass settings
+		// glDepthmask( GL_FALSE );
+		// glDisable( GL_DEPTH_TEST );
+		
 		//This line switches back to the default framebuffer
 		glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );

@@ -129,8 +129,8 @@ public:
 		if( typeid(light) == typeid(DirectionalLight) )
 		{
 			// buffer light here
-			glUniform1fv( getUniformLocation( ShaderUniform.DirectionalLightDirection ), 3, (cast(DirectionalLight)light).direction.values.ptr );
-			glUniform1fv( getUniformLocation( ShaderUniform.DirectionalLightColor ), 3, light.color.values.ptr );
+			glUniform3f( getUniformLocation( ShaderUniform.DirectionalLightDirection ), (cast(DirectionalLight)light).direction.x, (cast(DirectionalLight)light).direction.y, (cast(DirectionalLight)light).direction.z );
+			glUniform3f( getUniformLocation( ShaderUniform.DirectionalLightColor ), light.color.x, light.color.y, light.color.z );
 		}
 
 	}

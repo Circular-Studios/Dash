@@ -1,9 +1,9 @@
 module graphics.shaders.glshader;
 import core.properties;
-import components.mesh, components.texture;
+import components.mesh, components.texture, components.lights.light, components.lights.directionalLight;
 import graphics.shaders.shader;
 import utility.filepath, utility.output;
-import math.matrix;
+import math.matrix, math.vector;
 import derelict.opengl3.gl3;
 
 import std.traits;
@@ -15,7 +15,9 @@ public enum ShaderUniform
 	WorldViewProjection = "worldViewProj",
 	DiffuseTexture = "diffuseTexture",
 	NormalTexture = "normalTexture",
-	DepthTexture = "depthTexture"
+	DepthTexture = "depthTexture",
+	DirectionalLightDirection = "dirLight.direction",
+	DirectionalLightColor = "dirLight.color"
 }
 
 package class GLShader : Shader
@@ -120,6 +122,17 @@ public:
 		auto currentUniform = getUniformLocation( uniform );
 
 		glUniformMatrix4fv( currentUniform, 1, false, matrix.matrix.ptr.ptr );
+	}
+
+	void bindLight( Light light )
+	{
+		if( typeid(light) == typeid(DirectionalLight) )
+		{
+			// buffer light here
+			glUniform1fv( getUniformLocation( ShaderUniform.DirectionalLightDirection ), 3, (cast(DirectionalLight)light).direction.values.ptr );
+			glUniform1fv( getUniformLocation( ShaderUniform.DirectionalLightColor ), 3, light.color.values.ptr );
+		}
+
 	}
 
 	override void shutdown()

@@ -1,6 +1,6 @@
 module graphics.adapters.adapter;
 import core.gameobject, core.properties;
-import components.assets, components.mesh, components.camera;
+import components.assets, components.mesh, components.camera, components.lights.light, components.lights.directionalLight;
 import graphics.shaders.shader, graphics.shaders.shaders, graphics.shaders.glshader;
 import math.vector, math.matrix;
 import utility.config, utility.output;
@@ -125,12 +125,17 @@ public:
 	void beginDraw()
 	{
 		glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
+	
+		// must be called before glClear to clear the depth buffer, otherwise
+		// depth buffer won't be cleared
+		glDepthMask( GL_TRUE );
+
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-		glUseProgram( (cast(GLShader)Shaders[GeometryShader]).programID );
 		
-		// glDepthMask( GL_TRUE );
-		// glEnable( GL_DEPTH_TEST );
-		// glDisable( GL_BLEND );
+		glEnable( GL_DEPTH_TEST );
+		glDisable( GL_BLEND );
+
+		glUseProgram( (cast(GLShader)Shaders[GeometryShader]).programID );
 	}
 	
 	/**
@@ -173,9 +178,12 @@ public:
 	 */
 	void endDraw()
 	{
-		// disable geometry pass settings
-		// glDepthmask( GL_FALSE );
-		// glDisable( GL_DEPTH_TEST );
+		// settings for light pass
+		glDepthMask( GL_FALSE );
+		glDisable( GL_DEPTH_TEST );
+		glEnable( GL_BLEND );
+		// glBlendEquation( GL_FUNC_ADD );
+		// glBlendFunc(GL_ONE, GL_ONE );
 		
 		//This line switches back to the default framebuffer
 		glBindFramebuffer( GL_FRAMEBUFFER, 0 );
@@ -183,7 +191,8 @@ public:
 
 		GLShader shader = cast(GLShader)Shaders[LightingShader];
 		glUseProgram( shader.programID );
-
+		
+		// bind geometry pass textures
 		GLint textureLocation = shader.getUniformLocation( ShaderUniform.DiffuseTexture );
 		glUniform1i( textureLocation, 0 );
 		glActiveTexture( GL_TEXTURE0 );
@@ -198,8 +207,13 @@ public:
 		glUniform1i( textureLocation, 2 );
 		glActiveTexture( GL_TEXTURE2 );
 		glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
-
+		
+		// bind the window mesh for directional lights
 		glBindVertexArray( Assets.get!Mesh( WindowMesh ).glVertexArray );
+
+		// bind the directional light
+		Light tempLight = new DirectionalLight( new Vector!3( 1.0f, 1.0f, 1.0f ), new Vector!3( 0.0f, -1.0f, 0.5f ) );
+		shader.bindLight( tempLight );
 
 		glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, null );
 

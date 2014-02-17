@@ -127,7 +127,7 @@ public:
 				auto result = new Vector!S;
 
 				for( uint ii = 0; ii < S; ++ii )
-					result[ ii ] += values[ ii ] * other[ ii ];
+					result.values[ ii ] += values[ ii ] * other;
 
 				return result;
 			}

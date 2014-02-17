@@ -1,10 +1,25 @@
 module graphics.shaders.glshader;
 import core.properties;
-import components.mesh, components.texture;
+import components.mesh, components.texture, components.lights.light, components.lights.directional;
 import graphics.shaders.shader;
 import utility.filepath, utility.output;
-import math.matrix;
+import math.matrix, math.vector;
 import derelict.opengl3.gl3;
+
+import std.traits;
+
+public enum ShaderUniform 
+{
+	World = "world",
+	WorldView = "worldView",
+	WorldViewProjection = "worldViewProj",
+	DiffuseTexture = "diffuseTexture",
+	NormalTexture = "normalTexture",
+	DepthTexture = "depthTexture",
+	DirectionalLightDirection = "dirLight.direction",
+	DirectionalLightColor = "dirLight.color",
+	AmbientLight = "ambientLight"
+}
 
 final package class GLShader : Shader
 {
@@ -12,9 +27,12 @@ public:
 	mixin Property!( "uint", "programID", "protected" );
 	mixin Property!( "uint", "vertexShaderID", "protected" );
 	mixin Property!( "uint", "fragmentShaderID", "protected" );
+	mixin Property!( "string", "shaderName", "protected" );
+	protected int[string] uniformLocations;
 
-	this( string vertexPath, string fragmentPath )
+	this(string name, string vertexPath, string fragmentPath )
 	{
+		shaderName = name;
 		// Create shader
         vertexShaderID = glCreateShader( GL_VERTEX_SHADER );
         fragmentShaderID = glCreateShader( GL_FRAGMENT_SHADER );
@@ -37,7 +55,7 @@ public:
 		glGetShaderiv( vertexShaderID, GL_COMPILE_STATUS, &compileStatus );
 		if( compileStatus != GL_TRUE )
 		{
-			log( OutputType.Error, "Vertex Shader compile error" );
+			log( OutputType.Error, shaderName ~ " Vertex Shader compile error" );
 			char[1000] errorLog;
 			auto info = errorLog.ptr;
 			glGetShaderInfoLog( vertexShaderID, 1000, null, info );
@@ -49,7 +67,7 @@ public:
 		glGetShaderiv( fragmentShaderID, GL_COMPILE_STATUS, &compileStatus );
 		if( compileStatus != GL_TRUE )
 		{
-			log( OutputType.Error, "Fragment Shader compile error" );
+			log( OutputType.Error, shaderName ~ " Fragment Shader compile error" );
 			char[1000] errorLog;
 			auto info = errorLog.ptr;
 			glGetShaderInfoLog( fragmentShaderID, 1000, null, info );
@@ -62,12 +80,12 @@ public:
         glAttachShader( programID, fragmentShaderID );
 		glLinkProgram( programID );
 
-		bindInputs( vertexBody );
+		bindUniforms();
 
 		glGetProgramiv( programID, GL_LINK_STATUS, &compileStatus );
         if( compileStatus != GL_TRUE )
         {
-			log( OutputType.Error, "Shader program linking error", vertexPath );
+			log( OutputType.Error, shaderName ~ " Shader program linking error", vertexPath );
 			char[1000] errorLog;
 			auto info = errorLog.ptr;
 			glGetProgramInfoLog( programID, 1000, null, info );
@@ -76,28 +94,50 @@ public:
 		}
 	}
 
-	final void bindInputs( string vertexBody )
+	void bindUniforms()
 	{
-		//Make this generic later plx
-		glBindAttribLocation( programID, 0, "inPosition\0" );
-		glBindAttribLocation( programID, 1, "inUV\0" );
-		glBindAttribLocation( programID, 2, "inNormal\0" );
-		glBindAttribLocation( programID, 3, "inTangent\0" );
-		glBindAttribLocation( programID, 4, "inBinormal\0" );
+		//uniform is the *name* of the enum member not it's value
+		foreach( uniform; [ EnumMembers!ShaderUniform ] )
+		{
+			//thus we use the mixin to get the value at compile time
+			int uniformLocation = glGetUniformLocation( programID, uniform.ptr );
+
+			uniformLocations[ uniform ] = uniformLocation;
+		}
 	}
 
-	final void setUniform( string name, const float value )
+	int getUniformLocation( ShaderUniform uniform )
 	{
-		auto currentUniform = glGetUniformLocation( programID, (name ~ "\0").ptr );
+		return uniformLocations[ uniform ];
+	}
+
+	final void setUniform( ShaderUniform uniform, const float value )
+	{
+		auto currentUniform = getUniformLocation( uniform );
 		
 		glUniform1f( currentUniform, value );
 	}
 
-	final void setUniformMatrix( string name, const Matrix!4 matrix )
+	final void setUniformMatrix( ShaderUniform uniform, const Matrix!4 matrix )
 	{
-		auto currentUniform = glGetUniformLocation( programID, (name ~ "\0").ptr );
+		auto currentUniform = getUniformLocation( uniform );
 
 		glUniformMatrix4fv( currentUniform, 1, false, matrix.matrix.ptr.ptr );
+	}
+
+	void bindLight( Light light )
+	{
+		if( typeid(light) == typeid(DirectionalLight) )
+		{
+			// buffer light here
+			glUniform3f( getUniformLocation( ShaderUniform.DirectionalLightDirection ), (cast(DirectionalLight)light).direction.x, (cast(DirectionalLight)light).direction.y, (cast(DirectionalLight)light).direction.z );
+			glUniform3f( getUniformLocation( ShaderUniform.DirectionalLightColor ), light.color.x, light.color.y, light.color.z );
+		}
+		else //Base light class means ambient light
+		{
+			glUniform3f( getUniformLocation( ShaderUniform.AmbientLight ), light.color.x, light.color.y, light.color.z );
+		}
+
 	}
 
 	override void shutdown()

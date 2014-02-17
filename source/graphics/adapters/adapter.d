@@ -1,6 +1,6 @@
 module graphics.adapters.adapter;
 import core.gameobject, core.properties;
-import components.assets, components.mesh, components.camera;
+import components.assets, components.mesh, components.camera, components.lights.light, components.lights.directional;
 import graphics.shaders.shader, graphics.shaders.shaders, graphics.shaders.glshader;
 import math.vector, math.matrix;
 import utility.config, utility.output;
@@ -90,7 +90,7 @@ public:
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 
 		glBindTexture( GL_TEXTURE_2D, normalRenderTexture );
-		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, null );
+		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, null );
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
@@ -118,23 +118,42 @@ public:
 			assert(false);
 		}
 	}
-
+	
+	/**
+	 * sets up the rendering pipeline for the geometry pass
+	 */
 	final void beginDraw()
 	{
 		glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
+	
+		// must be called before glClear to clear the depth buffer, otherwise
+		// depth buffer won't be cleared
+		glDepthMask( GL_TRUE );
+
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+		
+		glEnable( GL_DEPTH_TEST );
+		glDisable( GL_BLEND );
+
 		glUseProgram( (cast(GLShader)Shaders[GeometryShader]).programID );
 	}
-
+	
+	/**
+	 * draws an object for the geometry pass
+	 * beginDraw must be called before any calls of this function
+	 * Params:
+	 *	object = the object to be drawn
+	 */
 	final void drawObject( GameObject object )
 	{
 		// set the shader
 		GLShader shader = cast(GLShader)Shaders[GeometryShader];
 		glBindVertexArray( object.mesh.glVertexArray );
 
-		shader.setUniformMatrix( "world", object.transform.matrix );
-		shader.setUniformMatrix( "worldViewProj", object.transform.matrix *
-								 Matrix!4.identity *
+		shader.setUniformMatrix( ShaderUniform.World , object.transform.matrix );
+		shader.setUniformMatrix( ShaderUniform.WorldView, object.transform.matrix * 
+								 Camera.lookAtLH( new Vector!3( 0, 0, 0), object.transform.position, new Vector!3( 0, 1, 0 ) ) );
+		shader.setUniformMatrix( ShaderUniform.WorldViewProjection , object.transform.matrix *
 								 Matrix!4.buildPerspective( std.math.PI_2, cast(float)width / cast(float)height, 1, 1000 ) );
 
 		//This is finding the uniform for the given texture, and setting that texture to the appropriate one for the object
@@ -144,32 +163,51 @@ public:
 
 		glBindVertexArray(0);
 	}
-
+	
+	/**
+	 * called after all desired objects are drawn
+	 * handles lighting and post processing
+	 */
 	final void endDraw()
 	{
+		// settings for light pass
+		glDepthMask( GL_FALSE );
+		glDisable( GL_DEPTH_TEST );
+		glEnable( GL_BLEND );
+		// glBlendEquation( GL_FUNC_ADD );
+		// glBlendFunc(GL_ONE, GL_ONE );
+		
 		//This line switches back to the default framebuffer
 		glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 		GLShader shader = cast(GLShader)Shaders[LightingShader];
 		glUseProgram( shader.programID );
-
-		GLint textureLocation = glGetUniformLocation( shader.programID, "diffuseTexture\0" );
+		
+		// bind geometry pass textures
+		GLint textureLocation = shader.getUniformLocation( ShaderUniform.DiffuseTexture );
 		glUniform1i( textureLocation, 0 );
 		glActiveTexture( GL_TEXTURE0 );
 		glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
 
-		textureLocation = glGetUniformLocation( shader.programID, "normalTexture\0" );
+		textureLocation = shader.getUniformLocation( ShaderUniform.NormalTexture );
 		glUniform1i( textureLocation, 1 );
 		glActiveTexture( GL_TEXTURE1 );
 		glBindTexture( GL_TEXTURE_2D, normalRenderTexture );
 
-		textureLocation = glGetUniformLocation( shader.programID, "depthTexture\0" );
+		textureLocation = shader.getUniformLocation( ShaderUniform.DepthTexture );
 		glUniform1i( textureLocation, 2 );
 		glActiveTexture( GL_TEXTURE2 );
 		glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
-
+		
+		// bind the window mesh for directional lights
 		glBindVertexArray( Assets.get!Mesh( WindowMesh ).glVertexArray );
+
+		// bind the directional and ambient lights
+		Light tempDirLight = new DirectionalLight( new Vector!3( 1.0f, 1.0f, 1.0f ), new Vector!3( 0.0f, -1.0f, 0.5f ) );
+		shader.bindLight( tempDirLight );
+		Light tempAmbLight = new Light( new Vector!3( .2f, .2f, .2f ) );
+		shader.bindLight( tempAmbLight );
 
 		glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, null );
 

@@ -1,6 +1,6 @@
 module graphics.adapters.adapter;
 import core.gameobject, core.properties;
-import components.assets, components.mesh, components.camera, components.lights.light, components.lights.directionalLight;
+import components.assets, components.mesh, components.camera, components.lights.light, components.lights.directional;
 import graphics.shaders.shader, graphics.shaders.shaders, graphics.shaders.glshader;
 import math.vector, math.matrix;
 import utility.config, utility.output;
@@ -151,6 +151,8 @@ public:
 		glBindVertexArray( object.mesh.glVertexArray );
 
 		shader.setUniformMatrix( ShaderUniform.World , object.transform.matrix );
+		shader.setUniformMatrix( ShaderUniform.WorldView, object.transform.matrix * 
+								 Camera.lookAtLH( new Vector!3( 0, 0, 0), object.transform.position, new Vector!3( 0, 1, 0 ) ) );
 		shader.setUniformMatrix( ShaderUniform.WorldViewProjection , object.transform.matrix *
 								 Matrix!4.buildPerspective( std.math.PI_2, cast(float)width / cast(float)height, 1, 1000 ) );
 

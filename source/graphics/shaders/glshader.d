@@ -21,7 +21,7 @@ public enum ShaderUniform
 	AmbientLight = "ambientLight"
 }
 
-package class GLShader : Shader
+final package class GLShader : Shader
 {
 public:
 	mixin Property!( "uint", "programID", "protected" );
@@ -111,14 +111,14 @@ public:
 		return uniformLocations[ uniform ];
 	}
 
-	void setUniform( ShaderUniform uniform, const float value )
+	final void setUniform( ShaderUniform uniform, const float value )
 	{
 		auto currentUniform = getUniformLocation( uniform );
 		
 		glUniform1f( currentUniform, value );
 	}
 
-	void setUniformMatrix( ShaderUniform uniform, const Matrix!4 matrix )
+	final void setUniformMatrix( ShaderUniform uniform, const Matrix!4 matrix )
 	{
 		auto currentUniform = getUniformLocation( uniform );
 

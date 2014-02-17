@@ -5,7 +5,7 @@ import math.matrix, math.vector;
 import std.signals, std.conv;
 import std.math;
 
-class Quaternion
+final class Quaternion
 {
 public:
 	this()
@@ -16,7 +16,6 @@ public:
 		_z = 0.0f;
 
 		matrix = new Matrix!4();
-		setMatrixDirty( "", "" );
 	}
 
 	this( const float x, const float y, const float z, const float angle )
@@ -30,7 +29,6 @@ public:
 		_z = fSin * z;
 
 		matrix = new Matrix!4();
-		setMatrixDirty( "", "" );
 	}
 
 	static Quaternion fromEulerAngles( Vector!3 angles )
@@ -67,7 +65,7 @@ public:
 
 	mixin DirtyProperty!( "Matrix!4", "matrix", "updateMatrix" );
 
-	Quaternion opBinary( string op ) ( Quaternion rhs )
+	final Quaternion opBinary( string op )( Quaternion other )
 	{
 		static if ( op  == "*" )
 		{
@@ -80,7 +78,7 @@ public:
 		else static assert ( 0, "Operator " ~ op ~ " not implemented." );
 	}
 
-	ref Quaternion opOpAssign( string op ) ( Quaternion rhs )
+	final ref Quaternion opOpAssign( string op )( Quaternion other )
 	{
 		static if ( op == "*" )
 		{
@@ -95,12 +93,7 @@ public:
 	}
 
 private:
-	void setMatrixDirty( string prop, string newVal )
-	{
-		_matrixIsDirty = true;
-	}
-
-	void updateMatrix()
+	final void updateMatrix()
 	{
 		_matrix.matrix[ 0 ][ 0 ] = 1.0f - 2.0f * y * y - 2.0f * z * z;
 		_matrix.matrix[ 0 ][ 1 ] = 2.0f * x * y - 2.0f * z * w;
@@ -111,7 +104,5 @@ private:
 		_matrix.matrix[ 2 ][ 0 ] = 2.0f * x * z - 2.0f * y * w;
 		_matrix.matrix[ 2 ][ 1 ] = 2.0f * y * z + 2.0f * x * w;
 		_matrix.matrix[ 2 ][ 2 ] = 1.0f - 2.0f * x * x - 2.0f * y * y;
-
-		_matrixIsDirty = false;
 	}
 }

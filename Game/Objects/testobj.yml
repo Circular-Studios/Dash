@@ -1,9 +1,10 @@
-Name: TestObject
-Script:
-    ClassName: testobject.TestObject
-Transform:
-    Position: !Vector3 0.0 -10.0 50.0
-    Scale: !Vector3 5 5 5
-Mesh: object
-Diffuse: gadget_dDo_d
-Normal: gadget_dDo_n
+-
+    Name: TestObject
+    InstanceOf: SupaFab
+-
+    Name: TestObject7
+    InstanceOf: SupaFab
+    Parent: TestObject
+    Transform:
+        Position: !Vector3 -25 0 0
+        Scale: !Vector3 1 1 1

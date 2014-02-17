@@ -10,7 +10,7 @@ import yaml;
 
 import std.path;
 
-class GameObjectCollection
+final class GameObjectCollection
 {
 public:
 	alias objects this;
@@ -18,31 +18,39 @@ public:
 	/**
 	 * Load all objects inside the specified folder in FilePath.Objects.
 	 */
-	void loadObjects( string objectPath = "" )
+	final void loadObjects( string objectPath = "" )
 	{
-		void addObject( Node object )
+		string[GameObject] parents;
+
+		Config.processYamlDirectory(
+			buildNormalizedPath( FilePath.Resources.Objects, objectPath ),
+			( Node yml )
+			{
+				auto name = yml[ "Name" ].as!string;
+
+				// Create the object
+				auto object = GameObject.createFromYaml( yml );
+				// Add to collection
+				objects[ name ] = object;
+
+				// If parent is specified, add it to the map
+				string parentName;
+				if( Config.tryGet( "Parent", parentName, yml ) )
+				{
+					parents[ object ] = parentName;
+				}
+			} );
+
+		foreach( object, parentName; parents )
 		{
-			auto name = object[ "Name" ].as!string;
-
-			objects[ name ] = GameObject.createFromYaml( object );
-		}
-
-		foreach( file; FilePath.scanDirectory( buildNormalizedPath( FilePath.Resources.Objects, objectPath ), "*.yml" ) )
-		{
-			auto object = Config.loadYaml( file.fullPath );
-
-			if( object.isSequence() )
-				foreach( Node innerObj; object )
-					addObject( innerObj );
-			else
-				addObject( object );
+			objects[ parentName ].addChild( object );
 		}
 	}
 
 	/**
 	 * Remove all objects from the collection.
 	 */
-	void clearObjects()
+	final void clearObjects()
 	{
 		foreach( key; objects.keys )
 			objects.remove( key );
@@ -56,7 +64,7 @@ public:
 	 * goc.apply( go => go.update() );
 	 * ---
 	 */
-	void apply( void function( GameObject ) func )
+	final void apply( void function( GameObject ) func )
 	{
 		foreach( value; objects.values )
 			func( value );
@@ -65,7 +73,7 @@ public:
 	/**
 	 * Update all game objects.
 	 */
-	void update()
+	final void update()
 	{
 		apply( go => go.update() );
 	}
@@ -73,7 +81,7 @@ public:
 	/**
 	 * Draw all game objects.
 	 */
-	void draw()
+	final void draw()
 	{
 		apply( go => go.draw() );
 	}

@@ -9,7 +9,7 @@ import graphics.graphics, graphics.shaders.shader;
 import derelict.opengl3.gl3;
 import derelict.freeimage.freeimage;
 
-class Texture : Component
+final class Texture : Component
 {
 public:
 	mixin Property!( "uint", "width" );

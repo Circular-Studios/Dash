@@ -3,61 +3,92 @@
  */
 module components.assets;
 import components;
-import utility.filepath;
+import utility.filepath, utility.config;
 
+import yaml;
 import derelict.freeimage.freeimage;
 
-static class Assets
+final abstract class Assets
 {
-static:
-public:
+public static:
 	/**
 	 * Get the asset with the given type and name.
 	 */
-	T get( T )( string name ) if( is( T : Component ) )
+	final T get( T )( string name ) if( is( T : Component ) )
 	{
-		return cast(T)componentShelf[ name ];
+		static if( is( T == Mesh ) )
+		{
+			return meshes[ name ];
+		}
+		else static if( is( T == Texture ) )
+		{
+			return textures[ name ];
+		}
+		else static if( is( T == Material ) )
+		{
+			return materials[ name ];
+		}
+		else static assert( false, "Material of type " ~ T.stringof ~ " is not maintained by Assets." );
 	}
 
 	/**
 	 * Load all assets in the FilePath.ResourceHome folder.
 	 */
-	void initialize()
+	final void initialize()
 	{
 		DerelictFI.load();
 
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Meshes ) )
 		{
-			// (If check for checking type of file loading)
-			componentShelf[ file.baseFileName ] = new Mesh( file.fullPath );
+			meshes[ file.baseFileName ] = new Mesh( file.fullPath );
 		}
 
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Textures ) )
 		{
-			componentShelf[ file.baseFileName ] = new Texture( file.fullPath );
+			textures[ file.baseFileName ] = new Texture( file.fullPath );
 		}
 
-		componentShelf.rehash();
+		Config.processYamlDirectory(
+			FilePath.Resources.Materials,
+			( Node object )
+			{
+				auto name = object[ "Name" ].as!string;
+
+				materials[ name ] = Material.createFromYaml( object );
+			} );
+
+		meshes.rehash();
+		textures.rehash();
+		materials.rehash();
 	}
 
 	/**
 	 * Unload and destroy all stored assets.
 	 */
-	void shutdown()
+	final void shutdown()
 	{
-		foreach_reverse( index; 0 .. componentShelf.length )
+		foreach_reverse( index; 0 .. meshes.length )
 		{
-			auto name = componentShelf.keys[ index ];
-			componentShelf[ name ].shutdown();
-			componentShelf.remove( name );
+			auto name = meshes.keys[ index ];
+			meshes[ name ].shutdown();
+			meshes.remove( name );
 		}
-		/*foreach( name, asset; componentShelf )
+		foreach_reverse( index; 0 .. textures.length )
 		{
-			asset.shutdown();
-			componentShelf.remove( name );
-		}*/
+			auto name = textures.keys[ index ];
+			textures[ name ].shutdown();
+			textures.remove( name );
+		}
+		foreach_reverse( index; 0 .. materials.length )
+		{
+			auto name = materials.keys[ index ];
+			materials[ name ].shutdown();
+			materials.remove( name );
+		}
 	}
 
 private:
-	Component[string] componentShelf;
+	Mesh[string] meshes;
+	Texture[string] textures;
+	Material[string] materials;
 }

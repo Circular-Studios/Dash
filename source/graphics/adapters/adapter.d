@@ -67,7 +67,7 @@ public:
 	
 	abstract void messageLoop();
 
-	void initializeDeferredRendering()
+	final void initializeDeferredRendering()
 	{
 		//http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
 
@@ -122,7 +122,7 @@ public:
 	/**
 	 * sets up the rendering pipeline for the geometry pass
 	 */
-	void beginDraw()
+	final void beginDraw()
 	{
 		glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
 	
@@ -144,7 +144,7 @@ public:
 	 * Params:
 	 *	object = the object to be drawn
 	 */
-	void drawObject( GameObject object )
+	final void drawObject( GameObject object )
 	{
 		// set the shader
 		GLShader shader = cast(GLShader)Shaders[GeometryShader];
@@ -157,15 +157,7 @@ public:
 								 Matrix!4.buildPerspective( std.math.PI_2, cast(float)width / cast(float)height, 1, 1000 ) );
 
 		//This is finding the uniform for the given texture, and setting that texture to the appropriate one for the object
-		GLint textureLocation = shader.getUniformLocation( ShaderUniform.DiffuseTexture );
-		glUniform1i( textureLocation, 0 );
-		glActiveTexture( GL_TEXTURE0 );
-		glBindTexture( GL_TEXTURE_2D, object.diffuse.glID );
-
-		textureLocation = shader.getUniformLocation( ShaderUniform.NormalTexture );
-		glUniform1i( textureLocation, 1 );
-		glActiveTexture( GL_TEXTURE1 );
-		glBindTexture( GL_TEXTURE_2D, object.normal.glID );
+		object.material.bind( shader );
 
 		glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
 
@@ -176,7 +168,7 @@ public:
 	 * called after all desired objects are drawn
 	 * handles lighting and post processing
 	 */
-	void endDraw()
+	final void endDraw()
 	{
 		// settings for light pass
 		glDepthMask( GL_FALSE );
@@ -226,7 +218,7 @@ public:
 	}
 
 protected:
-	void loadProperties()
+	final void loadProperties()
 	{
 		fullscreen = Config.get!bool( "Display.Fullscreen" );
 		if( fullscreen )

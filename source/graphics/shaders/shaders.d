@@ -4,11 +4,10 @@ import utility.filepath;
 
 import std.string;
 
-static class Shaders
+final abstract class Shaders
 {
-static:
-public:
-	void initialize()
+public static:
+	final void initialize()
 	{
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders, "*.fs.glsl" ) )
 		{
@@ -20,7 +19,7 @@ public:
 		shaders.rehash();
 	}
 
-	void shutdown()
+	final void shutdown()
 	{
 		foreach_reverse( index; 0 .. shaders.length )
 		{
@@ -35,12 +34,12 @@ public:
 		}*/
 	}
 
-	Shader opIndex( string name )
+	final Shader opIndex( string name )
 	{
 		return get( name );
 	}
 
-	Shader get( string name )
+	final Shader get( string name )
 	{
 		auto shader = name in shaders;
 		return shader is null ? null : *shader;

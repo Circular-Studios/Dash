@@ -151,8 +151,6 @@ public:
 		glBindVertexArray( object.mesh.glVertexArray );
 
 		shader.setUniformMatrix( ShaderUniform.World , object.transform.matrix );
-		shader.setUniformMatrix( ShaderUniform.WorldView, object.transform.matrix * 
-								 Camera.lookAtLH( new Vector!3( 0, 0, 0), object.transform.position, new Vector!3( 0, 1, 0 ) ) );
 		shader.setUniformMatrix( ShaderUniform.WorldViewProjection , object.transform.matrix *
 								 Matrix!4.buildPerspective( std.math.PI_2, cast(float)width / cast(float)height, 1, 1000 ) );
 
@@ -211,9 +209,11 @@ public:
 		// bind the window mesh for directional lights
 		glBindVertexArray( Assets.get!Mesh( WindowMesh ).glVertexArray );
 
-		// bind the directional light
-		Light tempLight = new DirectionalLight( new Vector!3( 1.0f, 1.0f, 1.0f ), new Vector!3( 0.0f, -1.0f, 0.5f ) );
-		shader.bindLight( tempLight );
+		// bind the directional and ambient lights
+		Light tempDirLight = new DirectionalLight( new Vector!3( 1.0f, 1.0f, 1.0f ), new Vector!3( 0.0f, -1.0f, 0.5f ) );
+		shader.bindLight( tempDirLight );
+		Light tempAmbLight = new Light( new Vector!3( .2f, .2f, .2f ) );
+		shader.bindLight( tempAmbLight );
 
 		glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, null );
 

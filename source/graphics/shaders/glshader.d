@@ -17,7 +17,8 @@ public enum ShaderUniform
 	NormalTexture = "normalTexture",
 	DepthTexture = "depthTexture",
 	DirectionalLightDirection = "dirLight.direction",
-	DirectionalLightColor = "dirLight.color"
+	DirectionalLightColor = "dirLight.color",
+	AmbientLight = "ambientLight"
 }
 
 package class GLShader : Shader
@@ -131,6 +132,10 @@ public:
 			// buffer light here
 			glUniform3f( getUniformLocation( ShaderUniform.DirectionalLightDirection ), (cast(DirectionalLight)light).direction.x, (cast(DirectionalLight)light).direction.y, (cast(DirectionalLight)light).direction.z );
 			glUniform3f( getUniformLocation( ShaderUniform.DirectionalLightColor ), light.color.x, light.color.y, light.color.z );
+		}
+		else //Base light class means ambient light
+		{
+			glUniform3f( getUniformLocation( ShaderUniform.AmbientLight ), light.color.x, light.color.y, light.color.z );
 		}
 
 	}

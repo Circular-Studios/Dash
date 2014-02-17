@@ -2,6 +2,7 @@
 	"name": "dash",
 	"description": "Helps you make vidja games.",
 	"copyright": "2013 - 2014",
+	"license": "MIT",
 	"authors": [ 
 		"Colden Cullen",
 		"Brandon Littell",

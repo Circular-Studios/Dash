@@ -1,6 +1,6 @@
 module graphics.shaders.glshader;
 import core.properties;
-import components.mesh, components.texture, components.lights.light, components.lights.directionalLight;
+import components.mesh, components.texture, components.lights.light, components.lights.directional;
 import graphics.shaders.shader;
 import utility.filepath, utility.output;
 import math.matrix, math.vector;

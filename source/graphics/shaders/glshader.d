@@ -30,7 +30,7 @@ public:
 	mixin Property!( "string", "shaderName", "protected" );
 	protected int[string] uniformLocations;
 
-	this(string name, string vertexPath, string fragmentPath )
+	this(string name, string vertex, string fragment, bool preloaded = false )
 	{
 		shaderName = name;
 		// Create shader
@@ -38,10 +38,22 @@ public:
         fragmentShaderID = glCreateShader( GL_FRAGMENT_SHADER );
         programID = glCreateProgram();
 
-		auto vertexFile = new FilePath( vertexPath );
-		auto fragmentFile = new FilePath( fragmentPath );
-		string vertexBody = vertexFile.getContents();
-		string fragmentBody = fragmentFile.getContents();
+		if(!preloaded)
+		{
+			auto vertexFile = new FilePath( vertex );
+			auto fragmentFile = new FilePath( fragment );
+			string vertexBody = vertexFile.getContents();
+			string fragmentBody = fragmentFile.getContents();
+			compile( vertexBody, fragmentBody );
+		}
+		else
+		{
+			compile( vertex, fragment );
+		}
+	}
+
+	void compile( string vertexBody, string fragmentBody )
+	{
 		auto vertexCBody = vertexBody.ptr;
 		auto fragmentCBody = fragmentBody.ptr;
 		int vertexSize = cast(int)vertexBody.length;
@@ -85,7 +97,7 @@ public:
 		glGetProgramiv( programID, GL_LINK_STATUS, &compileStatus );
         if( compileStatus != GL_TRUE )
         {
-			log( OutputType.Error, shaderName ~ " Shader program linking error", vertexPath );
+			log( OutputType.Error, shaderName ~ " Shader program linking error" );
 			char[1000] errorLog;
 			auto info = errorLog.ptr;
 			glGetProgramInfoLog( programID, 1000, null, info );

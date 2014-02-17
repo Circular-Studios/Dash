@@ -42,7 +42,7 @@ public:
 		if(!scene)
 		{
 			// Did not load
-			Output.printValue( OutputType.Info, "Error", "Mesh at " ~ filePath ~ " not loaded." );
+			log( OutputType.Error, "Mesh not loaded: ", filePath );
 		}
 		else
 		{
@@ -88,7 +88,8 @@ public:
 			foreach( ii; 0..numIndices )
 				indices[ ii ] = ii;
 		}
-
+		// Release assimp instance now that we have all the model data
+		aiReleaseImport( scene );
 
 		
 		// make and bind the VAO

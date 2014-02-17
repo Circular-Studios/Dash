@@ -40,7 +40,7 @@ public:
 		if(!scene)
 		{
 			// Did not load
-			Output.printValue( OutputType.Error, "Mesh not loaded." );
+			log( OutputType.Error, "Mesh not loaded." );
 		}
 		else
 		{

@@ -54,7 +54,7 @@ LRESULT WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 	return 0;
 }
 
-class Win32 : Adapter
+final class Win32 : Adapter
 {
 public:
 	static @property Win32 get() { return cast(Win32)Graphics.adapter; }
@@ -231,7 +231,7 @@ public:
 		openWindow( true );
 	}
 
-	void openWindow( bool showWindow )
+	final void openWindow( bool showWindow )
 	{
 		hWnd = CreateWindowEx( 0, DGame.instance.title.ptr, DGame.instance.title.ptr, fullscreen ? DWS_FULLSCREEN : DWS_WINDOWED,
 							   ( screenWidth - width ) / 2, ( screenHeight - height ) / 2, width, height,

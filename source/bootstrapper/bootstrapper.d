@@ -21,7 +21,7 @@ void main()
 	string libPath;
 
 	version( Windows )
-		libPath = "dvelop.dll";
+		libPath = "dash.dll";
 	else
 		libPath = "libdvelop.so";
 

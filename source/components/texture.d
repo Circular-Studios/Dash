@@ -9,7 +9,7 @@ import graphics.graphics, graphics.shaders.shader;
 import derelict.opengl3.gl3;
 import derelict.freeimage.freeimage;
 
-class Texture : Component
+final class Texture : Component
 {
 public:
 	mixin Property!( "uint", "width" );
@@ -35,10 +35,10 @@ public:
 			width,
 			height,
 			0,
-			GL_BGRA,
+			GL_BGRA, //FreeImage loads in BGR format because fuck you
 			GL_UNSIGNED_BYTE,
 			cast(GLvoid*)FreeImage_GetBits( imageData ) );
-		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 
 		FreeImage_Unload( imageData );
 		glBindTexture( GL_TEXTURE_2D, 0 );

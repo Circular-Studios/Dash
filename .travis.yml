@@ -8,7 +8,9 @@ install:
  - sudo apt-get install dmd-bin
  - sudo dub install x11
  - sudo dub add-local . ~master
- - cd Game
+ - cd ../
+ - sudo git clone https://github.com/Circular-Studios/Sample-Dash-Game.git
+ - cd Sample-Dash-Game/
 script: sudo dub run --build=unittest
 
 # For pushing results to gitter.im

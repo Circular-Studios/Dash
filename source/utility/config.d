@@ -6,6 +6,7 @@ import utility.filepath;
 
 // Imports for conversions
 import core.dgame : GameState;
+import components.assets;
 import graphics.shaders.shaders;
 import utility.output : Verbosity;
 import math.vector, math.quaternion;
@@ -17,11 +18,10 @@ import std.array, std.conv, std.string, std.path, std.typecons, std.variant;
 /**
  * Static class which handles the configuration options and YAML interactions.
  */
-static class Config
+final abstract class Config
 {
-static:
-public:
-	void initialize()
+public static:
+	final void initialize()
 	{
 		constructor = new Constructor;
 
@@ -34,6 +34,9 @@ public:
 		constructor.addConstructorScalar( "!GameState", &constructConv!GameState );
 		constructor.addConstructorScalar( "!Verbosity", &constructConv!Verbosity );
 		constructor.addConstructorScalar( "!Shader", ( ref Node node ) => Shaders.get( node.get!string ) );
+		//constructor.addConstructorScalar( "!Texture", ( ref Node node ) => Assets.get!Texture( node.get!string ) );
+		//constructor.addConstructorScalar( "!Mesh", ( ref Node node ) => Assets.get!Mesh( node.get!string ) );
+		//constructor.addConstructorScalar( "!Material", ( ref Node node ) => Assets.get!Material( node.get!string ) );
 
 		config = loadYaml( FilePath.Resources.Config );
 	}
@@ -41,7 +44,7 @@ public:
 	/**
 	 * Load a yaml file with the engine-specific mappings.
 	 */
-	Node loadYaml( string path )
+	final Node loadYaml( string path )
 	{
 		auto loader = Loader( path );
 		loader.constructor = constructor;
@@ -49,9 +52,26 @@ public:
 	}
 
 	/**
+	 * Process all yaml files in a directory, and call the callback with all the root level nodes.
+	 */
+	final void processYamlDirectory( string folder, void delegate( Node ) callback )
+	{
+		foreach( file; FilePath.scanDirectory( folder, "*.yml" ) )
+		{
+			auto object = Config.loadYaml( file.fullPath );
+
+			if( object.isSequence() )
+				foreach( Node innerObj; object )
+					callback( innerObj );
+			else
+				callback( object );
+		}
+	}
+
+	/**
 	 * Get the element, cast to the given type, at the given path, in the given node.
 	 */
-	T get( T )( string path, Node node = config )
+	final T get( T )( string path, Node node = config )
 	{
 		Node current = node;
 		string left;
@@ -76,7 +96,7 @@ public:
 	/**
 	* Try to get the value at path, assign to result, and return success.
 	*/
-	bool tryGet( T )( string path, ref T result, Node node = config )
+	final bool tryGet( T )( string path, ref T result, Node node = config )
 	{
 		Node res;
 		bool found = tryGet( path, res, node );
@@ -86,7 +106,7 @@ public:
 	}
 
 	/// ditto
-	bool tryGet( T: Node )( string path, ref T result, Node node = config )
+	final bool tryGet( T: Node )( string path, ref T result, Node node = config )
 	{
 		Node current;
 		string left;
@@ -118,7 +138,7 @@ public:
 	}
 
 	/// ditto
-	bool tryGet( T = Node )( string path, ref Variant result, Node node = config )
+	final bool tryGet( T = Node )( string path, ref Variant result, Node node = config )
 	{
 		// Get the value
 		T temp;
@@ -136,7 +156,7 @@ public:
 	/**
 	 * Get element as a file path.
 	 */
-	string getPath( string path )
+	final string getPath( string path )
 	{
 		return FilePath.ResourceHome ~ get!string( path );//buildNormalizedPath( FilePath.ResourceHome, get!string( path ) );;
 	}
@@ -266,3 +286,4 @@ unittest
 	assert( Config.tryGet( "test1", val, n1 ), "Config.tryGet failed." );
 	assert( !Config.tryGet( "dontexist", val, n1 ), "Config.tryGet returned true." );
 }
+

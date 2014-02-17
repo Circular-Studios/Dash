@@ -2,7 +2,10 @@ module math.matrix;
 import math.vector;
 import std.math, std.numeric, std.traits;
 
-class Matrix( uint S = 4 ) if( S > 1 && S < 5 )
+alias Matrix!3 Matrix3;
+alias Matrix!4 Matrix4;
+
+final class Matrix( uint S = 4 ) if( S > 1 && S < 5 )
 {
 public:
 static
@@ -37,6 +40,8 @@ static
 	}
 }
 
+	alias matrix this;
+
 	this() pure @safe
 	{
 		for( uint ii = 0; ii < S; ++ii )
@@ -51,7 +56,7 @@ static
 	/**
 		Calls other operators, and assigns results back to itself
 	*/
-	Matrix!S opOpAssign( string op )( const Matrix!S other )
+	final Matrix!S opOpAssign( string op )( const Matrix!S other )
 	{
 		matrix = opBinary!( op[ 0 ] )( other ).matrix;
 		return this;
@@ -62,7 +67,7 @@ static
 	/**
 	* Responsible for all math functions related to Matrix.
 	*/
-	auto opBinary( string op, T = Matrix!S )( T other )
+	final auto opBinary( string op, T = Matrix!S )( T other )
 	{
 		static if ( is( Unqual!T == Matrix!S ) )
 		{
@@ -134,16 +139,16 @@ static
 		else static assert( 0, "Operator " ~ op ~ " not implemented." );
 	}
 
-	Matrix!S opUnary( string op : "-" )() pure @safe
+	final Matrix!S opUnary( string op : "-" )() pure @safe
 	{
 		return inverse();
 	}
-	Matrix!S inverse() pure @safe
+	final Matrix!S inverse() pure @safe
 	{
 		return new Matrix!S;
 	}
 
-	Matrix!S transpose() pure @safe
+	final Matrix!S transpose() pure @safe
 	{
 		auto result = new Matrix!S;
 

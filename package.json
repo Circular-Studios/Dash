@@ -1,7 +1,8 @@
 {
-	"name": "dvelop",
+	"name": "dash",
 	"description": "Helps you make vidja games.",
 	"copyright": "2013 - 2014",
+	"license": "MIT",
 	"authors": [ 
 		"Colden Cullen",
 		"Brandon Littell",
@@ -13,9 +14,10 @@
 	"dependencies": {
 		"derelict-gl3": "~master",
 		"derelict-fi": "~master",
+		"derelict-assimp3": "~master",
 		"dyaml": "~master"
 	},
-	"targetName": "dvelop",
+	"targetName": "dash",
 	"targetType": "executable",
 	"mainSourceFile": "source/app.d",
 	"sourcePaths": [ "source/" ],

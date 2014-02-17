@@ -1,17 +1,16 @@
 module graphics.graphics;
 import graphics.adapters, graphics.shaders.shaders;
 
-static class Graphics
+final abstract class Graphics
 {
-static:
-public:
+public static:
 	Adapter adapter;
 	alias adapter this;
 
 	/**
 	 * Initialize the controllers.
 	 */
-	void initialize()
+	final void initialize()
 	{
 		version( Windows )
 		{
@@ -38,7 +37,7 @@ public:
 	/**
 	 * Shutdown the adapter and shaders.
 	 */
-	void shutdown()
+	final void shutdown()
 	{
 		Shaders.shutdown();
 		adapter.shutdown();

@@ -2,8 +2,8 @@
  * Defines the GameObject class, to be subclassed by scripts and instantiated for static objects.
  */
 module core.gameobject;
-import core.properties;
-import components.component, components.assets, components.texture, components.mesh;
+import core.prefabs, core.properties;
+import components;
 import graphics.graphics, graphics.shaders.shader;
 import utility.config;
 import math.transform, math.vector, math.quaternion;
@@ -20,17 +20,21 @@ public:
 	 */
 	mixin Property!( "Transform", "transform", "public" );
 	/**
-	 * The Texture belonging to the object
+	 * The Material belonging to the object
 	 */
-	mixin Property!( "Texture", "diffuse", "public" );
-	/**
-	* The Normal Texture belonging to the object
-	*/
-	mixin Property!( "Texture", "normal", "public" );
+	mixin Property!( "Material", "material", "public" );
 	/**
 	 * The Mesh belonging to the object
 	 */
 	mixin Property!( "Mesh", "mesh", "public" );
+	/**
+	 * The object that this object belongs to
+	 */
+	mixin Property!( "GameObject", "parent" );
+	/**
+	 * All of the objects which list this as parent
+	 */
+	mixin Property!( "GameObject[]", "children" );
 
 	mixin Signal!( string, string );
 
@@ -45,28 +49,32 @@ public:
 
 		// Try to get from script
 		if( Config.tryGet!string( "Script.ClassName", prop, yamlObj ) )
+		{
 			obj = cast(GameObject)Object.factory( prop.get!string );
+		}
+		else if( Config.tryGet!string( "InstanceOf", prop, yamlObj ) )
+		{
+			obj = Prefabs[ prop.get!string ].createInstance();
+		}
 		else
+		{
 			obj = new GameObject;
+		}
 
 		if( Config.tryGet!string( "Camera", prop, yamlObj ) )
 		{
 			//TODO: Setup camera
 		}
 
-		if( Config.tryGet!string( "Diffuse", prop, yamlObj ) )
-			obj.diffuse = Assets.get!Texture( prop.get!string );
-
-		if( Config.tryGet!string( "Normal", prop, yamlObj ) )
-			obj.normal = Assets.get!Texture( prop.get!string );
-
-		if( Config.tryGet!string( "AwesomiumView", prop, yamlObj ) )
+		if( Config.tryGet!string( "Material", prop, yamlObj ) )
 		{
-			//TODO: Initialize Awesomium view
+			obj.addComponent( Assets.get!Material( prop.get!string ) );
 		}
 
 		if( Config.tryGet!string( "Mesh", prop, yamlObj ) )
+		{
 			obj.addComponent( Assets.get!Mesh( prop.get!string ) );
+		}
 
 		if( Config.tryGet( "Transform", innerNode, yamlObj ) )
 		{
@@ -87,7 +95,7 @@ public:
 	 */
 	this()
 	{
-		transform = new Transform;
+		transform = new Transform( this );
 		transform.connect( &emit );
 	}
 
@@ -139,8 +147,8 @@ public:
 		componentList[ T.classinfo ] = newComponent;
 
 		// Add component to proper property
-		if( typeid( newComponent ) == typeid( Texture ) )
-			diffuse = cast(Texture)newComponent;
+		if( typeid( newComponent ) == typeid( Material ) )
+			material = cast(Material)newComponent;
 		else if( typeid( newComponent ) == typeid( Mesh ) )
 			mesh = cast(Mesh)newComponent;
 	}
@@ -151,6 +159,12 @@ public:
 	final T getComponent( T )() if( is( T : Component ) )
 	{
 		return componentList[ T.classinfo ];
+	}
+
+	final void addChild( GameObject object )
+	{
+		object._children ~= object;
+		object.parent = this;
 	}
 
 	/// Called on the update cycle.

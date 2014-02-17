@@ -11,7 +11,7 @@ import derelict.opengl3.gl3, derelict.opengl3.glx, derelict.opengl3.glxext;
 
 import std.traits;
 
-class Linux : Adapter
+final class Linux : Adapter
 {
 public:
 	static @property Linux get() { return cast(Linux)Graphics.adapter; }

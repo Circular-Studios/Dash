@@ -2,8 +2,6 @@
  * Defines the FilePath class, which stores default resource paths, and handles path manipulation.
  */
 module utility.filepath;
-import utility.output;
-
 static import std.file, std.path;
 import std.stdio;
 

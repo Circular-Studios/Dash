@@ -1,5 +1,5 @@
 module graphics.graphics;
-import graphics.adapters, graphics.shaders.shaders;
+import graphics.adapters, graphics.shaders;
 
 final abstract class Graphics
 {

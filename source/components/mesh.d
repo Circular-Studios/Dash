@@ -5,7 +5,7 @@ module components.mesh;
 
 import core.properties;
 import components.component;
-import graphics.graphics, graphics.shaders.shader;
+import graphics.graphics, graphics.shaders;
 import utility.output;
 import math.vector;
 import derelict.assimp3.assimp;

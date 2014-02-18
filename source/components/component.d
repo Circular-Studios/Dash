@@ -3,7 +3,7 @@
  */
 module components.component;
 import core.properties, core.gameobject;
-import graphics.shaders.shader;
+import graphics.shaders;
 
 /**
  * Interface for components to implement.

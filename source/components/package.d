@@ -4,5 +4,5 @@ import components.component;
 import components.assets;
 import components.material;
 import components.mesh;
-import components.texture;
 import components.camera;
+import components.lights;

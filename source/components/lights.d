@@ -20,11 +20,6 @@ public:
 	{
 
 	}
-	
-	override void draw( Shader shader )
-	{
-
-	}
 
 	override void shutdown()
 	{

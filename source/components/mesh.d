@@ -202,11 +202,6 @@ public:
 
 	}
 
-	override void draw( Shader shader )
-	{
-		//shader.drawMesh( this );
-	}
-
 	override void shutdown()
 	{
 		glDeleteBuffers( 1, &_glVertexBuffer );

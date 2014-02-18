@@ -27,7 +27,6 @@ public:
 	}
 
 	override void update() { }
-	override void draw( Shader shader ) { }
 	override void shutdown() { }
 
 	static Matrix!4 lookAtLH( Vector!3 cameraPosition, Vector!3 cameraTarget, Vector!3 cameraUpVector )

@@ -191,6 +191,19 @@ public:
 		glUniformMatrix4fv( currentUniform, 1, false, matrix.matrix.ptr.ptr );
 	}
 
+	final void bind( Component shader )
+	{
+		GLint textureLocation = glGetUniformLocation( shader.programID, "diffuseTexture\0" );
+		glUniform1i( textureLocation, 0 );
+		glActiveTexture( GL_TEXTURE0 );
+		glBindTexture( GL_TEXTURE_2D, diffuse.glID );
+
+		textureLocation = glGetUniformLocation( shader.programID, "normalTexture\0" );
+		glUniform1i( textureLocation, 1 );
+		glActiveTexture( GL_TEXTURE1 );
+		glBindTexture( GL_TEXTURE_2D, normal.glID );
+	}
+
 	void bindLight( Light light )
 	{
 		if( typeid(light) == typeid(DirectionalLight) )

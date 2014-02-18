@@ -212,7 +212,7 @@ public:
 	}
 }
 
-const string geometryVS = q{
+immutable string geometryVS = q{
 #version 400
 
 layout(location = 0) in vec3 vPosition_m;
@@ -242,7 +242,7 @@ void main( void )
 }
 };
 
-const string geometryFS = q{
+immutable string geometryFS = q{
 #version 400
 
 in vec4 fPosition_s;
@@ -281,7 +281,7 @@ void main( void )
 }
 };
 
-const string lightingVS = q{
+immutable string lightingVS = q{
 #version 400
 
 layout(location = 0) in vec3 vPosition_s;
@@ -298,7 +298,7 @@ void main( void )
 }
 };
 
-const string lightingFS = q{
+immutable string lightingFS = q{
 #version 400
 
 struct DirectionalLight

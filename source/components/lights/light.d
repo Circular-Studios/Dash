@@ -1,7 +1,7 @@
 module components.lights.light;
 import core.properties;
 import components.component;
-import graphics.shaders.shader;
+import graphics.shaders;
 import math.vector;
 
 class Light : Component

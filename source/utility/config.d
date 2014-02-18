@@ -7,7 +7,7 @@ import utility.filepath;
 // Imports for conversions
 import core.dgame : GameState;
 import components.assets;
-import graphics.shaders.shaders;
+import graphics.shaders;
 import utility.output : Verbosity;
 import math.vector, math.quaternion;
 

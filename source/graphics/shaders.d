@@ -1,27 +1,72 @@
-module graphics.shaders.glshader;
+module graphics.shaders;
 import core.properties;
-import components.mesh, components.texture, components.lights.light, components.lights.directional;
-import graphics.shaders.shader;
-import utility.filepath, utility.output;
+import components;
+import graphics.graphics;
 import math.matrix, math.vector;
-import derelict.opengl3.gl3;
+import utility.filepath, utility.output;
 
-import std.traits;
+import derelict.opengl3.gl3;
+import std.string, std.traits;
+
+final abstract class Shaders
+{
+public static:
+	final void initialize()
+	{
+		foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders, "*.fs.glsl" ) )
+		{
+			// Strip .fs from file name
+			string name = file.baseFileName[ 0..$-3 ];
+			shaders[ name ] = new Shader( name, file.directory ~ "\\" ~ name ~ ".vs.glsl", file.fullPath );
+		}
+
+		shaders.rehash();
+	}
+
+	final void shutdown()
+	{
+		foreach_reverse( index; 0 .. shaders.length )
+		{
+			auto name = shaders.keys[ index ];
+			shaders[ name ].shutdown();
+			shaders.remove( name );
+		}
+		/*foreach( name, shader; shaders )
+		{
+			shader.shutdown();
+			shaders.remove( name );
+		}*/
+	}
+
+	final Shader opIndex( string name )
+	{
+		return get( name );
+	}
+
+	final Shader get( string name )
+	{
+		auto shader = name in shaders;
+		return shader is null ? null : *shader;
+	}
+
+private:
+	Shader[string] shaders;
+}
 
 public enum ShaderUniform 
 {
 	World = "world",
-	WorldView = "worldView",
-	WorldViewProjection = "worldViewProj",
-	DiffuseTexture = "diffuseTexture",
-	NormalTexture = "normalTexture",
-	DepthTexture = "depthTexture",
-	DirectionalLightDirection = "dirLight.direction",
-	DirectionalLightColor = "dirLight.color",
-	AmbientLight = "ambientLight"
+		WorldView = "worldView",
+		WorldViewProjection = "worldViewProj",
+		DiffuseTexture = "diffuseTexture",
+		NormalTexture = "normalTexture",
+		DepthTexture = "depthTexture",
+		DirectionalLightDirection = "dirLight.direction",
+		DirectionalLightColor = "dirLight.color",
+		AmbientLight = "ambientLight"
 }
 
-final package class GLShader : Shader
+final package class Shader
 {
 public:
 	mixin Property!( "uint", "programID", "protected" );
@@ -114,7 +159,7 @@ public:
 	final void setUniform( ShaderUniform uniform, const float value )
 	{
 		auto currentUniform = getUniformLocation( uniform );
-		
+
 		glUniform1f( currentUniform, value );
 	}
 
@@ -140,7 +185,7 @@ public:
 
 	}
 
-	override void shutdown()
+	void shutdown()
 	{
 
 	}

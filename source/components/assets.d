@@ -14,7 +14,7 @@ public static:
 	/**
 	 * Get the asset with the given type and name.
 	 */
-	final T get( T )( string name ) if( is( T : Component ) )
+	final T get( T )( string name ) if( is( T == Mesh ) || is( T == Texture ) || is( T == Material ) )
 	{
 		static if( is( T == Mesh ) )
 		{

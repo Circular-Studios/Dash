@@ -1,7 +1,7 @@
 module graphics.adapters.adapter;
 import core.gameobject, core.properties;
-import components.assets, components.mesh, components.camera, components.lights.light, components.lights.directional;
-import graphics.shaders.shader, graphics.shaders.shaders, graphics.shaders.glshader;
+import components;
+import graphics.shaders;
 import math.vector, math.matrix;
 import utility.config, utility.output;
 
@@ -135,7 +135,7 @@ public:
 		glEnable( GL_DEPTH_TEST );
 		glDisable( GL_BLEND );
 
-		glUseProgram( (cast(GLShader)Shaders[GeometryShader]).programID );
+		glUseProgram( Shaders[GeometryShader].programID );
 	}
 	
 	/**
@@ -147,7 +147,7 @@ public:
 	final void drawObject( GameObject object )
 	{
 		// set the shader
-		GLShader shader = cast(GLShader)Shaders[GeometryShader];
+		auto shader = Shaders[GeometryShader];
 		glBindVertexArray( object.mesh.glVertexArray );
 
 		shader.setUniformMatrix( ShaderUniform.World , object.transform.matrix );
@@ -181,7 +181,7 @@ public:
 		glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-		GLShader shader = cast(GLShader)Shaders[LightingShader];
+		auto shader = Shaders[LightingShader];
 		glUseProgram( shader.programID );
 		
 		// bind geometry pass textures

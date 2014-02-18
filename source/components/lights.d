@@ -1,4 +1,4 @@
-module components.lights.light;
+module components.lights;
 import core.properties;
 import components.component;
 import graphics.shaders;
@@ -31,4 +31,16 @@ public:
 
 	}
 
+}
+
+class DirectionalLight : Light
+{
+public:
+	mixin Property!( "Vector!3", "direction" );
+
+	this( Vector!3 color, Vector!3 direction )
+	{
+		this.direction = direction;
+		super( color );
+	}
 }

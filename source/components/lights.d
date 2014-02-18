@@ -28,6 +28,14 @@ public:
 
 }
 
+class AmbientLight : Light 
+{ 
+	this( Vector!3 color )
+	{
+		super( color );
+	}
+}
+
 class DirectionalLight : Light
 {
 public:

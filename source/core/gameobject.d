@@ -35,6 +35,10 @@ public:
 	 * All of the objects which list this as parent
 	 */
 	mixin Property!( "GameObject[]", "children" );
+	/**
+	 * All of the lights attached to this object
+	 */
+	mixin Property!( "Light", "light" );
 
 	mixin Signal!( string, string );
 
@@ -87,6 +91,11 @@ public:
 				obj.transform.rotation = Quaternion.fromEulerAngles( transVec );
 		}
 
+		if( Config.tryGet!DirectionalLight( "Light", prop, yamlObj ) )
+		{
+			obj.addComponent( prop.get!DirectionalLight );
+		}
+
 		return obj;
 	}
 
@@ -122,7 +131,14 @@ public:
 	{
 		onDraw();
 
-		Graphics.drawObject( this );
+		if( mesh !is null )
+		{
+			Graphics.drawObject( this );
+		}
+		if( light !is null )
+		{
+			Graphics.addLight( light );
+		}
 	}
 
 	/**
@@ -151,6 +167,9 @@ public:
 			material = cast(Material)newComponent;
 		else if( typeid( newComponent ) == typeid( Mesh ) )
 			mesh = cast(Mesh)newComponent;
+		else if( typeid( newComponent ) == typeid( DirectionalLight ) || 
+				 typeid( newComponent ) == typeid( AmbientLight ) )
+			light = cast(Light)newComponent;
 	}
 
 	/**

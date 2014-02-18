@@ -4,7 +4,7 @@
 module core.gameobject;
 import core.prefabs, core.properties;
 import components;
-import graphics.graphics, graphics.shaders.shader;
+import graphics.graphics, graphics.shaders;
 import utility.config;
 import math.transform, math.vector, math.quaternion;
 

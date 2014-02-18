@@ -4,7 +4,7 @@
 module components.camera;
 import core.properties, core.gameobject;
 import components.component;
-import graphics.shaders.shader;
+import graphics.shaders;
 import math.matrix, math.vector;
 
 import std.signals, std.conv;

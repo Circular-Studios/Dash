@@ -28,6 +28,14 @@ public:
 	 */
 	mixin Property!( "Mesh", "mesh", "public" );
 	/**
+	* The light attached to this object
+	*/
+	mixin Property!( "Light", "light", "public" );
+	/**
+	* The camera attached to this object
+	*/
+	mixin Property!( "Camera", "camera", "public" );
+	/**
 	 * The object that this object belongs to
 	 */
 	mixin Property!( "GameObject", "parent" );
@@ -35,10 +43,6 @@ public:
 	 * All of the objects which list this as parent
 	 */
 	mixin Property!( "GameObject[]", "children" );
-	/**
-	 * All of the lights attached to this object
-	 */
-	mixin Property!( "Light", "light" );
 
 	mixin Signal!( string, string );
 
@@ -67,7 +71,7 @@ public:
 
 		if( Config.tryGet!string( "Camera", prop, yamlObj ) )
 		{
-			//TODO: Setup camera
+			obj.addComponent( new Camera( obj ) );
 		}
 
 		if( Config.tryGet!string( "Material", prop, yamlObj ) )
@@ -170,6 +174,8 @@ public:
 		else if( typeid( newComponent ) == typeid( DirectionalLight ) || 
 				 typeid( newComponent ) == typeid( AmbientLight ) )
 			light = cast(Light)newComponent;
+		else if( typeid( newComponent ) == typeid( Camera ) )
+			camera = cast(Camera)newComponent;
 	}
 
 	/**

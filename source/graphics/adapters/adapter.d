@@ -151,10 +151,9 @@ public:
 		glBindVertexArray( object.mesh.glVertexArray );
 
 		shader.bindUniformMatrix4fv( ShaderUniform.World , object.transform.matrix );
-		shader.bindUniformMatrix4fv( ShaderUniform.WorldView, object.transform.matrix * 
-								 Camera.lookAtLH( new Vector!3( 0, 0, 0), object.transform.position, new Vector!3( 0, 1, 0 ) ) );
 		shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , object.transform.matrix *
-								 Matrix!4.buildPerspective( std.math.PI_2, cast(float)width / cast(float)height, 1, 1000 ) );
+									 activeCamera.viewMatrix *
+									 Matrix!4.buildPerspective( std.math.PI_2, cast(float)width / cast(float)height, 1, 1000 ) );
 
 		shader.bindMaterial( object.material );
 
@@ -251,12 +250,9 @@ public:
 		}
 	}
 
-	final void addCamera( Camera camera )
+	final void setCamera( Camera camera )
 	{
-		if( this.camera is null )
-		{
-			
-		}
+		activeCamera = camera;
 	}
 
 protected:
@@ -279,8 +275,8 @@ protected:
 	}
 
 private:
+	static Camera activeCamera;
 	//To be cleared after a draw call:
-	Camera camera;
 	AmbientLight ambientLight;
 	DirectionalLight directionalLight;
 	Light[] lights;

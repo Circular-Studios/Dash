@@ -60,6 +60,7 @@ private:
 	{
 		_viewMatrixIsDirty = true;
 	}
+
 	final void updateViewMatrix()
 	{
 		auto up = owner.transform.rotation.matrix * Vector!3.up;

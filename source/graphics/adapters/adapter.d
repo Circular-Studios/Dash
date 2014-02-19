@@ -184,19 +184,19 @@ public:
 		auto shader = Shaders[LightingShader];
 		glUseProgram( shader.programID );
 		
-		// bind geometry pass textures
-		GLint textureLocation = shader.getUniformLocation( ShaderUniform.DiffuseTexture );
-		glUniform1i( textureLocation, 0 );
+		// bind geometry pass outputs
+		// diffuse
+		glUniform1i( shader.getUniformLocation( ShaderUniform.DiffuseTexture ), 0 );
 		glActiveTexture( GL_TEXTURE0 );
 		glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
-
-		textureLocation = shader.getUniformLocation( ShaderUniform.NormalTexture );
-		glUniform1i( textureLocation, 1 );
+		
+		// normal
+		glUniform1i( shader.getUniformLocation( ShaderUniform.NormalTexture ), 1 );
 		glActiveTexture( GL_TEXTURE1 );
 		glBindTexture( GL_TEXTURE_2D, normalRenderTexture );
-
-		textureLocation = shader.getUniformLocation( ShaderUniform.DepthTexture );
-		glUniform1i( textureLocation, 2 );
+		
+		// depth
+		glUniform1i( shader.getUniformLocation( ShaderUniform.DepthTexture ), 2 );
 		glActiveTexture( GL_TEXTURE2 );
 		glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
 		
@@ -204,9 +204,9 @@ public:
 		glBindVertexArray( Assets.get!Mesh( WindowMesh ).glVertexArray );
 
 		// bind the directional and ambient lights
-		Light tempDirLight = new DirectionalLight( new Vector!3( 1.0f, 1.0f, 1.0f ), new Vector!3( 0.0f, -1.0f, 0.5f ) );
+		Light tempDirLight = new DirectionalLight( null, new Vector!3( 1.0f, 1.0f, 1.0f ), new Vector!3( 0.0f, -1.0f, 0.5f ) );
 		shader.bindLight( tempDirLight );
-		Light tempAmbLight = new Light( new Vector!3( .2f, .2f, .2f ) );
+		Light tempAmbLight = new Light( null, new Vector!3( .2f, .2f, .2f ) );
 		shader.bindLight( tempAmbLight );
 
 		glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, null );

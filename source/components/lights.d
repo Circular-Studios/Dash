@@ -1,5 +1,5 @@
 module components.lights;
-import core.properties;
+import core.properties, core.gameobject;
 import components.component;
 import graphics.shaders;
 import math.vector;
@@ -9,9 +9,9 @@ class Light : Component
 public:
 	mixin Property!( "Vector!3", "color", "public" );
 
-	this( Vector!3 color )
+	this( GameObject owner, Vector!3 color )
 	{
-		super( null );
+		super( owner );
 
 		this.color = color;
 	}
@@ -33,14 +33,41 @@ public:
 
 }
 
+/* 
+ * Directional Light data
+ */
 class DirectionalLight : Light
 {
 public:
 	mixin Property!( "Vector!3", "direction" );
 
-	this( Vector!3 color, Vector!3 direction )
+	this( GameObject owner, Vector!3 color, Vector!3 direction )
 	{
 		this.direction = direction;
-		super( color );
+		super( owner, color );
+	}
+}
+
+/*
+ * Point Light Stub
+ */
+class PointLight : Light
+{
+public:
+	this( GameObject owner, Vector!3 color )
+	{
+		super( owner, color );
+	}
+}
+
+/*
+ * SpotLight Stub
+ */
+class SpotLight : Light
+{
+public:
+	this( GameObject owner, Vector!3 color )
+	{
+		super( owner, color );
 	}
 }

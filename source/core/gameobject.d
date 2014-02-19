@@ -91,9 +91,9 @@ public:
 				obj.transform.rotation = Quaternion.fromEulerAngles( transVec );
 		}
 
-		if( Config.tryGet!DirectionalLight( "Light", prop, yamlObj ) )
+		if( Config.tryGet!Light( "Light", prop, yamlObj ) )
 		{
-			obj.addComponent( prop.get!DirectionalLight );
+			obj.addComponent( prop.get!Light );
 		}
 
 		return obj;

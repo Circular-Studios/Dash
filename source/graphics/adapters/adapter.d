@@ -229,15 +229,33 @@ public:
 	{
 		if( typeid( light ) == typeid( AmbientLight ) )
 		{
-			ambientLight = cast(AmbientLight)light;
+			if( ambientLight is null )
+			{
+				ambientLight = cast(AmbientLight)light;
+			}
+			else
+				log( OutputType.Info, "Attemtping to add multiple ambient lights to the scene.  Ignoring additional ambient lights." );
 		}
 		else if( typeid( light ) == typeid( DirectionalLight ) )
 		{
-			directionalLight = cast(DirectionalLight)light;
+			if( directionalLight is null )
+			{
+				directionalLight = cast(DirectionalLight)light;
+			}
+			else
+				log( OutputType.Info, "Attemtping to add multiple directional lights to the scene.  Ignoring additional directional lights." );
 		}
 		else
 		{
 			lights ~= light;
+		}
+	}
+
+	final void addCamera( Camera camera )
+	{
+		if( this.camera is null )
+		{
+			
 		}
 	}
 
@@ -262,6 +280,7 @@ protected:
 
 private:
 	//To be cleared after a draw call:
+	Camera camera;
 	AmbientLight ambientLight;
 	DirectionalLight directionalLight;
 	Light[] lights;

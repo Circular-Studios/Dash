@@ -31,7 +31,9 @@ public:
 		Objects = ResourceHome ~ "/Objects",
 		Shaders = ResourceHome ~ "/Shaders",
 		UI = ResourceHome ~ "/UI",
-		Config = ResourceHome ~ "/Config.yml",
+		ConfigDir = ResourceHome ~ "/Config",
+		ConfigFile = ConfigDir ~ "/Config.yml",
+		InputBindings = ConfigDir ~ "/Input.yml", 
 	}
 
 	/**

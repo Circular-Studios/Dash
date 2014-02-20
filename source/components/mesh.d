@@ -12,7 +12,7 @@ import derelict.assimp3.assimp;
 
 import derelict.opengl3.gl3;
 
-import std.stdio, std.stream, std.format, std.math;
+import std.stdio, std.stream, std.format, std.math, std.container;
 
 class Mesh : Component
 {
@@ -48,16 +48,32 @@ public:
 			{
 				// (8 floats for animation data)
 				animation = true;
-				floatsPerVertex = 19;
+				floatsPerVertex = 15;
 				vertexSize = float.sizeof * floatsPerVertex;
 				
 				// Get the anim data
-				/*int[mesh.mNumVertices][4] vertBones = new int[[mesh.mNumVertices][4];
-				float[[mesh.mNumVertices][4] vertWeights = new float[[mesh.mNumVertices][4];
+				int[][] vertBones = new int[][mesh.mNumVertices];
+				float[][] vertWeights = new float[][mesh.mNumVertices];
 				for( int i = 0; i < mesh.mNumBones; i++)
-				{					for( int ii = 0; ii < mesh.mNumVertices; ii++)
+				{					
+					for( int ii = 0; ii < mesh.mBones[i].mNumWeights; ii++)
 					{
-						
+						vertBones[cast(int)mesh.mBones[i].mWeights[ii].mVertexId] ~= i;
+						vertWeights[cast(int)mesh.mBones[i].mWeights[ii].mVertexId] ~= mesh.mBones[i].mWeights[ii].mWeight;
+					}
+				}
+
+				// Make sure each is 4, if not bring to 4 (BREAKING)
+				/*for( int i = 0; i < mesh.mNumVertices; i++)
+				{
+					while(vertBones[i].length != 4)
+					{
+						vertBones[i] ~= 0;
+					}
+
+					while(vertWeights[i].length != 4)
+					{
+						vertWeights[i] ~= 0.0f;
 					}
 				}*/
 
@@ -90,9 +106,8 @@ public:
 						//outputData ~= bitangent.x;
 						//outputData ~= bitangent.y;
 						//outputData ~= bitangent.z;
-						/*outputData = vertBones[
-
-						*/
+						outputData ~= vertBones[ face.mIndices[ j ] ];
+						outputData ~= vertWeights[ face.mIndices[ j ] ];
 					}
 				}
 			}
@@ -191,9 +206,9 @@ public:
 			uint WEIGHT_ATTRIBUTE = 5;
 
 			glEnableVertexAttribArray( BONE_ATTRIBUTE );
-			glVertexAttribPointer( BONE_ATTRIBUTE, 4, GL_FLOAT, GL_FALSE, vertexSize, cast(char*)0 + ( GLfloat.sizeof * 11 ) );
+			glVertexAttribPointer( BONE_ATTRIBUTE, 2, GL_FLOAT, GL_FALSE, vertexSize, cast(char*)0 + ( GLfloat.sizeof * 11 ) );
 			glEnableVertexAttribArray( WEIGHT_ATTRIBUTE );
-			glVertexAttribPointer( WEIGHT_ATTRIBUTE, 4, GL_FLOAT, GL_FALSE, vertexSize, cast(char*)0 + ( GLfloat.sizeof * 15 ) );
+			glVertexAttribPointer( WEIGHT_ATTRIBUTE, 2, GL_FLOAT, GL_FALSE, vertexSize, cast(char*)0 + ( GLfloat.sizeof * 13 ) );
 		}
 
 		// Generate index buffer

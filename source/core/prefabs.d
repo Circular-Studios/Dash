@@ -4,6 +4,7 @@ import components;
 import utility.filepath, utility.config;
 
 import yaml;
+import gl3n.linalg;
 import std.variant;
 
 final abstract class Prefabs
@@ -68,13 +69,13 @@ public:
 
 		if( Config.tryGet( "Transform", innerNode, yml ) )
 		{
-			Vector!3 transVec;
+			vec3 transVec;
 			if( Config.tryGet( "Scale", transVec, innerNode ) )
 				transform.scale = transVec;
 			if( Config.tryGet( "Position", transVec, innerNode ) )
 				transform.position = transVec;
 			if( Config.tryGet( "Rotation", transVec, innerNode ) )
-				transform.rotation = Quaternion.fromEulerAngles( transVec );
+				transform.rotation = quat.euler_rotation( transVec.z, transVec.y, transVec.x );
 		}
 	}
 
@@ -93,8 +94,8 @@ public:
 		else
 			result = new GameObject;
 
-		result.transform.scale.values[ 0..3 ] = transform.scale.values[ 0..3 ];
-		result.transform.position.values[ 0..3 ] = transform.position.values[ 0..3 ];
+		result.transform.scale.vector[ 0..3 ] = transform.scale.vector[ 0..3 ];
+		result.transform.position.vector[ 0..3 ] = transform.position.vector[ 0..3 ];
 		result.transform.rotation.x = transform.rotation.x;
 		result.transform.rotation.y = transform.rotation.y;
 		result.transform.rotation.z = transform.rotation.z;

@@ -4,6 +4,7 @@ import components;
 import graphics.shaders;
 import utility.config, utility.output;
 
+import gl3n.linalg;
 import derelict.opengl3.gl3;
 
 version( Windows )
@@ -149,10 +150,16 @@ public:
 		auto shader = Shaders[GeometryShader];
 		glBindVertexArray( object.mesh.glVertexArray );
 
-		shader.bindUniformMatrix4fv( ShaderUniform.World , object.transform.matrix );
-		shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , object.transform.matrix *
-									 Matrix!4.identity *
-									 Matrix!4.buildPerspective( std.math.PI_2, cast(float)width / cast(float)height, 1, 1000 ) );
+		object.transform.updateMatrix();
+		mat4 world = object.transform.matrix;
+		mat4 view = mat4.identity;
+		mat4 proj = Camera.buildPerspective(std.math.PI_2,cast(float)width / cast(float)height, 1, 1000 );
+		mat4 worldviewproj = proj * view * world;
+
+		shader.bindUniformMatrix4fv( ShaderUniform.World , world );
+		shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , worldviewproj );//object.transform.matrix *
+									 //mat4.identity *
+									 //mat4.perspective_inverse( cast(float)width, cast(float)height, std.math.PI_2, 1, 1000 ) );
 
 		shader.bindMaterial( object.material );
 
@@ -200,11 +207,11 @@ public:
 		// bind the directional and ambient lights
 		if( directionalLight is null )
 		{
-			directionalLight = new DirectionalLight( new Vector!3(), new Vector!3() );
+			directionalLight = new DirectionalLight( vec3(), vec3() );
 		}
 		if( ambientLight is null )
 		{
-			ambientLight = new AmbientLight( new Vector!3() );
+			ambientLight = new AmbientLight( vec3() );
 		}
 		shader.bindDirectionalLight( directionalLight );
 		shader.bindAmbientLight( ambientLight );

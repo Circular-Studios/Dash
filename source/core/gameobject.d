@@ -86,13 +86,13 @@ public:
 
 		if( Config.tryGet( "Transform", innerNode, yamlObj ) )
 		{
-			Vector!3 transVec;
+			vec3 transVec;
 			if( Config.tryGet( "Scale", transVec, innerNode ) )
 				obj.transform.scale = transVec;
 			if( Config.tryGet( "Position", transVec, innerNode ) )
 				obj.transform.position = transVec;
 			if( Config.tryGet( "Rotation", transVec, innerNode ) )
-				obj.transform.rotation = Quaternion.fromEulerAngles( transVec );
+				obj.transform.rotation = quat.euler_rotation( transVec.z, transVec.y, transVec.x );
 		}
 
 		if( Config.tryGet!Light( "Light", prop, yamlObj ) )
@@ -211,34 +211,26 @@ public:
 	this( GameObject obj = null )
 	{
 		owner = obj;
-
-		position = new vec3;
-		rotation = new quat;
-		scale = new vec3( 1.0, 1.0, 1.0 );
-
-		position.connect( &emit );
-		rotation.connect( &emit );
-		scale.connect( &emit );
-
+		position = vec3(0,0,0);
+		scale = vec3(1,1,1);
+		rotation = quat(0,0,0,0);
 		updateMatrix();
-
-		position.connect( &setMatrixDirty );
-		rotation.connect( &setMatrixDirty );
-		scale.connect( &setMatrixDirty );
-		connect( &setMatrixDirty );
 	}
 
 	~this()
 	{
-		destroy( position );
-		destroy( rotation ); 
-		destroy( scale );
+		//destroy( position );
+		//destroy( rotation ); 
+		//destroy( scale );
 	}
 
 	mixin Property!( "GameObject", "owner" );
-	mixin EmmittingProperty!( "vec3", "position", "public" );
-	mixin EmmittingProperty!( "quat", "rotation", "public" );
-	mixin EmmittingProperty!( "vec3", "scale", "public" );
+	vec3 position;
+	quat rotation;
+	vec3 scale;
+	//mixin EmmittingProperty!( "vec3", "position", "public" );
+	//mixin EmmittingProperty!( "quat", "rotation", "public" );
+	//mixin EmmittingProperty!( "vec3", "scale", "public" );
 
 	/**
 	* This returns the object's position relative to the world origin, not the parent
@@ -278,7 +270,7 @@ public:
 	final void updateMatrix()
 	{
 		//Rotate
-		_matrix = rotation.to_matrix(4,4);
+		_matrix = rotation.to_matrix!(4,4);
 		// Scale
 		_matrix.scale([scale.x, scale.y, scale.z]);
 		_matrix.translation([position.x, position.y, position.z]);

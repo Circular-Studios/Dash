@@ -7,9 +7,8 @@ import core.properties;
 import components.component;
 import graphics.graphics, graphics.shaders;
 import utility.output;
-import math.vector;
-import derelict.assimp3.assimp;
 
+import derelict.assimp3.assimp;
 import derelict.opengl3.gl3;
 
 import std.stdio, std.stream, std.format, std.math;

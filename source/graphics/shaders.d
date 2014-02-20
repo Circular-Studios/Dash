@@ -2,7 +2,6 @@ module graphics.shaders;
 import core.properties;
 import components;
 import graphics.graphics;
-import math.matrix, math.vector;
 import utility.filepath, utility.output;
 
 import derelict.opengl3.gl3;

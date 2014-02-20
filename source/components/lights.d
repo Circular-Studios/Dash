@@ -2,7 +2,6 @@ module components.lights;
 import core.properties;
 import components.component;
 import graphics.shaders;
-import math.vector;
 
 class Light : Component
 {

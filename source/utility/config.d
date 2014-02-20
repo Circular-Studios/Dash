@@ -9,7 +9,6 @@ import core.dgame : GameState;
 import components.assets, components.lights;
 import graphics.shaders;
 import utility.output : Verbosity;
-import math.vector, math.quaternion;
 
 import yaml;
 

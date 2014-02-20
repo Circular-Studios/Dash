@@ -1,7 +1,6 @@
 module core.prefabs;
 import core.gameobject;
 import components;
-import math.transform, math.vector, math.quaternion;
 import utility.filepath, utility.config;
 
 import yaml;

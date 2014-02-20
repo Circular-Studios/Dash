@@ -2,7 +2,6 @@ module graphics.adapters.adapter;
 import core.gameobject, core.properties;
 import components;
 import graphics.shaders;
-import math.vector, math.matrix;
 import utility.config, utility.output;
 
 import derelict.opengl3.gl3;

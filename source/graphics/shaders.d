@@ -177,33 +177,44 @@ public:
 		return uniformLocations[ uniform ];
 	}
 
-	final void setUniform( ShaderUniform uniform, const float value )
+	final void bindUniform1f( ShaderUniform uniform, const float value )
 	{
 		auto currentUniform = getUniformLocation( uniform );
 
 		glUniform1f( currentUniform, value );
 	}
 
-	final void setUniformMatrix( ShaderUniform uniform, const Matrix!4 matrix )
+	final void bindUniformMatrix4fv( ShaderUniform uniform, const Matrix!4 matrix )
 	{
 		auto currentUniform = getUniformLocation( uniform );
 
 		glUniformMatrix4fv( currentUniform, 1, false, matrix.matrix.ptr.ptr );
 	}
 
-	void bindLight( Light light )
+	final void bindMaterial( Material material )
 	{
-		if( typeid(light) == typeid(DirectionalLight) )
-		{
-			// buffer light here
-			glUniform3f( getUniformLocation( ShaderUniform.DirectionalLightDirection ), (cast(DirectionalLight)light).direction.x, (cast(DirectionalLight)light).direction.y, (cast(DirectionalLight)light).direction.z );
-			glUniform3f( getUniformLocation( ShaderUniform.DirectionalLightColor ), light.color.x, light.color.y, light.color.z );
-		}
-		else //Base light class means ambient light
-		{
-			glUniform3f( getUniformLocation( ShaderUniform.AmbientLight ), light.color.x, light.color.y, light.color.z );
-		}
+		//This is finding the uniform for the given texture, and setting that texture to the appropriate one for the object
+		GLint textureLocation = getUniformLocation( ShaderUniform.DiffuseTexture );
+		glUniform1i( textureLocation, 0 );
+		glActiveTexture( GL_TEXTURE0 );
+		glBindTexture( GL_TEXTURE_2D, material.diffuse.glID );
 
+		textureLocation = getUniformLocation( ShaderUniform.NormalTexture );
+		glUniform1i( textureLocation, 1 );
+		glActiveTexture( GL_TEXTURE1 );
+		glBindTexture( GL_TEXTURE_2D, material.normal.glID );
+	}
+
+	final void bindAmbientLight( AmbientLight light )
+	{
+		glUniform3f( getUniformLocation( ShaderUniform.AmbientLight ), light.color.x, light.color.y, light.color.z );
+	}
+
+	final void bindDirectionalLight( DirectionalLight light )
+	{
+		// buffer light here
+		glUniform3f( getUniformLocation( ShaderUniform.DirectionalLightDirection ), (cast(DirectionalLight)light).direction.x, (cast(DirectionalLight)light).direction.y, (cast(DirectionalLight)light).direction.z );
+		glUniform3f( getUniformLocation( ShaderUniform.DirectionalLightColor ), light.color.x, light.color.y, light.color.z );
 	}
 
 	void shutdown()

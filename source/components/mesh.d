@@ -31,7 +31,7 @@ public:
 		DerelictASSIMP3.load();
 
 		// Load the scene via assimp
-		const aiScene* scene = aiImportFile(( filePath ~ "\0" ).ptr,
+		const aiScene* scene = aiImportFile( ( filePath ~ "\0" ).ptr,
 											aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
 											aiProcess_JoinIdenticalVertices | aiProcess_SortByPType |
 											aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder );
@@ -39,7 +39,7 @@ public:
 		int floatsPerVertex, vertexSize;
 		float[] outputData;
 		uint[] indices;
-		if(scene)
+		if( scene )
 		{
 			auto mesh = scene.mMeshes[0];	
 			
@@ -55,8 +55,7 @@ public:
 				/*int[mesh.mNumVertices][4] vertBones = new int[[mesh.mNumVertices][4];
 				float[[mesh.mNumVertices][4] vertWeights = new float[[mesh.mNumVertices][4];
 				for( int i = 0; i < mesh.mNumBones; i++)
-				{
-					for( int ii = 0; ii < mesh.mNumVertices; ii++)
+				{					for( int ii = 0; ii < mesh.mNumVertices; ii++)
 					{
 						
 					}
@@ -98,7 +97,7 @@ public:
 				}
 			}
 			// Otherwise render without animation
-			else //if( (scene.mNumAnimations == 0 && mesh.mNumBones == 0) || animation == false ) // No animation or animation failed
+			if( scene.mNumAnimations == 0 || mesh.mNumBones == 0 || animation == false ) // No animation or animation failed
 			{
 				animation = false;
 				floatsPerVertex = 11;

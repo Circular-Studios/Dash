@@ -20,10 +20,6 @@ abstract class Component
 	 */
 	abstract void update();
 	/**
-	 * Function calledn on draw.
-	 */
-	abstract void draw( Shader shader );
-	/**
 	 * Function called on shutdown.
 	 */
 	abstract void shutdown();

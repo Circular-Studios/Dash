@@ -20,17 +20,20 @@ public:
 	{
 
 	}
-	
-	override void draw( Shader shader )
-	{
-
-	}
 
 	override void shutdown()
 	{
 
 	}
 
+}
+
+class AmbientLight : Light 
+{ 
+	this( Vector!3 color )
+	{
+		super( color );
+	}
 }
 
 class DirectionalLight : Light

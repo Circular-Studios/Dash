@@ -201,11 +201,11 @@ public:
 		// bind the directional and ambient lights
 		if( directionalLight is null )
 		{
-			directionalLight = new DirectionalLight( new Vector!3(), new Vector!3() );
+			directionalLight = new DirectionalLight( null, new Vector!3(), new Vector!3() );
 		}
 		if( ambientLight is null )
 		{
-			ambientLight = new AmbientLight( new Vector!3() );
+			ambientLight = new AmbientLight( null, new Vector!3() );
 		}
 		shader.bindDirectionalLight( directionalLight );
 		shader.bindAmbientLight( ambientLight );

@@ -30,9 +30,9 @@ public:
 
 class AmbientLight : Light 
 { 
-	this( Vector!3 color )
+	this( GameObject owner, Vector!3 color )
 	{
-		super( color );
+		super( owner, color );
 	}
 }
 

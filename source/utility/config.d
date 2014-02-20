@@ -257,7 +257,7 @@ Light constructDirectionalLight( ref Node node )
 	Config.tryGet( "Color", color, node );
 	Config.tryGet( "Direction", dir, node );
 
-	return new DirectionalLight( color, dir );
+	return new DirectionalLight( null, color, dir );
 }
 
 Light constructAmbientLight( ref Node node )
@@ -265,7 +265,7 @@ Light constructAmbientLight( ref Node node )
 	Vector!3 color = new Vector!3();
 	Config.tryGet( "Color", color, node );
 
-	return new AmbientLight( color );
+	return new AmbientLight( null, color );
 }
 
 T constructConv( T )( ref Node node ) if( is( T == enum ) )

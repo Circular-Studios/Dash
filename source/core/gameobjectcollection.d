@@ -86,6 +86,5 @@ public:
 		apply( go => go.draw() );
 	}
 
-private:
 	GameObject[string] objects;
 }

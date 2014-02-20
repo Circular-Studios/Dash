@@ -2,6 +2,8 @@
  * Defines the FilePath class, which stores default resource paths, and handles path manipulation.
  */
 module utility.filepath;
+import utility.output;
+
 static import std.file, std.path;
 import std.stdio;
 
@@ -39,6 +41,12 @@ public:
 	{
 		// Get absolute path to folder
 		string safePath = std.path.buildNormalizedPath( std.path.absolutePath( path ) );
+
+		if( !std.file.exists( safePath ) )
+		{
+			log( OutputType.Info, path, " does not exist." );
+			return [];
+		}
 
 		// Start array
 		auto files = new FilePath[ 1 ];

@@ -150,14 +150,12 @@ public:
 		auto shader = Shaders[GeometryShader];
 		glBindVertexArray( object.mesh.glVertexArray );
 
-		shader.setUniformMatrix( ShaderUniform.World , object.transform.matrix );
-		shader.setUniformMatrix( ShaderUniform.WorldView, object.transform.matrix * 
-								 Camera.lookAtLH( new Vector!3( 0, 0, 0), object.transform.position, new Vector!3( 0, 1, 0 ) ) );
-		shader.setUniformMatrix( ShaderUniform.WorldViewProjection , object.transform.matrix *
-								 Matrix!4.buildPerspective( std.math.PI_2, cast(float)width / cast(float)height, 1, 1000 ) );
+		shader.bindUniformMatrix4fv( ShaderUniform.World , object.transform.matrix );
+		shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , object.transform.matrix *
+									 Matrix!4.identity *
+									 Matrix!4.buildPerspective( std.math.PI_2, cast(float)width / cast(float)height, 1, 1000 ) );
 
-		//This is finding the uniform for the given texture, and setting that texture to the appropriate one for the object
-		object.material.bind( shader );
+		shader.bindMaterial( object.material );
 
 		glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
 
@@ -200,21 +198,61 @@ public:
 		glActiveTexture( GL_TEXTURE2 );
 		glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
 		
+		// bind the directional and ambient lights
+		if( directionalLight is null )
+		{
+			directionalLight = new DirectionalLight( new Vector!3(), new Vector!3() );
+		}
+		if( ambientLight is null )
+		{
+			ambientLight = new AmbientLight( new Vector!3() );
+		}
+		shader.bindDirectionalLight( directionalLight );
+		shader.bindAmbientLight( ambientLight );
+		
 		// bind the window mesh for directional lights
 		glBindVertexArray( Assets.get!Mesh( WindowMesh ).glVertexArray );
-
-		// bind the directional and ambient lights
-		Light tempDirLight = new DirectionalLight( new Vector!3( 1.0f, 1.0f, 1.0f ), new Vector!3( 0.0f, -1.0f, 0.5f ) );
-		shader.bindLight( tempDirLight );
-		Light tempAmbLight = new Light( new Vector!3( .2f, .2f, .2f ) );
-		shader.bindLight( tempAmbLight );
-
 		glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, null );
 
 		glBindVertexArray(0);
 		glUseProgram(0);
 
 		swapBuffers();
+
+		lights = [];
+		ambientLight = null;
+		directionalLight = null;
+	}
+
+	final void addLight( Light light )
+	{
+		if( typeid( light ) == typeid( AmbientLight ) )
+		{
+			if( ambientLight is null )
+			{
+				ambientLight = cast(AmbientLight)light;
+			}
+			else
+				log( OutputType.Info, "Attemtping to add multiple ambient lights to the scene.  Ignoring additional ambient lights." );
+		}
+		else if( typeid( light ) == typeid( DirectionalLight ) )
+		{
+			if( directionalLight is null )
+			{
+				directionalLight = cast(DirectionalLight)light;
+			}
+			else
+				log( OutputType.Info, "Attemtping to add multiple directional lights to the scene.  Ignoring additional directional lights." );
+		}
+		else
+		{
+			lights ~= light;
+		}
+	}
+
+	final void setCamera( Camera camera )
+	{
+		activeCamera = camera;
 	}
 
 protected:
@@ -235,4 +273,11 @@ protected:
 		backfaceCulling = Config.get!bool( "Graphics.BackfaceCulling" );
 		vsync = Config.get!bool( "Graphics.VSync" );
 	}
+
+private:
+	static Camera activeCamera;
+	//To be cleared after a draw call:
+	AmbientLight ambientLight;
+	DirectionalLight directionalLight;
+	Light[] lights;
 }

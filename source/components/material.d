@@ -41,21 +41,7 @@ public:
 	}
 
 	override void update() { }
-	override void draw( Shader shader ) { }
 	override void shutdown() { }
-
-	final void bind( Shader shader )
-	{
-		GLint textureLocation = glGetUniformLocation( shader.programID, "diffuseTexture\0" );
-		glUniform1i( textureLocation, 0 );
-		glActiveTexture( GL_TEXTURE0 );
-		glBindTexture( GL_TEXTURE_2D, diffuse.glID );
-
-		textureLocation = glGetUniformLocation( shader.programID, "normalTexture\0" );
-		glUniform1i( textureLocation, 1 );
-		glActiveTexture( GL_TEXTURE1 );
-		glBindTexture( GL_TEXTURE_2D, normal.glID );
-	}
 }
 
 final class Texture

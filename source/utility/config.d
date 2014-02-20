@@ -6,7 +6,7 @@ import utility.filepath;
 
 // Imports for conversions
 import core.dgame : GameState;
-import components.assets;
+import components.assets, components.lights;
 import graphics.shaders;
 import utility.output : Verbosity;
 import math.vector, math.quaternion;
@@ -34,6 +34,8 @@ public static:
 		constructor.addConstructorScalar( "!GameState", &constructConv!GameState );
 		constructor.addConstructorScalar( "!Verbosity", &constructConv!Verbosity );
 		constructor.addConstructorScalar( "!Shader", ( ref Node node ) => Shaders.get( node.get!string ) );
+		constructor.addConstructorMapping( "!Light-Directional", &constructDirectionalLight );
+		constructor.addConstructorMapping( "!Light-Ambient", &constructAmbientLight );
 		//constructor.addConstructorScalar( "!Texture", ( ref Node node ) => Assets.get!Texture( node.get!string ) );
 		//constructor.addConstructorScalar( "!Mesh", ( ref Node node ) => Assets.get!Mesh( node.get!string ) );
 		//constructor.addConstructorScalar( "!Material", ( ref Node node ) => Assets.get!Material( node.get!string ) );
@@ -245,6 +247,25 @@ Quaternion constructQuaternion( ref Node node )
 	}
 
 	return result;
+}
+
+Light constructDirectionalLight( ref Node node )
+{
+	Vector!3 color = new Vector!3();
+	Vector!3 dir = new Vector!3();
+
+	Config.tryGet( "Color", color, node );
+	Config.tryGet( "Direction", dir, node );
+
+	return new DirectionalLight( color, dir );
+}
+
+Light constructAmbientLight( ref Node node )
+{
+	Vector!3 color = new Vector!3();
+	Config.tryGet( "Color", color, node );
+
+	return new AmbientLight( color );
 }
 
 T constructConv( T )( ref Node node ) if( is( T == enum ) )

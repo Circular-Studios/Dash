@@ -28,6 +28,14 @@ public:
 	 */
 	mixin Property!( "Mesh", "mesh", "public" );
 	/**
+	* The light attached to this object
+	*/
+	mixin Property!( "Light", "light", "public" );
+	/**
+	* The camera attached to this object
+	*/
+	mixin Property!( "Camera", "camera", "public" );
+	/**
 	 * The object that this object belongs to
 	 */
 	mixin Property!( "GameObject", "parent" );
@@ -63,7 +71,7 @@ public:
 
 		if( Config.tryGet!string( "Camera", prop, yamlObj ) )
 		{
-			//TODO: Setup camera
+			obj.addComponent( new Camera( obj ) );
 		}
 
 		if( Config.tryGet!string( "Material", prop, yamlObj ) )
@@ -85,6 +93,11 @@ public:
 				obj.transform.position = transVec;
 			if( Config.tryGet( "Rotation", transVec, innerNode ) )
 				obj.transform.rotation = Quaternion.fromEulerAngles( transVec );
+		}
+
+		if( Config.tryGet!Light( "Light", prop, yamlObj ) )
+		{
+			obj.addComponent( prop.get!Light );
 		}
 
 		return obj;
@@ -122,7 +135,14 @@ public:
 	{
 		onDraw();
 
-		Graphics.drawObject( this );
+		if( mesh !is null )
+		{
+			Graphics.drawObject( this );
+		}
+		if( light !is null )
+		{
+			Graphics.addLight( light );
+		}
 	}
 
 	/**
@@ -151,6 +171,11 @@ public:
 			material = cast(Material)newComponent;
 		else if( typeid( newComponent ) == typeid( Mesh ) )
 			mesh = cast(Mesh)newComponent;
+		else if( typeid( newComponent ) == typeid( DirectionalLight ) || 
+				 typeid( newComponent ) == typeid( AmbientLight ) )
+			light = cast(Light)newComponent;
+		else if( typeid( newComponent ) == typeid( Camera ) )
+			camera = cast(Camera)newComponent;
 	}
 
 	/**

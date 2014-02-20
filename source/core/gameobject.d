@@ -277,18 +277,11 @@ public:
 
 	final void updateMatrix()
 	{
-		auto newMatrix = new mat4;
-
+		//Rotate
+		auto newMatrix = rotation.to_matrix(4,4);
 		// Scale
 		newMatrix.scale([scale.x, scale.y, scale.z]);
-
-		// Rotate
-		_matrix = newMatrix * rotation.matrix;
-
-		// Translate
-		_matrix.matrix[ 3 ][ 0 ] = position.x;
-		_matrix.matrix[ 3 ][ 1 ] = position.y;
-		_matrix.matrix[ 3 ][ 2 ] = position.z;
+		newMatrix.translation([position.x, position.y, position.z]);
 
 		_matrixIsDirty = false;
 	}

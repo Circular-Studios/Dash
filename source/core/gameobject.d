@@ -278,10 +278,10 @@ public:
 	final void updateMatrix()
 	{
 		//Rotate
-		auto newMatrix = rotation.to_matrix(4,4);
+		_matrix = rotation.to_matrix(4,4);
 		// Scale
-		newMatrix.scale([scale.x, scale.y, scale.z]);
-		newMatrix.translation([position.x, position.y, position.z]);
+		_matrix.scale([scale.x, scale.y, scale.z]);
+		_matrix.translation([position.x, position.y, position.z]);
 
 		_matrixIsDirty = false;
 	}

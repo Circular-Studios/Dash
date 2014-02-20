@@ -152,7 +152,7 @@ public:
 
 		shader.bindUniformMatrix4fv( ShaderUniform.World , object.transform.matrix );
 		shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , object.transform.matrix *
-									 activeCamera.viewMatrix *
+									 Matrix!4.identity *
 									 Matrix!4.buildPerspective( std.math.PI_2, cast(float)width / cast(float)height, 1, 1000 ) );
 
 		shader.bindMaterial( object.material );

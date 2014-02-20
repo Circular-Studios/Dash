@@ -86,7 +86,16 @@ public:
 		apply( go => go.draw() );
 	}
 
+	final GameObject opIndex( string name )
+	{
+		return get( name );
+	}
 
+	final GameObject get( string name )
+	{
+		auto object = name in objects;
+		return object is null ? null : *object;
+	}
 
 private:
 	GameObject[string] objects;

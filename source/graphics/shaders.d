@@ -62,17 +62,21 @@ private:
 	Shader[string] shaders;
 }
 
+/*
+ * String constants for our shader uniforms
+ */
 public enum ShaderUniform 
 {
 	World = "world",
-		WorldView = "worldView",
-		WorldViewProjection = "worldViewProj",
-		DiffuseTexture = "diffuseTexture",
-		NormalTexture = "normalTexture",
-		DepthTexture = "depthTexture",
-		DirectionalLightDirection = "dirLight.direction",
-		DirectionalLightColor = "dirLight.color",
-		AmbientLight = "ambientLight"
+	WorldView = "worldView",
+	WorldViewProjection = "worldViewProj",
+	DiffuseTexture = "diffuseTexture",
+	NormalTexture = "normalTexture",
+	SpecularTexture = "specularTexture",
+	DepthTexture = "depthTexture",
+	DirectionalLightDirection = "dirLight.direction",
+	DirectionalLightColor = "dirLight.color",
+	AmbientLight = "ambientLight"
 }
 
 final package class Shader
@@ -179,30 +183,28 @@ public:
 
 	final void bindUniform1f( ShaderUniform uniform, const float value )
 	{
-		auto currentUniform = getUniformLocation( uniform );
-
-		glUniform1f( currentUniform, value );
+		glUniform1f( getUniformLocation( uniform ), value );
 	}
 
 	final void bindUniformMatrix4fv( ShaderUniform uniform, const Matrix!4 matrix )
 	{
-		auto currentUniform = getUniformLocation( uniform );
-
-		glUniformMatrix4fv( currentUniform, 1, false, matrix.matrix.ptr.ptr );
+		glUniformMatrix4fv( getUniformLocation( uniform ), 1, false, matrix.matrix.ptr.ptr );
 	}
 
 	final void bindMaterial( Material material )
 	{
 		//This is finding the uniform for the given texture, and setting that texture to the appropriate one for the object
-		GLint textureLocation = getUniformLocation( ShaderUniform.DiffuseTexture );
-		glUniform1i( textureLocation, 0 );
+		glUniform1i( getUniformLocation( ShaderUniform.DiffuseTexture ), 0 );
 		glActiveTexture( GL_TEXTURE0 );
 		glBindTexture( GL_TEXTURE_2D, material.diffuse.glID );
 
-		textureLocation = getUniformLocation( ShaderUniform.NormalTexture );
-		glUniform1i( textureLocation, 1 );
+		glUniform1i( getUniformLocation( ShaderUniform.NormalTexture ), 1 );
 		glActiveTexture( GL_TEXTURE1 );
 		glBindTexture( GL_TEXTURE_2D, material.normal.glID );
+
+		glUniform1i( getUniformLocation( ShaderUniform.SpecularTexture ), 2 );
+		glActiveTexture( GL_TEXTURE2 );
+		glBindTexture( GL_TEXTURE_2D, material.specular.glID );
 	}
 
 	final void bindAmbientLight( AmbientLight light )
@@ -213,7 +215,7 @@ public:
 	final void bindDirectionalLight( DirectionalLight light )
 	{
 		// buffer light here
-		glUniform3f( getUniformLocation( ShaderUniform.DirectionalLightDirection ), (cast(DirectionalLight)light).direction.x, (cast(DirectionalLight)light).direction.y, (cast(DirectionalLight)light).direction.z );
+		glUniform3f( getUniformLocation( ShaderUniform.DirectionalLightDirection ), light.direction.x, light.direction.y, light.direction.z );
 		glUniform3f( getUniformLocation( ShaderUniform.DirectionalLightColor ), light.color.x, light.color.y, light.color.z );
 	}
 
@@ -266,6 +268,7 @@ layout( location = 1 ) out vec4 normal_w;
 
 uniform sampler2D diffuseTexture;
 uniform sampler2D normalTexture;
+uniform sampler2D specularTexture;
 
 vec2 encode( vec3 normal )
 {
@@ -321,6 +324,7 @@ struct DirectionalLight
 in vec4 fPosition;
 in vec2 fUV;
 
+// this diffuse should be set to the geometry output
 uniform sampler2D diffuseTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D depthTexture;

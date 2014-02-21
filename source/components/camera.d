@@ -12,16 +12,14 @@ import std.signals, std.conv;
 
 final class Camera : Component
 {
-public:
-	mixin Property!( "float", "fov", "private" );
-	mixin Property!( "float", "near", "private" );
-	mixin Property!( "float", "far", "private" );
-	
+public:	
 	mixin Signal!( string, string );
 
-	this()
+	this( GameObject owner )
 	{
-		super( null );
+		super( owner );
+
+		owner.transform.connect( &this.setMatrixDirty );
 	}
 
 	override void update() { }

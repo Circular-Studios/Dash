@@ -44,6 +44,9 @@ public:
 	mixin Property!( "bool", "fullscreen", "protected" );
 	mixin Property!( "bool", "backfaceCulling", "protected" );
 	mixin Property!( "bool", "vsync", "protected" );
+	mixin Property!( "float", "fov", "protected" );
+	mixin Property!( "float", "near", "protected" );
+	mixin Property!( "float", "far", "protected" );
 	mixin Property!( "uint", "deferredFrameBuffer", "protected" );
 	mixin Property!( "uint", "diffuseRenderTexture", "protected" ); //Alpha channel stores Specular color
 	mixin Property!( "uint", "normalRenderTexture", "protected" ); //Alpha channel stores Specular power
@@ -111,6 +114,7 @@ public:
 		GLenum[ 2 ] DrawBuffers = [ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 ];
 		glDrawBuffers( 2, DrawBuffers.ptr );
 		glViewport(0, 0, width, height);
+		updateProjection();
 
 		if( glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE )
 		{
@@ -150,15 +154,10 @@ public:
 		auto shader = Shaders[GeometryShader];
 		glBindVertexArray( object.mesh.glVertexArray );
 
-		mat4 world = object.transform.matrix;
-		mat4 view = mat4.identity;
-		mat4 proj = mat4.perspective( cast(float)width, cast(float)height, 90, 1, 1000 );//Camera.buildPerspective(std.math.PI_2,cast(float)width / cast(float)height, 1, 1000 );
-		mat4 worldviewproj = proj * view * world;
-
-		shader.bindUniformMatrix4fv( ShaderUniform.World , world );
-		shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , worldviewproj );//object.transform.matrix *
-									 //mat4.identity *
-									 //mat4.perspective_inverse( cast(float)width, cast(float)height, std.math.PI_2, 1, 1000 ) );
+		shader.bindUniformMatrix4fv( ShaderUniform.World , object.transform.matrix );
+		shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , projection * 
+										( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) *
+										object.transform.matrix );
 
 		shader.bindMaterial( object.material );
 
@@ -277,10 +276,19 @@ protected:
 
 		backfaceCulling = Config.get!bool( "Graphics.BackfaceCulling" );
 		vsync = Config.get!bool( "Graphics.VSync" );
+		fov = Config.get!float( "Display.FieldOfView" );
+		near = Config.get!float( "Display.NearPlane" );
+		far = Config.get!float( "Display.FarPlane" );
+	}
+
+	final void updateProjection()
+	{
+		projection = mat4.perspective( cast(float)width, cast(float)height, fov, near, far );
 	}
 
 private:
 	static Camera activeCamera;
+	static mat4 projection;
 	//To be cleared after a draw call:
 	AmbientLight ambientLight;
 	DirectionalLight directionalLight;

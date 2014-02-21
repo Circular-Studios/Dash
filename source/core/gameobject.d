@@ -83,7 +83,6 @@ public:
 		{
 			auto cam = new Camera;
 			obj.addComponent( cam );
-			cam.owner = obj;
 		}
 
 		if( Config.tryGet!string( "Material", prop, yamlObj ) )

@@ -165,6 +165,7 @@ public:
 	final void addComponent( T )( T newComponent ) if( is( T : Component ) )
 	{
 		componentList[ T.classinfo ] = newComponent;
+		newComponent.owner = this;
 
 		// Add component to proper property
 		if( typeid( newComponent ) == typeid( Material ) )

@@ -17,6 +17,7 @@ import std.stdio, std.stream, std.format, std.math, std.container;
 class Mesh : Component
 {
 public:
+	mixin Property!( "bool", "animated", "protected" );
 	mixin Property!( "uint", "glVertexArray", "protected" );
 	mixin Property!( "uint", "numVertices", "protected" );
 	mixin Property!( "uint", "numIndices", "protected" );
@@ -35,10 +36,10 @@ public:
 											aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
 											aiProcess_JoinIdenticalVertices | aiProcess_SortByPType |
 											aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder );
-		bool animation;
 		int floatsPerVertex, vertexSize;
 		float[] outputData;
 		uint[] indices;
+		animated = false;
 		if( scene )
 		{
 			auto mesh = scene.mMeshes[0];	
@@ -47,35 +48,44 @@ public:
 			if( scene.mNumAnimations > 0 && mesh.mNumBones > 0 )
 			{
 				// (8 floats for animation data)
-				animation = true;
-				floatsPerVertex = 15;
+				animated = true;
+				floatsPerVertex = 19;
 				vertexSize = float.sizeof * floatsPerVertex;
 				
-				// Get the anim data
-				int[][] vertBones = new int[][mesh.mNumVertices];
-				float[][] vertWeights = new float[][mesh.mNumVertices];
-				for( int i = 0; i < mesh.mNumBones; i++)
+				// Get the vertex anim data
+				int[][] vertBones = new int[][ mesh.mNumVertices ];
+				float[][] vertWeights = new float[][ mesh.mNumVertices ];
+				for( int i = 0; i < mesh.mNumBones; i++ )
 				{					
-					for( int ii = 0; ii < mesh.mBones[i].mNumWeights; ii++)
+					for( int ii = 0; ii < mesh.mBones[ i ].mNumWeights; ii++ )
 					{
-						vertBones[cast(int)mesh.mBones[i].mWeights[ii].mVertexId] ~= i;
-						vertWeights[cast(int)mesh.mBones[i].mWeights[ii].mVertexId] ~= mesh.mBones[i].mWeights[ii].mWeight;
+						vertBones[ cast(int)mesh.mBones[ i ].mWeights[ ii ].mVertexId ] ~= i;
+						vertWeights[ cast(int)mesh.mBones[ i ].mWeights[ ii ].mVertexId ] ~= mesh.mBones[ i ].mWeights[ ii ].mWeight;
 					}
 				}
 
-				// Make sure each is 4, if not bring to 4 (BREAKING)
-				/*for( int i = 0; i < mesh.mNumVertices; i++)
+				// Make sure each is 4, if not bring or truncate to 4
+				int maxBonesAttached = 0;
+				for( int i = 0; i < mesh.mNumVertices; i++)
 				{
-					while(vertBones[i].length != 4)
+					if ( vertBones[i].length > maxBonesAttached )
+						maxBonesAttached = vertBones[i].length;
+
+					while(vertBones[i].length < 4)
 					{
 						vertBones[i] ~= 0;
 					}
 
-					while(vertWeights[i].length != 4)
+					while(vertWeights[i].length < 4)
 					{
 						vertWeights[i] ~= 0.0f;
 					}
-				}*/
+
+				}
+				if( maxBonesAttached > 4 )
+				{
+					log( OutputType.Warning, filePath, " has more than 4 bones for some vertex, data will be truncated. (has ", maxBonesAttached, ")" );
+				}
 
 				// For each vertex on each face
 				int meshFaces = mesh.mNumFaces;
@@ -106,15 +116,15 @@ public:
 						//outputData ~= bitangent.x;
 						//outputData ~= bitangent.y;
 						//outputData ~= bitangent.z;
-						outputData ~= vertBones[ face.mIndices[ j ] ];
-						outputData ~= vertWeights[ face.mIndices[ j ] ];
+						outputData ~= vertBones[ face.mIndices[ j ] ][0..4];
+						outputData ~= vertWeights[ face.mIndices[ j ] ][0..4];
 					}
 				}
 			}
 			// Otherwise render without animation
-			if( scene.mNumAnimations == 0 || mesh.mNumBones == 0 || animation == false ) // No animation or animation failed
+			if( scene.mNumAnimations == 0 || mesh.mNumBones == 0 || animated == false ) // No animation or animation failed
 			{
-				animation = false;
+				animated = false;
 				floatsPerVertex = 11;
 				vertexSize = float.sizeof * floatsPerVertex;
 
@@ -182,7 +192,7 @@ public:
 		uint UV_ATTRIBUTE = 1;
 		uint NORMAL_ATTRIBUTE = 2;
 		uint TANGENT_ATTRIBUTE = 3;
-		uint BINORMAL_ATTRIBUTE = 4;
+		//uint BINORMAL_ATTRIBUTE = 4;
 
 		// Connect the position to the inputPosition attribute of the vertex shader
 		glEnableVertexAttribArray( POSITION_ATTRIBUTE );
@@ -200,15 +210,15 @@ public:
 		//glEnableVertexAttribArray( BINORMAL_ATTRIBUTE );
 		//glVertexAttribPointer( BINORMAL_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, vertexSize, cast(char*)0 + ( GLfloat.sizeof * 11 ) );
 
-		if(animation)
+		if( animated )
 		{
 			uint BONE_ATTRIBUTE = 4;
 			uint WEIGHT_ATTRIBUTE = 5;
 
 			glEnableVertexAttribArray( BONE_ATTRIBUTE );
-			glVertexAttribPointer( BONE_ATTRIBUTE, 2, GL_FLOAT, GL_FALSE, vertexSize, cast(char*)0 + ( GLfloat.sizeof * 11 ) );
+			glVertexAttribPointer( BONE_ATTRIBUTE, 4, GL_FLOAT, GL_FALSE, vertexSize, cast(char*)0 + ( GLfloat.sizeof * 11 ) );
 			glEnableVertexAttribArray( WEIGHT_ATTRIBUTE );
-			glVertexAttribPointer( WEIGHT_ATTRIBUTE, 2, GL_FLOAT, GL_FALSE, vertexSize, cast(char*)0 + ( GLfloat.sizeof * 13 ) );
+			glVertexAttribPointer( WEIGHT_ATTRIBUTE, 4, GL_FLOAT, GL_FALSE, vertexSize, cast(char*)0 + ( GLfloat.sizeof * 15 ) );
 		}
 
 		// Generate index buffer

@@ -75,7 +75,7 @@ public:
 			if( Config.tryGet( "Position", transVec, innerNode ) )
 				transform.position = transVec;
 			if( Config.tryGet( "Rotation", transVec, innerNode ) )
-				transform.rotation = quat.euler_rotation( transVec.z, transVec.y, transVec.x );
+				transform.rotation = quat.euler_rotation( transVec.y, transVec.z, transVec.x );
 		}
 	}
 
@@ -99,7 +99,7 @@ public:
 		result.transform.rotation.x = transform.rotation.x;
 		result.transform.rotation.y = transform.rotation.y;
 		result.transform.rotation.z = transform.rotation.z;
-		result.transform.rotation.w = transform.rotation.w;
+		//result.transform.rotation.w = transform.rotation.w;
 
 		foreach( cpn; componentReferences )
 			result.addComponent( cpn );

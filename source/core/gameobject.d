@@ -92,7 +92,7 @@ public:
 			if( Config.tryGet( "Position", transVec, innerNode ) )
 				obj.transform.position = transVec;
 			if( Config.tryGet( "Rotation", transVec, innerNode ) )
-				obj.transform.rotation = quat.euler_rotation( transVec.z, transVec.y, transVec.x );
+				obj.transform.rotation = quat.euler_rotation( transVec.y, transVec.z, transVec.x );
 		}
 
 		if( Config.tryGet!Light( "Light", prop, yamlObj ) )
@@ -269,10 +269,12 @@ public:
 
 	final void updateMatrix()
 	{
-		//Rotate
-		_matrix = rotation.to_matrix!(4,4);
+		_matrix = mat4.identity;
 		// Scale
 		_matrix.scale([scale.x, scale.y, scale.z]);
+		//Rotate
+		_matrix.rotation( rotation.to_matrix!( 3, 3 ) );
+		// Translate
 		_matrix.translation([position.x, position.y, position.z]);
 
 		_matrixIsDirty = false;

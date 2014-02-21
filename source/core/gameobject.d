@@ -58,9 +58,19 @@ public:
 		// Try to get from script
 		if( Config.tryGet!string( "Script.ClassName", prop, yamlObj ) )
 		{
-			obj = cast(GameObject)Object.factory( prop.get!string );
+			const ClassInfo scriptClass = ClassInfo.find( prop.get!string );
+
+			if( Config.tryGet!string( "InstanceOf", prop, yamlObj ) )
+			{
+				obj = Prefabs[ prop.get!string ].createInstance( scriptClass );
+			}
+			else
+			{
+				obj = cast(GameObject)scriptClass.create();
+			}
 		}
-		else if( Config.tryGet!string( "InstanceOf", prop, yamlObj ) )
+
+		if( Config.tryGet!string( "InstanceOf", prop, yamlObj ) )
 		{
 			obj = Prefabs[ prop.get!string ].createInstance();
 		}
@@ -71,7 +81,9 @@ public:
 
 		if( Config.tryGet!string( "Camera", prop, yamlObj ) )
 		{
-			obj.addComponent( new Camera( obj ) );
+			auto cam = new Camera;
+			obj.addComponent( cam );
+			cam.owner = obj;
 		}
 
 		if( Config.tryGet!string( "Material", prop, yamlObj ) )

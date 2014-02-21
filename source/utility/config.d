@@ -129,7 +129,7 @@ public static:
 				right = right[ split + 1..$ ];
 			}
 
-			if( !current.containsKey( left ) )
+			if( !current.isMapping || !current.containsKey( left ) )
 				return false;
 
 			current = current[ left ];

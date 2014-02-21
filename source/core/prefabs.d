@@ -77,6 +77,11 @@ public:
 			if( Config.tryGet( "Rotation", transVec, innerNode ) )
 				transform.rotation = quat.euler_rotation( transVec.y, transVec.z, transVec.x );
 		}
+
+		if( Config.tryGet!Light( "Light", prop, innerNode ) )
+		{
+			componentReferences ~= prop.get!Light;
+		}
 	}
 
 	this()
@@ -85,12 +90,14 @@ public:
 		scriptClass = null;
 	}
 
-	final GameObject createInstance()
+	final GameObject createInstance( const ClassInfo overrideScript = null )
 	{
 		GameObject result;
 
-		if( scriptClass )
-			result = cast(GameObject)scriptClass.create();
+		auto script = overrideScript is null ? scriptClass : overrideScript;
+
+		if( script )
+			result = cast(GameObject)script.create();
 		else
 			result = new GameObject;
 
@@ -105,7 +112,11 @@ public:
 			result.addComponent( cpn );
 
 		foreach( cpncls; componentCreations )
-			result.addComponent( cast(Component)cpncls.create() );
+		{
+			auto inst = cast(Component)cpncls.create();
+			result.addComponent( inst );
+			inst.owner = result;
+		}
 
 		result.transform.updateMatrix();
 

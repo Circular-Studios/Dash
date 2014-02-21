@@ -58,9 +58,19 @@ public:
 		// Try to get from script
 		if( Config.tryGet!string( "Script.ClassName", prop, yamlObj ) )
 		{
-			obj = cast(GameObject)Object.factory( prop.get!string );
+			const ClassInfo scriptClass = ClassInfo.find( prop.get!string );
+
+			if( Config.tryGet!string( "InstanceOf", prop, yamlObj ) )
+			{
+				obj = Prefabs[ prop.get!string ].createInstance( scriptClass );
+			}
+			else
+			{
+				obj = cast(GameObject)scriptClass.create();
+			}
 		}
-		else if( Config.tryGet!string( "InstanceOf", prop, yamlObj ) )
+
+		if( Config.tryGet!string( "InstanceOf", prop, yamlObj ) )
 		{
 			obj = Prefabs[ prop.get!string ].createInstance();
 		}

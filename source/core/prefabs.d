@@ -85,12 +85,14 @@ public:
 		scriptClass = null;
 	}
 
-	final GameObject createInstance()
+	final GameObject createInstance( const ClassInfo overrideScript = null )
 	{
 		GameObject result;
 
-		if( scriptClass )
-			result = cast(GameObject)scriptClass.create();
+		auto script = overrideScript is null ? scriptClass : overrideScript;
+
+		if( script )
+			result = cast(GameObject)script.create();
 		else
 			result = new GameObject;
 

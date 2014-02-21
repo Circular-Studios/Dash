@@ -77,6 +77,11 @@ public:
 			if( Config.tryGet( "Rotation", transVec, innerNode ) )
 				transform.rotation = quat.euler_rotation( transVec.y, transVec.z, transVec.x );
 		}
+
+		if( Config.tryGet!Light( "Light", prop, innerNode ) )
+		{
+			componentReferences ~= prop.get!Light;
+		}
 	}
 
 	this()
@@ -107,7 +112,11 @@ public:
 			result.addComponent( cpn );
 
 		foreach( cpncls; componentCreations )
-			result.addComponent( cast(Component)cpncls.create() );
+		{
+			auto inst = cast(Component)cpncls.create();
+			result.addComponent( inst );
+			inst.owner = result;
+		}
 
 		result.transform.updateMatrix();
 

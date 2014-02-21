@@ -81,7 +81,9 @@ public:
 
 		if( Config.tryGet!string( "Camera", prop, yamlObj ) )
 		{
-			obj.addComponent( new Camera( obj ) );
+			auto cam = new Camera;
+			obj.addComponent( cam );
+			cam.owner = obj;
 		}
 
 		if( Config.tryGet!string( "Material", prop, yamlObj ) )

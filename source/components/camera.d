@@ -20,11 +20,9 @@ public:
 	
 	mixin Signal!( string, string );
 
-	this( GameObject owner )
+	this()
 	{
-		super( owner );
-
-		owner.transform.connect( &this.setMatrixDirty );
+		super( null );
 	}
 
 	override void update() { }

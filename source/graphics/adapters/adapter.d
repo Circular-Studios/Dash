@@ -150,10 +150,9 @@ public:
 		auto shader = Shaders[GeometryShader];
 		glBindVertexArray( object.mesh.glVertexArray );
 
-		object.transform.updateMatrix();
 		mat4 world = object.transform.matrix;
 		mat4 view = mat4.identity;
-		mat4 proj = Camera.buildPerspective(std.math.PI_2,cast(float)width / cast(float)height, 1, 1000 );
+		mat4 proj = mat4.perspective( cast(float)width, cast(float)height, 90, 1, 1000 );//Camera.buildPerspective(std.math.PI_2,cast(float)width / cast(float)height, 1, 1000 );
 		mat4 worldviewproj = proj * view * world;
 
 		shader.bindUniformMatrix4fv( ShaderUniform.World , world );

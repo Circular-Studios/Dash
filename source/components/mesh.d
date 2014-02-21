@@ -34,8 +34,8 @@ public:
 		// Load the scene via assimp
 		const aiScene* scene = aiImportFile(( filePath ~ "\0" ).ptr,
 											aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
-											aiProcess_JoinIdenticalVertices | aiProcess_SortByPType |
-											aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder );
+											aiProcess_JoinIdenticalVertices | aiProcess_SortByPType );//|
+											//aiProcess_FlipWindingOrder );
 		float[] outputData;
 		uint[] indices;
 		if(!scene)

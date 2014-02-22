@@ -1,5 +1,6 @@
 module components;
 public:
+import components.animation;
 import components.component;
 import components.assets;
 import components.material;

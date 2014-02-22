@@ -8,9 +8,8 @@ import components.component;
 import graphics.graphics, graphics.shaders;
 import utility.output;
 import math.vector;
-import derelict.assimp3.assimp;
 
-import derelict.opengl3.gl3;
+import derelict.opengl3.gl3, derelict.assimp3.assimp;
 
 import std.stdio, std.stream, std.format, std.math, std.container;
 
@@ -24,28 +23,18 @@ public:
 	mixin BackedProperty!( "uint", "_glIndexBuffer", "glIndexBuffer" );
 	mixin BackedProperty!( "uint", "_glVertexBuffer", "glVertexBuffer" );
 
-	this( string filePath )
+	this( string filePath, const(aiMesh*) mesh )
 	{
 		super( null );
 
-		// Initial assimp start
-		DerelictASSIMP3.load();
-
-		// Load the scene via assimp
-		const aiScene* scene = aiImportFile( ( filePath ~ "\0" ).ptr,
-											aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
-											aiProcess_JoinIdenticalVertices | aiProcess_SortByPType |
-											aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder );
 		int floatsPerVertex, vertexSize;
 		float[] outputData;
 		uint[] indices;
 		animated = false;
-		if( scene )
+		if( mesh )
 		{
-			auto mesh = scene.mMeshes[0];	
-			
 			// If there is animation data
-			if( scene.mNumAnimations > 0 && mesh.mNumBones > 0 )
+			if( mesh.mNumBones > 0 )
 			{
 				// (8 floats for animation data)
 				animated = true;
@@ -122,7 +111,7 @@ public:
 				}
 			}
 			// Otherwise render without animation
-			if( scene.mNumAnimations == 0 || mesh.mNumBones == 0 || animated == false ) // No animation or animation failed
+			if( mesh.mNumBones == 0 || animated == false ) // No animation or animation failed
 			{
 				animated = false;
 				floatsPerVertex = 11;
@@ -173,9 +162,6 @@ public:
 			// Did not load
 			log( OutputType.Error, "Mesh not loaded: ", filePath );
 		}
-		// Release assimp instance now that we have all the mesh data
-		aiReleaseImport( scene );
-
 		
 		// make and bind the VAO
 		glGenVertexArrays( 1, &_glVertexArray );

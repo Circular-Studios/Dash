@@ -6,7 +6,7 @@ import derelict.assimp3.assimp;
 
 import math.matrix, math.vector;
 
-class Mesh : Component
+class Animation : Component
 {
 public:
 	//mixin Property!( "Bone[]", "bones", "public" );
@@ -31,11 +31,10 @@ public:
 
 	struct Animation
 	{
-		string name;
 		float duration;
 		float fps;
 		float currentTime;
-		BonePoses[] animData;
+		BonePoses[] boneAnimData;
 	}
 
 	struct BonePoses
@@ -44,6 +43,4 @@ public:
 		//Quaternion[] rotations;
 		//Vector!3[] scales;
 	}
-	
-
 }

@@ -8,7 +8,7 @@ import graphics.graphics, graphics.shaders;
 import utility.config;
 
 import yaml;
-import gl3n.linalg;
+import gl3n.linalg, gl3n.math;
 
 import std.signals, std.conv, std.variant;
 
@@ -104,7 +104,7 @@ public:
 			if( Config.tryGet( "Position", transVec, innerNode ) )
 				obj.transform.position = transVec;
 			if( Config.tryGet( "Rotation", transVec, innerNode ) )
-				obj.transform.rotation = quat.euler_rotation( transVec.y, transVec.z, transVec.x );
+				obj.transform.rotation = quat.euler_rotation( radians(transVec.y), radians(transVec.z), radians(transVec.x) );
 		}
 
 		if( Config.tryGet!Light( "Light", prop, yamlObj ) )

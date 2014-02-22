@@ -69,8 +69,7 @@ public:
 				obj = cast(GameObject)scriptClass.create();
 			}
 		}
-
-		if( Config.tryGet!string( "InstanceOf", prop, yamlObj ) )
+		else if( Config.tryGet!string( "InstanceOf", prop, yamlObj ) )
 		{
 			obj = Prefabs[ prop.get!string ].createInstance();
 		}

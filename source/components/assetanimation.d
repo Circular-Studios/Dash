@@ -14,10 +14,10 @@ public:
 
 	this( string name, const(aiAnimation*) animation, const(aiNode*) boneHierarchy )
 	{
-		animationSet.duration = cast(float)animation.mDuration;
-		animationSet.fps = cast(float)animation.mTicksPerSecond;
+		_animationSet.duration = cast(float)animation.mDuration;
+		_animationSet.fps = cast(float)animation.mTicksPerSecond;
 
-		animationSet.boneAnimData = makeBoneFromNode( animation, boneHierarchy );
+		_animationSet.boneAnimData = makeBoneFromNode( animation, boneHierarchy );
 	}
 
 	Bone makeBoneFromNode( const(aiAnimation*) animation, const(aiNode*) bones )
@@ -40,7 +40,7 @@ public:
 	void assignCorrectAnimationData( const(aiAnimation*) animation, Bone boneToAssign )
 	{
 		// For each bone animation data
-		for( int i = 0; i < animation.mNumMeshChannels; i++)
+		for( int i = 0; i < animation.mNumChannels; i++)
 		{
 			// If the names match
 			if( cast(string)animation.mChannels[ i ].mNodeName.data == boneToAssign.name )
@@ -95,7 +95,6 @@ public:
 		this( string boneName )
 		{
 			name = boneName;
-			//positionKeys = positions;
 		}
 
 		string name;

@@ -226,7 +226,7 @@ public:
 		owner = obj;
 		position = vec3(0,0,0);
 		scale = vec3(1,1,1);
-		rotation = quat(0,0,0,0);
+		rotation = quat.identity;
 		updateMatrix();
 	}
 

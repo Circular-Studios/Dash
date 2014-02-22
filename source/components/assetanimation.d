@@ -16,27 +16,41 @@ public:
 	{
 		animationSet.duration = cast(float)animation.mDuration;
 		animationSet.fps = cast(float)animation.mTicksPerSecond;
-		
-		// For each bone
-		for( int i = 0; i < animation.mNumMeshChannels; i++ )
-		{
 
-			// Append array of position keys 
-			animationSet.boneAnimData ~= new Bone( cast(string)animation.mChannels[ i ].mNodeName.data,
-											       convertVectorArray( animation.mChannels[ i ].mPositionKeys,
-															           animation.mChannels[ i ].mNumPositionKeys ));
-		}
-
-		// For each bone
-		for( int i = 0; i < animation.mNumMeshChannels; i++ )
-		{
-			// Find bone in node hierarchy
-			const(aiNode*) bone = findNodeWithName( animation.mChannels[ i ].mNodeName, boneHierarchy );
-
-			//boneAnimData[ i ].parent = bone.
-		}
+		animationSet.boneAnimData = makeBoneFromNode( animation, boneHierarchy );
 	}
 
+	Bone makeBoneFromNode( const(aiAnimation*) animation, const(aiNode*) bones )
+	{
+		
+		Bone temp = new Bone( cast(string)bones.mName.data );
+		
+		if( !(bones.mParent !is null) )
+			temp.parent = makeBoneFromNode( animation, bones.mParent );
+
+		for(int i = 0; i < bones.mNumChildren; i++)
+		{
+			temp.children ~= makeBoneFromNode( animation, bones.mChildren[i]);
+		}
+
+		assignCorrectAnimationData( animation, temp );
+
+		return temp;
+	}
+	void assignCorrectAnimationData( const(aiAnimation*) animation, Bone boneToAssign )
+	{
+		// For each bone animation data
+		for( int i = 0; i < animation.mNumMeshChannels; i++)
+		{
+			// If the names match
+			if( cast(string)animation.mChannels[ i ].mNodeName.data == boneToAssign.name )
+			{
+				// Assign the bone animation data to the bone
+				boneToAssign.positionKeys = convertVectorArray( animation.mChannels[ i ].mPositionKeys,
+																animation.mChannels[ i ].mNumPositionKeys );
+			}
+		}
+	}
 	// Go through array of keys and convert/store in vector[]
 	Vector!3[] convertVectorArray(const(aiVectorKey*) vectors, int numKeys)
 	{
@@ -49,38 +63,39 @@ public:
 
 		return temp;
 	}
-
-	const(aiNode*) findNodeWithName(aiString name, const(aiNode*) node)
+	
+	// Find bone with name in our structure
+	/*Bone findBoneWithName(string name, Bone bone)
 	{
-		if(name == node.mName)
+		if(name == bone.name)
 		{
-			return node;
+			return bone;
 		}
 
-		for(int i = 0; i < node.mNumChildren; i++)
+		for(int i = 0; i < bone.children.length; i++)
 		{
-			const(aiNode*) temp = findNodeWithName(name, node.mChildren[i]);
-			if(temp != null)
+			Bone temp = findBoneWithName(name, bone.children[i]);
+			if(temp !is null)
 			{
 				return temp;
 			}
 		}
 
 		return null;
-	}
+	}*/
 
 	struct AnimationSet
 	{
 		float duration;
 		float fps;
-		Bone[] boneAnimData;
+		Bone boneAnimData;
 	}
 	class Bone
 	{
-		this( string boneName, Vector!3[] positions )
+		this( string boneName )
 		{
 			name = boneName;
-			positionKeys = positions;
+			//positionKeys = positions;
 		}
 
 		string name;

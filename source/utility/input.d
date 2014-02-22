@@ -157,7 +157,7 @@ private:
  *
  * From: http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
  */
-enum Keys: uint
+enum Keyboard: uint
 {
 	MouseLeft	= 0x01, /// Left mouse button
 	MouseRight	= 0x02, /// Right mouse button

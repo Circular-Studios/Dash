@@ -1,6 +1,6 @@
 {
 	"name": "dash",
-	"description": "Helps you make vidja games.",
+	"description": "A game engine in dlang.",
 	"copyright": "2013 - 2014",
 	"license": "MIT",
 	"authors": [ 

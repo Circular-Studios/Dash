@@ -7,8 +7,11 @@ import gl3n.linalg;
 
 class Light : Component
 {
+private:
+	vec3 _color;
+
 public:
-	mixin Property!( "vec3", "color", "public" );
+	mixin( Property!( _color, "color", AccessModifier.Public ) );
 
 	this( vec3 color )
 	{
@@ -26,7 +29,6 @@ public:
 	{
 
 	}
-
 }
 
 class AmbientLight : Light 
@@ -39,8 +41,11 @@ class AmbientLight : Light
 
 class DirectionalLight : Light
 {
+private:
+	vec3 _direction;
+
 public:
-	mixin Property!( "vec3", "direction" );
+	mixin( Property!( _direction, "direction", AccessModifier.Public ) );
 
 	this( vec3 color, vec3 direction )
 	{

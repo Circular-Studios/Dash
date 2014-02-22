@@ -32,25 +32,34 @@ else
 
 abstract class Adapter
 {
-public:
-	// Graphics contexts
-	mixin Property!( "GLDeviceContext", "deviceContext", "protected" );
-	mixin Property!( "GLRenderContext", "renderContext", "protected" );
+private:
+	GLDeviceContext _deviceContext;
+	GLRenderContext _renderContext;
 
-	mixin Property!( "uint", "width", "protected" );
-	mixin Property!( "uint", "screenWidth", "protected" );
-	mixin Property!( "uint", "height", "protected" );
-	mixin Property!( "uint", "screenHeight", "protected" );
-	mixin Property!( "bool", "fullscreen", "protected" );
-	mixin Property!( "bool", "backfaceCulling", "protected" );
-	mixin Property!( "bool", "vsync", "protected" );
-	mixin Property!( "float", "fov", "protected" );
-	mixin Property!( "float", "near", "protected" );
-	mixin Property!( "float", "far", "protected" );
-	mixin Property!( "uint", "deferredFrameBuffer", "protected" );
-	mixin Property!( "uint", "diffuseRenderTexture", "protected" ); //Alpha channel stores Specular color
-	mixin Property!( "uint", "normalRenderTexture", "protected" ); //Alpha channel stores Specular power
-	mixin Property!( "uint", "depthRenderTexture", "protected" );
+	uint _width, _screenWidth;
+	uint _height, _screenHeight;
+	bool _fullscreen, _backfaceCulling, _vsync;
+	float _fov, _near, _far;
+	uint _deferredFrameBuffer, _diffuseRenderTexture, _normalRenderTexture, _depthRenderTexture;
+
+public:
+	mixin( Property!_deviceContext );
+	mixin( Property!_renderContext );
+
+	mixin( Property!_width );
+	mixin( Property!_screenWidth );
+	mixin( Property!_height );
+	mixin( Property!_screenHeight );
+	mixin( Property!_fullscreen );
+	mixin( Property!_backfaceCulling );
+	mixin( Property!_vsync );
+	mixin( Property!_fov );
+	mixin( Property!_near );
+	mixin( Property!_far );
+	mixin( Property!_deferredFrameBuffer );
+	mixin( Property!_diffuseRenderTexture ); //Alpha channel stores Specular color
+	mixin( Property!_normalRenderTexture ); //Alpha channel stores Specular power
+	mixin( Property!_depthRenderTexture );
 	
 	enum : string 
 	{

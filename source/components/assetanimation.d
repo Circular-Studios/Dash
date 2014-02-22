@@ -4,6 +4,7 @@ import core.properties;
 import components.component;
 
 import derelict.assimp3.assimp;
+import utility.output;
 
 import math.matrix, math.vector;
 
@@ -48,6 +49,10 @@ public:
 				// Assign the bone animation data to the bone
 				boneToAssign.positionKeys = convertVectorArray( animation.mChannels[ i ].mPositionKeys,
 																animation.mChannels[ i ].mNumPositionKeys );
+			}
+			else
+			{
+				log( OutputType.Warning, "Bone ", i, " did not find a valid AnimNode pair." );
 			}
 		}
 	}

@@ -15,11 +15,11 @@ public static:
 	/**
 	 * Time since last frame, in seconds.
 	 */
-	final @property float deltaTime() { return 0.016; }
+	final @property float deltaTime() { return delta; }
 	/**
 	 * Total time spent running, in seconds.
 	 */
-	final @property float totalTime() { return 1.00f; }
+	final @property float totalTime() { return totalTime; }
 
 	/**
 	 * Initialize the time controller with initial values.

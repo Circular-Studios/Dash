@@ -9,6 +9,7 @@ import core.dgame : GameState;
 import components.assets, components.lights;
 import graphics.shaders;
 import utility.output : Verbosity;
+import utility.input : Keyboard;
 
 import gl3n.linalg;
 import yaml;
@@ -33,6 +34,7 @@ public static:
 		constructor.addConstructorMapping( "!Quaternion-Map", &constructQuaternion );
 		constructor.addConstructorScalar( "!GameState", &constructConv!GameState );
 		constructor.addConstructorScalar( "!Verbosity", &constructConv!Verbosity );
+		constructor.addConstructorScalar( "!Keyboard", &constructConv!Keyboard );
 		constructor.addConstructorScalar( "!Shader", ( ref Node node ) => Shaders.get( node.get!string ) );
 		constructor.addConstructorMapping( "!Light-Directional", &constructDirectionalLight );
 		constructor.addConstructorMapping( "!Light-Ambient", &constructAmbientLight );
@@ -40,7 +42,7 @@ public static:
 		//constructor.addConstructorScalar( "!Mesh", ( ref Node node ) => Assets.get!Mesh( node.get!string ) );
 		//constructor.addConstructorScalar( "!Material", ( ref Node node ) => Assets.get!Material( node.get!string ) );
 
-		config = loadYaml( FilePath.Resources.Config );
+		config = loadYaml( FilePath.Resources.ConfigFile );
 	}
 
 	/**

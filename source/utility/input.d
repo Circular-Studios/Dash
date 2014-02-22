@@ -2,8 +2,10 @@
  * Defines the static Input class, which is responsible for handling all keyboard/mouse/controller interactions.
  */
 module utility.input;
+import utility.config, utility.filepath, utility.output;
 
-import std.typecons;
+import yaml;
+import std.typecons, std.conv;
 
 final abstract class Input
 {
@@ -13,6 +15,65 @@ public static:
 	 */
 	alias void delegate( uint, bool ) KeyEvent;
 	alias void delegate( uint ) KeyStateEvent;
+
+	/**
+	 * Processes Config/Input.yml and pulls input string bindings.
+	 */
+	final void initialize()
+	{
+		auto bindings = Config.loadYaml( FilePath.Resources.InputBindings );
+
+		foreach( string name, Node bind; bindings )
+		{
+			log( OutputType.Info, "Binding ", name );
+
+			if( bind.isScalar )
+			{
+				keyBindings[ name ] = bind.get!Keyboard;
+			}
+			else if( bind.isSequence )
+			{
+				foreach( Node child; bind )
+				{
+					try
+					{
+						keyBindings[ name ] = child.get!Keyboard;
+					}
+					catch
+					{
+						log( OutputType.Error, "Failed to parse keybinding ", name );
+					}
+				}
+			}
+			else if( bind.isMapping )
+			{
+				foreach( string type, Node value; bind )
+				{
+					final switch( type )
+					{
+						case "Keyboard":
+							try
+							{
+								keyBindings[ name ] = value.get!Keyboard;
+							}
+							catch
+							{
+								try
+								{
+									keyBindings[ name ] = value.get!string.to!Keyboard;
+								}
+								catch
+								{
+									log( OutputType.Error, "Failed to parse keybinding ", name );
+								}
+							}
+
+							break;
+					}
+				}
+			}
+		}
+	}
 
 	/**
 	 * Updates the key states, and calls all key events.
@@ -92,7 +153,35 @@ public static:
 		staging[ keyCode ] = newState;
 	}
 
+	/**
+	 * Gets the state of a string-bound input.
+	 *
+	 * Params:
+	 *		input =			The input to check for.
+	 * 		checkPrevious =	Whether or not to make sure the key was up last frame.
+	 */
+	final T getState( T = bool )( string input, bool checkPrevious = false ) if( is( T == bool ) /*|| is( T == float )*/ )
+	{
+		static if( is( T == bool ) )
+		{
+			if( input in keyBindings )
+			{
+				return isKeyDown( keyBindings[ input ], checkPrevious );
+			}
+			else
+			{
+				throw new Exception( "Input " ~ input ~ " not bound." );
+			}
+		}
+		/*else static if( is( T == float ) )
+		{
+
+		}*/
+	}
+
 private:
+	Keyboard[ string ] keyBindings;
+
 	KeyEvent[][ uint ] keyEvents;
 
 	KeyState current;
@@ -157,7 +246,7 @@ private:
  *
  * From: http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
  */
-enum Keys: uint
+enum Keyboard: uint
 {
 	MouseLeft	= 0x01, /// Left mouse button
 	MouseRight	= 0x02, /// Right mouse button

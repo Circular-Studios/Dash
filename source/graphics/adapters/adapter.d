@@ -287,8 +287,8 @@ protected:
 	}
 
 private:
-	static Camera activeCamera;
-	static mat4 projection;
+	Camera activeCamera;
+	mat4 projection;
 	//To be cleared after a draw call:
 	AmbientLight ambientLight;
 	DirectionalLight directionalLight;

@@ -18,12 +18,13 @@ public:
 	this(  )
 	{
 		super( null );
+		_viewMatrixIsDirty = true;
 	}
 
 	override void update() { }
 	override void shutdown() { }
 
-	final @property mat4 viewMatrix()
+	final @property ref mat4 viewMatrix()
 	{
 		if( _viewMatrixIsDirty )
 			updateViewMatrix();
@@ -51,10 +52,10 @@ private:
 		vec3 zaxis = vec3( sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw );
 
 		_viewMatrix.clear( 0.0f );
-		_viewMatrix[ 0 ] = [ xaxis.x, yaxis.x, zaxis.x, 0 ];
-		_viewMatrix[ 1 ] = [ xaxis.y, yaxis.y, zaxis.y, 0 ];
-		_viewMatrix[ 2 ] = [ xaxis.z, yaxis.z, zaxis.z, 0 ];
-		_viewMatrix[ 3 ] = [ -( xaxis * owner.transform.position ), -( yaxis * owner.transform.position ), -( zaxis * owner.transform.position ), 1 ];
+		_viewMatrix[ 0 ] = xaxis.vector ~ -( xaxis * owner.transform.position );
+		_viewMatrix[ 1 ] = yaxis.vector ~ -( yaxis * owner.transform.position );
+		_viewMatrix[ 2 ] = zaxis.vector ~ -( zaxis * owner.transform.position );
+		_viewMatrix[ 3 ] = [ 0, 0, 0, 1 ];
 
 		_viewMatrixIsDirty = false;
 	}

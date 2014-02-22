@@ -4,7 +4,7 @@ install:
  - sudo apt-get update
  - sudo apt-get -y --allow-unauthenticated install --reinstall d-apt-keyring 
  - sudo apt-get update
- - sudo apt-get install dub=0.9.20-0
+ - sudo apt-get install dub=0.9.20
  - sudo apt-get install dmd-bin
  - sudo dub install x11
  - sudo dub add-local . ~master

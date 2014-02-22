@@ -40,7 +40,7 @@ public static:
 		//constructor.addConstructorScalar( "!Mesh", ( ref Node node ) => Assets.get!Mesh( node.get!string ) );
 		//constructor.addConstructorScalar( "!Material", ( ref Node node ) => Assets.get!Material( node.get!string ) );
 
-		config = loadYaml( FilePath.Resources.Config );
+		config = loadYaml( FilePath.Resources.ConfigFile );
 	}
 
 	/**

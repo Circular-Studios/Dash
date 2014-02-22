@@ -1,46 +1,42 @@
 module components.animation;
 
-import components.component;
-
-import derelict.assimp3.assimp;
+import core.properties;
+import components.component, components.assetanimation;
 
 import math.matrix, math.vector;
 
 class Animation : Component
 {
 public:
-	//mixin Property!( "Bone[]", "bones", "public" );
+	mixin Property!( "AssetAnimation", "animationData", "public" );
+	mixin Property!( "int", "currentAnimation", "public" );
+	mixin Property!( "float", "currentPosition", "public" );
+	mixin Property!( "Bone[]", "currentPose", "public" );
 
-	this( )
+	this( AssetAnimation assetAnimation)
 	{
 		super( null );
+
+		currentAnimation = 0;
+		currentPosition = 0.0f;
+		animationData = assetAnimation;
+		//currentPose = animationData.getPose();
 	}
 
-	this( aiAnimation animation, aiBone[] bones )
+	override void update()
 	{
-		super( null );
+
 	}
 
+	override void shutdown()
+	{
+
+	}
 
 	class Bone
 	{
 		Bone parent;
 		Bone[] children;
 		Matrix!4 offset;
-	}
-
-	struct Animation
-	{
-		float duration;
-		float fps;
-		float currentTime;
-		BonePoses[] boneAnimData;
-	}
-
-	struct BonePoses
-	{
-		Vector!3[] positions;
-		//Quaternion[] rotations;
-		//Vector!3[] scales;
 	}
 }

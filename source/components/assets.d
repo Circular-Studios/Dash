@@ -14,7 +14,7 @@ public static:
 	/**
 	 * Get the asset with the given type and name.
 	 */
-	final T get( T )( string name ) if( is( T == Mesh ) || is( T == Texture ) || is( T == Material ) || is( T == Animation ))
+	final T get( T )( string name ) if( is( T == Mesh ) || is( T == Texture ) || is( T == Material ) || is( T == AssetAnimation ))
 	{
 		static if( is( T == Mesh ) )
 		{
@@ -28,7 +28,7 @@ public static:
 		{
 			return materials[ name ];
 		}
-		else static if( is( T == Animation ) )
+		else static if( is( T == AssetAnimation ) )
 		{
 			return animations[ name ];
 		}
@@ -53,7 +53,9 @@ public static:
 												aiProcess_JoinIdenticalVertices | aiProcess_SortByPType |
 												aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder );
 			// If animation data, add animation
-			
+			if(scene.mNumAnimations > 0)
+				animations[ file.baseFileName ] = new AssetAnimation( file.baseFileName, scene.mAnimations[0], scene.mRootNode.mChildren[1]);
+
 			// Add mesh
 			meshes[ file.baseFileName ] = new Mesh( file.fullPath, scene.mMeshes[0] );
 
@@ -116,5 +118,5 @@ private:
 	Mesh[string] meshes;
 	Texture[string] textures;
 	Material[string] materials;
-	Animation[string] animations;
+	AssetAnimation[string] animations;
 }

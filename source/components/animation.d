@@ -3,7 +3,7 @@ module components.animation;
 import core.properties;
 import components.component, components.assetanimation;
 
-import math.matrix, math.vector;
+import gl3n.linalg;
 
 class Animation : Component
 {
@@ -37,6 +37,6 @@ public:
 	{
 		Bone parent;
 		Bone[] children;
-		Matrix!4 offset;
+		mat4 offset;
 	}
 }

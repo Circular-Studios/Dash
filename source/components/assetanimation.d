@@ -6,7 +6,7 @@ import components.component;
 import derelict.assimp3.assimp;
 import utility.output;
 
-import math.matrix, math.vector;
+import gl3n.linalg;
 
 class AssetAnimation
 {
@@ -52,18 +52,18 @@ public:
 			}
 			else
 			{
-				log( OutputType.Warning, "Bone ", i, " did not find a valid AnimNode pair." );
+				//log( OutputType.Warning, "Bone ", i, " did not find a valid AnimNode pair." );
 			}
 		}
 	}
 	// Go through array of keys and convert/store in vector[]
-	Vector!3[] convertVectorArray(const(aiVectorKey*) vectors, int numKeys)
+	vec3[] convertVectorArray(const(aiVectorKey*) vectors, int numKeys)
 	{
-		Vector!3[] temp;
+		vec3[] temp;
 		for(int i = 0; i < numKeys; i++)
 		{
 			aiVector3D vector = vectors[i].mValue;
-			temp ~= new Vector!3(vector.x, vector.y, vector.z);
+			temp ~= vec3(vector.x, vector.y, vector.z);
 		}
 
 		return temp;
@@ -105,8 +105,8 @@ public:
 		string name;
 		Bone parent;
 		Bone[] children;
-		Vector!3[] positionKeys;
+		vec3[] positionKeys;
 		//Quaternion[] rotationKeys;
-		//Vector!3[] scaleKeys;
+		//vec3[] scaleKeys;
 	}
 }

@@ -2,10 +2,11 @@ module graphics.shaders;
 import core.properties;
 import components;
 import graphics.graphics;
-import math.matrix, math.vector;
 import utility.filepath, utility.output;
 
 import derelict.opengl3.gl3;
+import gl3n.linalg;
+
 import std.string, std.traits;
 
 final abstract class Shaders
@@ -185,11 +186,11 @@ public:
 		glUniform1f( currentUniform, value );
 	}
 
-	final void bindUniformMatrix4fv( ShaderUniform uniform, const Matrix!4 matrix )
+	final void bindUniformMatrix4fv( ShaderUniform uniform, mat4 matrix )
 	{
 		auto currentUniform = getUniformLocation( uniform );
 
-		glUniformMatrix4fv( currentUniform, 1, false, matrix.matrix.ptr.ptr );
+		glUniformMatrix4fv( currentUniform, 1, true, matrix.value_ptr );
 	}
 
 	final void bindMaterial( Material material )

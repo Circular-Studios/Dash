@@ -1,10 +1,10 @@
 module core.prefabs;
 import core.gameobject;
 import components;
-import math.transform, math.vector, math.quaternion;
 import utility.filepath, utility.config;
 
 import yaml;
+import gl3n.linalg;
 import std.variant;
 
 final abstract class Prefabs
@@ -16,6 +16,9 @@ public static:
 
 	void initialize()
 	{
+		foreach( key; prefabs.keys )
+			prefabs.remove( key );
+
 		void addObject( Node object )
 		{
 			auto name = object[ "Name" ].as!string;
@@ -69,13 +72,18 @@ public:
 
 		if( Config.tryGet( "Transform", innerNode, yml ) )
 		{
-			Vector!3 transVec;
+			vec3 transVec;
 			if( Config.tryGet( "Scale", transVec, innerNode ) )
 				transform.scale = transVec;
 			if( Config.tryGet( "Position", transVec, innerNode ) )
 				transform.position = transVec;
 			if( Config.tryGet( "Rotation", transVec, innerNode ) )
-				transform.rotation = Quaternion.fromEulerAngles( transVec );
+				transform.rotation = quat.euler_rotation( transVec.y, transVec.z, transVec.x );
+		}
+
+		if( Config.tryGet!Light( "Light", prop, innerNode ) )
+		{
+			componentReferences ~= prop.get!Light;
 		}
 	}
 
@@ -85,27 +93,33 @@ public:
 		scriptClass = null;
 	}
 
-	final GameObject createInstance()
+	final GameObject createInstance( const ClassInfo overrideScript = null )
 	{
 		GameObject result;
 
-		if( scriptClass )
-			result = cast(GameObject)scriptClass.create();
+		auto script = overrideScript is null ? scriptClass : overrideScript;
+
+		if( script )
+			result = cast(GameObject)script.create();
 		else
 			result = new GameObject;
 
-		result.transform.scale.values[ 0..3 ] = transform.scale.values[ 0..3 ];
-		result.transform.position.values[ 0..3 ] = transform.position.values[ 0..3 ];
+		result.transform.scale.vector[ 0..3 ] = transform.scale.vector[ 0..3 ];
+		result.transform.position.vector[ 0..3 ] = transform.position.vector[ 0..3 ];
 		result.transform.rotation.x = transform.rotation.x;
 		result.transform.rotation.y = transform.rotation.y;
 		result.transform.rotation.z = transform.rotation.z;
-		result.transform.rotation.w = transform.rotation.w;
+		//result.transform.rotation.w = transform.rotation.w;
 
 		foreach( cpn; componentReferences )
 			result.addComponent( cpn );
 
 		foreach( cpncls; componentCreations )
-			result.addComponent( cast(Component)cpncls.create() );
+		{
+			auto inst = cast(Component)cpncls.create();
+			result.addComponent( inst );
+			inst.owner = result;
+		}
 
 		result.transform.updateMatrix();
 

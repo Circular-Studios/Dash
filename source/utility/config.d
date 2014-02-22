@@ -9,8 +9,9 @@ import core.dgame : GameState;
 import components.assets, components.lights;
 import graphics.shaders;
 import utility.output : Verbosity;
-import math.vector, math.quaternion;
+import utility.input : Keyboard;
 
+import gl3n.linalg;
 import yaml;
 
 import std.array, std.conv, std.string, std.path, std.typecons, std.variant;
@@ -33,6 +34,7 @@ public static:
 		constructor.addConstructorMapping( "!Quaternion-Map", &constructQuaternion );
 		constructor.addConstructorScalar( "!GameState", &constructConv!GameState );
 		constructor.addConstructorScalar( "!Verbosity", &constructConv!Verbosity );
+		constructor.addConstructorScalar( "!Keyboard", &constructConv!Keyboard );
 		constructor.addConstructorScalar( "!Shader", ( ref Node node ) => Shaders.get( node.get!string ) );
 		constructor.addConstructorMapping( "!Light-Directional", &constructDirectionalLight );
 		constructor.addConstructorMapping( "!Light-Ambient", &constructAmbientLight );
@@ -129,7 +131,7 @@ public static:
 				right = right[ split + 1..$ ];
 			}
 
-			if( !current.containsKey( left ) )
+			if( !current.isMapping || !current.containsKey( left ) )
 				return false;
 
 			current = current[ left ];
@@ -168,14 +170,14 @@ private:
 	Constructor constructor;
 }
 
-Vector!2 constructVector2( ref Node node )
+vec2 constructVector2( ref Node node )
 {
-	auto result = new Vector!2;
+	vec2 result;
 
 	if( node.isMapping )
 	{
-		result.values[ 0 ] = node[ "x" ].as!float;
-		result.values[ 1 ] = node[ "y" ].as!float;
+		result.x = node[ "x" ].as!float;
+		result.y = node[ "y" ].as!float;
 	}
 	else if( node.isScalar )
 	{
@@ -193,15 +195,15 @@ Vector!2 constructVector2( ref Node node )
 	return result;
 }
 
-Vector!3 constructVector3( ref Node node )
+vec3 constructVector3( ref Node node )
 {
-	auto result = new Vector!3;
+	vec3 result;
 
 	if( node.isMapping )
 	{
-		result.values[ 0 ] = node[ "x" ].as!float;
-		result.values[ 1 ] = node[ "y" ].as!float;
-		result.values[ 2 ] = node[ "z" ].as!float;
+		result.x = node[ "x" ].as!float;
+		result.y = node[ "y" ].as!float;
+		result.z = node[ "z" ].as!float;
 	}
 	else if( node.isScalar )
 	{
@@ -220,9 +222,9 @@ Vector!3 constructVector3( ref Node node )
 	return result;
 }
 
-Quaternion constructQuaternion( ref Node node )
+quat constructQuaternion( ref Node node )
 {
-	Quaternion result = new Quaternion;
+	quat result;
 
 	if( node.isMapping )
 	{
@@ -251,8 +253,8 @@ Quaternion constructQuaternion( ref Node node )
 
 Light constructDirectionalLight( ref Node node )
 {
-	Vector!3 color = new Vector!3();
-	Vector!3 dir = new Vector!3();
+	vec3 color;
+	vec3 dir;
 
 	Config.tryGet( "Color", color, node );
 	Config.tryGet( "Direction", dir, node );
@@ -262,7 +264,7 @@ Light constructDirectionalLight( ref Node node )
 
 Light constructAmbientLight( ref Node node )
 {
-	Vector!3 color = new Vector!3();
+	vec3 color;
 	Config.tryGet( "Color", color, node );
 
 	return new AmbientLight( color );

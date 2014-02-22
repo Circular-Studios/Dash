@@ -16,6 +16,9 @@ public static:
 
 	void initialize()
 	{
+		foreach( key; prefabs.keys )
+			prefabs.remove( key );
+
 		void addObject( Node object )
 		{
 			auto name = object[ "Name" ].as!string;

@@ -112,6 +112,7 @@ public:
 			obj.addComponent( prop.get!Light );
 		}
 
+		obj.transform.updateMatrix();
 		return obj;
 	}
 

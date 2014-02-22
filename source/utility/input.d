@@ -23,6 +23,9 @@ public static:
 	{
 		auto bindings = Config.loadYaml( FilePath.Resources.InputBindings );
 
+		foreach( key; keyBindings.keys )
+			keyBindings.remove( key );
+
 		foreach( string name, Node bind; bindings )
 		{
 			log( OutputType.Info, "Binding ", name );

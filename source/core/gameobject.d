@@ -4,11 +4,11 @@
 module core.gameobject;
 import core.prefabs, core.properties;
 import components;
-import graphics.graphics, graphics.shaders.shader;
+import graphics.graphics, graphics.shaders;
 import utility.config;
-import math.transform, math.vector, math.quaternion;
 
 import yaml;
+import gl3n.linalg;
 
 import std.signals, std.conv, std.variant;
 
@@ -27,6 +27,14 @@ public:
 	 * The Mesh belonging to the object
 	 */
 	mixin Property!( "Mesh", "mesh", "public" );
+	/**
+	* The light attached to this object
+	*/
+	mixin Property!( "Light", "light", "public" );
+	/**
+	* The camera attached to this object
+	*/
+	mixin Property!( "Camera", "camera", "public" );
 	/**
 	 * The object that this object belongs to
 	 */
@@ -50,9 +58,19 @@ public:
 		// Try to get from script
 		if( Config.tryGet!string( "Script.ClassName", prop, yamlObj ) )
 		{
-			obj = cast(GameObject)Object.factory( prop.get!string );
+			const ClassInfo scriptClass = ClassInfo.find( prop.get!string );
+
+			if( Config.tryGet!string( "InstanceOf", prop, yamlObj ) )
+			{
+				obj = Prefabs[ prop.get!string ].createInstance( scriptClass );
+			}
+			else
+			{
+				obj = cast(GameObject)scriptClass.create();
+			}
 		}
-		else if( Config.tryGet!string( "InstanceOf", prop, yamlObj ) )
+
+		if( Config.tryGet!string( "InstanceOf", prop, yamlObj ) )
 		{
 			obj = Prefabs[ prop.get!string ].createInstance();
 		}
@@ -63,7 +81,9 @@ public:
 
 		if( Config.tryGet!string( "Camera", prop, yamlObj ) )
 		{
-			//TODO: Setup camera
+			auto cam = new Camera;
+			obj.addComponent( cam );
+			cam.owner = obj;
 		}
 
 		if( Config.tryGet!string( "Material", prop, yamlObj ) )
@@ -78,15 +98,21 @@ public:
 
 		if( Config.tryGet( "Transform", innerNode, yamlObj ) )
 		{
-			Vector!3 transVec;
+			vec3 transVec;
 			if( Config.tryGet( "Scale", transVec, innerNode ) )
 				obj.transform.scale = transVec;
 			if( Config.tryGet( "Position", transVec, innerNode ) )
 				obj.transform.position = transVec;
 			if( Config.tryGet( "Rotation", transVec, innerNode ) )
-				obj.transform.rotation = Quaternion.fromEulerAngles( transVec );
+				obj.transform.rotation = quat.euler_rotation( transVec.y, transVec.z, transVec.x );
 		}
 
+		if( Config.tryGet!Light( "Light", prop, yamlObj ) )
+		{
+			obj.addComponent( prop.get!Light );
+		}
+
+		obj.transform.updateMatrix();
 		return obj;
 	}
 
@@ -122,7 +148,14 @@ public:
 	{
 		onDraw();
 
-		Graphics.drawObject( this );
+		if( mesh !is null )
+		{
+			Graphics.drawObject( this );
+		}
+		if( light !is null )
+		{
+			Graphics.addLight( light );
+		}
 	}
 
 	/**
@@ -151,6 +184,11 @@ public:
 			material = cast(Material)newComponent;
 		else if( typeid( newComponent ) == typeid( Mesh ) )
 			mesh = cast(Mesh)newComponent;
+		else if( typeid( newComponent ) == typeid( DirectionalLight ) || 
+				 typeid( newComponent ) == typeid( AmbientLight ) )
+			light = cast(Light)newComponent;
+		else if( typeid( newComponent ) == typeid( Camera ) )
+			camera = cast(Camera)newComponent;
 	}
 
 	/**
@@ -178,4 +216,89 @@ public:
 
 private:
 	Component[ClassInfo] componentList;
+}
+
+class Transform
+{
+public:
+	this( GameObject obj = null )
+	{
+		owner = obj;
+		position = vec3(0,0,0);
+		scale = vec3(1,1,1);
+		rotation = quat(0,0,0,0);
+		updateMatrix();
+	}
+
+	~this()
+	{
+		//destroy( position );
+		//destroy( rotation ); 
+		//destroy( scale );
+	}
+
+	mixin Property!( "GameObject", "owner" );
+	vec3 position;
+	quat rotation;
+	vec3 scale;
+	//mixin EmmittingProperty!( "vec3", "position", "public" );
+	//mixin EmmittingProperty!( "quat", "rotation", "public" );
+	//mixin EmmittingProperty!( "vec3", "scale", "public" );
+
+	/**
+	* This returns the object's position relative to the world origin, not the parent
+	*/
+	final @property vec3 worldPosition()
+	{
+		if( owner.parent is null )
+			return position;
+		else
+			return owner.parent.transform.worldPosition + position;
+	}
+
+	/**
+	* This returns the object's rotation relative to the world origin, not the parent
+	*/
+	final @property quat worldRotation()
+	{
+		if( owner.parent is null )
+			return rotation;
+		else
+			return owner.parent.transform.worldRotation * rotation;
+	}
+
+	final @property mat4 matrix()
+	{
+		if( _matrixIsDirty )
+			updateMatrix();
+
+		if( owner.parent is null )
+			return _matrix;
+		else
+			return owner.parent.transform.matrix * _matrix;
+	}
+
+	mixin Signal!( string, string );
+
+	final void updateMatrix()
+	{
+		_matrix = mat4.identity;
+		// Scale
+		_matrix.scale([scale.x, scale.y, scale.z]);
+		//Rotate
+		_matrix.rotation( rotation.to_matrix!( 3, 3 ) );
+		// Translate
+		_matrix.translation([position.x, position.y, position.z]);
+
+		_matrixIsDirty = false;
+	}
+
+private:
+	mat4 _matrix;
+	bool _matrixIsDirty;
+
+	final void setMatrixDirty( string prop, string newVal )
+	{
+		_matrixIsDirty = true;
+	}
 }

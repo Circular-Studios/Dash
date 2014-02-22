@@ -1,11 +1,11 @@
 module components.material;
 import core.properties;
 import components;
-import graphics.shaders.shader, graphics.shaders.glshader;
+import graphics.graphics, graphics.shaders;
 import utility.config;
 
 import yaml;
-import derelict.opengl3.gl3;
+import derelict.opengl3.gl3, derelict.freeimage.freeimage;
 import std.variant, std.conv;
 
 final class Material : Component
@@ -41,19 +41,45 @@ public:
 	}
 
 	override void update() { }
-	override void draw( Shader shader ) { }
 	override void shutdown() { }
+}
 
-	final void bind( Shader shader )
+final class Texture
+{
+public:
+	mixin Property!( "uint", "width" );
+	mixin Property!( "uint", "height" );
+	mixin Property!( "uint", "glID" );
+
+	this( string filePath )
 	{
-		GLint textureLocation = glGetUniformLocation( (cast(GLShader)shader).programID, "diffuseTexture\0" );
-		glUniform1i( textureLocation, 0 );
-		glActiveTexture( GL_TEXTURE0 );
-		glBindTexture( GL_TEXTURE_2D, diffuse.glID );
+		filePath ~= "\0";
+		auto imageData = FreeImage_ConvertTo32Bits( FreeImage_Load( FreeImage_GetFileType( filePath.ptr, 0 ), filePath.ptr, 0 ) );
 
-		textureLocation = glGetUniformLocation( (cast(GLShader)shader).programID, "normalTexture\0" );
-		glUniform1i( textureLocation, 1 );
-		glActiveTexture( GL_TEXTURE1 );
-		glBindTexture( GL_TEXTURE_2D, normal.glID );
+		width = FreeImage_GetWidth( imageData );
+		height = FreeImage_GetHeight( imageData );
+
+		glGenTextures( 1, &_glID );
+		glBindTexture( GL_TEXTURE_2D, glID );
+		glTexImage2D(
+					 GL_TEXTURE_2D,
+					 0,
+					 GL_RGBA,
+					 width,
+					 height,
+					 0,
+					 GL_BGRA, //FreeImage loads in BGR format because fuck you
+					 GL_UNSIGNED_BYTE,
+					 cast(GLvoid*)FreeImage_GetBits( imageData ) );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+
+		FreeImage_Unload( imageData );
+		glBindTexture( GL_TEXTURE_2D, 0 );
+	}
+
+	void shutdown()
+	{
+		glBindTexture( GL_TEXTURE_2D, 0 );
+		glDeleteBuffers( 1, &_glID );
 	}
 }

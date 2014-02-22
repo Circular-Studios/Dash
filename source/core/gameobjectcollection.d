@@ -3,7 +3,7 @@
  */
 module core.gameobjectcollection;
 import core.gameobject;
-import graphics.shaders.shader;
+import graphics.shaders;
 import utility.filepath, utility.config;
 
 import yaml;
@@ -86,6 +86,10 @@ public:
 		apply( go => go.draw() );
 	}
 
-private:
+	final GameObject opIndex( string key )
+	{
+		return objects[ key ];
+	}
+
 	GameObject[string] objects;
 }

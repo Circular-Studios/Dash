@@ -1,10 +1,10 @@
 module graphics.adapters.adapter;
 import core.gameobject, core.properties;
-import components.assets, components.mesh, components.camera, components.lights.light, components.lights.directional;
-import graphics.shaders.shader, graphics.shaders.shaders, graphics.shaders.glshader;
-import math.vector, math.matrix;
+import components;
+import graphics.shaders;
 import utility.config, utility.output;
 
+import gl3n.linalg;
 import derelict.opengl3.gl3;
 
 version( Windows )
@@ -44,6 +44,9 @@ public:
 	mixin Property!( "bool", "fullscreen", "protected" );
 	mixin Property!( "bool", "backfaceCulling", "protected" );
 	mixin Property!( "bool", "vsync", "protected" );
+	mixin Property!( "float", "fov", "protected" );
+	mixin Property!( "float", "near", "protected" );
+	mixin Property!( "float", "far", "protected" );
 	mixin Property!( "uint", "deferredFrameBuffer", "protected" );
 	mixin Property!( "uint", "diffuseRenderTexture", "protected" ); //Alpha channel stores Specular color
 	mixin Property!( "uint", "normalRenderTexture", "protected" ); //Alpha channel stores Specular power
@@ -111,6 +114,7 @@ public:
 		GLenum[ 2 ] DrawBuffers = [ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 ];
 		glDrawBuffers( 2, DrawBuffers.ptr );
 		glViewport(0, 0, width, height);
+		updateProjection();
 
 		if( glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE )
 		{
@@ -135,7 +139,7 @@ public:
 		glEnable( GL_DEPTH_TEST );
 		glDisable( GL_BLEND );
 
-		glUseProgram( (cast(GLShader)Shaders[GeometryShader]).programID );
+		glUseProgram( Shaders[GeometryShader].programID );
 	}
 	
 	/**
@@ -147,17 +151,15 @@ public:
 	final void drawObject( GameObject object )
 	{
 		// set the shader
-		GLShader shader = cast(GLShader)Shaders[GeometryShader];
+		auto shader = Shaders[GeometryShader];
 		glBindVertexArray( object.mesh.glVertexArray );
 
-		shader.setUniformMatrix( ShaderUniform.World , object.transform.matrix );
-		shader.setUniformMatrix( ShaderUniform.WorldView, object.transform.matrix * 
-								 Camera.lookAtLH( new Vector!3( 0, 0, 0), object.transform.position, new Vector!3( 0, 1, 0 ) ) );
-		shader.setUniformMatrix( ShaderUniform.WorldViewProjection , object.transform.matrix *
-								 Matrix!4.buildPerspective( std.math.PI_2, cast(float)width / cast(float)height, 1, 1000 ) );
+		shader.bindUniformMatrix4fv( ShaderUniform.World , object.transform.matrix );
+		shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , projection * 
+										( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) *
+										object.transform.matrix );
 
-		//This is finding the uniform for the given texture, and setting that texture to the appropriate one for the object
-		object.material.bind( shader );
+		shader.bindMaterial( object.material );
 
 		glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
 
@@ -181,7 +183,7 @@ public:
 		glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-		GLShader shader = cast(GLShader)Shaders[LightingShader];
+		auto shader = Shaders[LightingShader];
 		glUseProgram( shader.programID );
 		
 		// bind geometry pass textures
@@ -200,21 +202,61 @@ public:
 		glActiveTexture( GL_TEXTURE2 );
 		glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
 		
+		// bind the directional and ambient lights
+		if( directionalLight is null )
+		{
+			directionalLight = new DirectionalLight( vec3(), vec3() );
+		}
+		if( ambientLight is null )
+		{
+			ambientLight = new AmbientLight( vec3() );
+		}
+		shader.bindDirectionalLight( directionalLight );
+		shader.bindAmbientLight( ambientLight );
+		
 		// bind the window mesh for directional lights
 		glBindVertexArray( Assets.get!Mesh( WindowMesh ).glVertexArray );
-
-		// bind the directional and ambient lights
-		Light tempDirLight = new DirectionalLight( new Vector!3( 1.0f, 1.0f, 1.0f ), new Vector!3( 0.0f, -1.0f, 0.5f ) );
-		shader.bindLight( tempDirLight );
-		Light tempAmbLight = new Light( new Vector!3( .2f, .2f, .2f ) );
-		shader.bindLight( tempAmbLight );
-
 		glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, null );
 
 		glBindVertexArray(0);
 		glUseProgram(0);
 
 		swapBuffers();
+
+		lights = [];
+		ambientLight = null;
+		directionalLight = null;
+	}
+
+	final void addLight( Light light )
+	{
+		if( typeid( light ) == typeid( AmbientLight ) )
+		{
+			if( ambientLight is null )
+			{
+				ambientLight = cast(AmbientLight)light;
+			}
+			else
+				log( OutputType.Info, "Attemtping to add multiple ambient lights to the scene.  Ignoring additional ambient lights." );
+		}
+		else if( typeid( light ) == typeid( DirectionalLight ) )
+		{
+			if( directionalLight is null )
+			{
+				directionalLight = cast(DirectionalLight)light;
+			}
+			else
+				log( OutputType.Info, "Attemtping to add multiple directional lights to the scene.  Ignoring additional directional lights." );
+		}
+		else
+		{
+			lights ~= light;
+		}
+	}
+
+	final void setCamera( Camera camera )
+	{
+		activeCamera = camera;
 	}
 
 protected:
@@ -234,5 +276,21 @@ protected:
 
 		backfaceCulling = Config.get!bool( "Graphics.BackfaceCulling" );
 		vsync = Config.get!bool( "Graphics.VSync" );
+		fov = Config.get!float( "Display.FieldOfView" );
+		near = Config.get!float( "Display.NearPlane" );
+		far = Config.get!float( "Display.FarPlane" );
 	}
+
+	final void updateProjection()
+	{
+		projection = mat4.perspective( cast(float)width, cast(float)height, fov, near, far );
+	}
+
+private:
+	Camera activeCamera;
+	mat4 projection;
+	//To be cleared after a draw call:
+	AmbientLight ambientLight;
+	DirectionalLight directionalLight;
+	Light[] lights;
 }

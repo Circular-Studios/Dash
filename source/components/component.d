@@ -3,7 +3,7 @@
  */
 module components.component;
 import core.properties, core.gameobject;
-import graphics.shaders.shader;
+import graphics.shaders;
 
 /**
  * Interface for components to implement.
@@ -20,10 +20,6 @@ abstract class Component
 	 */
 	abstract void update();
 	/**
-	 * Function calledn on draw.
-	 */
-	abstract void draw( Shader shader );
-	/**
 	 * Function called on shutdown.
 	 */
 	abstract void shutdown();
@@ -31,5 +27,5 @@ abstract class Component
 	/**
 	 * The GameObject that owns this component.
 	 */
-	mixin Property!( "GameObject", "owner", "protected" );
+	mixin Property!( "GameObject", "owner", "public" );
 }

@@ -2,6 +2,8 @@
  * Defines the FilePath class, which stores default resource paths, and handles path manipulation.
  */
 module utility.filepath;
+import utility.output;
+
 static import std.file, std.path;
 import std.stdio;
 
@@ -29,7 +31,9 @@ public:
 		Objects = ResourceHome ~ "/Objects",
 		Shaders = ResourceHome ~ "/Shaders",
 		UI = ResourceHome ~ "/UI",
-		Config = ResourceHome ~ "/Config.yml",
+		ConfigDir = ResourceHome ~ "/Config",
+		ConfigFile = ConfigDir ~ "/Config.yml",
+		InputBindings = ConfigDir ~ "/Input.yml", 
 	}
 
 	/**
@@ -39,6 +43,12 @@ public:
 	{
 		// Get absolute path to folder
 		string safePath = std.path.buildNormalizedPath( std.path.absolutePath( path ) );
+
+		if( !std.file.exists( safePath ) )
+		{
+			log( OutputType.Info, path, " does not exist." );
+			return [];
+		}
 
 		// Start array
 		auto files = new FilePath[ 1 ];
@@ -157,7 +167,7 @@ unittest
 	import std.stdio;
 	writeln( "Dash FilePath properties unittest" );
 
-	auto fp = new FilePath( FilePath.Resources.Config );
+	auto fp = new FilePath( FilePath.Resources.ConfigFile );
 
 	assert( fp.fileName == "Config.yml", "FilePath.fileName error." );
 	assert( fp.baseFileName == "Config", "FilePath.baseFileName error." );

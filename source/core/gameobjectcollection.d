@@ -86,5 +86,10 @@ public:
 		apply( go => go.draw() );
 	}
 
+	final GameObject opIndex( string key )
+	{
+		return objects[ key ];
+	}
+
 	GameObject[string] objects;
 }

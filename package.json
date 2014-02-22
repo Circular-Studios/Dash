@@ -15,7 +15,8 @@
 		"derelict-gl3": "~master",
 		"derelict-fi": "~master",
 		"derelict-assimp3": "~master",
-		"dyaml": "~master"
+		"dyaml": "~master",
+		"gl3n" : "~master"
 	},
 	"targetName": "dash",
 	"targetType": "executable",

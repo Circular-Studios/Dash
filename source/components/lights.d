@@ -2,14 +2,15 @@ module components.lights;
 import core.properties;
 import components.component;
 import graphics.shaders;
-import math.vector;
+
+import gl3n.linalg;
 
 class Light : Component
 {
 public:
-	mixin Property!( "Vector!3", "color", "public" );
+	mixin Property!( "vec3", "color", "public" );
 
-	this( Vector!3 color )
+	this( vec3 color )
 	{
 		super( null );
 
@@ -30,7 +31,7 @@ public:
 
 class AmbientLight : Light 
 { 
-	this( Vector!3 color )
+	this( vec3 color )
 	{
 		super( color );
 	}
@@ -39,9 +40,9 @@ class AmbientLight : Light
 class DirectionalLight : Light
 {
 public:
-	mixin Property!( "Vector!3", "direction" );
+	mixin Property!( "vec3", "direction" );
 
-	this( Vector!3 color, Vector!3 direction )
+	this( vec3 color, vec3 direction )
 	{
 		this.direction = direction;
 		super( color );

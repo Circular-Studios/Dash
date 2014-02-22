@@ -7,9 +7,8 @@ import core.properties;
 import components.component;
 import graphics.graphics, graphics.shaders;
 import utility.output;
-import math.vector;
-import derelict.assimp3.assimp;
 
+import derelict.assimp3.assimp;
 import derelict.opengl3.gl3;
 
 import std.stdio, std.stream, std.format, std.math;
@@ -35,8 +34,8 @@ public:
 		// Load the scene via assimp
 		const aiScene* scene = aiImportFile(( filePath ~ "\0" ).ptr,
 											aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
-											aiProcess_JoinIdenticalVertices | aiProcess_SortByPType |
-											aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder );
+											aiProcess_JoinIdenticalVertices | aiProcess_SortByPType );//|
+											//aiProcess_FlipWindingOrder );
 		float[] outputData;
 		uint[] indices;
 		if(!scene)
@@ -135,66 +134,6 @@ public:
 		// unbind the VBO and VAO
 		glBindBuffer( GL_ARRAY_BUFFER, 0 );
 		glBindVertexArray( 0 );
-	}
-
-	/// Calculates two magic numbers (tangent and binormal) which are necessary for normal mapping
-	Vector!3[2] calculateTangentBinormal( Vector!3[3] vertices, Vector!2[3] uvs )
-	{
-		Vector!3[2] tangentBinormal;
-
-		Vector!3 vector1, vector2, tangent, binormal;
-		Vector!2 uvector, vvector;
-		float den, length;
-
-		//Calculate vectors for this face
-		vector1 = new Vector!3( vertices[1].x - vertices[0].x, 
-								vertices[1].y - vertices[0].y,
-								vertices[1].z - vertices[0].z );
-
-		vector2 = new Vector!3( vertices[2].x - vertices[0].x,
-								vertices[2].y - vertices[0].y,
-								vertices[2].z - vertices[0].z );
-
-		//Calculate the UV space vectors
-		uvector = new Vector!2();
-		vvector = new Vector!2();
-
-		uvector.x = uvs[1].x - uvs[0].x;
-		vvector.x = uvs[1].y - uvs[0].y;
-
-		uvector.y = uvs[2].x - uvs[0].x;
-		vvector.y = uvs[2].y - uvs[0].y;
-
-		//Calculate the denominator of the tangent/binormal equation
-		den = 1.0f/(uvector.x * vvector.y - uvector.y * vvector.x);
-
-		//Calculate the cross products and multiply by the coefficient to get the tangent and binomial
-		tangent = new Vector!3();
-		tangent.x = (vvector.y * vector1.x - vvector.x * vector2.x) * den;
-		tangent.y = (vvector.y * vector1.y - vvector.x * vector2.y) * den;
-		tangent.z = (vvector.y * vector1.z - vvector.x * vector2.z) * den;
-		
-		binormal = new Vector!3();
-		binormal.x = (uvector.x * vector2.x - uvector.y * vector1.x) * den;
-		binormal.y = (uvector.x * vector2.y - uvector.y * vector1.y) * den;
-		binormal.z = (uvector.x * vector2.z - uvector.y * vector1.z) * den;
-
-		//Normalize each vector
-		length = sqrt((tangent.x * tangent.x) + (tangent.y * tangent.y) + (tangent.z * tangent.z));
-		tangent.x = tangent.x / length;
-		tangent.y = tangent.y / length;
-		tangent.z = tangent.z / length;
-
-		length = sqrt((binormal.x * binormal.x) + (binormal.y * binormal.y) + (binormal.z * binormal.z));
-		binormal.x = binormal.x / length;
-		binormal.y = binormal.y / length;
-		binormal.z = binormal.z / length;
-
-		//Store them in the vertices
-		tangentBinormal[0] = tangent;
-		tangentBinormal[1] = binormal;
-
-		return tangentBinormal;
 	}
 
 	override void update()

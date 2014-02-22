@@ -116,6 +116,7 @@ private:
         //camera = null;
 
 		Config.initialize();
+		Input.initialize();
 		Output.initialize();
 		Graphics.initialize();
 		Assets.initialize();

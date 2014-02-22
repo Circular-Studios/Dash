@@ -33,6 +33,7 @@ public:
 		UI = ResourceHome ~ "/UI",
 		ConfigDir = ResourceHome ~ "/Config",
 		ConfigFile = ConfigDir ~ "/Config.yml",
+		InputBindings = ConfigDir ~ "/Input.yml", 
 	}
 
 	/**

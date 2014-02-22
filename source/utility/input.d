@@ -41,7 +41,7 @@ public static:
 					}
 					catch
 					{
-						log( OutputType.Error, "Failed to parse keybinding ", name );
+						log( OutputType.Error, "Failed to parse keybinding for input ", name );
 					}
 				}
 			}
@@ -64,7 +64,7 @@ public static:
 								}
 								catch
 								{
-									log( OutputType.Error, "Failed to parse keybinding ", name );
+									log( OutputType.Error, "Failed to parse keybinding for input ", name );
 								}
 							}
 

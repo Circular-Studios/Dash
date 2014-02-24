@@ -48,10 +48,11 @@ public static:
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Meshes ) )
 		{
 			// Load mesh
-			const aiScene* scene = aiImportFile( ( file.fullPath ~ "\0" ).ptr,
-												 aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
-												aiProcess_JoinIdenticalVertices | aiProcess_SortByPType |
-												aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder );
+			const aiScene* scene = aiImportFile(( file.fullPath ~ "\0" ).ptr,
+			                                    aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
+			                                    aiProcess_JoinIdenticalVertices | aiProcess_SortByPType );//|
+			//aiProcess_FlipWindingOrder );
+
 			// If animation data, add animation
 			if(scene.mNumAnimations > 0)
 				animations[ file.baseFileName ] = new AssetAnimation( file.baseFileName, scene.mAnimations[0], scene.mRootNode.mChildren[1]);

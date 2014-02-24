@@ -10,7 +10,7 @@ class Light : Component
 public:
 	mixin Property!( "vec3", "color", "public" );
 
-	this( vec3 color )
+	this( GameObject owner, vec3 color )
 	{
 		super( owner );
 

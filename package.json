@@ -1,6 +1,6 @@
 {
 	"name": "dash",
-	"description": "Helps you make vidja games.",
+	"description": "A game engine in dlang.",
 	"copyright": "2013 - 2014",
 	"license": "MIT",
 	"authors": [ 
@@ -19,7 +19,7 @@
 		"gl3n" : "~master"
 	},
 	"targetName": "dash",
-	"targetType": "executable",
+	"targetType": "library",
 	"mainSourceFile": "source/app.d",
 	"sourcePaths": [ "source/" ],
 	"importPaths": [ "source/" ],

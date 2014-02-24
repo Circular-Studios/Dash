@@ -8,7 +8,7 @@ import graphics.graphics, graphics.shaders;
 import utility.config;
 
 import yaml;
-import gl3n.linalg;
+import gl3n.linalg, gl3n.math;
 
 import std.signals, std.conv, std.variant;
 
@@ -77,8 +77,7 @@ public:
 				obj = cast(GameObject)scriptClass.create();
 			}
 		}
-
-		if( Config.tryGet!string( "InstanceOf", prop, yamlObj ) )
+		else if( Config.tryGet!string( "InstanceOf", prop, yamlObj ) )
 		{
 			obj = Prefabs[ prop.get!string ].createInstance();
 		}
@@ -112,7 +111,7 @@ public:
 			if( Config.tryGet( "Position", transVec, innerNode ) )
 				obj.transform.position = transVec;
 			if( Config.tryGet( "Rotation", transVec, innerNode ) )
-				obj.transform.rotation = quat.euler_rotation( transVec.y, transVec.z, transVec.x );
+				obj.transform.rotation = quat.euler_rotation( radians(transVec.y), radians(transVec.z), radians(transVec.x) );
 		}
 
 		if( Config.tryGet!Light( "Light", prop, yamlObj ) )
@@ -244,7 +243,7 @@ public:
 		owner = obj;
 		position = vec3(0,0,0);
 		scale = vec3(1,1,1);
-		rotation = quat(0,0,0,0);
+		rotation = quat.identity;
 		updateMatrix();
 	}
 
@@ -290,21 +289,25 @@ public:
 
 	mixin Signal!( string, string );
 
+	/**
+	 * Rebuilds the object's matrix
+	 */
 	final void updateMatrix()
 	{
 		_matrix = mat4.identity;
 		// Scale
-		_matrix.scale([scale.x, scale.y, scale.z]);
-		//Rotate
-		_matrix.rotation( rotation.to_matrix!( 3, 3 ) );
+		_matrix.scale( scale.x, scale.y, scale.z );
+		// Rotate
+		_matrix = _matrix * rotation.to_matrix!( 4, 4 );
 		// Translate
-		_matrix.translation([position.x, position.y, position.z]);
+		_matrix.translate( position.x, position.y, position.z );
 
 		_matrixIsDirty = false;
 	}
 
 private:
 	mat4 _matrix;
+	// Update flag
 	bool _matrixIsDirty;
 
 	final void setMatrixDirty( string prop, string newVal )

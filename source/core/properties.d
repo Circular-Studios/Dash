@@ -31,12 +31,14 @@ template Getter( alias field, string name, AccessModifier access = AccessModifie
 	enum Getter = access ~ " @property " ~ typeof(field).stringof ~ " " ~ name ~ "(){ return " ~ field.stringof ~ ";}\n";
 }
 
-mixin template DirtyGetter( string type, string name, string field, string update, AccessModifier access = AccessModifier.Protected )
+template DirtyGetter( string type, string name, string field, string update, AccessModifier access = AccessModifier.Protected )
 {
-	mixin( "public bool " ~ field ~ "IsDirty = true;" );
-	mixin( access ~ " @property " ~ type ~ " " ~ name ~ "(){" ~
-	"if(" ~ field ~ "IsDirty)" ~ update ~ "();"
-	"return " ~ field ~ ";}" );
+	enum DirtyGetter =
+		"public bool " ~ field ~ "IsDirty = true;\n" ~
+		access ~ " @property " ~ type ~ " " ~ name ~ "(){" ~
+			"if(" ~ field ~ "IsDirty)" ~
+				update ~ "();"
+			"return " ~ field ~ ";}";
 }
 
 template Setter( alias field, string name, AccessModifier access = AccessModifier.Protected )

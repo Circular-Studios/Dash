@@ -9,18 +9,47 @@ import gl3n.linalg;
 
 import std.string, std.traits;
 
+/*
+ * Other shader related constants
+ */
+
+public enum : string
+{
+	GeometryShader = "geometry",
+	LightingShader = "lighting"
+}
+
+/*
+ * String constants for our shader uniforms
+ */
+public enum ShaderUniform 
+{
+	World = "world",
+	WorldView = "worldView",
+	WorldViewProjection = "worldViewProj",
+	DiffuseTexture = "diffuseTexture",
+	NormalTexture = "normalTexture",
+	SpecularTexture = "specularTexture",
+	DepthTexture = "depthTexture",
+	DirectionalLightDirection = "dirLight.direction",
+	DirectionalLightColor = "dirLight.color",
+	AmbientLight = "ambientLight",
+	EyePosition = "eyePosition_w",
+	InverseViewProjection = "invViewProj"
+}
+
 final abstract class Shaders
 {
 public static:
 	final void initialize()
 	{
-		shaders[ "geometry" ] = new Shader( "geometry", geometryVS, geometryFS, true );
-		shaders[ "lighting" ] = new Shader( "lighting", lightingVS, lightingFS, true );
+		shaders[ GeometryShader ] = new Shader( GeometryShader, geometryVS, geometryFS, true );
+		shaders[ LightingShader ] = new Shader( LightingShader, lightingVS, lightingFS, true );
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders, "*.fs.glsl" ) )
 		{
 			// Strip .fs from file name
 			string name = file.baseFileName[ 0..$-3 ];
-			if( name != "geometry" && name != "lighting" )
+			if( name != GeometryShader && name != LightingShader )
 			{
 				shaders[ name ] = new Shader( name, file.directory ~ "\\" ~ name ~ ".vs.glsl", file.fullPath );
 			}
@@ -61,24 +90,6 @@ public static:
 
 private:
 	Shader[string] shaders;
-}
-
-/*
- * String constants for our shader uniforms
- */
-public enum ShaderUniform 
-{
-	World = "world",
-	WorldView = "worldView",
-	WorldViewProjection = "worldViewProj",
-	DiffuseTexture = "diffuseTexture",
-	NormalTexture = "normalTexture",
-	SpecularTexture = "specularTexture",
-	DepthTexture = "depthTexture",
-	DirectionalLightDirection = "dirLight.direction",
-	DirectionalLightColor = "dirLight.color",
-	AmbientLight = "ambientLight",
-	EyePosition = "eyePosition"
 }
 
 final package class Shader
@@ -352,7 +363,8 @@ immutable string lightingFS = q{
 	uniform sampler2D depthTexture;
 	uniform DirectionalLight dirLight;
 	uniform vec3 ambientLight;
-	uniform vec3 eyePosition;
+	uniform vec3 eyePosition_w;
+	uniform mat4 invViewProj;
 
 	// https://stackoverflow.com/questions/9222217/how-does-the-fragment-shader-know-what-variable-to-use-for-the-color-of-a-pixel
 	out vec4 color;
@@ -366,10 +378,23 @@ immutable string lightingFS = q{
 
 	void main( void )
 	{
-		vec4 textureColor = texture( diffuseTexture, fUV );
+		vec3 textureColor = texture( diffuseTexture, fUV ).xyz;
 		vec3 normal = texture( normalTexture, fUV ).xyz;
 
+		// Diffuse lighting calculations
 		float diffuseIntensity = clamp( dot( normal, -dirLight.direction ), 0, 1 );
-		color = ( vec4( ambientLight, 1.0f ) + ( diffuseIntensity * vec4( dirLight.color, 1.0f ) ) ) * textureColor;
+
+		// Specular lighting calculations
+		// pixelPosition is essentially 3D screen space coordinates - x, y, z of the screen
+		vec3 pixelPosition_s = vec3( fUV.x * 2.0f - 1.0f, fUV.y * 2.0f - 1.0f, texture( depthTexture, fUV ).x );
+		// Multiplying screen space coordinates by the inverse viewProjection matrix gives you world coordinates
+		vec3 pixelPosition_w = ( invViewProj * vec4( pixelPosition_s, 1.0f ) ).xyz;
+		vec3 eyeDirection = normalize( ( pixelPosition_w - eyePosition_w).xyz );
+		float specularIntensity = clamp( dot( eyeDirection, reflect( -dirLight.direction, normal ) ), 0, 1 );
+
+		vec3 ambient = ( ambientLight * textureColor );
+		vec3 diffuse = ( diffuseIntensity * dirLight.color ) * textureColor;
+		vec3 specular = ( specularIntensity * dirLight.color ) * textureColor;
+		color = vec4( ( ambient + diffuse + specular ), 1.0f );
 	}
 };

@@ -2,14 +2,15 @@ module components.lights;
 import core.properties, core.gameobject;
 import components.component;
 import graphics.shaders;
-import math.vector;
+
+import gl3n.linalg;
 
 class Light : Component
 {
 public:
-	mixin Property!( "Vector!3", "color", "public" );
+	mixin Property!( "vec3", "color", "public" );
 
-	this( GameObject owner, Vector!3 color )
+	this( vec3 color )
 	{
 		super( owner );
 
@@ -30,7 +31,7 @@ public:
 
 class AmbientLight : Light 
 { 
-	this( GameObject owner, Vector!3 color )
+	this( GameObject owner, vec3 color )
 	{
 		super( owner, color );
 	}
@@ -42,9 +43,9 @@ class AmbientLight : Light
 class DirectionalLight : Light
 {
 public:
-	mixin Property!( "Vector!3", "direction" );
+	mixin Property!( "vec3", "direction" );
 
-	this( GameObject owner, Vector!3 color, Vector!3 direction )
+	this( GameObject owner, vec3 color, vec3 direction )
 	{
 		this.direction = direction;
 		super( owner, color );
@@ -57,7 +58,7 @@ public:
 class PointLight : Light
 {
 public:
-	this( GameObject owner, Vector!3 color )
+	this( GameObject owner, vec3 color )
 	{
 		super( owner, color );
 	}
@@ -69,7 +70,7 @@ public:
 class SpotLight : Light
 {
 public:
-	this( GameObject owner, Vector!3 color )
+	this( GameObject owner, vec3 color )
 	{
 		super( owner, color );
 	}

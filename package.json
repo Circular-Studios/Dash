@@ -1,6 +1,6 @@
 {
 	"name": "dash",
-	"description": "Helps you make vidja games.",
+	"description": "A game engine in dlang.",
 	"copyright": "2013 - 2014",
 	"license": "MIT",
 	"authors": [ 
@@ -15,7 +15,8 @@
 		"derelict-gl3": "~master",
 		"derelict-fi": "~master",
 		"derelict-assimp3": "~master",
-		"dyaml": "~master"
+		"dyaml": "~master",
+		"gl3n" : "~master"
 	},
 	"targetName": "dash",
 	"targetType": "executable",

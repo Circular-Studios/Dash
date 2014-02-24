@@ -13,7 +13,7 @@ abstract class Component
 	/**
 	* The GameObject that owns this component.
 	*/
-	mixin Property!( "GameObject", "owner", "protected" );
+	mixin Property!( "GameObject", "owner", "public" );
 
 	/*
 	 * 
@@ -31,5 +31,4 @@ abstract class Component
 	 * Function called on shutdown.
 	 */
 	abstract void shutdown();
-	
 }

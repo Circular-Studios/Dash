@@ -38,8 +38,11 @@ public:
         start();
 
         // Loop until there is a quit message from the window or the user.
-        while( currentState != GameState.Quit && currentState != GameState.Reset )
+        while( currentState != GameState.Quit )
         {
+			if( currentState == GameState.Reset )
+				reload();
+
 			//////////////////////////////////////////////////////////////////////////
 			// Update
 			//////////////////////////////////////////////////////////////////////////
@@ -73,9 +76,6 @@ public:
 			// End drawing
 			Graphics.endDraw();
         }
-
-		if( currentState == GameState.Reset )
-			saveState();
 
         stop();
 	}
@@ -112,10 +112,11 @@ private:
 	 */
 	final void start()
 	{
-		currentState = GameState.Menu;
+		currentState = GameState.Game;
         //camera = null;
 
 		Config.initialize();
+		Input.initialize();
 		Output.initialize();
 		Graphics.initialize();
 		Assets.initialize();
@@ -135,6 +136,16 @@ private:
 		onShutdown();
 		Assets.shutdown();
 		Graphics.shutdown();
+	}
+
+	/**
+	 * Reloads content and yaml.
+	 */
+	final void reload()
+	{
+		stop();
+
+		start();
 	}
 
 	/**

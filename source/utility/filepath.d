@@ -31,7 +31,9 @@ public:
 		Objects = ResourceHome ~ "/Objects",
 		Shaders = ResourceHome ~ "/Shaders",
 		UI = ResourceHome ~ "/UI",
-		Config = ResourceHome ~ "/Config.yml",
+		ConfigDir = ResourceHome ~ "/Config",
+		ConfigFile = ConfigDir ~ "/Config.yml",
+		InputBindings = ConfigDir ~ "/Input.yml", 
 	}
 
 	/**
@@ -165,7 +167,7 @@ unittest
 	import std.stdio;
 	writeln( "Dash FilePath properties unittest" );
 
-	auto fp = new FilePath( FilePath.Resources.Config );
+	auto fp = new FilePath( FilePath.Resources.ConfigFile );
 
 	assert( fp.fileName == "Config.yml", "FilePath.fileName error." );
 	assert( fp.baseFileName == "Config", "FilePath.baseFileName error." );

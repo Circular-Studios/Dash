@@ -132,7 +132,7 @@ public static:
 	 */
 	final bool isKeyDown( uint keyCode, bool checkPrevious = false )
 	{
-		return current[ keyCode ] && ( !checkPrevious || previous[ keyCode ] );
+		return current[ keyCode ] && ( !checkPrevious || !previous[ keyCode ] );
 	}
 
 	/**
@@ -144,7 +144,7 @@ public static:
 	 */
 	final bool isKeyUp( uint keyCode, bool checkPrevious = false )
 	{
-		return !current[ keyCode ] && ( !checkPrevious || !previous[ keyCode ] );
+		return !current[ keyCode ] && ( !checkPrevious || previous[ keyCode ] );
 	}
 
 	/**

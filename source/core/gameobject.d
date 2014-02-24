@@ -283,11 +283,11 @@ public:
 	{
 		_matrix = mat4.identity;
 		// Scale
-		_matrix.scale([scale.x, scale.y, scale.z]);
-		//Rotate
-		_matrix.rotation( rotation.to_matrix!( 3, 3 ) );
+		_matrix.scale(scale.x, scale.y, scale.z);
+		// Rotate
+		_matrix = _matrix * rotation.to_matrix!( 4, 4 );
 		// Translate
-		_matrix.translation([position.x, position.y, position.z]);
+		_matrix.translate(position.x, position.y, position.z);
 
 		_matrixIsDirty = false;
 	}

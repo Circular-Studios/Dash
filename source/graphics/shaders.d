@@ -20,7 +20,7 @@ public static:
 		{
 			// Strip .fs from file name
 			string name = file.baseFileName[ 0..$-3 ];
-			if(name != "geometry" && name != "lighting")
+			if( name != "geometry" && name != "lighting" )
 			{
 				shaders[ name ] = new Shader( name, file.directory ~ "\\" ~ name ~ ".vs.glsl", file.fullPath );
 			}
@@ -55,7 +55,7 @@ public static:
 
 	final Shader get( string name )
 	{
-		auto shader = name in shaders;
+		Shader* shader = name in shaders;
 		return shader is null ? null : *shader;
 	}
 
@@ -77,7 +77,8 @@ public enum ShaderUniform
 	DepthTexture = "depthTexture",
 	DirectionalLightDirection = "dirLight.direction",
 	DirectionalLightColor = "dirLight.color",
-	AmbientLight = "ambientLight"
+	AmbientLight = "ambientLight",
+	EyePosition = "eyePosition"
 }
 
 final package class Shader
@@ -192,6 +193,10 @@ public:
 		glUniformMatrix4fv( getUniformLocation( uniform ), 1, true, matrix.value_ptr );
 	}
 
+
+	/*
+	 * Binds diffuse, normal, and specular textures to the shader
+	 */
 	final void bindMaterial( Material material )
 	{
 		//This is finding the uniform for the given texture, and setting that texture to the appropriate one for the object
@@ -208,150 +213,163 @@ public:
 		glBindTexture( GL_TEXTURE_2D, material.specular.glID );
 	}
 
+	/*
+	 * Set the ambient light
+	 */
 	final void bindAmbientLight( AmbientLight light )
 	{
 		glUniform3f( getUniformLocation( ShaderUniform.AmbientLight ), light.color.x, light.color.y, light.color.z );
 	}
 
+	/*
+	 * Set the (currently only 1 possible) directional light
+	 */
 	final void bindDirectionalLight( DirectionalLight light )
 	{
-		// buffer light here
 		glUniform3f( getUniformLocation( ShaderUniform.DirectionalLightDirection ), light.direction.x, light.direction.y, light.direction.z );
 		glUniform3f( getUniformLocation( ShaderUniform.DirectionalLightColor ), light.color.x, light.color.y, light.color.z );
 	}
 
+	/*
+	 * Sets the eye position for lighting calculations
+	 */
+	final void setEyePosition( vec3 pos )
+	{
+		glUniform3f( getUniformLocation( ShaderUniform.EyePosition ), pos.x, pos.y, pos.z );
+	}
+
 	void shutdown()
 	{
-
+		// please write me :(
 	}
 }
 
 immutable string geometryVS = q{
-#version 400
+	#version 400
 
-layout(location = 0) in vec3 vPosition_m;
-layout(location = 1) in vec2 vUV;
-layout(location = 2) in vec3 vNormal_m;
-layout(location = 3) in vec3 vTangent_m;
+	layout(location = 0) in vec3 vPosition_m;
+	layout(location = 1) in vec2 vUV;
+	layout(location = 2) in vec3 vNormal_m;
+	layout(location = 3) in vec3 vTangent_m;
 
-out vec4 fPosition_s;
-out vec3 fNormal_w;
-out vec2 fUV;
-out vec3 fTangent_w;
-out vec3 fBitangent_w;
+	out vec4 fPosition_s;
+	out vec3 fNormal_w;
+	out vec2 fUV;
+	out vec3 fTangent_w;
+	out vec3 fBitangent_w;
 
-uniform mat4 world;
-uniform mat4 worldView;
-uniform mat4 worldViewProj;
+	uniform mat4 world;
+	uniform mat4 worldView;
+	uniform mat4 worldViewProj;
 
-void main( void )
-{
-	// gl_Position is like SV_Position
-	fPosition_s = worldViewProj * vec4( vPosition_m, 1.0f );
-	gl_Position = fPosition_s;
-	fUV = vUV;
+	void main( void )
+	{
+		// gl_Position is like SV_Position
+		fPosition_s = worldViewProj * vec4( vPosition_m, 1.0f );
+		gl_Position = fPosition_s;
+		fUV = vUV;
 
-	fNormal_w = ( world * vec4( vNormal_m, 0.0f ) ).xyz;
-	fTangent_w =  ( world * vec4( vTangent_m, 0.0f ) ).xyz;
-}
+		fNormal_w = ( world * vec4( vNormal_m, 0.0f ) ).xyz;
+		fTangent_w =  ( world * vec4( vTangent_m, 0.0f ) ).xyz;
+	}
 };
 
 immutable string geometryFS = q{
-#version 400
+	#version 400
 
-in vec4 fPosition_s;
-in vec3 fNormal_w;
-in vec2 fUV;
-in vec3 fTangent_w;
+	in vec4 fPosition_s;
+	in vec3 fNormal_w;
+	in vec2 fUV;
+	in vec3 fTangent_w;
 
-layout( location = 0 ) out vec4 color;
-layout( location = 1 ) out vec4 normal_w;
+	layout( location = 0 ) out vec4 color;
+	layout( location = 1 ) out vec4 normal_w;
 
-uniform sampler2D diffuseTexture;
-uniform sampler2D normalTexture;
-uniform sampler2D specularTexture;
+	uniform sampler2D diffuseTexture;
+	uniform sampler2D normalTexture;
+	uniform sampler2D specularTexture;
 
-vec2 encode( vec3 normal )
-{
-	float t = sqrt( 2 / 1 - normal.z );
-	return normal.xy * t;
-}
+	vec2 encode( vec3 normal )
+	{
+		float t = sqrt( 2 / 1 - normal.z );
+		return normal.xy * t;
+	}
 
-vec3 calculateMappedNormal()
-{
-	vec3 normal = normalize( fNormal_w );
-	vec3 tangent = normalize( fTangent_w );
-	//Use Gramm-Schmidt process to orthogonalize the two
-	tangent = normalize( tangent - dot( tangent, normal ) * normal );
-	vec3 bitangent = cross( tangent, normal );
-	vec3 normalMap = ((texture( normalTexture, fUV ).xyz) * 2) - 1;
-	mat3 TBN = mat3( tangent, bitangent, normal );
-	return normalize( TBN * normalMap );
-}
+	vec3 calculateMappedNormal()
+	{
+		vec3 normal = normalize( fNormal_w );
+		vec3 tangent = normalize( fTangent_w );
+		//Use Gramm-Schmidt process to orthogonalize the two
+		tangent = normalize( tangent - dot( tangent, normal ) * normal );
+		vec3 bitangent = cross( tangent, normal );
+		vec3 normalMap = ((texture( normalTexture, fUV ).xyz) * 2) - 1;
+		mat3 TBN = mat3( tangent, bitangent, normal );
+		return normalize( TBN * normalMap );
+	}
 
-void main( void )
-{
-	color = texture( diffuseTexture, fUV );	
-	normal_w = vec4( calculateMappedNormal(), 1.0f );
-}
+	void main( void )
+	{
+		color = texture( diffuseTexture, fUV );
+		// specular exponent
+		vec3 specularSample = texture( specularTexture, fUV ).xyz;
+		color.w = ( specularSample.x + specularSample.y + specularSample.z ) / 3;
+		normal_w = vec4( calculateMappedNormal(), 1.0f );
+	}
 };
 
 immutable string lightingVS = q{
-#version 400
+	#version 400
 
-layout(location = 0) in vec3 vPosition_s;
-layout(location = 1) in vec2 vUV;
+	layout(location = 0) in vec3 vPosition_s;
+	layout(location = 1) in vec2 vUV;
 
-out vec4 fPosition_s;
-out vec2 fUV;
+	out vec4 fPosition_s;
+	out vec2 fUV;
 
-void main( void )
-{
-	fPosition_s = vec4( vPosition_s, 1.0f );
-	gl_Position = fPosition_s;
-	fUV = vUV;
-}
+	void main( void )
+	{
+		fPosition_s = vec4( vPosition_s, 1.0f );
+		gl_Position = fPosition_s;
+		fUV = vUV;
+	}
 };
 
 immutable string lightingFS = q{
-#version 400
+	#version 400
 
-struct DirectionalLight
-{
-	vec3 color;
-	vec3 direction;
-};
+	struct DirectionalLight
+	{
+		vec3 color;
+		vec3 direction;
+	};
 
-in vec4 fPosition;
-in vec2 fUV;
+	in vec4 fPosition;
+	in vec2 fUV;
 
-// this diffuse should be set to the geometry output
-uniform sampler2D diffuseTexture;
-uniform sampler2D normalTexture;
-uniform sampler2D depthTexture;
-uniform DirectionalLight dirLight;
-uniform vec3 ambientLight;
+	// this diffuse should be set to the geometry output
+	uniform sampler2D diffuseTexture;
+	uniform sampler2D normalTexture;
+	uniform sampler2D depthTexture;
+	uniform DirectionalLight dirLight;
+	uniform vec3 ambientLight;
+	uniform vec3 eyePosition;
 
-// https://stackoverflow.com/questions/9222217/how-does-the-fragment-shader-know-what-variable-to-use-for-the-color-of-a-pixel
-out vec4 color;
+	// https://stackoverflow.com/questions/9222217/how-does-the-fragment-shader-know-what-variable-to-use-for-the-color-of-a-pixel
+	out vec4 color;
 
-vec3 decode( vec2 enc )
-{
-	float t = ( ( enc.x * enc.x ) + ( enc.y * enc.y ) ) / 4;
-	float ti = sqrt( 1 - t );
-	return vec3( ti * enc.x, ti * enc.y, -1 + t * 2 );
-}
+	vec3 decode( vec2 enc )
+	{
+		float t = ( ( enc.x * enc.x ) + ( enc.y * enc.y ) ) / 4;
+		float ti = sqrt( 1 - t );
+		return vec3( ti * enc.x, ti * enc.y, -1 + t * 2 );
+	}
 
-void main( void )
-{
-	vec4 textureColor = texture( diffuseTexture, fUV );
-	vec3 normal = texture( normalTexture, fUV ).xyz;
+	void main( void )
+	{
+		vec4 textureColor = texture( diffuseTexture, fUV );
+		vec3 normal = texture( normalTexture, fUV ).xyz;
 
-	// temp vars until we get lights in
-	//vec3 lightDirection = vec3( 0.0f, -1.0f, 0.5f );
-	//vec4 diffuseColor = vec4( 1.0f, 1.0f, 1.0f, 1.0f );
-
-	float diffuseIntensity = clamp( dot( normal, -dirLight.direction ), 0, 1 );
-	color = ( vec4( ambientLight, 1.0f ) + ( diffuseIntensity * vec4( dirLight.color, 1.0f ) ) ) * textureColor;
-}
+		float diffuseIntensity = clamp( dot( normal, -dirLight.direction ), 0, 1 );
+		color = ( vec4( ambientLight, 1.0f ) + ( diffuseIntensity * vec4( dirLight.color, 1.0f ) ) ) * textureColor;
+	}
 };

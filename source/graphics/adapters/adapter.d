@@ -48,10 +48,13 @@ public:
 	mixin Property!( "float", "near", "protected" );
 	mixin Property!( "float", "far", "protected" );
 	mixin Property!( "uint", "deferredFrameBuffer", "protected" );
-	mixin Property!( "uint", "diffuseRenderTexture", "protected" ); //Alpha channel stores Specular color
-	mixin Property!( "uint", "normalRenderTexture", "protected" ); //Alpha channel stores Specular power
+	mixin Property!( "uint", "diffuseRenderTexture", "protected" ); //Alpha channel stores Specular exponent
+	mixin Property!( "uint", "normalRenderTexture", "protected" ); //Alpha channel stores nothing right now
 	mixin Property!( "uint", "depthRenderTexture", "protected" );
-	
+
+	/**
+	 *  Constant strings for various parts of the render pipeline
+	 **/
 	enum : string 
 	{
 		GeometryShader = "geometry",
@@ -187,6 +190,7 @@ public:
 		glUseProgram( shader.programID );
 		
 		// bind geometry pass outputs
+		{
 		// diffuse
 		glUniform1i( shader.getUniformLocation( ShaderUniform.DiffuseTexture ), 0 );
 		glActiveTexture( GL_TEXTURE0 );
@@ -201,6 +205,7 @@ public:
 		glUniform1i( shader.getUniformLocation( ShaderUniform.DepthTexture ), 2 );
 		glActiveTexture( GL_TEXTURE2 );
 		glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
+		}
 		
 		// bind the directional and ambient lights
 		if( directionalLight is null )
@@ -214,15 +219,16 @@ public:
 		shader.bindDirectionalLight( directionalLight );
 		shader.bindAmbientLight( ambientLight );
 		
-		// bind the window mesh for directional lights
+		// bind the window mesh for directional lights`
 		glBindVertexArray( Assets.get!Mesh( WindowMesh ).glVertexArray );
 		glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, null );
 
-		glBindVertexArray(0);
-		glUseProgram(0);
-
+		// put it on the screen
 		swapBuffers();
 
+		// clean up 
+		glBindVertexArray(0);
+		glUseProgram(0);
 		lights = [];
 		ambientLight = null;
 		directionalLight = null;

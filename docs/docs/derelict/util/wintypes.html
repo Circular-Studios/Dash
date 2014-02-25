@@ -1,0 +1,1022 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/><!-- using block title in layout.dt--><!-- using block ddox.defs in ddox.layout.dt--><!-- using block ddox.title in ddox.layout.dt-->
+		<title>Module derelict.util.wintypes</title>
+		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav"><!-- using block navigation in layout.dt-->
+						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">components</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../components/animation.html" class=" module">animation</a>
+							</li>
+							<li>
+								<a href="../../components/assetanimation.html" class=" module">assetanimation</a>
+							</li>
+							<li>
+								<a href="../../components/assets.html" class=" module">assets</a>
+							</li>
+							<li>
+								<a href="../../components/camera.html" class=" module">camera</a>
+							</li>
+							<li>
+								<a href="../../components/component.html" class=" module">component</a>
+							</li>
+							<li>
+								<a href="../../components/lights.html" class=" module">lights</a>
+							</li>
+							<li>
+								<a href="../../components/material.html" class=" module">material</a>
+							</li>
+							<li>
+								<a href="../../components/mesh.html" class=" module">mesh</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">core</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../core/dgame.html" class=" module">dgame</a>
+							</li>
+							<li>
+								<a href="../../core/gameobject.html" class=" module">gameobject</a>
+							</li>
+							<li>
+								<a href="../../core/gameobjectcollection.html" class=" module">gameobjectcollection</a>
+							</li>
+							<li>
+								<a href="../../core/prefabs.html" class=" module">prefabs</a>
+							</li>
+							<li>
+								<a href="../../core/properties.html" class=" module">properties</a>
+							</li>
+							<li>
+								<a href="../../core/reflection.html" class=" module">reflection</a>
+							</li>
+						</ul>
+							</li>
+							<li class=" tree-view">
+								<a href="#" class="package">derelict</a>
+						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">assimp3</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/assimp3/assimp.html" class=" module">assimp</a>
+							</li>
+							<li>
+								<a href="../../derelict/assimp3/types.html" class=" module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">freeimage</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/freeimage/freeimage.html" class=" module">freeimage</a>
+							</li>
+							<li>
+								<a href="../../derelict/freeimage/functions.html" class=" module">functions</a>
+							</li>
+							<li>
+								<a href="../../derelict/freeimage/types.html" class=" module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">opengl3</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/opengl3/arb.html" class=" module">arb</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/cgl.html" class=" module">cgl</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/constants.html" class=" module">constants</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/deprecatedConstants.html" class=" module">deprecatedConstants</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/deprecatedFunctions.html" class=" module">deprecatedFunctions</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/ext.html" class=" module">ext</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/functions.html" class=" module">functions</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/gl.html" class=" module">gl</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/gl3.html" class=" module">gl3</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/glx.html" class=" module">glx</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/glxext.html" class=" module">glxext</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/internal.html" class=" module">internal</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/types.html" class=" module">types</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/wgl.html" class=" module">wgl</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/wglext.html" class=" module">wglext</a>
+							</li>
+						</ul>
+							</li>
+							<li class=" tree-view">
+								<a href="#" class="package">util</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/util/exception.html" class=" module">exception</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/loader.html" class=" module">loader</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/sharedlib.html" class=" module">sharedlib</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/system.html" class=" module">system</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/wintypes.html" class="selected module">wintypes</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/xtypes.html" class=" module">xtypes</a>
+							</li>
+						</ul>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">graphics</a>
+						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">adapters</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../graphics/adapters/adapter.html" class=" module">adapter</a>
+							</li>
+							<li>
+								<a href="../../graphics/adapters/linux.html" class=" module">linux</a>
+							</li>
+							<li>
+								<a href="../../graphics/adapters/mac.html" class=" module">mac</a>
+							</li>
+							<li>
+								<a href="../../graphics/adapters/win32.html" class=" module">win32</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../graphics/adapters.html" class=" module">adapters</a>
+							</li>
+							<li>
+								<a href="../../graphics/graphics.html" class=" module">graphics</a>
+							</li>
+							<li>
+								<a href="../../graphics/shaders.html" class=" module">shaders</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">utility</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../utility/config.html" class=" module">config</a>
+							</li>
+							<li>
+								<a href="../../utility/filepath.html" class=" module">filepath</a>
+							</li>
+							<li>
+								<a href="../../utility/input.html" class=" module">input</a>
+							</li>
+							<li>
+								<a href="../../utility/output.html" class=" module">output</a>
+							</li>
+							<li>
+								<a href="../../utility/time.html" class=" module">time</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../components.html" class=" module">components</a>
+							</li>
+							<li>
+								<a href="../../core.html" class=" module">core</a>
+							</li>
+							<li>
+								<a href="../../graphics.html" class=" module">graphics</a>
+							</li>
+							<li>
+								<a href="../../utility.html" class=" module">utility</a>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../symbols.js"></script>
+	<script type="application/javascript">
+		//<![CDATA[
+		var symbolSearchRootDir = "../../";		$('#symbolSearchPane').show();
+		//]]>
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Module derelict.util.wintypes</h1><!-- using block body in layout.dt--><!-- using block ddox.description in ddox.layout.dt-->
+			<p></p>
+<!-- using block ddox.sections in ddox.layout.dt-->
+			<section></section><!-- using block ddox.members in ddox.layout.dt-->
+			<section>
+				<h2>Functions</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="ChoosePixelFormat" href="../../derelict/util/wintypes/ChoosePixelFormat.html">
+								<code>ChoosePixelFormat</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="DescribePixelFormat" href="../../derelict/util/wintypes/DescribePixelFormat.html">
+								<code>DescribePixelFormat</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FormatMessageA" href="../../derelict/util/wintypes/FormatMessageA.html">
+								<code>FormatMessageA</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FreeLibrary" href="../../derelict/util/wintypes/FreeLibrary.html">
+								<code>FreeLibrary</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="GetDC" href="../../derelict/util/wintypes/GetDC.html">
+								<code>GetDC</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="GetLastError" href="../../derelict/util/wintypes/GetLastError.html">
+								<code>GetLastError</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="GetPixelFormat" href="../../derelict/util/wintypes/GetPixelFormat.html">
+								<code>GetPixelFormat</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="GetProcAddress" href="../../derelict/util/wintypes/GetProcAddress.html">
+								<code>GetProcAddress</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="LoadLibraryA" href="../../derelict/util/wintypes/LoadLibraryA.html">
+								<code>LoadLibraryA</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="LocalFree" href="../../derelict/util/wintypes/LocalFree.html">
+								<code>LocalFree</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="MAKELANGID" href="../../derelict/util/wintypes/MAKELANGID.html">
+								<code>MAKELANGID</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="SetPixelFormat" href="../../derelict/util/wintypes/SetPixelFormat.html">
+								<code>SetPixelFormat</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="SwapBuffers" href="../../derelict/util/wintypes/SwapBuffers.html">
+								<code>SwapBuffers</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Structs</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="BITMAPINFO" href="../../derelict/util/wintypes/BITMAPINFO.html">
+								<code>BITMAPINFO</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="BITMAPINFOHEADER" href="../../derelict/util/wintypes/BITMAPINFOHEADER.html">
+								<code>BITMAPINFOHEADER</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="GLYPHMETRICSFLOAT" href="../../derelict/util/wintypes/GLYPHMETRICSFLOAT.html">
+								<code>GLYPHMETRICSFLOAT</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="LAYERPLANEDESCRIPTOR" href="../../derelict/util/wintypes/LAYERPLANEDESCRIPTOR.html">
+								<code>LAYERPLANEDESCRIPTOR</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PIXELFORMATDESCRIPTOR" href="../../derelict/util/wintypes/PIXELFORMATDESCRIPTOR.html">
+								<code>PIXELFORMATDESCRIPTOR</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="POINTFLOAT" href="../../derelict/util/wintypes/POINTFLOAT.html">
+								<code>POINTFLOAT</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="RECT" href="../../derelict/util/wintypes/RECT.html">
+								<code>RECT</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="RGBQUAD" href="../../derelict/util/wintypes/RGBQUAD.html">
+								<code>RGBQUAD</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="VA_LIST" href="../../derelict/util/wintypes/VA_LIST.html">
+								<code>VA_LIST</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Enum values</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="FORMAT_MESSAGE_ALLOCATE_BUFFER" href="../../derelict/util/wintypes/FORMAT_MESSAGE_ALLOCATE_BUFFER.html">
+								<code>FORMAT_MESSAGE_ALLOCATE_BUFFER</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FORMAT_MESSAGE_FROM_SYSTEM" href="../../derelict/util/wintypes/FORMAT_MESSAGE_FROM_SYSTEM.html">
+								<code>FORMAT_MESSAGE_FROM_SYSTEM</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FORMAT_MESSAGE_IGNORE_INSERTS" href="../../derelict/util/wintypes/FORMAT_MESSAGE_IGNORE_INSERTS.html">
+								<code>FORMAT_MESSAGE_IGNORE_INSERTS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="LANG_NEUTRAL" href="../../derelict/util/wintypes/LANG_NEUTRAL.html">
+								<code>LANG_NEUTRAL</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFD_DEPTH_DONTCARE" href="../../derelict/util/wintypes/PFD_DEPTH_DONTCARE.html">
+								<code>PFD_DEPTH_DONTCARE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFD_DOUBLBUFFER_DONTCARE" href="../../derelict/util/wintypes/PFD_DOUBLBUFFER_DONTCARE.html">
+								<code>PFD_DOUBLBUFFER_DONTCARE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFD_DOUBLEBUFFER" href="../../derelict/util/wintypes/PFD_DOUBLEBUFFER.html">
+								<code>PFD_DOUBLEBUFFER</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFD_DRAW_TO_BITMAP" href="../../derelict/util/wintypes/PFD_DRAW_TO_BITMAP.html">
+								<code>PFD_DRAW_TO_BITMAP</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFD_DRAW_TO_WINDOW" href="../../derelict/util/wintypes/PFD_DRAW_TO_WINDOW.html">
+								<code>PFD_DRAW_TO_WINDOW</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFD_GENERIC_ACCELERATED" href="../../derelict/util/wintypes/PFD_GENERIC_ACCELERATED.html">
+								<code>PFD_GENERIC_ACCELERATED</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFD_GENERIC_FORMAT" href="../../derelict/util/wintypes/PFD_GENERIC_FORMAT.html">
+								<code>PFD_GENERIC_FORMAT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFD_MAIN_PLANE" href="../../derelict/util/wintypes/PFD_MAIN_PLANE.html">
+								<code>PFD_MAIN_PLANE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFD_NEED_PALETTE" href="../../derelict/util/wintypes/PFD_NEED_PALETTE.html">
+								<code>PFD_NEED_PALETTE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFD_NEED_SYSTEM_PALETTE" href="../../derelict/util/wintypes/PFD_NEED_SYSTEM_PALETTE.html">
+								<code>PFD_NEED_SYSTEM_PALETTE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFD_OVERLAY_PLANE" href="../../derelict/util/wintypes/PFD_OVERLAY_PLANE.html">
+								<code>PFD_OVERLAY_PLANE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFD_STEREO" href="../../derelict/util/wintypes/PFD_STEREO.html">
+								<code>PFD_STEREO</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFD_STEREO_DONTCARE" href="../../derelict/util/wintypes/PFD_STEREO_DONTCARE.html">
+								<code>PFD_STEREO_DONTCARE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFD_SUPPORT_DIRECTDRAW" href="../../derelict/util/wintypes/PFD_SUPPORT_DIRECTDRAW.html">
+								<code>PFD_SUPPORT_DIRECTDRAW</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFD_SUPPORT_GDI" href="../../derelict/util/wintypes/PFD_SUPPORT_GDI.html">
+								<code>PFD_SUPPORT_GDI</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFD_SUPPORT_OPENGL" href="../../derelict/util/wintypes/PFD_SUPPORT_OPENGL.html">
+								<code>PFD_SUPPORT_OPENGL</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFD_SWAP_COPY" href="../../derelict/util/wintypes/PFD_SWAP_COPY.html">
+								<code>PFD_SWAP_COPY</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFD_SWAP_EXCHANGE" href="../../derelict/util/wintypes/PFD_SWAP_EXCHANGE.html">
+								<code>PFD_SWAP_EXCHANGE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFD_SWAP_LAYER_BUFFERS" href="../../derelict/util/wintypes/PFD_SWAP_LAYER_BUFFERS.html">
+								<code>PFD_SWAP_LAYER_BUFFERS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFD_TYPE_COLORINDEX" href="../../derelict/util/wintypes/PFD_TYPE_COLORINDEX.html">
+								<code>PFD_TYPE_COLORINDEX</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFD_TYPE_RGBA" href="../../derelict/util/wintypes/PFD_TYPE_RGBA.html">
+								<code>PFD_TYPE_RGBA</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFD_UNDERLAY_PLANE" href="../../derelict/util/wintypes/PFD_UNDERLAY_PLANE.html">
+								<code>PFD_UNDERLAY_PLANE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="SUBLANG_DEFAULT" href="../../derelict/util/wintypes/SUBLANG_DEFAULT.html">
+								<code>SUBLANG_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Aliases</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="BOOL" href="../../derelict/util/wintypes/BOOL.html">
+								<code>BOOL</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="BYTE" href="../../derelict/util/wintypes/BYTE.html">
+								<code>BYTE</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">ubyte</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="COLORREF" href="../../derelict/util/wintypes/COLORREF.html">
+								<code>COLORREF</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">uint</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="DWORD" href="../../derelict/util/wintypes/DWORD.html">
+								<code>DWORD</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">uint</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FARPROC" href="../../derelict/util/wintypes/FARPROC.html">
+								<code>FARPROC</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FLOAT" href="../../derelict/util/wintypes/FLOAT.html">
+								<code>FLOAT</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">float</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="HANDLE" href="../../derelict/util/wintypes/HANDLE.html">
+								<code>HANDLE</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">void*</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="HBITMAP" href="../../derelict/util/wintypes/HBITMAP.html">
+								<code>HBITMAP</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">void*</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="HDC" href="../../derelict/util/wintypes/HDC.html">
+								<code>HDC</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">void*</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="HGLRC" href="../../derelict/util/wintypes/HGLRC.html">
+								<code>HGLRC</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">void*</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="HINSTANCE" href="../../derelict/util/wintypes/HINSTANCE.html">
+								<code>HINSTANCE</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">void*</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="HLOCAL" href="../../derelict/util/wintypes/HLOCAL.html">
+								<code>HLOCAL</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">void*</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="HMODULE" href="../../derelict/util/wintypes/HMODULE.html">
+								<code>HMODULE</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">void*</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="HPALETTE" href="../../derelict/util/wintypes/HPALETTE.html">
+								<code>HPALETTE</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">void*</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="HWND" href="../../derelict/util/wintypes/HWND.html">
+								<code>HWND</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">void*</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="INT" href="../../derelict/util/wintypes/INT.html">
+								<code>INT</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="LONG" href="../../derelict/util/wintypes/LONG.html">
+								<code>LONG</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="LPARAM" href="../../derelict/util/wintypes/LPARAM.html">
+								<code>LPARAM</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="LPCSTR" href="../../derelict/util/wintypes/LPCSTR.html">
+								<code>LPCSTR</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">const(char*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="LPVOID" href="../../derelict/util/wintypes/LPVOID.html">
+								<code>LPVOID</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">void*</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="UINT" href="../../derelict/util/wintypes/UINT.html">
+								<code>UINT</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">uint</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="USHORT" href="../../derelict/util/wintypes/USHORT.html">
+								<code>USHORT</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">ushort</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WORD" href="../../derelict/util/wintypes/WORD.html">
+								<code>WORD</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">ushort</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WPARAM" href="../../derelict/util/wintypes/WPARAM.html">
+								<code>WPARAM</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">uint</code>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Authors</h2><!-- using block ddox.authors in ddox.layout.dt-->
+
+			</section>
+			<section>
+				<h2>Copyright</h2><!-- using block ddox.copyright in ddox.layout.dt-->
+
+			</section>
+			<section>
+				<h2>License</h2><!-- using block ddox.license in ddox.layout.dt-->
+
+			</section>
+		</div>
+	</body>
+</html>

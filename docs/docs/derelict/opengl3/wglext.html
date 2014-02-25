@@ -1,0 +1,2056 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/><!-- using block title in layout.dt--><!-- using block ddox.defs in ddox.layout.dt--><!-- using block ddox.title in ddox.layout.dt-->
+		<title>Module derelict.opengl3.wglext</title>
+		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav"><!-- using block navigation in layout.dt-->
+						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">components</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../components/animation.html" class=" module">animation</a>
+							</li>
+							<li>
+								<a href="../../components/assetanimation.html" class=" module">assetanimation</a>
+							</li>
+							<li>
+								<a href="../../components/assets.html" class=" module">assets</a>
+							</li>
+							<li>
+								<a href="../../components/camera.html" class=" module">camera</a>
+							</li>
+							<li>
+								<a href="../../components/component.html" class=" module">component</a>
+							</li>
+							<li>
+								<a href="../../components/lights.html" class=" module">lights</a>
+							</li>
+							<li>
+								<a href="../../components/material.html" class=" module">material</a>
+							</li>
+							<li>
+								<a href="../../components/mesh.html" class=" module">mesh</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">core</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../core/dgame.html" class=" module">dgame</a>
+							</li>
+							<li>
+								<a href="../../core/gameobject.html" class=" module">gameobject</a>
+							</li>
+							<li>
+								<a href="../../core/gameobjectcollection.html" class=" module">gameobjectcollection</a>
+							</li>
+							<li>
+								<a href="../../core/prefabs.html" class=" module">prefabs</a>
+							</li>
+							<li>
+								<a href="../../core/properties.html" class=" module">properties</a>
+							</li>
+							<li>
+								<a href="../../core/reflection.html" class=" module">reflection</a>
+							</li>
+						</ul>
+							</li>
+							<li class=" tree-view">
+								<a href="#" class="package">derelict</a>
+						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">assimp3</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/assimp3/assimp.html" class=" module">assimp</a>
+							</li>
+							<li>
+								<a href="../../derelict/assimp3/types.html" class=" module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">freeimage</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/freeimage/freeimage.html" class=" module">freeimage</a>
+							</li>
+							<li>
+								<a href="../../derelict/freeimage/functions.html" class=" module">functions</a>
+							</li>
+							<li>
+								<a href="../../derelict/freeimage/types.html" class=" module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li class=" tree-view">
+								<a href="#" class="package">opengl3</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/opengl3/arb.html" class=" module">arb</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/cgl.html" class=" module">cgl</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/constants.html" class=" module">constants</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/deprecatedConstants.html" class=" module">deprecatedConstants</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/deprecatedFunctions.html" class=" module">deprecatedFunctions</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/ext.html" class=" module">ext</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/functions.html" class=" module">functions</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/gl.html" class=" module">gl</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/gl3.html" class=" module">gl3</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/glx.html" class=" module">glx</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/glxext.html" class=" module">glxext</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/internal.html" class=" module">internal</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/types.html" class=" module">types</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/wgl.html" class=" module">wgl</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/wglext.html" class="selected module">wglext</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">util</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/util/exception.html" class=" module">exception</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/loader.html" class=" module">loader</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/sharedlib.html" class=" module">sharedlib</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/system.html" class=" module">system</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/wintypes.html" class=" module">wintypes</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/xtypes.html" class=" module">xtypes</a>
+							</li>
+						</ul>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">graphics</a>
+						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">adapters</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../graphics/adapters/adapter.html" class=" module">adapter</a>
+							</li>
+							<li>
+								<a href="../../graphics/adapters/linux.html" class=" module">linux</a>
+							</li>
+							<li>
+								<a href="../../graphics/adapters/mac.html" class=" module">mac</a>
+							</li>
+							<li>
+								<a href="../../graphics/adapters/win32.html" class=" module">win32</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../graphics/adapters.html" class=" module">adapters</a>
+							</li>
+							<li>
+								<a href="../../graphics/graphics.html" class=" module">graphics</a>
+							</li>
+							<li>
+								<a href="../../graphics/shaders.html" class=" module">shaders</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">utility</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../utility/config.html" class=" module">config</a>
+							</li>
+							<li>
+								<a href="../../utility/filepath.html" class=" module">filepath</a>
+							</li>
+							<li>
+								<a href="../../utility/input.html" class=" module">input</a>
+							</li>
+							<li>
+								<a href="../../utility/output.html" class=" module">output</a>
+							</li>
+							<li>
+								<a href="../../utility/time.html" class=" module">time</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../components.html" class=" module">components</a>
+							</li>
+							<li>
+								<a href="../../core.html" class=" module">core</a>
+							</li>
+							<li>
+								<a href="../../graphics.html" class=" module">graphics</a>
+							</li>
+							<li>
+								<a href="../../utility.html" class=" module">utility</a>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../symbols.js"></script>
+	<script type="application/javascript">
+		//<![CDATA[
+		var symbolSearchRootDir = "../../";		$('#symbolSearchPane').show();
+		//]]>
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Module derelict.opengl3.wglext</h1><!-- using block body in layout.dt--><!-- using block ddox.description in ddox.layout.dt-->
+			<p></p>
+<!-- using block ddox.sections in ddox.layout.dt-->
+			<section></section><!-- using block ddox.members in ddox.layout.dt-->
+			<section>
+				<h2>Functions</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_ARB_buffer_region" href="../../derelict/opengl3/wglext/WGL_ARB_buffer_region.html">
+								<code>WGL_ARB_buffer_region</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_ARB_create_context" href="../../derelict/opengl3/wglext/WGL_ARB_create_context.html">
+								<code>WGL_ARB_create_context</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_ARB_create_context_profile" href="../../derelict/opengl3/wglext/WGL_ARB_create_context_profile.html">
+								<code>WGL_ARB_create_context_profile</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_ARB_create_context_robustness" href="../../derelict/opengl3/wglext/WGL_ARB_create_context_robustness.html">
+								<code>WGL_ARB_create_context_robustness</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_ARB_extensions_string" href="../../derelict/opengl3/wglext/WGL_ARB_extensions_string.html">
+								<code>WGL_ARB_extensions_string</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_ARB_framebuffer_sRGB" href="../../derelict/opengl3/wglext/WGL_ARB_framebuffer_sRGB.html">
+								<code>WGL_ARB_framebuffer_sRGB</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_ARB_make_current_read" href="../../derelict/opengl3/wglext/WGL_ARB_make_current_read.html">
+								<code>WGL_ARB_make_current_read</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_ARB_multisample" href="../../derelict/opengl3/wglext/WGL_ARB_multisample.html">
+								<code>WGL_ARB_multisample</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_ARB_pbuffer" href="../../derelict/opengl3/wglext/WGL_ARB_pbuffer.html">
+								<code>WGL_ARB_pbuffer</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_ARB_pixel_format" href="../../derelict/opengl3/wglext/WGL_ARB_pixel_format.html">
+								<code>WGL_ARB_pixel_format</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_ARB_pixel_format_float" href="../../derelict/opengl3/wglext/WGL_ARB_pixel_format_float.html">
+								<code>WGL_ARB_pixel_format_float</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_ARB_render_texture" href="../../derelict/opengl3/wglext/WGL_ARB_render_texture.html">
+								<code>WGL_ARB_render_texture</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_ARB_robustness_application_isolation" href="../../derelict/opengl3/wglext/WGL_ARB_robustness_application_isolation.html">
+								<code>WGL_ARB_robustness_application_isolation</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_ARB_robustness_share_group_isolation" href="../../derelict/opengl3/wglext/WGL_ARB_robustness_share_group_isolation.html">
+								<code>WGL_ARB_robustness_share_group_isolation</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_EXT_swap_control" href="../../derelict/opengl3/wglext/WGL_EXT_swap_control.html">
+								<code>WGL_EXT_swap_control</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Enum values</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="ERROR_INCOMPATIBLE_DEVICE_CONTEXTS_ARB" href="../../derelict/opengl3/wglext/ERROR_INCOMPATIBLE_DEVICE_CONTEXTS_ARB.html">
+								<code>ERROR_INCOMPATIBLE_DEVICE_CONTEXTS_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="ERROR_INVALID_PIXEL_TYPE_ARB" href="../../derelict/opengl3/wglext/ERROR_INVALID_PIXEL_TYPE_ARB.html">
+								<code>ERROR_INVALID_PIXEL_TYPE_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="ERROR_INVALID_PROFILE_ARB" href="../../derelict/opengl3/wglext/ERROR_INVALID_PROFILE_ARB.html">
+								<code>ERROR_INVALID_PROFILE_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="ERROR_INVALID_VERSION_ARB" href="../../derelict/opengl3/wglext/ERROR_INVALID_VERSION_ARB.html">
+								<code>ERROR_INVALID_VERSION_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_ACCELERATION_ARB" href="../../derelict/opengl3/wglext/WGL_ACCELERATION_ARB.html">
+								<code>WGL_ACCELERATION_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_ACCUM_ALPHA_BITS_ARB" href="../../derelict/opengl3/wglext/WGL_ACCUM_ALPHA_BITS_ARB.html">
+								<code>WGL_ACCUM_ALPHA_BITS_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_ACCUM_BITS_ARB" href="../../derelict/opengl3/wglext/WGL_ACCUM_BITS_ARB.html">
+								<code>WGL_ACCUM_BITS_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_ACCUM_BLUE_BITS_ARB" href="../../derelict/opengl3/wglext/WGL_ACCUM_BLUE_BITS_ARB.html">
+								<code>WGL_ACCUM_BLUE_BITS_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_ACCUM_GREEN_BITS_ARB" href="../../derelict/opengl3/wglext/WGL_ACCUM_GREEN_BITS_ARB.html">
+								<code>WGL_ACCUM_GREEN_BITS_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_ACCUM_RED_BITS_ARB" href="../../derelict/opengl3/wglext/WGL_ACCUM_RED_BITS_ARB.html">
+								<code>WGL_ACCUM_RED_BITS_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_ALPHA_BITS_ARB" href="../../derelict/opengl3/wglext/WGL_ALPHA_BITS_ARB.html">
+								<code>WGL_ALPHA_BITS_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_ALPHA_SHIFT_ARB" href="../../derelict/opengl3/wglext/WGL_ALPHA_SHIFT_ARB.html">
+								<code>WGL_ALPHA_SHIFT_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_AUX0_ARB" href="../../derelict/opengl3/wglext/WGL_AUX0_ARB.html">
+								<code>WGL_AUX0_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_AUX1_ARB" href="../../derelict/opengl3/wglext/WGL_AUX1_ARB.html">
+								<code>WGL_AUX1_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_AUX2_ARB" href="../../derelict/opengl3/wglext/WGL_AUX2_ARB.html">
+								<code>WGL_AUX2_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_AUX3_ARB" href="../../derelict/opengl3/wglext/WGL_AUX3_ARB.html">
+								<code>WGL_AUX3_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_AUX4_ARB" href="../../derelict/opengl3/wglext/WGL_AUX4_ARB.html">
+								<code>WGL_AUX4_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_AUX5_ARB" href="../../derelict/opengl3/wglext/WGL_AUX5_ARB.html">
+								<code>WGL_AUX5_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_AUX6_ARB" href="../../derelict/opengl3/wglext/WGL_AUX6_ARB.html">
+								<code>WGL_AUX6_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_AUX7_ARB" href="../../derelict/opengl3/wglext/WGL_AUX7_ARB.html">
+								<code>WGL_AUX7_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_AUX8_ARB" href="../../derelict/opengl3/wglext/WGL_AUX8_ARB.html">
+								<code>WGL_AUX8_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_AUX9_ARB" href="../../derelict/opengl3/wglext/WGL_AUX9_ARB.html">
+								<code>WGL_AUX9_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_AUX_BUFFERS_ARB" href="../../derelict/opengl3/wglext/WGL_AUX_BUFFERS_ARB.html">
+								<code>WGL_AUX_BUFFERS_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_BACK_COLOR_BUFFER_BIT_ARB" href="../../derelict/opengl3/wglext/WGL_BACK_COLOR_BUFFER_BIT_ARB.html">
+								<code>WGL_BACK_COLOR_BUFFER_BIT_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_BACK_LEFT_ARB" href="../../derelict/opengl3/wglext/WGL_BACK_LEFT_ARB.html">
+								<code>WGL_BACK_LEFT_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_BACK_RIGHT_ARB" href="../../derelict/opengl3/wglext/WGL_BACK_RIGHT_ARB.html">
+								<code>WGL_BACK_RIGHT_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_BIND_TO_TEXTURE_RGBA_ARB" href="../../derelict/opengl3/wglext/WGL_BIND_TO_TEXTURE_RGBA_ARB.html">
+								<code>WGL_BIND_TO_TEXTURE_RGBA_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_BIND_TO_TEXTURE_RGB_ARB" href="../../derelict/opengl3/wglext/WGL_BIND_TO_TEXTURE_RGB_ARB.html">
+								<code>WGL_BIND_TO_TEXTURE_RGB_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_BLUE_BITS_ARB" href="../../derelict/opengl3/wglext/WGL_BLUE_BITS_ARB.html">
+								<code>WGL_BLUE_BITS_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_BLUE_SHIFT_ARB" href="../../derelict/opengl3/wglext/WGL_BLUE_SHIFT_ARB.html">
+								<code>WGL_BLUE_SHIFT_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_COLOR_BITS_ARB" href="../../derelict/opengl3/wglext/WGL_COLOR_BITS_ARB.html">
+								<code>WGL_COLOR_BITS_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB" href="../../derelict/opengl3/wglext/WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB.html">
+								<code>WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_CONTEXT_CORE_PROFILE_BIT_ARB" href="../../derelict/opengl3/wglext/WGL_CONTEXT_CORE_PROFILE_BIT_ARB.html">
+								<code>WGL_CONTEXT_CORE_PROFILE_BIT_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_CONTEXT_DEBUG_BIT_ARB" href="../../derelict/opengl3/wglext/WGL_CONTEXT_DEBUG_BIT_ARB.html">
+								<code>WGL_CONTEXT_DEBUG_BIT_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_CONTEXT_FLAGS_ARB" href="../../derelict/opengl3/wglext/WGL_CONTEXT_FLAGS_ARB.html">
+								<code>WGL_CONTEXT_FLAGS_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB" href="../../derelict/opengl3/wglext/WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB.html">
+								<code>WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_CONTEXT_LAYER_PLANE_ARB" href="../../derelict/opengl3/wglext/WGL_CONTEXT_LAYER_PLANE_ARB.html">
+								<code>WGL_CONTEXT_LAYER_PLANE_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_CONTEXT_MAJOR_VERSION_ARB" href="../../derelict/opengl3/wglext/WGL_CONTEXT_MAJOR_VERSION_ARB.html">
+								<code>WGL_CONTEXT_MAJOR_VERSION_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_CONTEXT_MINOR_VERSION_ARB" href="../../derelict/opengl3/wglext/WGL_CONTEXT_MINOR_VERSION_ARB.html">
+								<code>WGL_CONTEXT_MINOR_VERSION_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_CONTEXT_PROFILE_MASK_ARB" href="../../derelict/opengl3/wglext/WGL_CONTEXT_PROFILE_MASK_ARB.html">
+								<code>WGL_CONTEXT_PROFILE_MASK_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB" href="../../derelict/opengl3/wglext/WGL_CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB.html">
+								<code>WGL_CONTEXT_RESET_NOTIFICATION_STRATEGY_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_CONTEXT_ROBUST_ACCESS_BIT_ARB" href="../../derelict/opengl3/wglext/WGL_CONTEXT_ROBUST_ACCESS_BIT_ARB.html">
+								<code>WGL_CONTEXT_ROBUST_ACCESS_BIT_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_CUBE_MAP_FACE_ARB" href="../../derelict/opengl3/wglext/WGL_CUBE_MAP_FACE_ARB.html">
+								<code>WGL_CUBE_MAP_FACE_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_DEPTH_BITS_ARB" href="../../derelict/opengl3/wglext/WGL_DEPTH_BITS_ARB.html">
+								<code>WGL_DEPTH_BITS_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_DEPTH_BUFFER_BIT_ARB" href="../../derelict/opengl3/wglext/WGL_DEPTH_BUFFER_BIT_ARB.html">
+								<code>WGL_DEPTH_BUFFER_BIT_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_DOUBLE_BUFFER_ARB" href="../../derelict/opengl3/wglext/WGL_DOUBLE_BUFFER_ARB.html">
+								<code>WGL_DOUBLE_BUFFER_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_DRAW_TO_BITMAP_ARB" href="../../derelict/opengl3/wglext/WGL_DRAW_TO_BITMAP_ARB.html">
+								<code>WGL_DRAW_TO_BITMAP_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_DRAW_TO_PBUFFER_ARB" href="../../derelict/opengl3/wglext/WGL_DRAW_TO_PBUFFER_ARB.html">
+								<code>WGL_DRAW_TO_PBUFFER_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_DRAW_TO_WINDOW_ARB" href="../../derelict/opengl3/wglext/WGL_DRAW_TO_WINDOW_ARB.html">
+								<code>WGL_DRAW_TO_WINDOW_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB" href="../../derelict/opengl3/wglext/WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB.html">
+								<code>WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_FRONT_COLOR_BUFFER_BIT_ARB" href="../../derelict/opengl3/wglext/WGL_FRONT_COLOR_BUFFER_BIT_ARB.html">
+								<code>WGL_FRONT_COLOR_BUFFER_BIT_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_FRONT_LEFT_ARB" href="../../derelict/opengl3/wglext/WGL_FRONT_LEFT_ARB.html">
+								<code>WGL_FRONT_LEFT_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_FRONT_RIGHT_ARB" href="../../derelict/opengl3/wglext/WGL_FRONT_RIGHT_ARB.html">
+								<code>WGL_FRONT_RIGHT_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_FULL_ACCELERATION_ARB" href="../../derelict/opengl3/wglext/WGL_FULL_ACCELERATION_ARB.html">
+								<code>WGL_FULL_ACCELERATION_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_GENERIC_ACCELERATION_ARB" href="../../derelict/opengl3/wglext/WGL_GENERIC_ACCELERATION_ARB.html">
+								<code>WGL_GENERIC_ACCELERATION_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_GREEN_BITS_ARB" href="../../derelict/opengl3/wglext/WGL_GREEN_BITS_ARB.html">
+								<code>WGL_GREEN_BITS_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_GREEN_SHIFT_ARB" href="../../derelict/opengl3/wglext/WGL_GREEN_SHIFT_ARB.html">
+								<code>WGL_GREEN_SHIFT_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_LOSE_CONTEXT_ON_RESET_ARB" href="../../derelict/opengl3/wglext/WGL_LOSE_CONTEXT_ON_RESET_ARB.html">
+								<code>WGL_LOSE_CONTEXT_ON_RESET_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_MAX_PBUFFER_HEIGHT_ARB" href="../../derelict/opengl3/wglext/WGL_MAX_PBUFFER_HEIGHT_ARB.html">
+								<code>WGL_MAX_PBUFFER_HEIGHT_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_MAX_PBUFFER_PIXELS_ARB" href="../../derelict/opengl3/wglext/WGL_MAX_PBUFFER_PIXELS_ARB.html">
+								<code>WGL_MAX_PBUFFER_PIXELS_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_MAX_PBUFFER_WIDTH_ARB" href="../../derelict/opengl3/wglext/WGL_MAX_PBUFFER_WIDTH_ARB.html">
+								<code>WGL_MAX_PBUFFER_WIDTH_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_MIPMAP_LEVEL_ARB" href="../../derelict/opengl3/wglext/WGL_MIPMAP_LEVEL_ARB.html">
+								<code>WGL_MIPMAP_LEVEL_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_MIPMAP_TEXTURE_ARB" href="../../derelict/opengl3/wglext/WGL_MIPMAP_TEXTURE_ARB.html">
+								<code>WGL_MIPMAP_TEXTURE_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_NEED_PALETTE_ARB" href="../../derelict/opengl3/wglext/WGL_NEED_PALETTE_ARB.html">
+								<code>WGL_NEED_PALETTE_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_NEED_SYSTEM_PALETTE_ARB" href="../../derelict/opengl3/wglext/WGL_NEED_SYSTEM_PALETTE_ARB.html">
+								<code>WGL_NEED_SYSTEM_PALETTE_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_NO_ACCELERATION_ARB" href="../../derelict/opengl3/wglext/WGL_NO_ACCELERATION_ARB.html">
+								<code>WGL_NO_ACCELERATION_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_NO_RESET_NOTIFICATION_ARB" href="../../derelict/opengl3/wglext/WGL_NO_RESET_NOTIFICATION_ARB.html">
+								<code>WGL_NO_RESET_NOTIFICATION_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_NO_TEXTURE_ARB" href="../../derelict/opengl3/wglext/WGL_NO_TEXTURE_ARB.html">
+								<code>WGL_NO_TEXTURE_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_NUMBER_OVERLAYS_ARB" href="../../derelict/opengl3/wglext/WGL_NUMBER_OVERLAYS_ARB.html">
+								<code>WGL_NUMBER_OVERLAYS_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_NUMBER_PIXEL_FORMATS_ARB" href="../../derelict/opengl3/wglext/WGL_NUMBER_PIXEL_FORMATS_ARB.html">
+								<code>WGL_NUMBER_PIXEL_FORMATS_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_NUMBER_UNDERLAYS_ARB" href="../../derelict/opengl3/wglext/WGL_NUMBER_UNDERLAYS_ARB.html">
+								<code>WGL_NUMBER_UNDERLAYS_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_PBUFFER_HEIGHT_ARB" href="../../derelict/opengl3/wglext/WGL_PBUFFER_HEIGHT_ARB.html">
+								<code>WGL_PBUFFER_HEIGHT_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_PBUFFER_LARGEST_ARB" href="../../derelict/opengl3/wglext/WGL_PBUFFER_LARGEST_ARB.html">
+								<code>WGL_PBUFFER_LARGEST_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_PBUFFER_LOST_ARB" href="../../derelict/opengl3/wglext/WGL_PBUFFER_LOST_ARB.html">
+								<code>WGL_PBUFFER_LOST_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_PBUFFER_WIDTH_ARB" href="../../derelict/opengl3/wglext/WGL_PBUFFER_WIDTH_ARB.html">
+								<code>WGL_PBUFFER_WIDTH_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_PIXEL_TYPE_ARB" href="../../derelict/opengl3/wglext/WGL_PIXEL_TYPE_ARB.html">
+								<code>WGL_PIXEL_TYPE_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_RED_BITS_ARB" href="../../derelict/opengl3/wglext/WGL_RED_BITS_ARB.html">
+								<code>WGL_RED_BITS_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_RED_SHIFT_ARB" href="../../derelict/opengl3/wglext/WGL_RED_SHIFT_ARB.html">
+								<code>WGL_RED_SHIFT_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_SAMPLES_ARB" href="../../derelict/opengl3/wglext/WGL_SAMPLES_ARB.html">
+								<code>WGL_SAMPLES_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_SAMPLE_BUFFERS_ARB" href="../../derelict/opengl3/wglext/WGL_SAMPLE_BUFFERS_ARB.html">
+								<code>WGL_SAMPLE_BUFFERS_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_SHARE_ACCUM_ARB" href="../../derelict/opengl3/wglext/WGL_SHARE_ACCUM_ARB.html">
+								<code>WGL_SHARE_ACCUM_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_SHARE_DEPTH_ARB" href="../../derelict/opengl3/wglext/WGL_SHARE_DEPTH_ARB.html">
+								<code>WGL_SHARE_DEPTH_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_SHARE_STENCIL_ARB" href="../../derelict/opengl3/wglext/WGL_SHARE_STENCIL_ARB.html">
+								<code>WGL_SHARE_STENCIL_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_STENCIL_BITS_ARB" href="../../derelict/opengl3/wglext/WGL_STENCIL_BITS_ARB.html">
+								<code>WGL_STENCIL_BITS_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_STENCIL_BUFFER_BIT_ARB" href="../../derelict/opengl3/wglext/WGL_STENCIL_BUFFER_BIT_ARB.html">
+								<code>WGL_STENCIL_BUFFER_BIT_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_STEREO_ARB" href="../../derelict/opengl3/wglext/WGL_STEREO_ARB.html">
+								<code>WGL_STEREO_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_SUPPORT_GDI_ARB" href="../../derelict/opengl3/wglext/WGL_SUPPORT_GDI_ARB.html">
+								<code>WGL_SUPPORT_GDI_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_SUPPORT_OPENGL_ARB" href="../../derelict/opengl3/wglext/WGL_SUPPORT_OPENGL_ARB.html">
+								<code>WGL_SUPPORT_OPENGL_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_SWAP_COPY_ARB" href="../../derelict/opengl3/wglext/WGL_SWAP_COPY_ARB.html">
+								<code>WGL_SWAP_COPY_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_SWAP_EXCHANGE_ARB" href="../../derelict/opengl3/wglext/WGL_SWAP_EXCHANGE_ARB.html">
+								<code>WGL_SWAP_EXCHANGE_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_SWAP_LAYER_BUFFERS_ARB" href="../../derelict/opengl3/wglext/WGL_SWAP_LAYER_BUFFERS_ARB.html">
+								<code>WGL_SWAP_LAYER_BUFFERS_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_SWAP_METHOD_ARB" href="../../derelict/opengl3/wglext/WGL_SWAP_METHOD_ARB.html">
+								<code>WGL_SWAP_METHOD_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_SWAP_UNDEFINED_ARB" href="../../derelict/opengl3/wglext/WGL_SWAP_UNDEFINED_ARB.html">
+								<code>WGL_SWAP_UNDEFINED_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_TEXTURE_1D_ARB" href="../../derelict/opengl3/wglext/WGL_TEXTURE_1D_ARB.html">
+								<code>WGL_TEXTURE_1D_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_TEXTURE_2D_ARB" href="../../derelict/opengl3/wglext/WGL_TEXTURE_2D_ARB.html">
+								<code>WGL_TEXTURE_2D_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_TEXTURE_CUBE_MAP_ARB" href="../../derelict/opengl3/wglext/WGL_TEXTURE_CUBE_MAP_ARB.html">
+								<code>WGL_TEXTURE_CUBE_MAP_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_TEXTURE_CUBE_MAP_NEGATIVE_X_ARB" href="../../derelict/opengl3/wglext/WGL_TEXTURE_CUBE_MAP_NEGATIVE_X_ARB.html">
+								<code>WGL_TEXTURE_CUBE_MAP_NEGATIVE_X_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_TEXTURE_CUBE_MAP_NEGATIVE_Y_ARB" href="../../derelict/opengl3/wglext/WGL_TEXTURE_CUBE_MAP_NEGATIVE_Y_ARB.html">
+								<code>WGL_TEXTURE_CUBE_MAP_NEGATIVE_Y_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_TEXTURE_CUBE_MAP_NEGATIVE_Z_ARB" href="../../derelict/opengl3/wglext/WGL_TEXTURE_CUBE_MAP_NEGATIVE_Z_ARB.html">
+								<code>WGL_TEXTURE_CUBE_MAP_NEGATIVE_Z_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB" href="../../derelict/opengl3/wglext/WGL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB.html">
+								<code>WGL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_TEXTURE_CUBE_MAP_POSITIVE_Y_ARB" href="../../derelict/opengl3/wglext/WGL_TEXTURE_CUBE_MAP_POSITIVE_Y_ARB.html">
+								<code>WGL_TEXTURE_CUBE_MAP_POSITIVE_Y_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB" href="../../derelict/opengl3/wglext/WGL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB.html">
+								<code>WGL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_TEXTURE_FORMAT_ARB" href="../../derelict/opengl3/wglext/WGL_TEXTURE_FORMAT_ARB.html">
+								<code>WGL_TEXTURE_FORMAT_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_TEXTURE_RGBA_ARB" href="../../derelict/opengl3/wglext/WGL_TEXTURE_RGBA_ARB.html">
+								<code>WGL_TEXTURE_RGBA_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_TEXTURE_RGB_ARB" href="../../derelict/opengl3/wglext/WGL_TEXTURE_RGB_ARB.html">
+								<code>WGL_TEXTURE_RGB_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_TEXTURE_TARGET_ARB" href="../../derelict/opengl3/wglext/WGL_TEXTURE_TARGET_ARB.html">
+								<code>WGL_TEXTURE_TARGET_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_TRANSPARENT_ALPHA_VALUE_ARB" href="../../derelict/opengl3/wglext/WGL_TRANSPARENT_ALPHA_VALUE_ARB.html">
+								<code>WGL_TRANSPARENT_ALPHA_VALUE_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_TRANSPARENT_ARB" href="../../derelict/opengl3/wglext/WGL_TRANSPARENT_ARB.html">
+								<code>WGL_TRANSPARENT_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_TRANSPARENT_BLUE_VALUE_ARB" href="../../derelict/opengl3/wglext/WGL_TRANSPARENT_BLUE_VALUE_ARB.html">
+								<code>WGL_TRANSPARENT_BLUE_VALUE_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_TRANSPARENT_GREEN_VALUE_ARB" href="../../derelict/opengl3/wglext/WGL_TRANSPARENT_GREEN_VALUE_ARB.html">
+								<code>WGL_TRANSPARENT_GREEN_VALUE_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_TRANSPARENT_INDEX_VALUE_ARB" href="../../derelict/opengl3/wglext/WGL_TRANSPARENT_INDEX_VALUE_ARB.html">
+								<code>WGL_TRANSPARENT_INDEX_VALUE_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_TRANSPARENT_RED_VALUE_ARB" href="../../derelict/opengl3/wglext/WGL_TRANSPARENT_RED_VALUE_ARB.html">
+								<code>WGL_TRANSPARENT_RED_VALUE_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_TYPE_COLORINDEX_ARB" href="../../derelict/opengl3/wglext/WGL_TYPE_COLORINDEX_ARB.html">
+								<code>WGL_TYPE_COLORINDEX_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_TYPE_RGBA_ARB" href="../../derelict/opengl3/wglext/WGL_TYPE_RGBA_ARB.html">
+								<code>WGL_TYPE_RGBA_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WGL_TYPE_RGBA_FLOAT_ARB" href="../../derelict/opengl3/wglext/WGL_TYPE_RGBA_FLOAT_ARB.html">
+								<code>WGL_TYPE_RGBA_FLOAT_ARB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Global variables</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="wglBindTexImageARB" href="../../derelict/opengl3/wglext/wglBindTexImageARB.html">
+								<code>wglBindTexImageARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="wglChoosePixelFormatARB" href="../../derelict/opengl3/wglext/wglChoosePixelFormatARB.html">
+								<code>wglChoosePixelFormatARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, const(int)*, const(float)*, uint, int*, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="wglCreateBufferRegionARB" href="../../derelict/opengl3/wglext/wglCreateBufferRegionARB.html">
+								<code>wglCreateBufferRegionARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void* function(void*, int, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="wglCreateContextAttribsARB" href="../../derelict/opengl3/wglext/wglCreateContextAttribsARB.html">
+								<code>wglCreateContextAttribsARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void* function(void*, void*, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="wglCreatePbufferARB" href="../../derelict/opengl3/wglext/wglCreatePbufferARB.html">
+								<code>wglCreatePbufferARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void* function(void*, int, int, int, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="wglDeleteBufferRegionARB" href="../../derelict/opengl3/wglext/wglDeleteBufferRegionARB.html">
+								<code>wglDeleteBufferRegionARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="wglDestroyPbufferARB" href="../../derelict/opengl3/wglext/wglDestroyPbufferARB.html">
+								<code>wglDestroyPbufferARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="wglGetCurrentReadDCARB" href="../../derelict/opengl3/wglext/wglGetCurrentReadDCARB.html">
+								<code>wglGetCurrentReadDCARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void* function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="wglGetExtensionsStringARB" href="../../derelict/opengl3/wglext/wglGetExtensionsStringARB.html">
+								<code>wglGetExtensionsStringARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow const(char*) function(void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="wglGetPbufferDCARB" href="../../derelict/opengl3/wglext/wglGetPbufferDCARB.html">
+								<code>wglGetPbufferDCARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void* function(void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="wglGetPixelFormatAttribfvARB" href="../../derelict/opengl3/wglext/wglGetPixelFormatAttribfvARB.html">
+								<code>wglGetPixelFormatAttribfvARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, int, int, uint, const(int)*, float*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="wglGetPixelFormatAttribivARB" href="../../derelict/opengl3/wglext/wglGetPixelFormatAttribivARB.html">
+								<code>wglGetPixelFormatAttribivARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, int, int, uint, const(int)*, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="wglGetSwapIntervalEXT" href="../../derelict/opengl3/wglext/wglGetSwapIntervalEXT.html">
+								<code>wglGetSwapIntervalEXT</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="wglMakeContextCurrentARB" href="../../derelict/opengl3/wglext/wglMakeContextCurrentARB.html">
+								<code>wglMakeContextCurrentARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, void*, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="wglQueryPbufferARB" href="../../derelict/opengl3/wglext/wglQueryPbufferARB.html">
+								<code>wglQueryPbufferARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="wglReleasePbufferDCARB" href="../../derelict/opengl3/wglext/wglReleasePbufferDCARB.html">
+								<code>wglReleasePbufferDCARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="wglReleaseTexImageARB" href="../../derelict/opengl3/wglext/wglReleaseTexImageARB.html">
+								<code>wglReleaseTexImageARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="wglRestoreBufferRegionARB" href="../../derelict/opengl3/wglext/wglRestoreBufferRegionARB.html">
+								<code>wglRestoreBufferRegionARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, int, int, int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="wglSaveBufferRegionARB" href="../../derelict/opengl3/wglext/wglSaveBufferRegionARB.html">
+								<code>wglSaveBufferRegionARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="wglSetPbufferAttribARB" href="../../derelict/opengl3/wglext/wglSetPbufferAttribARB.html">
+								<code>wglSetPbufferAttribARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="wglSwapIntervalEXT" href="../../derelict/opengl3/wglext/wglSwapIntervalEXT.html">
+								<code>wglSwapIntervalEXT</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(int)</code>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Aliases</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_wglBindTexImageARB" href="../../derelict/opengl3/wglext/da_wglBindTexImageARB.html">
+								<code>da_wglBindTexImageARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_wglChoosePixelFormatARB" href="../../derelict/opengl3/wglext/da_wglChoosePixelFormatARB.html">
+								<code>da_wglChoosePixelFormatARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, const(int)*, const(float)*, uint, int*, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_wglCreateBufferRegionARB" href="../../derelict/opengl3/wglext/da_wglCreateBufferRegionARB.html">
+								<code>da_wglCreateBufferRegionARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void* function(void*, int, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_wglCreateContextAttribsARB" href="../../derelict/opengl3/wglext/da_wglCreateContextAttribsARB.html">
+								<code>da_wglCreateContextAttribsARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void* function(void*, void*, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_wglCreatePbufferARB" href="../../derelict/opengl3/wglext/da_wglCreatePbufferARB.html">
+								<code>da_wglCreatePbufferARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void* function(void*, int, int, int, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_wglDeleteBufferRegionARB" href="../../derelict/opengl3/wglext/da_wglDeleteBufferRegionARB.html">
+								<code>da_wglDeleteBufferRegionARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_wglDestroyPbufferARB" href="../../derelict/opengl3/wglext/da_wglDestroyPbufferARB.html">
+								<code>da_wglDestroyPbufferARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_wglGetCurrentReadDCARB" href="../../derelict/opengl3/wglext/da_wglGetCurrentReadDCARB.html">
+								<code>da_wglGetCurrentReadDCARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void* function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_wglGetExtensionsStringARB" href="../../derelict/opengl3/wglext/da_wglGetExtensionsStringARB.html">
+								<code>da_wglGetExtensionsStringARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow const(char*) function(void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_wglGetPbufferDCARB" href="../../derelict/opengl3/wglext/da_wglGetPbufferDCARB.html">
+								<code>da_wglGetPbufferDCARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void* function(void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_wglGetPixelFormatAttribfvARB" href="../../derelict/opengl3/wglext/da_wglGetPixelFormatAttribfvARB.html">
+								<code>da_wglGetPixelFormatAttribfvARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, int, int, uint, const(int)*, float*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_wglGetPixelFormatAttribivARB" href="../../derelict/opengl3/wglext/da_wglGetPixelFormatAttribivARB.html">
+								<code>da_wglGetPixelFormatAttribivARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, int, int, uint, const(int)*, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_wglGetSwapIntervalEXT" href="../../derelict/opengl3/wglext/da_wglGetSwapIntervalEXT.html">
+								<code>da_wglGetSwapIntervalEXT</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_wglMakeContextCurrentARB" href="../../derelict/opengl3/wglext/da_wglMakeContextCurrentARB.html">
+								<code>da_wglMakeContextCurrentARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, void*, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_wglQueryPbufferARB" href="../../derelict/opengl3/wglext/da_wglQueryPbufferARB.html">
+								<code>da_wglQueryPbufferARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_wglReleasePbufferDCARB" href="../../derelict/opengl3/wglext/da_wglReleasePbufferDCARB.html">
+								<code>da_wglReleasePbufferDCARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_wglReleaseTexImageARB" href="../../derelict/opengl3/wglext/da_wglReleaseTexImageARB.html">
+								<code>da_wglReleaseTexImageARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_wglRestoreBufferRegionARB" href="../../derelict/opengl3/wglext/da_wglRestoreBufferRegionARB.html">
+								<code>da_wglRestoreBufferRegionARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, int, int, int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_wglSaveBufferRegionARB" href="../../derelict/opengl3/wglext/da_wglSaveBufferRegionARB.html">
+								<code>da_wglSaveBufferRegionARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_wglSetPbufferAttribARB" href="../../derelict/opengl3/wglext/da_wglSetPbufferAttribARB.html">
+								<code>da_wglSetPbufferAttribARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_wglSwapIntervalEXT" href="../../derelict/opengl3/wglext/da_wglSwapIntervalEXT.html">
+								<code>da_wglSwapIntervalEXT</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="HPBUFFERARB" href="../../derelict/opengl3/wglext/HPBUFFERARB.html">
+								<code>HPBUFFERARB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">void*</code>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Authors</h2><!-- using block ddox.authors in ddox.layout.dt-->
+
+			</section>
+			<section>
+				<h2>Copyright</h2><!-- using block ddox.copyright in ddox.layout.dt-->
+
+			</section>
+			<section>
+				<h2>License</h2><!-- using block ddox.license in ddox.layout.dt-->
+
+			</section>
+		</div>
+	</body>
+</html>

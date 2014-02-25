@@ -1,0 +1,1447 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/><!-- using block title in layout.dt--><!-- using block ddox.defs in ddox.layout.dt--><!-- using block ddox.title in ddox.layout.dt-->
+		<title>Module derelict.assimp3.assimp</title>
+		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav"><!-- using block navigation in layout.dt-->
+						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">components</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../components/animation.html" class=" module">animation</a>
+							</li>
+							<li>
+								<a href="../../components/assetanimation.html" class=" module">assetanimation</a>
+							</li>
+							<li>
+								<a href="../../components/assets.html" class=" module">assets</a>
+							</li>
+							<li>
+								<a href="../../components/camera.html" class=" module">camera</a>
+							</li>
+							<li>
+								<a href="../../components/component.html" class=" module">component</a>
+							</li>
+							<li>
+								<a href="../../components/lights.html" class=" module">lights</a>
+							</li>
+							<li>
+								<a href="../../components/material.html" class=" module">material</a>
+							</li>
+							<li>
+								<a href="../../components/mesh.html" class=" module">mesh</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">core</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../core/dgame.html" class=" module">dgame</a>
+							</li>
+							<li>
+								<a href="../../core/gameobject.html" class=" module">gameobject</a>
+							</li>
+							<li>
+								<a href="../../core/gameobjectcollection.html" class=" module">gameobjectcollection</a>
+							</li>
+							<li>
+								<a href="../../core/prefabs.html" class=" module">prefabs</a>
+							</li>
+							<li>
+								<a href="../../core/properties.html" class=" module">properties</a>
+							</li>
+							<li>
+								<a href="../../core/reflection.html" class=" module">reflection</a>
+							</li>
+						</ul>
+							</li>
+							<li class=" tree-view">
+								<a href="#" class="package">derelict</a>
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">assimp3</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/assimp3/assimp.html" class="selected module">assimp</a>
+							</li>
+							<li>
+								<a href="../../derelict/assimp3/types.html" class=" module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">freeimage</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/freeimage/freeimage.html" class=" module">freeimage</a>
+							</li>
+							<li>
+								<a href="../../derelict/freeimage/functions.html" class=" module">functions</a>
+							</li>
+							<li>
+								<a href="../../derelict/freeimage/types.html" class=" module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">opengl3</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/opengl3/arb.html" class=" module">arb</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/cgl.html" class=" module">cgl</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/constants.html" class=" module">constants</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/deprecatedConstants.html" class=" module">deprecatedConstants</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/deprecatedFunctions.html" class=" module">deprecatedFunctions</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/ext.html" class=" module">ext</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/functions.html" class=" module">functions</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/gl.html" class=" module">gl</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/gl3.html" class=" module">gl3</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/glx.html" class=" module">glx</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/glxext.html" class=" module">glxext</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/internal.html" class=" module">internal</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/types.html" class=" module">types</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/wgl.html" class=" module">wgl</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/wglext.html" class=" module">wglext</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">util</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/util/exception.html" class=" module">exception</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/loader.html" class=" module">loader</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/sharedlib.html" class=" module">sharedlib</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/system.html" class=" module">system</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/wintypes.html" class=" module">wintypes</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/xtypes.html" class=" module">xtypes</a>
+							</li>
+						</ul>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">graphics</a>
+						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">adapters</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../graphics/adapters/adapter.html" class=" module">adapter</a>
+							</li>
+							<li>
+								<a href="../../graphics/adapters/linux.html" class=" module">linux</a>
+							</li>
+							<li>
+								<a href="../../graphics/adapters/mac.html" class=" module">mac</a>
+							</li>
+							<li>
+								<a href="../../graphics/adapters/win32.html" class=" module">win32</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../graphics/adapters.html" class=" module">adapters</a>
+							</li>
+							<li>
+								<a href="../../graphics/graphics.html" class=" module">graphics</a>
+							</li>
+							<li>
+								<a href="../../graphics/shaders.html" class=" module">shaders</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">utility</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../utility/config.html" class=" module">config</a>
+							</li>
+							<li>
+								<a href="../../utility/filepath.html" class=" module">filepath</a>
+							</li>
+							<li>
+								<a href="../../utility/input.html" class=" module">input</a>
+							</li>
+							<li>
+								<a href="../../utility/output.html" class=" module">output</a>
+							</li>
+							<li>
+								<a href="../../utility/time.html" class=" module">time</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../components.html" class=" module">components</a>
+							</li>
+							<li>
+								<a href="../../core.html" class=" module">core</a>
+							</li>
+							<li>
+								<a href="../../graphics.html" class=" module">graphics</a>
+							</li>
+							<li>
+								<a href="../../utility.html" class=" module">utility</a>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../symbols.js"></script>
+	<script type="application/javascript">
+		//<![CDATA[
+		var symbolSearchRootDir = "../../";		$('#symbolSearchPane').show();
+		//]]>
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Module derelict.assimp3.assimp</h1><!-- using block body in layout.dt--><!-- using block ddox.description in ddox.layout.dt-->
+			<p></p>
+<!-- using block ddox.sections in ddox.layout.dt-->
+			<section></section><!-- using block ddox.members in ddox.layout.dt-->
+			<section>
+				<h2>Functions</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiGetMaterialFloat" href="../../derelict/assimp3/assimp/aiGetMaterialFloat.html">
+								<code>aiGetMaterialFloat</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiGetMaterialInteger" href="../../derelict/assimp3/assimp/aiGetMaterialInteger.html">
+								<code>aiGetMaterialInteger</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Classes</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="DerelictASSIMP3Loader" href="../../derelict/assimp3/assimp/DerelictASSIMP3Loader.html">
+								<code>DerelictASSIMP3Loader</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Global variables</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiApplyPostProcessing" href="../../derelict/assimp3/assimp/aiApplyPostProcessing.html">
+								<code>aiApplyPostProcessing</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>*) function(const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>*), uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiAttachLogStream" href="../../derelict/assimp3/assimp/aiAttachLogStream.html">
+								<code>aiAttachLogStream</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(const(<a href="../../derelict/assimp3/types/aiLogStream.html">aiLogStream</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiCopyScene" href="../../derelict/assimp3/assimp/aiCopyScene.html">
+								<code>aiCopyScene</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>)*, <a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>**)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiCreatePropertyStore" href="../../derelict/assimp3/assimp/aiCreatePropertyStore.html">
+								<code>aiCreatePropertyStore</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow <a href="../../derelict/assimp3/types/aiPropertyStore.html">aiPropertyStore</a>* function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiCreateQuaternionFromMatrix" href="../../derelict/assimp3/assimp/aiCreateQuaternionFromMatrix.html">
+								<code>aiCreateQuaternionFromMatrix</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiQuaternion.html">aiQuaternion</a>*, const(<a href="../../derelict/assimp3/types/aiMatrix3x3.html">aiMatrix3x3</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiDecomposeMatrix" href="../../derelict/assimp3/assimp/aiDecomposeMatrix.html">
+								<code>aiDecomposeMatrix</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(const(<a href="../../derelict/assimp3/types/aiMatrix4x4.html">aiMatrix4x4</a>)*, <a href="../../derelict/assimp3/types/aiVector3D.html">aiVector3D</a>*, <a href="../../derelict/assimp3/types/aiQuaternion.html">aiQuaternion</a>*, <a href="../../derelict/assimp3/types/aiVector3D.html">aiVector3D</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiDetachAllLogStreams" href="../../derelict/assimp3/assimp/aiDetachAllLogStreams.html">
+								<code>aiDetachAllLogStreams</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiDetachLogStream" href="../../derelict/assimp3/assimp/aiDetachLogStream.html">
+								<code>aiDetachLogStream</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(const(<a href="../../derelict/assimp3/types/aiLogStream.html">aiLogStream</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiEnableVerboseLogging" href="../../derelict/assimp3/assimp/aiEnableVerboseLogging.html">
+								<code>aiEnableVerboseLogging</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiExportScene" href="../../derelict/assimp3/assimp/aiExportScene.html">
+								<code>aiExportScene</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>)*, const(char)*, const(char)*, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiExportSceneEx" href="../../derelict/assimp3/assimp/aiExportSceneEx.html">
+								<code>aiExportSceneEx</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>)*, const(char)*, const(char)*, <a href="../../derelict/assimp3/types/aiFileIO.html">aiFileIO</a>*, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiExportSceneToBlob" href="../../derelict/assimp3/assimp/aiExportSceneToBlob.html">
+								<code>aiExportSceneToBlob</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow const(<a href="../../derelict/assimp3/types/aiExportDataBlob.html">aiExportDataBlob</a>)* function(const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>)*, const(char)*, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiGetCompileFlags" href="../../derelict/assimp3/assimp/aiGetCompileFlags.html">
+								<code>aiGetCompileFlags</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow uint function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiGetErrorString" href="../../derelict/assimp3/assimp/aiGetErrorString.html">
+								<code>aiGetErrorString</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow const(char)* function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiGetExportFormatCount" href="../../derelict/assimp3/assimp/aiGetExportFormatCount.html">
+								<code>aiGetExportFormatCount</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow uint function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiGetExportFormatDescription" href="../../derelict/assimp3/assimp/aiGetExportFormatDescription.html">
+								<code>aiGetExportFormatDescription</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow <a href="../../derelict/assimp3/types/aiExportFormatDesc.html">aiExportFormatDesc</a>* function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiGetExtensionList" href="../../derelict/assimp3/assimp/aiGetExtensionList.html">
+								<code>aiGetExtensionList</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiString.html">aiString</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiGetLegalString" href="../../derelict/assimp3/assimp/aiGetLegalString.html">
+								<code>aiGetLegalString</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow const(char)* function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiGetMaterialColor" href="../../derelict/assimp3/assimp/aiGetMaterialColor.html">
+								<code>aiGetMaterialColor</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(const(<a href="../../derelict/assimp3/types/aiMaterial.html">aiMaterial</a>)*, const(char)*, uint, uint, <a href="../../derelict/assimp3/types/aiColor4D.html">aiColor4D</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiGetMaterialFloatArray" href="../../derelict/assimp3/assimp/aiGetMaterialFloatArray.html">
+								<code>aiGetMaterialFloatArray</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(const(<a href="../../derelict/assimp3/types/aiMaterial.html">aiMaterial</a>)*, const(char)*, uint, uint, float*, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiGetMaterialIntegerArray" href="../../derelict/assimp3/assimp/aiGetMaterialIntegerArray.html">
+								<code>aiGetMaterialIntegerArray</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(const(<a href="../../derelict/assimp3/types/aiMaterial.html">aiMaterial</a>)*, const(char)*, uint, uint, int*, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiGetMaterialProperty" href="../../derelict/assimp3/assimp/aiGetMaterialProperty.html">
+								<code>aiGetMaterialProperty</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(const(<a href="../../derelict/assimp3/types/aiMaterial.html">aiMaterial</a>)*, const(char)*, uint, uint, <a href="../../derelict/assimp3/types/aiMaterialProperty.html">aiMaterialProperty</a>**)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiGetMaterialString" href="../../derelict/assimp3/assimp/aiGetMaterialString.html">
+								<code>aiGetMaterialString</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(const(<a href="../../derelict/assimp3/types/aiMaterial.html">aiMaterial</a>)*, const(char)*, uint, uint, <a href="../../derelict/assimp3/types/aiString.html">aiString</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiGetMaterialTexture" href="../../derelict/assimp3/assimp/aiGetMaterialTexture.html">
+								<code>aiGetMaterialTexture</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(const(<a href="../../derelict/assimp3/types/aiMaterial.html">aiMaterial</a>)*, uint, uint, <a href="../../derelict/assimp3/types/aiString.html">aiString</a>*, uint*, uint*, float*, uint*, uint*, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiGetMaterialTextureCount" href="../../derelict/assimp3/assimp/aiGetMaterialTextureCount.html">
+								<code>aiGetMaterialTextureCount</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow uint function(const(<a href="../../derelict/assimp3/types/aiMaterial.html">aiMaterial</a>)*, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiGetMemoryRequirements" href="../../derelict/assimp3/assimp/aiGetMemoryRequirements.html">
+								<code>aiGetMemoryRequirements</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>)*, <a href="../../derelict/assimp3/types/aiMemoryInfo.html">aiMemoryInfo</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiGetPredefinedLogStream" href="../../derelict/assimp3/assimp/aiGetPredefinedLogStream.html">
+								<code>aiGetPredefinedLogStream</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow <a href="../../derelict/assimp3/types/aiLogStream.html">aiLogStream</a> function(uint, const(char)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiGetVersionMajor" href="../../derelict/assimp3/assimp/aiGetVersionMajor.html">
+								<code>aiGetVersionMajor</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow uint function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiGetVersionMinor" href="../../derelict/assimp3/assimp/aiGetVersionMinor.html">
+								<code>aiGetVersionMinor</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow uint function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiGetVersionRevision" href="../../derelict/assimp3/assimp/aiGetVersionRevision.html">
+								<code>aiGetVersionRevision</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow uint function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiIdentityMatrix3" href="../../derelict/assimp3/assimp/aiIdentityMatrix3.html">
+								<code>aiIdentityMatrix3</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiMatrix3x3.html">aiMatrix3x3</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiIdentityMatrix4" href="../../derelict/assimp3/assimp/aiIdentityMatrix4.html">
+								<code>aiIdentityMatrix4</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiMatrix4x4.html">aiMatrix4x4</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiImportFile" href="../../derelict/assimp3/assimp/aiImportFile.html">
+								<code>aiImportFile</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>*) function(const(char)*, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiImportFileEx" href="../../derelict/assimp3/assimp/aiImportFileEx.html">
+								<code>aiImportFileEx</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>*) function(const(char)*, uint, <a href="../../derelict/assimp3/types/aiFileIO.html">aiFileIO</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiImportFileExWithProperties" href="../../derelict/assimp3/assimp/aiImportFileExWithProperties.html">
+								<code>aiImportFileExWithProperties</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>*) function(const(char)*, uint, <a href="../../derelict/assimp3/types/aiFileIO.html">aiFileIO</a>*, const(<a href="../../derelict/assimp3/types/aiPropertyStore.html">aiPropertyStore</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiImportFileFromMemory" href="../../derelict/assimp3/assimp/aiImportFileFromMemory.html">
+								<code>aiImportFileFromMemory</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>*) function(const(void)*, uint, uint, const(char)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiImportFileFromMemoryWithProperties" href="../../derelict/assimp3/assimp/aiImportFileFromMemoryWithProperties.html">
+								<code>aiImportFileFromMemoryWithProperties</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>*) function(const(void)*, uint, uint, const(char)*, const(<a href="../../derelict/assimp3/types/aiPropertyStore.html">aiPropertyStore</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiIsExtensionSupported" href="../../derelict/assimp3/assimp/aiIsExtensionSupported.html">
+								<code>aiIsExtensionSupported</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(const(char)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiMultiplyMatrix3" href="../../derelict/assimp3/assimp/aiMultiplyMatrix3.html">
+								<code>aiMultiplyMatrix3</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiMatrix3x3.html">aiMatrix3x3</a>*, const(<a href="../../derelict/assimp3/types/aiMatrix3x3.html">aiMatrix3x3</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiMultiplyMatrix4" href="../../derelict/assimp3/assimp/aiMultiplyMatrix4.html">
+								<code>aiMultiplyMatrix4</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiMatrix4x4.html">aiMatrix4x4</a>*, const(<a href="../../derelict/assimp3/types/aiMatrix4x4.html">aiMatrix4x4</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiReleaseExportBlob" href="../../derelict/assimp3/assimp/aiReleaseExportBlob.html">
+								<code>aiReleaseExportBlob</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(const(<a href="../../derelict/assimp3/types/aiExportDataBlob.html">aiExportDataBlob</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiReleaseImport" href="../../derelict/assimp3/assimp/aiReleaseImport.html">
+								<code>aiReleaseImport</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiReleasePropertyStore" href="../../derelict/assimp3/assimp/aiReleasePropertyStore.html">
+								<code>aiReleasePropertyStore</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiPropertyStore.html">aiPropertyStore</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiSetImportPropertyFloat" href="../../derelict/assimp3/assimp/aiSetImportPropertyFloat.html">
+								<code>aiSetImportPropertyFloat</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiPropertyStore.html">aiPropertyStore</a>*, const(char)*, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiSetImportPropertyInteger" href="../../derelict/assimp3/assimp/aiSetImportPropertyInteger.html">
+								<code>aiSetImportPropertyInteger</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiPropertyStore.html">aiPropertyStore</a>*, const(char)*, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiSetImportPropertyString" href="../../derelict/assimp3/assimp/aiSetImportPropertyString.html">
+								<code>aiSetImportPropertyString</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiPropertyStore.html">aiPropertyStore</a>*, const(char)*, const(<a href="../../derelict/assimp3/types/aiString.html">aiString</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTransformVecByMatrix3" href="../../derelict/assimp3/assimp/aiTransformVecByMatrix3.html">
+								<code>aiTransformVecByMatrix3</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiVector3D.html">aiVector3D</a>*, const(<a href="../../derelict/assimp3/types/aiMatrix3x3.html">aiMatrix3x3</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTransformVecByMatrix4" href="../../derelict/assimp3/assimp/aiTransformVecByMatrix4.html">
+								<code>aiTransformVecByMatrix4</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiVector3D.html">aiVector3D</a>*, const(<a href="../../derelict/assimp3/types/aiMatrix4x4.html">aiMatrix4x4</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTransposeMatrix3" href="../../derelict/assimp3/assimp/aiTransposeMatrix3.html">
+								<code>aiTransposeMatrix3</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiMatrix3x3.html">aiMatrix3x3</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTransposeMatrix4" href="../../derelict/assimp3/assimp/aiTransposeMatrix4.html">
+								<code>aiTransposeMatrix4</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiMatrix4x4.html">aiMatrix4x4</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="DerelictASSIMP3" href="../../derelict/assimp3/assimp/DerelictASSIMP3.html">
+								<code>DerelictASSIMP3</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d"><a href="../../derelict/assimp3/assimp/DerelictASSIMP3Loader.html">DerelictASSIMP3Loader</a></code>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Aliases</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiApplyPostProcessing" href="../../derelict/assimp3/assimp/da_aiApplyPostProcessing.html">
+								<code>da_aiApplyPostProcessing</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>*) function(const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>*), uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiAttachLogStream" href="../../derelict/assimp3/assimp/da_aiAttachLogStream.html">
+								<code>da_aiAttachLogStream</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(const(<a href="../../derelict/assimp3/types/aiLogStream.html">aiLogStream</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiCopyScene" href="../../derelict/assimp3/assimp/da_aiCopyScene.html">
+								<code>da_aiCopyScene</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>)*, <a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>**)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiCreatePropertyStore" href="../../derelict/assimp3/assimp/da_aiCreatePropertyStore.html">
+								<code>da_aiCreatePropertyStore</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow <a href="../../derelict/assimp3/types/aiPropertyStore.html">aiPropertyStore</a>* function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiCreateQuaternionFromMatrix" href="../../derelict/assimp3/assimp/da_aiCreateQuaternionFromMatrix.html">
+								<code>da_aiCreateQuaternionFromMatrix</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiQuaternion.html">aiQuaternion</a>*, const(<a href="../../derelict/assimp3/types/aiMatrix3x3.html">aiMatrix3x3</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiDecomposeMatrix" href="../../derelict/assimp3/assimp/da_aiDecomposeMatrix.html">
+								<code>da_aiDecomposeMatrix</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(const(<a href="../../derelict/assimp3/types/aiMatrix4x4.html">aiMatrix4x4</a>)*, <a href="../../derelict/assimp3/types/aiVector3D.html">aiVector3D</a>*, <a href="../../derelict/assimp3/types/aiQuaternion.html">aiQuaternion</a>*, <a href="../../derelict/assimp3/types/aiVector3D.html">aiVector3D</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiDetachAllLogStreams" href="../../derelict/assimp3/assimp/da_aiDetachAllLogStreams.html">
+								<code>da_aiDetachAllLogStreams</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiDetachLogStream" href="../../derelict/assimp3/assimp/da_aiDetachLogStream.html">
+								<code>da_aiDetachLogStream</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(const(<a href="../../derelict/assimp3/types/aiLogStream.html">aiLogStream</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiEnableVerboseLogging" href="../../derelict/assimp3/assimp/da_aiEnableVerboseLogging.html">
+								<code>da_aiEnableVerboseLogging</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiExportScene" href="../../derelict/assimp3/assimp/da_aiExportScene.html">
+								<code>da_aiExportScene</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>)*, const(char)*, const(char)*, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiExportSceneEx" href="../../derelict/assimp3/assimp/da_aiExportSceneEx.html">
+								<code>da_aiExportSceneEx</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>)*, const(char)*, const(char)*, <a href="../../derelict/assimp3/types/aiFileIO.html">aiFileIO</a>*, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiExportSceneToBlob" href="../../derelict/assimp3/assimp/da_aiExportSceneToBlob.html">
+								<code>da_aiExportSceneToBlob</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow const(<a href="../../derelict/assimp3/types/aiExportDataBlob.html">aiExportDataBlob</a>)* function(const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>)*, const(char)*, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiGetCompileFlags" href="../../derelict/assimp3/assimp/da_aiGetCompileFlags.html">
+								<code>da_aiGetCompileFlags</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow uint function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiGetErrorString" href="../../derelict/assimp3/assimp/da_aiGetErrorString.html">
+								<code>da_aiGetErrorString</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow const(char)* function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiGetExportFormatCount" href="../../derelict/assimp3/assimp/da_aiGetExportFormatCount.html">
+								<code>da_aiGetExportFormatCount</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow uint function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiGetExportFormatDescription" href="../../derelict/assimp3/assimp/da_aiGetExportFormatDescription.html">
+								<code>da_aiGetExportFormatDescription</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow <a href="../../derelict/assimp3/types/aiExportFormatDesc.html">aiExportFormatDesc</a>* function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiGetExtensionList" href="../../derelict/assimp3/assimp/da_aiGetExtensionList.html">
+								<code>da_aiGetExtensionList</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiString.html">aiString</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiGetLegalString" href="../../derelict/assimp3/assimp/da_aiGetLegalString.html">
+								<code>da_aiGetLegalString</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow const(char)* function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiGetMaterialColor" href="../../derelict/assimp3/assimp/da_aiGetMaterialColor.html">
+								<code>da_aiGetMaterialColor</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(const(<a href="../../derelict/assimp3/types/aiMaterial.html">aiMaterial</a>)*, const(char)*, uint, uint, <a href="../../derelict/assimp3/types/aiColor4D.html">aiColor4D</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiGetMaterialFloatArray" href="../../derelict/assimp3/assimp/da_aiGetMaterialFloatArray.html">
+								<code>da_aiGetMaterialFloatArray</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(const(<a href="../../derelict/assimp3/types/aiMaterial.html">aiMaterial</a>)*, const(char)*, uint, uint, float*, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiGetMaterialIntegerArray" href="../../derelict/assimp3/assimp/da_aiGetMaterialIntegerArray.html">
+								<code>da_aiGetMaterialIntegerArray</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(const(<a href="../../derelict/assimp3/types/aiMaterial.html">aiMaterial</a>)*, const(char)*, uint, uint, int*, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiGetMaterialProperty" href="../../derelict/assimp3/assimp/da_aiGetMaterialProperty.html">
+								<code>da_aiGetMaterialProperty</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(const(<a href="../../derelict/assimp3/types/aiMaterial.html">aiMaterial</a>)*, const(char)*, uint, uint, <a href="../../derelict/assimp3/types/aiMaterialProperty.html">aiMaterialProperty</a>**)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiGetMaterialString" href="../../derelict/assimp3/assimp/da_aiGetMaterialString.html">
+								<code>da_aiGetMaterialString</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(const(<a href="../../derelict/assimp3/types/aiMaterial.html">aiMaterial</a>)*, const(char)*, uint, uint, <a href="../../derelict/assimp3/types/aiString.html">aiString</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiGetMaterialTexture" href="../../derelict/assimp3/assimp/da_aiGetMaterialTexture.html">
+								<code>da_aiGetMaterialTexture</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(const(<a href="../../derelict/assimp3/types/aiMaterial.html">aiMaterial</a>)*, uint, uint, <a href="../../derelict/assimp3/types/aiString.html">aiString</a>*, uint*, uint*, float*, uint*, uint*, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiGetMaterialTextureCount" href="../../derelict/assimp3/assimp/da_aiGetMaterialTextureCount.html">
+								<code>da_aiGetMaterialTextureCount</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow uint function(const(<a href="../../derelict/assimp3/types/aiMaterial.html">aiMaterial</a>)*, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiGetMemoryRequirements" href="../../derelict/assimp3/assimp/da_aiGetMemoryRequirements.html">
+								<code>da_aiGetMemoryRequirements</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>)*, <a href="../../derelict/assimp3/types/aiMemoryInfo.html">aiMemoryInfo</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiGetPredefinedLogStream" href="../../derelict/assimp3/assimp/da_aiGetPredefinedLogStream.html">
+								<code>da_aiGetPredefinedLogStream</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow <a href="../../derelict/assimp3/types/aiLogStream.html">aiLogStream</a> function(uint, const(char)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiGetVersionMajor" href="../../derelict/assimp3/assimp/da_aiGetVersionMajor.html">
+								<code>da_aiGetVersionMajor</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow uint function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiGetVersionMinor" href="../../derelict/assimp3/assimp/da_aiGetVersionMinor.html">
+								<code>da_aiGetVersionMinor</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow uint function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiGetVersionRevision" href="../../derelict/assimp3/assimp/da_aiGetVersionRevision.html">
+								<code>da_aiGetVersionRevision</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow uint function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiIdentityMatrix3" href="../../derelict/assimp3/assimp/da_aiIdentityMatrix3.html">
+								<code>da_aiIdentityMatrix3</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiMatrix3x3.html">aiMatrix3x3</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiIdentityMatrix4" href="../../derelict/assimp3/assimp/da_aiIdentityMatrix4.html">
+								<code>da_aiIdentityMatrix4</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiMatrix4x4.html">aiMatrix4x4</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiImportFile" href="../../derelict/assimp3/assimp/da_aiImportFile.html">
+								<code>da_aiImportFile</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>*) function(const(char)*, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiImportFileEx" href="../../derelict/assimp3/assimp/da_aiImportFileEx.html">
+								<code>da_aiImportFileEx</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>*) function(const(char)*, uint, <a href="../../derelict/assimp3/types/aiFileIO.html">aiFileIO</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiImportFileExWithProperties" href="../../derelict/assimp3/assimp/da_aiImportFileExWithProperties.html">
+								<code>da_aiImportFileExWithProperties</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>*) function(const(char)*, uint, <a href="../../derelict/assimp3/types/aiFileIO.html">aiFileIO</a>*, const(<a href="../../derelict/assimp3/types/aiPropertyStore.html">aiPropertyStore</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiImportFileFromMemory" href="../../derelict/assimp3/assimp/da_aiImportFileFromMemory.html">
+								<code>da_aiImportFileFromMemory</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>*) function(const(void)*, uint, uint, const(char)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiImportFileFromMemoryWithProperties" href="../../derelict/assimp3/assimp/da_aiImportFileFromMemoryWithProperties.html">
+								<code>da_aiImportFileFromMemoryWithProperties</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>*) function(const(void)*, uint, uint, const(char)*, const(<a href="../../derelict/assimp3/types/aiPropertyStore.html">aiPropertyStore</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiIsExtensionSupported" href="../../derelict/assimp3/assimp/da_aiIsExtensionSupported.html">
+								<code>da_aiIsExtensionSupported</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(const(char)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiMultiplyMatrix3" href="../../derelict/assimp3/assimp/da_aiMultiplyMatrix3.html">
+								<code>da_aiMultiplyMatrix3</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiMatrix3x3.html">aiMatrix3x3</a>*, const(<a href="../../derelict/assimp3/types/aiMatrix3x3.html">aiMatrix3x3</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiMultiplyMatrix4" href="../../derelict/assimp3/assimp/da_aiMultiplyMatrix4.html">
+								<code>da_aiMultiplyMatrix4</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiMatrix4x4.html">aiMatrix4x4</a>*, const(<a href="../../derelict/assimp3/types/aiMatrix4x4.html">aiMatrix4x4</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiReleaseExportBlob" href="../../derelict/assimp3/assimp/da_aiReleaseExportBlob.html">
+								<code>da_aiReleaseExportBlob</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(const(<a href="../../derelict/assimp3/types/aiExportDataBlob.html">aiExportDataBlob</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiReleaseImport" href="../../derelict/assimp3/assimp/da_aiReleaseImport.html">
+								<code>da_aiReleaseImport</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(const(<a href="../../derelict/assimp3/types/aiScene.html">aiScene</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiReleasePropertyStore" href="../../derelict/assimp3/assimp/da_aiReleasePropertyStore.html">
+								<code>da_aiReleasePropertyStore</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiPropertyStore.html">aiPropertyStore</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiSetImportPropertyFloat" href="../../derelict/assimp3/assimp/da_aiSetImportPropertyFloat.html">
+								<code>da_aiSetImportPropertyFloat</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiPropertyStore.html">aiPropertyStore</a>*, const(char)*, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiSetImportPropertyInteger" href="../../derelict/assimp3/assimp/da_aiSetImportPropertyInteger.html">
+								<code>da_aiSetImportPropertyInteger</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiPropertyStore.html">aiPropertyStore</a>*, const(char)*, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiSetImportPropertyString" href="../../derelict/assimp3/assimp/da_aiSetImportPropertyString.html">
+								<code>da_aiSetImportPropertyString</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiPropertyStore.html">aiPropertyStore</a>*, const(char)*, const(<a href="../../derelict/assimp3/types/aiString.html">aiString</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiTransformVecByMatrix3" href="../../derelict/assimp3/assimp/da_aiTransformVecByMatrix3.html">
+								<code>da_aiTransformVecByMatrix3</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiVector3D.html">aiVector3D</a>*, const(<a href="../../derelict/assimp3/types/aiMatrix3x3.html">aiMatrix3x3</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiTransformVecByMatrix4" href="../../derelict/assimp3/assimp/da_aiTransformVecByMatrix4.html">
+								<code>da_aiTransformVecByMatrix4</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiVector3D.html">aiVector3D</a>*, const(<a href="../../derelict/assimp3/types/aiMatrix4x4.html">aiMatrix4x4</a>)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiTransposeMatrix3" href="../../derelict/assimp3/assimp/da_aiTransposeMatrix3.html">
+								<code>da_aiTransposeMatrix3</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiMatrix3x3.html">aiMatrix3x3</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_aiTransposeMatrix4" href="../../derelict/assimp3/assimp/da_aiTransposeMatrix4.html">
+								<code>da_aiTransposeMatrix4</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiMatrix4x4.html">aiMatrix4x4</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Authors</h2><!-- using block ddox.authors in ddox.layout.dt-->
+
+			</section>
+			<section>
+				<h2>Copyright</h2><!-- using block ddox.copyright in ddox.layout.dt-->
+
+			</section>
+			<section>
+				<h2>License</h2><!-- using block ddox.license in ddox.layout.dt-->
+
+			</section>
+		</div>
+	</body>
+</html>

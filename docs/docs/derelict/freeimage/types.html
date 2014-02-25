@@ -1,0 +1,3459 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/><!-- using block title in layout.dt--><!-- using block ddox.defs in ddox.layout.dt--><!-- using block ddox.title in ddox.layout.dt-->
+		<title>Module derelict.freeimage.types</title>
+		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav"><!-- using block navigation in layout.dt-->
+						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">components</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../components/animation.html" class=" module">animation</a>
+							</li>
+							<li>
+								<a href="../../components/assetanimation.html" class=" module">assetanimation</a>
+							</li>
+							<li>
+								<a href="../../components/assets.html" class=" module">assets</a>
+							</li>
+							<li>
+								<a href="../../components/camera.html" class=" module">camera</a>
+							</li>
+							<li>
+								<a href="../../components/component.html" class=" module">component</a>
+							</li>
+							<li>
+								<a href="../../components/lights.html" class=" module">lights</a>
+							</li>
+							<li>
+								<a href="../../components/material.html" class=" module">material</a>
+							</li>
+							<li>
+								<a href="../../components/mesh.html" class=" module">mesh</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">core</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../core/dgame.html" class=" module">dgame</a>
+							</li>
+							<li>
+								<a href="../../core/gameobject.html" class=" module">gameobject</a>
+							</li>
+							<li>
+								<a href="../../core/gameobjectcollection.html" class=" module">gameobjectcollection</a>
+							</li>
+							<li>
+								<a href="../../core/prefabs.html" class=" module">prefabs</a>
+							</li>
+							<li>
+								<a href="../../core/properties.html" class=" module">properties</a>
+							</li>
+							<li>
+								<a href="../../core/reflection.html" class=" module">reflection</a>
+							</li>
+						</ul>
+							</li>
+							<li class=" tree-view">
+								<a href="#" class="package">derelict</a>
+						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">assimp3</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/assimp3/assimp.html" class=" module">assimp</a>
+							</li>
+							<li>
+								<a href="../../derelict/assimp3/types.html" class=" module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li class=" tree-view">
+								<a href="#" class="package">freeimage</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/freeimage/freeimage.html" class=" module">freeimage</a>
+							</li>
+							<li>
+								<a href="../../derelict/freeimage/functions.html" class=" module">functions</a>
+							</li>
+							<li>
+								<a href="../../derelict/freeimage/types.html" class="selected module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">opengl3</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/opengl3/arb.html" class=" module">arb</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/cgl.html" class=" module">cgl</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/constants.html" class=" module">constants</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/deprecatedConstants.html" class=" module">deprecatedConstants</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/deprecatedFunctions.html" class=" module">deprecatedFunctions</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/ext.html" class=" module">ext</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/functions.html" class=" module">functions</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/gl.html" class=" module">gl</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/gl3.html" class=" module">gl3</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/glx.html" class=" module">glx</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/glxext.html" class=" module">glxext</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/internal.html" class=" module">internal</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/types.html" class=" module">types</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/wgl.html" class=" module">wgl</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/wglext.html" class=" module">wglext</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">util</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/util/exception.html" class=" module">exception</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/loader.html" class=" module">loader</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/sharedlib.html" class=" module">sharedlib</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/system.html" class=" module">system</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/wintypes.html" class=" module">wintypes</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/xtypes.html" class=" module">xtypes</a>
+							</li>
+						</ul>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">graphics</a>
+						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">adapters</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../graphics/adapters/adapter.html" class=" module">adapter</a>
+							</li>
+							<li>
+								<a href="../../graphics/adapters/linux.html" class=" module">linux</a>
+							</li>
+							<li>
+								<a href="../../graphics/adapters/mac.html" class=" module">mac</a>
+							</li>
+							<li>
+								<a href="../../graphics/adapters/win32.html" class=" module">win32</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../graphics/adapters.html" class=" module">adapters</a>
+							</li>
+							<li>
+								<a href="../../graphics/graphics.html" class=" module">graphics</a>
+							</li>
+							<li>
+								<a href="../../graphics/shaders.html" class=" module">shaders</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">utility</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../utility/config.html" class=" module">config</a>
+							</li>
+							<li>
+								<a href="../../utility/filepath.html" class=" module">filepath</a>
+							</li>
+							<li>
+								<a href="../../utility/input.html" class=" module">input</a>
+							</li>
+							<li>
+								<a href="../../utility/output.html" class=" module">output</a>
+							</li>
+							<li>
+								<a href="../../utility/time.html" class=" module">time</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../components.html" class=" module">components</a>
+							</li>
+							<li>
+								<a href="../../core.html" class=" module">core</a>
+							</li>
+							<li>
+								<a href="../../graphics.html" class=" module">graphics</a>
+							</li>
+							<li>
+								<a href="../../utility.html" class=" module">utility</a>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../symbols.js"></script>
+	<script type="application/javascript">
+		//<![CDATA[
+		var symbolSearchRootDir = "../../";		$('#symbolSearchPane').show();
+		//]]>
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Module derelict.freeimage.types</h1><!-- using block body in layout.dt--><!-- using block ddox.description in ddox.layout.dt-->
+			<p></p>
+<!-- using block ddox.sections in ddox.layout.dt-->
+			<section></section><!-- using block ddox.members in ddox.layout.dt-->
+			<section>
+				<h2>Structs</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="BITMAPINFO" href="../../derelict/freeimage/types/BITMAPINFO.html">
+								<code>BITMAPINFO</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="BITMAPINFOHEADER" href="../../derelict/freeimage/types/BITMAPINFOHEADER.html">
+								<code>BITMAPINFOHEADER</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIBITMAP" href="../../derelict/freeimage/types/FIBITMAP.html">
+								<code>FIBITMAP</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FICOMPLEX" href="../../derelict/freeimage/types/FICOMPLEX.html">
+								<code>FICOMPLEX</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIICCPROFILE" href="../../derelict/freeimage/types/FIICCPROFILE.html">
+								<code>FIICCPROFILE</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIMEMORY" href="../../derelict/freeimage/types/FIMEMORY.html">
+								<code>FIMEMORY</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIMETADATA" href="../../derelict/freeimage/types/FIMETADATA.html">
+								<code>FIMETADATA</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIMULTIBITMAP" href="../../derelict/freeimage/types/FIMULTIBITMAP.html">
+								<code>FIMULTIBITMAP</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIRGB16" href="../../derelict/freeimage/types/FIRGB16.html">
+								<code>FIRGB16</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIRGBA16" href="../../derelict/freeimage/types/FIRGBA16.html">
+								<code>FIRGBA16</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIRGBAF" href="../../derelict/freeimage/types/FIRGBAF.html">
+								<code>FIRGBAF</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIRGBF" href="../../derelict/freeimage/types/FIRGBF.html">
+								<code>FIRGBF</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FITAG" href="../../derelict/freeimage/types/FITAG.html">
+								<code>FITAG</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FreeImageIO" href="../../derelict/freeimage/types/FreeImageIO.html">
+								<code>FreeImageIO</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="Plugin" href="../../derelict/freeimage/types/Plugin.html">
+								<code>Plugin</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="RGBQUAD" href="../../derelict/freeimage/types/RGBQUAD.html">
+								<code>RGBQUAD</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="RGBTRIPLE" href="../../derelict/freeimage/types/RGBTRIPLE.html">
+								<code>RGBTRIPLE</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Enum values</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="BMP_DEFAULT" href="../../derelict/freeimage/types/BMP_DEFAULT.html">
+								<code>BMP_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="BMP_SAVE_RLE" href="../../derelict/freeimage/types/BMP_SAVE_RLE.html">
+								<code>BMP_SAVE_RLE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="CUT_DEFAULT" href="../../derelict/freeimage/types/CUT_DEFAULT.html">
+								<code>CUT_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="DDS_DEFAULT" href="../../derelict/freeimage/types/DDS_DEFAULT.html">
+								<code>DDS_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="EXR_B44" href="../../derelict/freeimage/types/EXR_B44.html">
+								<code>EXR_B44</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="EXR_DEFAULT" href="../../derelict/freeimage/types/EXR_DEFAULT.html">
+								<code>EXR_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="EXR_FLOAT" href="../../derelict/freeimage/types/EXR_FLOAT.html">
+								<code>EXR_FLOAT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="EXR_LC" href="../../derelict/freeimage/types/EXR_LC.html">
+								<code>EXR_LC</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="EXR_NONE" href="../../derelict/freeimage/types/EXR_NONE.html">
+								<code>EXR_NONE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="EXR_PIZ" href="../../derelict/freeimage/types/EXR_PIZ.html">
+								<code>EXR_PIZ</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="EXR_PXR24" href="../../derelict/freeimage/types/EXR_PXR24.html">
+								<code>EXR_PXR24</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="EXR_ZIP" href="../../derelict/freeimage/types/EXR_ZIP.html">
+								<code>EXR_ZIP</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FALSE" href="../../derelict/freeimage/types/FALSE.html">
+								<code>FALSE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FAXG3_DEFAULT" href="../../derelict/freeimage/types/FAXG3_DEFAULT.html">
+								<code>FAXG3_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI16_555_BLUE_MASK" href="../../derelict/freeimage/types/FI16_555_BLUE_MASK.html">
+								<code>FI16_555_BLUE_MASK</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI16_555_BLUE_SHIFT" href="../../derelict/freeimage/types/FI16_555_BLUE_SHIFT.html">
+								<code>FI16_555_BLUE_SHIFT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI16_555_GREEN_MASK" href="../../derelict/freeimage/types/FI16_555_GREEN_MASK.html">
+								<code>FI16_555_GREEN_MASK</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI16_555_GREEN_SHIFT" href="../../derelict/freeimage/types/FI16_555_GREEN_SHIFT.html">
+								<code>FI16_555_GREEN_SHIFT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI16_555_RED_MASK" href="../../derelict/freeimage/types/FI16_555_RED_MASK.html">
+								<code>FI16_555_RED_MASK</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI16_555_RED_SHIFT" href="../../derelict/freeimage/types/FI16_555_RED_SHIFT.html">
+								<code>FI16_555_RED_SHIFT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI16_565_BLUE_MASK" href="../../derelict/freeimage/types/FI16_565_BLUE_MASK.html">
+								<code>FI16_565_BLUE_MASK</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI16_565_BLUE_SHIFT" href="../../derelict/freeimage/types/FI16_565_BLUE_SHIFT.html">
+								<code>FI16_565_BLUE_SHIFT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI16_565_GREEN_MASK" href="../../derelict/freeimage/types/FI16_565_GREEN_MASK.html">
+								<code>FI16_565_GREEN_MASK</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI16_565_GREEN_SHIFT" href="../../derelict/freeimage/types/FI16_565_GREEN_SHIFT.html">
+								<code>FI16_565_GREEN_SHIFT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI16_565_RED_MASK" href="../../derelict/freeimage/types/FI16_565_RED_MASK.html">
+								<code>FI16_565_RED_MASK</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI16_565_RED_SHIFT" href="../../derelict/freeimage/types/FI16_565_RED_SHIFT.html">
+								<code>FI16_565_RED_SHIFT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FICC_ALPHA" href="../../derelict/freeimage/types/FICC_ALPHA.html">
+								<code>FICC_ALPHA</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FICC_BLACK" href="../../derelict/freeimage/types/FICC_BLACK.html">
+								<code>FICC_BLACK</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FICC_BLUE" href="../../derelict/freeimage/types/FICC_BLUE.html">
+								<code>FICC_BLUE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FICC_GREEN" href="../../derelict/freeimage/types/FICC_GREEN.html">
+								<code>FICC_GREEN</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FICC_IMAG" href="../../derelict/freeimage/types/FICC_IMAG.html">
+								<code>FICC_IMAG</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FICC_MAG" href="../../derelict/freeimage/types/FICC_MAG.html">
+								<code>FICC_MAG</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FICC_PHASE" href="../../derelict/freeimage/types/FICC_PHASE.html">
+								<code>FICC_PHASE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FICC_REAL" href="../../derelict/freeimage/types/FICC_REAL.html">
+								<code>FICC_REAL</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FICC_RED" href="../../derelict/freeimage/types/FICC_RED.html">
+								<code>FICC_RED</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FICC_RGB" href="../../derelict/freeimage/types/FICC_RGB.html">
+								<code>FICC_RGB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIC_CMYK" href="../../derelict/freeimage/types/FIC_CMYK.html">
+								<code>FIC_CMYK</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIC_MINISBLACK" href="../../derelict/freeimage/types/FIC_MINISBLACK.html">
+								<code>FIC_MINISBLACK</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIC_MINISWHITE" href="../../derelict/freeimage/types/FIC_MINISWHITE.html">
+								<code>FIC_MINISWHITE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIC_PALETTE" href="../../derelict/freeimage/types/FIC_PALETTE.html">
+								<code>FIC_PALETTE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIC_RGB" href="../../derelict/freeimage/types/FIC_RGB.html">
+								<code>FIC_RGB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIC_RGBALPHA" href="../../derelict/freeimage/types/FIC_RGBALPHA.html">
+								<code>FIC_RGBALPHA</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIDT_ASCII" href="../../derelict/freeimage/types/FIDT_ASCII.html">
+								<code>FIDT_ASCII</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIDT_BYTE" href="../../derelict/freeimage/types/FIDT_BYTE.html">
+								<code>FIDT_BYTE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIDT_DOUBLE" href="../../derelict/freeimage/types/FIDT_DOUBLE.html">
+								<code>FIDT_DOUBLE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIDT_FLOAT" href="../../derelict/freeimage/types/FIDT_FLOAT.html">
+								<code>FIDT_FLOAT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIDT_IFD" href="../../derelict/freeimage/types/FIDT_IFD.html">
+								<code>FIDT_IFD</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIDT_IFD8" href="../../derelict/freeimage/types/FIDT_IFD8.html">
+								<code>FIDT_IFD8</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIDT_LONG" href="../../derelict/freeimage/types/FIDT_LONG.html">
+								<code>FIDT_LONG</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIDT_LONG8" href="../../derelict/freeimage/types/FIDT_LONG8.html">
+								<code>FIDT_LONG8</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIDT_NOTYPE" href="../../derelict/freeimage/types/FIDT_NOTYPE.html">
+								<code>FIDT_NOTYPE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIDT_PALETTE" href="../../derelict/freeimage/types/FIDT_PALETTE.html">
+								<code>FIDT_PALETTE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIDT_RATIONAL" href="../../derelict/freeimage/types/FIDT_RATIONAL.html">
+								<code>FIDT_RATIONAL</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIDT_SBYTE" href="../../derelict/freeimage/types/FIDT_SBYTE.html">
+								<code>FIDT_SBYTE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIDT_SHORT" href="../../derelict/freeimage/types/FIDT_SHORT.html">
+								<code>FIDT_SHORT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIDT_SLONG" href="../../derelict/freeimage/types/FIDT_SLONG.html">
+								<code>FIDT_SLONG</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIDT_SLONG8" href="../../derelict/freeimage/types/FIDT_SLONG8.html">
+								<code>FIDT_SLONG8</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIDT_SRATIONAL" href="../../derelict/freeimage/types/FIDT_SRATIONAL.html">
+								<code>FIDT_SRATIONAL</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIDT_SSHORT" href="../../derelict/freeimage/types/FIDT_SSHORT.html">
+								<code>FIDT_SSHORT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIDT_UNDEFINED" href="../../derelict/freeimage/types/FIDT_UNDEFINED.html">
+								<code>FIDT_UNDEFINED</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FID_BAYER16x16" href="../../derelict/freeimage/types/FID_BAYER16x16.html">
+								<code>FID_BAYER16x16</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FID_BAYER4x4" href="../../derelict/freeimage/types/FID_BAYER4x4.html">
+								<code>FID_BAYER4x4</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FID_BAYER8x8" href="../../derelict/freeimage/types/FID_BAYER8x8.html">
+								<code>FID_BAYER8x8</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FID_CLUSTER16x16" href="../../derelict/freeimage/types/FID_CLUSTER16x16.html">
+								<code>FID_CLUSTER16x16</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FID_CLUSTER6x6" href="../../derelict/freeimage/types/FID_CLUSTER6x6.html">
+								<code>FID_CLUSTER6x6</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FID_CLUSTER8x8" href="../../derelict/freeimage/types/FID_CLUSTER8x8.html">
+								<code>FID_CLUSTER8x8</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FID_FS" href="../../derelict/freeimage/types/FID_FS.html">
+								<code>FID_FS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_BMP" href="../../derelict/freeimage/types/FIF_BMP.html">
+								<code>FIF_BMP</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_CUT" href="../../derelict/freeimage/types/FIF_CUT.html">
+								<code>FIF_CUT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_DDS" href="../../derelict/freeimage/types/FIF_DDS.html">
+								<code>FIF_DDS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_EXR" href="../../derelict/freeimage/types/FIF_EXR.html">
+								<code>FIF_EXR</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_FAXG3" href="../../derelict/freeimage/types/FIF_FAXG3.html">
+								<code>FIF_FAXG3</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_GIF" href="../../derelict/freeimage/types/FIF_GIF.html">
+								<code>FIF_GIF</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_HDR" href="../../derelict/freeimage/types/FIF_HDR.html">
+								<code>FIF_HDR</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_ICO" href="../../derelict/freeimage/types/FIF_ICO.html">
+								<code>FIF_ICO</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_IFF" href="../../derelict/freeimage/types/FIF_IFF.html">
+								<code>FIF_IFF</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_J2K" href="../../derelict/freeimage/types/FIF_J2K.html">
+								<code>FIF_J2K</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_JNG" href="../../derelict/freeimage/types/FIF_JNG.html">
+								<code>FIF_JNG</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_JP2" href="../../derelict/freeimage/types/FIF_JP2.html">
+								<code>FIF_JP2</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_JPEG" href="../../derelict/freeimage/types/FIF_JPEG.html">
+								<code>FIF_JPEG</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_KOALA" href="../../derelict/freeimage/types/FIF_KOALA.html">
+								<code>FIF_KOALA</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_LBM" href="../../derelict/freeimage/types/FIF_LBM.html">
+								<code>FIF_LBM</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_LOAD_NOPIXELS" href="../../derelict/freeimage/types/FIF_LOAD_NOPIXELS.html">
+								<code>FIF_LOAD_NOPIXELS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_MNG" href="../../derelict/freeimage/types/FIF_MNG.html">
+								<code>FIF_MNG</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_PBM" href="../../derelict/freeimage/types/FIF_PBM.html">
+								<code>FIF_PBM</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_PBMRAW" href="../../derelict/freeimage/types/FIF_PBMRAW.html">
+								<code>FIF_PBMRAW</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_PCD" href="../../derelict/freeimage/types/FIF_PCD.html">
+								<code>FIF_PCD</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_PCX" href="../../derelict/freeimage/types/FIF_PCX.html">
+								<code>FIF_PCX</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_PFM" href="../../derelict/freeimage/types/FIF_PFM.html">
+								<code>FIF_PFM</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_PGM" href="../../derelict/freeimage/types/FIF_PGM.html">
+								<code>FIF_PGM</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_PGMRAW" href="../../derelict/freeimage/types/FIF_PGMRAW.html">
+								<code>FIF_PGMRAW</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_PICT" href="../../derelict/freeimage/types/FIF_PICT.html">
+								<code>FIF_PICT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_PNG" href="../../derelict/freeimage/types/FIF_PNG.html">
+								<code>FIF_PNG</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_PPM" href="../../derelict/freeimage/types/FIF_PPM.html">
+								<code>FIF_PPM</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_PPMRAW" href="../../derelict/freeimage/types/FIF_PPMRAW.html">
+								<code>FIF_PPMRAW</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_PSD" href="../../derelict/freeimage/types/FIF_PSD.html">
+								<code>FIF_PSD</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_RAS" href="../../derelict/freeimage/types/FIF_RAS.html">
+								<code>FIF_RAS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_RAW" href="../../derelict/freeimage/types/FIF_RAW.html">
+								<code>FIF_RAW</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_SGI" href="../../derelict/freeimage/types/FIF_SGI.html">
+								<code>FIF_SGI</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_TARGA" href="../../derelict/freeimage/types/FIF_TARGA.html">
+								<code>FIF_TARGA</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_TIFF" href="../../derelict/freeimage/types/FIF_TIFF.html">
+								<code>FIF_TIFF</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_UNKNOWN" href="../../derelict/freeimage/types/FIF_UNKNOWN.html">
+								<code>FIF_UNKNOWN</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_WBMP" href="../../derelict/freeimage/types/FIF_WBMP.html">
+								<code>FIF_WBMP</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_XBM" href="../../derelict/freeimage/types/FIF_XBM.html">
+								<code>FIF_XBM</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIF_XPM" href="../../derelict/freeimage/types/FIF_XPM.html">
+								<code>FIF_XPM</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIICC_COLOR_IS_CMYK" href="../../derelict/freeimage/types/FIICC_COLOR_IS_CMYK.html">
+								<code>FIICC_COLOR_IS_CMYK</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIICC_DEFAULT" href="../../derelict/freeimage/types/FIICC_DEFAULT.html">
+								<code>FIICC_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIJPEG_OP_FLIP_H" href="../../derelict/freeimage/types/FIJPEG_OP_FLIP_H.html">
+								<code>FIJPEG_OP_FLIP_H</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIJPEG_OP_FLIP_V" href="../../derelict/freeimage/types/FIJPEG_OP_FLIP_V.html">
+								<code>FIJPEG_OP_FLIP_V</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIJPEG_OP_NONE" href="../../derelict/freeimage/types/FIJPEG_OP_NONE.html">
+								<code>FIJPEG_OP_NONE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIJPEG_OP_ROTATE_180" href="../../derelict/freeimage/types/FIJPEG_OP_ROTATE_180.html">
+								<code>FIJPEG_OP_ROTATE_180</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIJPEG_OP_ROTATE_270" href="../../derelict/freeimage/types/FIJPEG_OP_ROTATE_270.html">
+								<code>FIJPEG_OP_ROTATE_270</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIJPEG_OP_ROTATE_90" href="../../derelict/freeimage/types/FIJPEG_OP_ROTATE_90.html">
+								<code>FIJPEG_OP_ROTATE_90</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIJPEG_OP_TRANSPOSE" href="../../derelict/freeimage/types/FIJPEG_OP_TRANSPOSE.html">
+								<code>FIJPEG_OP_TRANSPOSE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIJPEG_OP_TRANSVERSE" href="../../derelict/freeimage/types/FIJPEG_OP_TRANSVERSE.html">
+								<code>FIJPEG_OP_TRANSVERSE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FILTER_BICUBIC" href="../../derelict/freeimage/types/FILTER_BICUBIC.html">
+								<code>FILTER_BICUBIC</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FILTER_BILINEAR" href="../../derelict/freeimage/types/FILTER_BILINEAR.html">
+								<code>FILTER_BILINEAR</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FILTER_BOX" href="../../derelict/freeimage/types/FILTER_BOX.html">
+								<code>FILTER_BOX</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FILTER_BSPLINE" href="../../derelict/freeimage/types/FILTER_BSPLINE.html">
+								<code>FILTER_BSPLINE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FILTER_CATMULLROM" href="../../derelict/freeimage/types/FILTER_CATMULLROM.html">
+								<code>FILTER_CATMULLROM</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FILTER_LANCZOS3" href="../../derelict/freeimage/types/FILTER_LANCZOS3.html">
+								<code>FILTER_LANCZOS3</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIMD_ANIMATION" href="../../derelict/freeimage/types/FIMD_ANIMATION.html">
+								<code>FIMD_ANIMATION</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIMD_COMMENTS" href="../../derelict/freeimage/types/FIMD_COMMENTS.html">
+								<code>FIMD_COMMENTS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIMD_CUSTOM" href="../../derelict/freeimage/types/FIMD_CUSTOM.html">
+								<code>FIMD_CUSTOM</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIMD_EXIF_EXIF" href="../../derelict/freeimage/types/FIMD_EXIF_EXIF.html">
+								<code>FIMD_EXIF_EXIF</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIMD_EXIF_GPS" href="../../derelict/freeimage/types/FIMD_EXIF_GPS.html">
+								<code>FIMD_EXIF_GPS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIMD_EXIF_INTEROP" href="../../derelict/freeimage/types/FIMD_EXIF_INTEROP.html">
+								<code>FIMD_EXIF_INTEROP</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIMD_EXIF_MAIN" href="../../derelict/freeimage/types/FIMD_EXIF_MAIN.html">
+								<code>FIMD_EXIF_MAIN</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIMD_EXIF_MAKERNOTE" href="../../derelict/freeimage/types/FIMD_EXIF_MAKERNOTE.html">
+								<code>FIMD_EXIF_MAKERNOTE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIMD_EXIF_RAW" href="../../derelict/freeimage/types/FIMD_EXIF_RAW.html">
+								<code>FIMD_EXIF_RAW</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIMD_GEOTIFF" href="../../derelict/freeimage/types/FIMD_GEOTIFF.html">
+								<code>FIMD_GEOTIFF</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIMD_IPTC" href="../../derelict/freeimage/types/FIMD_IPTC.html">
+								<code>FIMD_IPTC</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIMD_NODATA" href="../../derelict/freeimage/types/FIMD_NODATA.html">
+								<code>FIMD_NODATA</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIMD_XMP" href="../../derelict/freeimage/types/FIMD_XMP.html">
+								<code>FIMD_XMP</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIQ_NNQUANT" href="../../derelict/freeimage/types/FIQ_NNQUANT.html">
+								<code>FIQ_NNQUANT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIQ_WUQUANT" href="../../derelict/freeimage/types/FIQ_WUQUANT.html">
+								<code>FIQ_WUQUANT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FITMO_DRAGO03" href="../../derelict/freeimage/types/FITMO_DRAGO03.html">
+								<code>FITMO_DRAGO03</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FITMO_FATTAL02" href="../../derelict/freeimage/types/FITMO_FATTAL02.html">
+								<code>FITMO_FATTAL02</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FITMO_REINHARD05" href="../../derelict/freeimage/types/FITMO_REINHARD05.html">
+								<code>FITMO_REINHARD05</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIT_BITMAP" href="../../derelict/freeimage/types/FIT_BITMAP.html">
+								<code>FIT_BITMAP</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIT_COMPLEX" href="../../derelict/freeimage/types/FIT_COMPLEX.html">
+								<code>FIT_COMPLEX</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIT_DOUBLE" href="../../derelict/freeimage/types/FIT_DOUBLE.html">
+								<code>FIT_DOUBLE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIT_FLOAT" href="../../derelict/freeimage/types/FIT_FLOAT.html">
+								<code>FIT_FLOAT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIT_INT16" href="../../derelict/freeimage/types/FIT_INT16.html">
+								<code>FIT_INT16</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIT_INT32" href="../../derelict/freeimage/types/FIT_INT32.html">
+								<code>FIT_INT32</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIT_RGB16" href="../../derelict/freeimage/types/FIT_RGB16.html">
+								<code>FIT_RGB16</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIT_RGBA16" href="../../derelict/freeimage/types/FIT_RGBA16.html">
+								<code>FIT_RGBA16</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIT_RGBAF" href="../../derelict/freeimage/types/FIT_RGBAF.html">
+								<code>FIT_RGBAF</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIT_RGBF" href="../../derelict/freeimage/types/FIT_RGBF.html">
+								<code>FIT_RGBF</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIT_UINT16" href="../../derelict/freeimage/types/FIT_UINT16.html">
+								<code>FIT_UINT16</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIT_UINT32" href="../../derelict/freeimage/types/FIT_UINT32.html">
+								<code>FIT_UINT32</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIT_UNKNOWN" href="../../derelict/freeimage/types/FIT_UNKNOWN.html">
+								<code>FIT_UNKNOWN</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_COLOR_ALPHA_IS_INDEX" href="../../derelict/freeimage/types/FI_COLOR_ALPHA_IS_INDEX.html">
+								<code>FI_COLOR_ALPHA_IS_INDEX</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_COLOR_FIND_EQUAL_COLOR" href="../../derelict/freeimage/types/FI_COLOR_FIND_EQUAL_COLOR.html">
+								<code>FI_COLOR_FIND_EQUAL_COLOR</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_COLOR_IS_RGBA_COLOR" href="../../derelict/freeimage/types/FI_COLOR_IS_RGBA_COLOR.html">
+								<code>FI_COLOR_IS_RGBA_COLOR</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_COLOR_IS_RGB_COLOR" href="../../derelict/freeimage/types/FI_COLOR_IS_RGB_COLOR.html">
+								<code>FI_COLOR_IS_RGB_COLOR</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_COLOR_PALETTE_SEARCH_MASK" href="../../derelict/freeimage/types/FI_COLOR_PALETTE_SEARCH_MASK.html">
+								<code>FI_COLOR_PALETTE_SEARCH_MASK</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_RGBA_ALPHA" href="../../derelict/freeimage/types/FI_RGBA_ALPHA.html">
+								<code>FI_RGBA_ALPHA</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_RGBA_ALPHA_MASK" href="../../derelict/freeimage/types/FI_RGBA_ALPHA_MASK.html">
+								<code>FI_RGBA_ALPHA_MASK</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_RGBA_ALPHA_SHIFT" href="../../derelict/freeimage/types/FI_RGBA_ALPHA_SHIFT.html">
+								<code>FI_RGBA_ALPHA_SHIFT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_RGBA_BLUE" href="../../derelict/freeimage/types/FI_RGBA_BLUE.html">
+								<code>FI_RGBA_BLUE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_RGBA_BLUE_MASK" href="../../derelict/freeimage/types/FI_RGBA_BLUE_MASK.html">
+								<code>FI_RGBA_BLUE_MASK</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_RGBA_BLUE_SHIFT" href="../../derelict/freeimage/types/FI_RGBA_BLUE_SHIFT.html">
+								<code>FI_RGBA_BLUE_SHIFT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_RGBA_GREEN" href="../../derelict/freeimage/types/FI_RGBA_GREEN.html">
+								<code>FI_RGBA_GREEN</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_RGBA_GREEN_MASK" href="../../derelict/freeimage/types/FI_RGBA_GREEN_MASK.html">
+								<code>FI_RGBA_GREEN_MASK</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_RGBA_GREEN_SHIFT" href="../../derelict/freeimage/types/FI_RGBA_GREEN_SHIFT.html">
+								<code>FI_RGBA_GREEN_SHIFT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_RGBA_RED" href="../../derelict/freeimage/types/FI_RGBA_RED.html">
+								<code>FI_RGBA_RED</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_RGBA_RED_MASK" href="../../derelict/freeimage/types/FI_RGBA_RED_MASK.html">
+								<code>FI_RGBA_RED_MASK</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_RGBA_RED_SHIFT" href="../../derelict/freeimage/types/FI_RGBA_RED_SHIFT.html">
+								<code>FI_RGBA_RED_SHIFT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="GIF_DEFAULT" href="../../derelict/freeimage/types/GIF_DEFAULT.html">
+								<code>GIF_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="GIF_LOAD256" href="../../derelict/freeimage/types/GIF_LOAD256.html">
+								<code>GIF_LOAD256</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="GIF_PLAYBACK" href="../../derelict/freeimage/types/GIF_PLAYBACK.html">
+								<code>GIF_PLAYBACK</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="HDR_DEFAULT" href="../../derelict/freeimage/types/HDR_DEFAULT.html">
+								<code>HDR_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="ICO_DEFAULT" href="../../derelict/freeimage/types/ICO_DEFAULT.html">
+								<code>ICO_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="ICO_MAKEALPHA" href="../../derelict/freeimage/types/ICO_MAKEALPHA.html">
+								<code>ICO_MAKEALPHA</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="IFF_DEFAULT" href="../../derelict/freeimage/types/IFF_DEFAULT.html">
+								<code>IFF_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="J2K_DEFAULT" href="../../derelict/freeimage/types/J2K_DEFAULT.html">
+								<code>J2K_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="JP2_DEFAULT" href="../../derelict/freeimage/types/JP2_DEFAULT.html">
+								<code>JP2_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="JPEG_ACCURATE" href="../../derelict/freeimage/types/JPEG_ACCURATE.html">
+								<code>JPEG_ACCURATE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="JPEG_BASELINE" href="../../derelict/freeimage/types/JPEG_BASELINE.html">
+								<code>JPEG_BASELINE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="JPEG_CMYK" href="../../derelict/freeimage/types/JPEG_CMYK.html">
+								<code>JPEG_CMYK</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="JPEG_DEFAULT" href="../../derelict/freeimage/types/JPEG_DEFAULT.html">
+								<code>JPEG_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="JPEG_EXIFROTATE" href="../../derelict/freeimage/types/JPEG_EXIFROTATE.html">
+								<code>JPEG_EXIFROTATE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="JPEG_FAST" href="../../derelict/freeimage/types/JPEG_FAST.html">
+								<code>JPEG_FAST</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="JPEG_OPTIMIZE" href="../../derelict/freeimage/types/JPEG_OPTIMIZE.html">
+								<code>JPEG_OPTIMIZE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="JPEG_PROGRESSIVE" href="../../derelict/freeimage/types/JPEG_PROGRESSIVE.html">
+								<code>JPEG_PROGRESSIVE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="JPEG_QUALITYAVERAGE" href="../../derelict/freeimage/types/JPEG_QUALITYAVERAGE.html">
+								<code>JPEG_QUALITYAVERAGE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="JPEG_QUALITYBAD" href="../../derelict/freeimage/types/JPEG_QUALITYBAD.html">
+								<code>JPEG_QUALITYBAD</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="JPEG_QUALITYGOOD" href="../../derelict/freeimage/types/JPEG_QUALITYGOOD.html">
+								<code>JPEG_QUALITYGOOD</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="JPEG_QUALITYNORMAL" href="../../derelict/freeimage/types/JPEG_QUALITYNORMAL.html">
+								<code>JPEG_QUALITYNORMAL</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="JPEG_QUALITYSUPERB" href="../../derelict/freeimage/types/JPEG_QUALITYSUPERB.html">
+								<code>JPEG_QUALITYSUPERB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="JPEG_SUBSAMPLING_411" href="../../derelict/freeimage/types/JPEG_SUBSAMPLING_411.html">
+								<code>JPEG_SUBSAMPLING_411</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="JPEG_SUBSAMPLING_420" href="../../derelict/freeimage/types/JPEG_SUBSAMPLING_420.html">
+								<code>JPEG_SUBSAMPLING_420</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="JPEG_SUBSAMPLING_422" href="../../derelict/freeimage/types/JPEG_SUBSAMPLING_422.html">
+								<code>JPEG_SUBSAMPLING_422</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="JPEG_SUBSAMPLING_444" href="../../derelict/freeimage/types/JPEG_SUBSAMPLING_444.html">
+								<code>JPEG_SUBSAMPLING_444</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="KOALA_DEFAULT" href="../../derelict/freeimage/types/KOALA_DEFAULT.html">
+								<code>KOALA_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="LBM_DEFAULT" href="../../derelict/freeimage/types/LBM_DEFAULT.html">
+								<code>LBM_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="MNG_DEFAULT" href="../../derelict/freeimage/types/MNG_DEFAULT.html">
+								<code>MNG_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="NULL" href="../../derelict/freeimage/types/NULL.html">
+								<code>NULL</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PCD_BASE" href="../../derelict/freeimage/types/PCD_BASE.html">
+								<code>PCD_BASE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PCD_BASEDIV16" href="../../derelict/freeimage/types/PCD_BASEDIV16.html">
+								<code>PCD_BASEDIV16</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PCD_BASEDIV4" href="../../derelict/freeimage/types/PCD_BASEDIV4.html">
+								<code>PCD_BASEDIV4</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PCD_DEFAULT" href="../../derelict/freeimage/types/PCD_DEFAULT.html">
+								<code>PCD_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PCX_DEFAULT" href="../../derelict/freeimage/types/PCX_DEFAULT.html">
+								<code>PCX_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PFM_DEFAULT" href="../../derelict/freeimage/types/PFM_DEFAULT.html">
+								<code>PFM_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PICT_DEFAULT" href="../../derelict/freeimage/types/PICT_DEFAULT.html">
+								<code>PICT_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PNG_DEFAULT" href="../../derelict/freeimage/types/PNG_DEFAULT.html">
+								<code>PNG_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PNG_IGNOREGAMMA" href="../../derelict/freeimage/types/PNG_IGNOREGAMMA.html">
+								<code>PNG_IGNOREGAMMA</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PNG_INTERLACED" href="../../derelict/freeimage/types/PNG_INTERLACED.html">
+								<code>PNG_INTERLACED</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PNG_Z_BEST_COMPRESSION" href="../../derelict/freeimage/types/PNG_Z_BEST_COMPRESSION.html">
+								<code>PNG_Z_BEST_COMPRESSION</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PNG_Z_BEST_SPEED" href="../../derelict/freeimage/types/PNG_Z_BEST_SPEED.html">
+								<code>PNG_Z_BEST_SPEED</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PNG_Z_DEFAULT_COMPRESSION" href="../../derelict/freeimage/types/PNG_Z_DEFAULT_COMPRESSION.html">
+								<code>PNG_Z_DEFAULT_COMPRESSION</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PNG_Z_NO_COMPRESSION" href="../../derelict/freeimage/types/PNG_Z_NO_COMPRESSION.html">
+								<code>PNG_Z_NO_COMPRESSION</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PNM_DEFAULT" href="../../derelict/freeimage/types/PNM_DEFAULT.html">
+								<code>PNM_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PNM_SAVE_ASCII" href="../../derelict/freeimage/types/PNM_SAVE_ASCII.html">
+								<code>PNM_SAVE_ASCII</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PNM_SAVE_RAW" href="../../derelict/freeimage/types/PNM_SAVE_RAW.html">
+								<code>PNM_SAVE_RAW</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PSD_CMYK" href="../../derelict/freeimage/types/PSD_CMYK.html">
+								<code>PSD_CMYK</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PSD_DEFAULT" href="../../derelict/freeimage/types/PSD_DEFAULT.html">
+								<code>PSD_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PSD_LAB" href="../../derelict/freeimage/types/PSD_LAB.html">
+								<code>PSD_LAB</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="RAS_DEFAULT" href="../../derelict/freeimage/types/RAS_DEFAULT.html">
+								<code>RAS_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="RAW_DEFAULT" href="../../derelict/freeimage/types/RAW_DEFAULT.html">
+								<code>RAW_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="RAW_DISPLAY" href="../../derelict/freeimage/types/RAW_DISPLAY.html">
+								<code>RAW_DISPLAY</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="RAW_HALFSIZE" href="../../derelict/freeimage/types/RAW_HALFSIZE.html">
+								<code>RAW_HALFSIZE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="RAW_PREVIEW" href="../../derelict/freeimage/types/RAW_PREVIEW.html">
+								<code>RAW_PREVIEW</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="SEEK_CUR" href="../../derelict/freeimage/types/SEEK_CUR.html">
+								<code>SEEK_CUR</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="SEEK_END" href="../../derelict/freeimage/types/SEEK_END.html">
+								<code>SEEK_END</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="SEEK_SET" href="../../derelict/freeimage/types/SEEK_SET.html">
+								<code>SEEK_SET</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="SGI_DEFAULT" href="../../derelict/freeimage/types/SGI_DEFAULT.html">
+								<code>SGI_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="TARGA_DEFAULT" href="../../derelict/freeimage/types/TARGA_DEFAULT.html">
+								<code>TARGA_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="TARGA_LOAD_RGB888" href="../../derelict/freeimage/types/TARGA_LOAD_RGB888.html">
+								<code>TARGA_LOAD_RGB888</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="TARGA_SAVE_RLE" href="../../derelict/freeimage/types/TARGA_SAVE_RLE.html">
+								<code>TARGA_SAVE_RLE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="TIFF_ADOBE_DEFLATE" href="../../derelict/freeimage/types/TIFF_ADOBE_DEFLATE.html">
+								<code>TIFF_ADOBE_DEFLATE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="TIFF_CCITTFAX3" href="../../derelict/freeimage/types/TIFF_CCITTFAX3.html">
+								<code>TIFF_CCITTFAX3</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="TIFF_CCITTFAX4" href="../../derelict/freeimage/types/TIFF_CCITTFAX4.html">
+								<code>TIFF_CCITTFAX4</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="TIFF_CMYK" href="../../derelict/freeimage/types/TIFF_CMYK.html">
+								<code>TIFF_CMYK</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="TIFF_DEFAULT" href="../../derelict/freeimage/types/TIFF_DEFAULT.html">
+								<code>TIFF_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="TIFF_DEFLATE" href="../../derelict/freeimage/types/TIFF_DEFLATE.html">
+								<code>TIFF_DEFLATE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="TIFF_JPEG" href="../../derelict/freeimage/types/TIFF_JPEG.html">
+								<code>TIFF_JPEG</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="TIFF_LOGLUV" href="../../derelict/freeimage/types/TIFF_LOGLUV.html">
+								<code>TIFF_LOGLUV</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="TIFF_LZW" href="../../derelict/freeimage/types/TIFF_LZW.html">
+								<code>TIFF_LZW</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="TIFF_NONE" href="../../derelict/freeimage/types/TIFF_NONE.html">
+								<code>TIFF_NONE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="TIFF_PACKBITS" href="../../derelict/freeimage/types/TIFF_PACKBITS.html">
+								<code>TIFF_PACKBITS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="TRUE" href="../../derelict/freeimage/types/TRUE.html">
+								<code>TRUE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WBMP_DEFAULT" href="../../derelict/freeimage/types/WBMP_DEFAULT.html">
+								<code>WBMP_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="XBM_DEFAULT" href="../../derelict/freeimage/types/XBM_DEFAULT.html">
+								<code>XBM_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="XPM_DEFAULT" href="../../derelict/freeimage/types/XPM_DEFAULT.html">
+								<code>XPM_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Global variables</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_RGBA_RGB_MASK" href="../../derelict/freeimage/types/FI_RGBA_RGB_MASK.html">
+								<code>FI_RGBA_RGB_MASK</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FREEIMAGE_COLORORDER_BGR" href="../../derelict/freeimage/types/FREEIMAGE_COLORORDER_BGR.html">
+								<code>FREEIMAGE_COLORORDER_BGR</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FREEIMAGE_COLORORDER_RGB" href="../../derelict/freeimage/types/FREEIMAGE_COLORORDER_RGB.html">
+								<code>FREEIMAGE_COLORORDER_RGB</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FREEIMAGE_MAJOR_VERSION" href="../../derelict/freeimage/types/FREEIMAGE_MAJOR_VERSION.html">
+								<code>FREEIMAGE_MAJOR_VERSION</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FREEIMAGE_MINOR_VERSION" href="../../derelict/freeimage/types/FREEIMAGE_MINOR_VERSION.html">
+								<code>FREEIMAGE_MINOR_VERSION</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FREEIMAGE_RELEASE_SERIAL" href="../../derelict/freeimage/types/FREEIMAGE_RELEASE_SERIAL.html">
+								<code>FREEIMAGE_RELEASE_SERIAL</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Aliases</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="BOOL" href="../../derelict/freeimage/types/BOOL.html">
+								<code>BOOL</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">uint</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="BYTE" href="../../derelict/freeimage/types/BYTE.html">
+								<code>BYTE</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">ubyte</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="DWORD" href="../../derelict/freeimage/types/DWORD.html">
+								<code>DWORD</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">uint</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIINT64" href="../../derelict/freeimage/types/FIINT64.html">
+								<code>FIINT64</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">long</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FIUINT64" href="../../derelict/freeimage/types/FIUINT64.html">
+								<code>FIUINT64</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">ulong</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_CloseProc" href="../../derelict/freeimage/types/FI_CloseProc.html">
+								<code>FI_CloseProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/freeimage/types/FreeImageIO.html">FreeImageIO</a>*, void*, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_DescriptionProc" href="../../derelict/freeimage/types/FI_DescriptionProc.html">
+								<code>FI_DescriptionProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow extern function(C)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_ExtensionListProc" href="../../derelict/freeimage/types/FI_ExtensionListProc.html">
+								<code>FI_ExtensionListProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow extern function(C)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_FormatProc" href="../../derelict/freeimage/types/FI_FormatProc.html">
+								<code>FI_FormatProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow extern function(C)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="fi_handle" href="../../derelict/freeimage/types/fi_handle.html">
+								<code>fi_handle</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">void*</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_InitProc" href="../../derelict/freeimage/types/FI_InitProc.html">
+								<code>FI_InitProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/freeimage/types/Plugin.html">Plugin</a>*, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_LoadProc" href="../../derelict/freeimage/types/FI_LoadProc.html">
+								<code>FI_LoadProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow <a href="../../derelict/freeimage/types/FIBITMAP.html">FIBITMAP</a>* function(<a href="../../derelict/freeimage/types/FreeImageIO.html">FreeImageIO</a>*, void*, int, int, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_MimeProc" href="../../derelict/freeimage/types/FI_MimeProc.html">
+								<code>FI_MimeProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow extern function(C)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_OpenProc" href="../../derelict/freeimage/types/FI_OpenProc.html">
+								<code>FI_OpenProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void* function(<a href="../../derelict/freeimage/types/FreeImageIO.html">FreeImageIO</a>*, void*, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_PageCapabilityProc" href="../../derelict/freeimage/types/FI_PageCapabilityProc.html">
+								<code>FI_PageCapabilityProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(<a href="../../derelict/freeimage/types/FreeImageIO.html">FreeImageIO</a>*, void*, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_PageCountProc" href="../../derelict/freeimage/types/FI_PageCountProc.html">
+								<code>FI_PageCountProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(<a href="../../derelict/freeimage/types/FreeImageIO.html">FreeImageIO</a>*, void*, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_ReadProc" href="../../derelict/freeimage/types/FI_ReadProc.html">
+								<code>FI_ReadProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow uint function(void*, uint, uint, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_RegExprProc" href="../../derelict/freeimage/types/FI_RegExprProc.html">
+								<code>FI_RegExprProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow extern function(C)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_SaveProc" href="../../derelict/freeimage/types/FI_SaveProc.html">
+								<code>FI_SaveProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow uint function(<a href="../../derelict/freeimage/types/FreeImageIO.html">FreeImageIO</a>*, <a href="../../derelict/freeimage/types/FIBITMAP.html">FIBITMAP</a>*, void*, int, int, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_SeekProc" href="../../derelict/freeimage/types/FI_SeekProc.html">
+								<code>FI_SeekProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_SupportsExportBPPProc" href="../../derelict/freeimage/types/FI_SupportsExportBPPProc.html">
+								<code>FI_SupportsExportBPPProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow uint function(int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_SupportsExportTypeProc" href="../../derelict/freeimage/types/FI_SupportsExportTypeProc.html">
+								<code>FI_SupportsExportTypeProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow uint function(int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_SupportsICCProfilesProc" href="../../derelict/freeimage/types/FI_SupportsICCProfilesProc.html">
+								<code>FI_SupportsICCProfilesProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow uint function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_SupportsNoPixelsProc" href="../../derelict/freeimage/types/FI_SupportsNoPixelsProc.html">
+								<code>FI_SupportsNoPixelsProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow uint function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_TellProc" href="../../derelict/freeimage/types/FI_TellProc.html">
+								<code>FI_TellProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_ValidateProc" href="../../derelict/freeimage/types/FI_ValidateProc.html">
+								<code>FI_ValidateProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow uint function(<a href="../../derelict/freeimage/types/FreeImageIO.html">FreeImageIO</a>*, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FI_WriteProc" href="../../derelict/freeimage/types/FI_WriteProc.html">
+								<code>FI_WriteProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow uint function(void*, uint, uint, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FreeImage_OutputMessageFunction" href="../../derelict/freeimage/types/FreeImage_OutputMessageFunction.html">
+								<code>FreeImage_OutputMessageFunction</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(int, const(char)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FreeImage_OutputMessageFunctionStdCall" href="../../derelict/freeimage/types/FreeImage_OutputMessageFunctionStdCall.html">
+								<code>FreeImage_OutputMessageFunctionStdCall</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, const(char)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FREE_IMAGE_COLOR_CHANNEL" href="../../derelict/freeimage/types/FREE_IMAGE_COLOR_CHANNEL.html">
+								<code>FREE_IMAGE_COLOR_CHANNEL</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FREE_IMAGE_COLOR_TYPE" href="../../derelict/freeimage/types/FREE_IMAGE_COLOR_TYPE.html">
+								<code>FREE_IMAGE_COLOR_TYPE</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FREE_IMAGE_DITHER" href="../../derelict/freeimage/types/FREE_IMAGE_DITHER.html">
+								<code>FREE_IMAGE_DITHER</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FREE_IMAGE_FILTER" href="../../derelict/freeimage/types/FREE_IMAGE_FILTER.html">
+								<code>FREE_IMAGE_FILTER</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FREE_IMAGE_FORMAT" href="../../derelict/freeimage/types/FREE_IMAGE_FORMAT.html">
+								<code>FREE_IMAGE_FORMAT</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FREE_IMAGE_JPEG_OPERATION" href="../../derelict/freeimage/types/FREE_IMAGE_JPEG_OPERATION.html">
+								<code>FREE_IMAGE_JPEG_OPERATION</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FREE_IMAGE_MDMODEL" href="../../derelict/freeimage/types/FREE_IMAGE_MDMODEL.html">
+								<code>FREE_IMAGE_MDMODEL</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FREE_IMAGE_MDTYPE" href="../../derelict/freeimage/types/FREE_IMAGE_MDTYPE.html">
+								<code>FREE_IMAGE_MDTYPE</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FREE_IMAGE_QUANTIZE" href="../../derelict/freeimage/types/FREE_IMAGE_QUANTIZE.html">
+								<code>FREE_IMAGE_QUANTIZE</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FREE_IMAGE_TMO" href="../../derelict/freeimage/types/FREE_IMAGE_TMO.html">
+								<code>FREE_IMAGE_TMO</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="FREE_IMAGE_TYPE" href="../../derelict/freeimage/types/FREE_IMAGE_TYPE.html">
+								<code>FREE_IMAGE_TYPE</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="LONG" href="../../derelict/freeimage/types/LONG.html">
+								<code>LONG</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PBITMAPINFO" href="../../derelict/freeimage/types/PBITMAPINFO.html">
+								<code>PBITMAPINFO</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d"><a href="../../derelict/freeimage/types/BITMAPINFO.html">BITMAPINFO</a>*</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PBITMAPINFOHEADER" href="../../derelict/freeimage/types/PBITMAPINFOHEADER.html">
+								<code>PBITMAPINFOHEADER</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d"><a href="../../derelict/freeimage/types/BITMAPINFOHEADER.html">BITMAPINFOHEADER</a>*</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="WORD" href="../../derelict/freeimage/types/WORD.html">
+								<code>WORD</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">ushort</code>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Authors</h2><!-- using block ddox.authors in ddox.layout.dt-->
+
+			</section>
+			<section>
+				<h2>Copyright</h2><!-- using block ddox.copyright in ddox.layout.dt-->
+
+			</section>
+			<section>
+				<h2>License</h2><!-- using block ddox.license in ddox.layout.dt-->
+
+			</section>
+		</div>
+	</body>
+</html>

@@ -50,8 +50,8 @@ public static:
 			// Load mesh
 			const aiScene* scene = aiImportFile(( file.fullPath ~ "\0" ).ptr,
 			                                    aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
-			                                    aiProcess_JoinIdenticalVertices | aiProcess_SortByPType );//|
-			//aiProcess_FlipWindingOrder );
+			                                    aiProcess_JoinIdenticalVertices | aiProcess_SortByPType );
+												//| aiProcess_FlipWindingOrder );
 
 			// If animation data, add animation
 			if(scene.mNumAnimations > 0)
@@ -107,11 +107,11 @@ public static:
 			materials[ name ].shutdown();
 			materials.remove( name );
 		}
-		foreach_reverse( index; 0 .. materials.length )
+		foreach_reverse( index; 0 .. animations.length )
 		{
-			auto name = materials.keys[ index ];
-			materials[ name ].shutdown();
-			materials.remove( name );
+			auto name = animations.keys[ index ];
+			animations[ name ].shutdown();
+			animations.remove( name );
 		}
 	}
 

@@ -21,9 +21,9 @@ public:
 		_animationSet.boneAnimData = makeBoneFromNode( animation, boneHierarchy );
 	}
 
+	// PROBLEM! To get the parent you cant call makeBoneFromNode, otherwise it will be extra new nodes. Instead pass in parent node (if there is one)
 	Bone makeBoneFromNode( const(aiAnimation*) animation, const(aiNode*) bones )
 	{
-		
 		Bone temp = new Bone( cast(string)bones.mName.data );
 		
 		if( !(bones.mParent !is null) )
@@ -88,6 +88,11 @@ public:
 
 		return null;
 	}*/
+
+	void shutdown()
+	{
+
+	}
 
 	struct AnimationSet
 	{

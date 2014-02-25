@@ -10,7 +10,7 @@ import utility.output;
 
 import derelict.opengl3.gl3, derelict.assimp3.assimp;
 
-import std.stdio, std.stream, std.format, std.math, std.container;
+import std.stdio, std.stream, std.format, std.math;
 
 class Mesh : Component
 {

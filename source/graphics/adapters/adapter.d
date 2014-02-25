@@ -32,6 +32,19 @@ else
 
 abstract class Adapter
 {
+private:
+	uint deferredFrameBuffer;
+	uint diffuseRenderTexture; //Alpha channel stores Specular exponent
+	uint normalRenderTexture; //Alpha channel stores nothing right now
+	uint depthRenderTexture;
+	Camera activeCamera;
+	mat4 projection;
+	//To be cleared after a draw call:
+	AmbientLight ambientLight;
+	DirectionalLight[] directionalLights;
+	PointLight[] pointLights;
+	SpotLight[] spotLights;
+
 public:
 	// Graphics contexts
 	mixin Property!( "GLDeviceContext", "deviceContext", "protected" );
@@ -47,10 +60,7 @@ public:
 	mixin Property!( "float", "fov", "protected" );
 	mixin Property!( "float", "near", "protected" );
 	mixin Property!( "float", "far", "protected" );
-	mixin Property!( "uint", "deferredFrameBuffer", "protected" );
-	mixin Property!( "uint", "diffuseRenderTexture", "protected" ); //Alpha channel stores Specular exponent
-	mixin Property!( "uint", "normalRenderTexture", "protected" ); //Alpha channel stores nothing right now
-	mixin Property!( "uint", "depthRenderTexture", "protected" );
+	
 
 	/**
 	 *  Constant strings for various parts of the render pipeline
@@ -77,13 +87,13 @@ public:
 
 		//Create the frame buffer, which will contain the textures to render to
 		deferredFrameBuffer = 0;
-		glGenFramebuffers( 1, &_deferredFrameBuffer );
+		glGenFramebuffers( 1, &deferredFrameBuffer );
 		glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
 
 		//Generate our 3 textures
-		glGenTextures( 1, &_diffuseRenderTexture );
-		glGenTextures( 1, &_normalRenderTexture );
-		glGenTextures( 1, &_depthRenderTexture );
+		glGenTextures( 1, &diffuseRenderTexture );
+		glGenTextures( 1, &normalRenderTexture );
+		glGenTextures( 1, &depthRenderTexture );
 
 		//For each texture, we bind it to our active texture, and set the format and filtering
 		glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
@@ -204,15 +214,15 @@ public:
 		glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
 		
 		// bind the directional and ambient lights
-		if( directionalLight is null )
+		if( directionalLights.length == 0 )
 		{
-			directionalLight = new DirectionalLight( null, vec3( 0, 0, 0 ), vec3( 0, 0, 0 ) );
+			directionalLights ~= new DirectionalLight( null, vec3( 0, 0, 0 ), vec3( 0, 0, 0 ) );
 		}
 		if( ambientLight is null )
 		{
 			ambientLight = new AmbientLight( null, vec3( 0, 0, 0 ) );
 		}
-		shader.bindDirectionalLight( directionalLight );
+		shader.bindDirectionalLight( directionalLights[0] );
 		shader.bindAmbientLight( ambientLight );
 
 		// bind inverseViewProj for rebuilding world positions from pixel locations
@@ -229,37 +239,50 @@ public:
 		// clean up 
 		glBindVertexArray(0);
 		glUseProgram(0);
-		lights = [];
 		ambientLight = null;
-		directionalLight = null;
+		directionalLights = [];
+		pointLights = [];
+		spotLights = [];
 	}
 
+	/*
+	 * Build arrays of lights in the scene to be drawn in endDraw
+	 */
 	final void addLight( Light light )
 	{
-		if( typeid( light ) == typeid( AmbientLight ) )
+		auto lightType = typeid( light );
+
+		if( lightType == typeid( AmbientLight ) )
 		{
 			if( ambientLight is null )
 			{
 				ambientLight = cast(AmbientLight)light;
 			}
 			else
-				log( OutputType.Info, "Attemtping to add multiple ambient lights to the scene.  Ignoring additional ambient lights." );
+				log( OutputType.Warning, "Attemtping to add multiple ambient lights to the scene.  Ignoring additional ambient lights." );
 		}
-		else if( typeid( light ) == typeid( DirectionalLight ) )
+		else if( lightType == typeid( DirectionalLight ) )
 		{
-			if( directionalLight is null )
-			{
-				directionalLight = cast(DirectionalLight)light;
-			}
-			else
-				log( OutputType.Info, "Attemtping to add multiple directional lights to the scene.  Ignoring additional directional lights." );
+			directionalLights ~= cast(DirectionalLight)light;
+		}
+		else if( lightType == typeid( PointLight ) )
+		{
+			pointLights ~= cast(PointLight)light;
+		}
+		else if( lightType == typeid( SpotLight ) )
+		{
+			spotLights ~= cast(SpotLight)light;
 		}
 		else
 		{
-			lights ~= light;
+			log( OutputType.Warning, "Attempting to add unknown light type, light ignored." );
 		}
 	}
 
+	/*
+	 * Set the camera to draw the scene from.
+	 * Do not change between calls of beginDraw and endDraw.
+	 */
 	final void setCamera( Camera camera )
 	{
 		activeCamera = camera;
@@ -293,10 +316,5 @@ protected:
 	}
 
 private:
-	Camera activeCamera;
-	mat4 projection;
-	//To be cleared after a draw call:
-	AmbientLight ambientLight;
-	DirectionalLight directionalLight;
-	Light[] lights;
+	
 }

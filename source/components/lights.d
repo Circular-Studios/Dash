@@ -1,6 +1,6 @@
 module components.lights;
 import core.properties, core.gameobject;
-import components.component;
+import components.component, components.mesh, components.assets;
 import graphics.shaders;
 
 import gl3n.linalg;
@@ -53,13 +53,21 @@ public:
 }
 
 /*
- * Point Light Stub
+ * Point Light data
  */
 class PointLight : Light
 {
 public:
-	this( GameObject owner, vec3 color )
+	mixin Property!( "float", "radius" );
+	/*
+	 * The area that lighting will be calculated for 
+	 */
+	mixin Property!( "Mesh", "mesh" );
+
+	this( GameObject owner, vec3 color, float radius )
 	{
+		this.radius = radius;
+		mesh = Assets.get!Mesh( "8unitsphere" );
 		super( owner, color );
 	}
 }

@@ -12,12 +12,13 @@ public static:
 	final void initialize()
 	{
 		shaders[ "geometry" ] = new Shader( "geometry", geometryVS, geometryFS, true );
+		shaders[ "animatedGeometry" ] = new Shader( "animatedGeometry", animatedGeometryVS, geometryFS, true ); // Only VS changed, FS stays the same
 		shaders[ "lighting" ] = new Shader( "lighting", lightingVS, lightingFS, true );
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders, "*.fs.glsl" ) )
 		{
 			// Strip .fs from file name
 			string name = file.baseFileName[ 0..$-3 ];
-			if(name != "geometry" && name != "lighting")
+			if(name != "geometry" && name != "lighting" && name != "animatedGeometry" )
 			{
 				shaders[ name ] = new Shader( name, file.directory ~ "\\" ~ name ~ ".vs.glsl", file.fullPath );
 			}
@@ -225,6 +226,9 @@ public:
 	}
 }
 
+///
+/// Non-animated geometry shaders
+///
 immutable string geometryVS = q{
 #version 400
 
@@ -293,6 +297,45 @@ void main( void )
 	normal_w = vec4( calculateMappedNormal(), 1.0f );
 }
 };
+
+///
+/// Animated Geometry Shader
+///
+immutable string animatedGeometryVS = q{
+	#version 400
+
+	layout(location = 0) in vec3 vPosition_m;
+	layout(location = 1) in vec2 vUV;
+	layout(location = 2) in vec3 vNormal_m;
+	layout(location = 3) in vec3 vTangent_m;
+	layout(location = 4) in vec4 vBone_m;
+	layout(location = 5) in vec4 vWeight_m;
+
+	out vec4 fPosition_s;
+	out vec3 fNormal_w;
+	out vec2 fUV;
+	out vec3 fTangent_w;
+	out vec3 fBitangent_w;
+
+	uniform mat4 world;
+	uniform mat4 worldView;
+	uniform mat4 worldViewProj;
+
+	void main( void )
+	{
+		// gl_Position is like SV_Position
+		fPosition_s = worldViewProj * vec4( vPosition_m, 1.0f );
+		gl_Position = fPosition_s;
+		fUV = vUV;
+
+		fNormal_w = ( world * vec4( vNormal_m, 0.0f ) ).xyz;
+		fTangent_w =  ( world * vec4( vTangent_m, 0.0f ) ).xyz;
+	}
+};
+
+///
+/// Lighting Shader
+///
 
 immutable string lightingVS = q{
 #version 400

@@ -16,7 +16,7 @@ template Properties()
 	};
 }
 
-enum AccessModifier
+enum AccessModifier : string
 {
 	Public = "public",
 	Protected = "protected",

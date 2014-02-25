@@ -1,7 +1,5 @@
 module core.prefabs;
-import core.gameobject;
-import components;
-import utility.filepath, utility.config;
+import core, components, utility;
 
 import yaml;
 import gl3n.linalg;

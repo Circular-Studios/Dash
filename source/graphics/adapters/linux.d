@@ -2,9 +2,7 @@
 
 version( linux ):
 
-import core.gameobject, core.dgame;
-import graphics.graphics, graphics.adapters.adapter;
-import utility.output;
+import core, graphics, utility;
 
 import x11.X, x11.Xlib, x11.Xutil;
 import derelict.opengl3.gl3, derelict.opengl3.glx, derelict.opengl3.glxext;

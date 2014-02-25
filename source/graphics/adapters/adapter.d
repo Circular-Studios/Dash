@@ -1,8 +1,5 @@
 module graphics.adapters.adapter;
-import core.gameobject, core.properties;
-import components;
-import graphics.shaders;
-import utility.config, utility.output;
+import core, components, graphics, utility;
 
 import gl3n.linalg;
 import derelict.opengl3.gl3;

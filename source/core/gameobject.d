@@ -98,6 +98,12 @@ public:
 		if( Config.tryGet!string( "Mesh", prop, yamlObj ) )
 		{
 			obj.addComponent( Assets.get!Mesh( prop.get!string ) );
+
+			// If the mesh has animation also add animation component
+			if( Assets.get!Mesh( prop.get!string ).animated )
+			{
+				obj.addComponent( new Animation( Assets.get!AssetAnimation( prop.get!string ) ) );
+			}
 		}
 
 		if( Config.tryGet( "Transform", innerNode, yamlObj ) )

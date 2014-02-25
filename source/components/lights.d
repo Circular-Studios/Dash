@@ -1,7 +1,5 @@
 module components.lights;
-import core.properties;
-import components.component;
-import graphics.shaders;
+import core, components, graphics;
 
 import gl3n.linalg;
 

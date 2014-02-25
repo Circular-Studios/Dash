@@ -3,10 +3,7 @@
  */
 module components.mesh;
 
-import core.properties;
-import components.component;
-import graphics.graphics, graphics.shaders;
-import utility.output;
+import core, components, graphics, utility;
 
 import derelict.assimp3.assimp;
 import derelict.opengl3.gl3;

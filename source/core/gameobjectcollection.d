@@ -2,9 +2,7 @@
  * Defines the GameObjectCollection class, which manages game objects and allows for batch operations on them.
  */
 module core.gameobjectcollection;
-import core.gameobject;
-import graphics.shaders;
-import utility.filepath, utility.config;
+import core, graphics, utility;
 
 import yaml;
 

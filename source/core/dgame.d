@@ -2,10 +2,7 @@
  * Defines the DGame class, the base class for all game logic.
  */
 module core.dgame;
-import core.prefabs, core.properties;
-import components.assets;
-import graphics.graphics;
-import utility.time, utility.config, utility.output, utility.input;
+import core, components, graphics, utility;
 
 enum GameState { Menu = 0, Game = 1, Reset = 2, Quit = 3 };
 

@@ -2,9 +2,7 @@
  * Defines the Camera class, which controls the view matrix for the world.
  */
 module components.camera;
-import core.properties, core.gameobject;
-import components.component;
-import graphics.shaders;
+import core, components, graphics;
 
 import gl3n.linalg;
 

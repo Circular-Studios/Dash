@@ -52,6 +52,7 @@ public:
 	enum : string 
 	{
 		GeometryShader = "geometry",
+		AnimatedGeometryShader = "animatedGeometry",
 		LightingShader = "lighting",
 		WindowMesh = "WindowMesh"
 	}
@@ -136,7 +137,7 @@ public:
 		glEnable( GL_DEPTH_TEST );
 		glDisable( GL_BLEND );
 
-		glUseProgram( Shaders[GeometryShader].programID );
+		
 	}
 	
 	/**
@@ -148,7 +149,19 @@ public:
 	final void drawObject( GameObject object )
 	{
 		// set the shader
-		auto shader = Shaders[GeometryShader];
+		Shader shader;
+		if( object.mesh.animated )
+		{
+			glUseProgram( Shaders[AnimatedGeometryShader].programID );
+			shader = Shaders[AnimatedGeometryShader];
+			
+		}
+		else // not animated mesh
+		{
+			glUseProgram( Shaders[GeometryShader].programID );
+			shader = Shaders[GeometryShader];
+		}
+
 		glBindVertexArray( object.mesh.glVertexArray );
 
 		shader.bindUniformMatrix4fv( ShaderUniform.World , object.transform.matrix );

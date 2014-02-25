@@ -38,7 +38,7 @@ public:
 				// (8 floats for animation data)
 				animated = true;
 				floatsPerVertex = 19;
-				vertexSize = float.sizeof * floatsPerVertex;
+				vertexSize = cast(int)(float.sizeof * floatsPerVertex);
 				
 				// Get the vertex anim data
 				int[][] vertBones = new int[][ mesh.mNumVertices ];
@@ -57,7 +57,7 @@ public:
 				for( int i = 0; i < mesh.mNumVertices; i++)
 				{
 					if ( vertBones[i].length > maxBonesAttached )
-						maxBonesAttached = vertBones[i].length;
+						maxBonesAttached = cast(int)vertBones[i].length;
 
 					while(vertBones[i].length < 4)
 					{
@@ -114,7 +114,7 @@ public:
 			{
 				animated = false;
 				floatsPerVertex = 11;
-				vertexSize = float.sizeof * floatsPerVertex;
+				vertexSize = cast(int)(float.sizeof * floatsPerVertex);
 
 				// For each vertex on each face
 				int meshFaces = mesh.mNumFaces;

@@ -11,7 +11,7 @@ Dash is an free and open game engine written in the D Programming Language.
 
 ### Running Dash
 
-[Setting up your environment](https://github.com/Circular-Studios/) is your one-stop-shop to running Dash. 
+[Setting up your environment](https://github.com/Circular-Studios/Dash/wiki/Setting-Up-Your-Environment-(Engine)) is your one-stop-shop to running Dash. 
 
 ### About Us
 

@@ -2,10 +2,7 @@
  * Defines the GameObject class, to be subclassed by scripts and instantiated for static objects.
  */
 module core.gameobject;
-import core.prefabs, core.properties;
-import components;
-import graphics.graphics, graphics.shaders;
-import utility.config;
+import core, components, graphics, utility.config;
 
 import yaml;
 import gl3n.linalg, gl3n.math;

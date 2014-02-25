@@ -1,8 +1,5 @@
 module graphics.shaders;
-import core.properties;
-import components;
-import graphics.graphics;
-import utility.filepath, utility.output;
+import core, components, graphics, utility;
 
 import derelict.opengl3.gl3;
 import gl3n.linalg;

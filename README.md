@@ -5,3 +5,5 @@ Dash
 [![Gitter Chat](https://badges.gitter.im/Circular-Studios/Dash.png)](https://gitter.im/Circular-Studios/Dash)
 
 Dash is a video game engine written in the D Programming Language. The project is currently in development by students attending Rochester Institute of Technology's Game Design &amp; Development program.
+
+Check out a demo using this engine [here](https://github.com/Circular-Studios/Sample-Dash-Game).

@@ -11,7 +11,7 @@ install:
  - cd ../
  - sudo git clone https://github.com/Circular-Studios/Sample-Dash-Game.git
  - cd Sample-Dash-Game/
-script: sudo dub run --build=unittest
+script: sudo dub test --force
 
 # For pushing results to gitter.im
 notifications:

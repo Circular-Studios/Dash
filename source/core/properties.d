@@ -7,11 +7,13 @@ module core.properties;
 
 public import std.traits;
 
-mixin template Properties()
+template Properties()
 {
-	public void delegate()[] onChanged;
+	enum Properties = q{
+		public void delegate()[] onChanged;
 
-	void changed() { foreach( ev; onChanged ) ev(); }
+		void changed() { foreach( ev; onChanged ) ev(); }
+	};
 }
 
 enum AccessModifier
@@ -26,22 +28,32 @@ template Property( alias field, string name = field.stringof[ 1..$ ], AccessModi
 	enum Property = Getter!( field, name, getterAccess ) ~ Setter!( field, name, setterAccess );
 }
 
-template Getter( alias field, string name, AccessModifier access = AccessModifier.Protected )
+template Getter( alias field, string name = field.stringof[ 1..$ ], AccessModifier access = AccessModifier.Protected )
 {
-	enum Getter = access ~ " @property " ~ typeof(field).stringof ~ " " ~ name ~ "(){ return " ~ field.stringof ~ ";}\n";
+	enum Getter = "final " ~ access ~ " @property auto " ~ name ~ "(){ return " ~ field.stringof ~ ";}\n";
 }
 
-template DirtyGetter( string type, string name, string field, string update, AccessModifier access = AccessModifier.Protected )
+template DirtyGetter( alias field, string update, string name = field.stringof[ 1..$ ], AccessModifier access = AccessModifier.Public )
 {
 	enum DirtyGetter =
-		"public bool " ~ field ~ "IsDirty = true;\n" ~
-		access ~ " @property " ~ type ~ " " ~ name ~ "(){" ~
-			"if(" ~ field ~ "IsDirty)" ~
+		"public bool " ~ field.stringof ~ "IsDirty = true;\n" ~
+		"final " ~ access ~ " @property auto " ~ name ~ "(){" ~
+			"if(" ~ field.stringof ~ "IsDirty)" ~
 				update ~ "();"
-			"return " ~ field ~ ";}";
+			"return " ~ field.stringof ~ ";}";
 }
 
-template Setter( alias field, string name, AccessModifier access = AccessModifier.Protected )
+void setDirty( alias field )()
 {
-	enum Setter = access ~ " @property void " ~ name ~ "(" ~ typeof(field).stringof ~ " newVal){ if( newVal !=" ~ field.stringof ~ ")" ~ field.stringof ~ " = newVal;}\n";
+	mixin( field.stringof ~ "IsDirty = true;" );
+}
+
+template Setter( alias field, string name = field.stringof[ 1..$ ], AccessModifier access = AccessModifier.Protected )
+{
+	enum Setter = "final " ~ access ~ " @property void " ~ name ~ "(" ~ typeof(field).stringof ~ " newVal){ if( newVal !=" ~ field.stringof ~ ")" ~ field.stringof ~ " = newVal;}\n";
+}
+
+template DirtySetter( alias field, string name = field.stringof[ 1..$ ], AccessModifier access = AccessModifier.Protected )
+{
+	enum Setter = "final " ~ access ~ " @property void " ~ name ~ "(" ~ typeof(field).stringof ~ " newVal){ if( newVal !=" ~ field.stringof ~ "){" ~ field.stringof ~ " = newVal; changed();}\n";
 }

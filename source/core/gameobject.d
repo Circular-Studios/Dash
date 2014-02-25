@@ -230,7 +230,10 @@ private:
 	GameObject _owner;
 
 public:
+	mixin Properties;
+
 	mixin( Property!( _owner, "owner", AccessModifier.Public ) );
+
 	vec3 position;
 	quat rotation;
 	vec3 scale;

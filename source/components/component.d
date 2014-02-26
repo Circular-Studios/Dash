@@ -2,8 +2,7 @@
  * Defines the Component abstract class, which is the base for all components.
  */
 module components.component;
-import core.properties, core.gameobject;
-import graphics.shaders;
+import core, graphics;
 
 /**
  * Interface for components to implement.

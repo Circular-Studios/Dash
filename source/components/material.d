@@ -1,8 +1,5 @@
 module components.material;
-import core.properties;
-import components;
-import graphics.graphics, graphics.shaders;
-import utility.config;
+import core, components, graphics, utility;
 
 import yaml;
 import derelict.opengl3.gl3, derelict.freeimage.freeimage;

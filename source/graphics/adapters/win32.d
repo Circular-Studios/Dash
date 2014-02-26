@@ -54,11 +54,15 @@ LRESULT WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 
 final class Win32 : Adapter
 {
-public:
-	static @property Win32 get() { return cast(Win32)Graphics.adapter; }
+private:
+	HWND _hWnd;
+	HINSTANCE _hInstance;
 
-	mixin Property!( "HWND", "hWnd" );
-	mixin Property!( "HINSTANCE", "hInstance" );
+public:
+	mixin( Property!_hWnd );
+	mixin( Property!_hInstance );
+
+	static @property Win32 get() { return cast(Win32)Graphics.adapter; }
 
 	override void initialize()
 	{

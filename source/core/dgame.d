@@ -11,7 +11,7 @@ class DGame
 public:
 	static
 	{
-		mixin Property!( "DGame", "instance" );
+		DGame instance;
 	}
 
 	GameState currentState;

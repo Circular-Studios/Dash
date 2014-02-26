@@ -7,11 +7,17 @@ import gl3n.linalg;
 
 class Animation : Component
 {
+private:
+	AssetAnimation _animationData;
+	int _currentAnimation;
+	float _currentPosition;
+	Bone[] _currentPose;
+
 public:
-	mixin Property!( "AssetAnimation", "animationData", "public" );
-	mixin Property!( "int", "currentAnimation", "public" );
-	mixin Property!( "float", "currentPosition", "public" );
-	mixin Property!( "Bone[]", "currentPose", "public" );
+	mixin( Property!_animationData );
+	mixin( Property!_currentAnimation );
+	mixin( Property!_currentPosition );
+	mixin( Property!_currentPose );
 
 	this( AssetAnimation assetAnimation)
 	{

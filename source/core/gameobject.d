@@ -11,37 +11,45 @@ import std.signals, std.conv, std.variant;
 
 class GameObject
 {
+private:
+	Transform _transform;
+	Material _material;
+	Mesh _mesh;
+	Light _light;
+	Camera _camera;
+	GameObject _parent;
+	GameObject[] _children;
+	Component[ClassInfo] componentList;
+
 public:
 	/**
 	 * The current transform of the object.
 	 */
-	mixin Property!( "Transform", "transform", "public" );
+	mixin( Property!( _transform, AccessModifier.Public ) );
 	/**
 	 * The Material belonging to the object
 	 */
-	mixin Property!( "Material", "material", "public" );
+	mixin( Property!( _material, AccessModifier.Public ) );
 	/**
 	 * The Mesh belonging to the object
 	 */
-	mixin Property!( "Mesh", "mesh", "public" );
+	mixin( Property!( _mesh, AccessModifier.Public ) );
 	/**
 	* The light attached to this object
 	*/
-	mixin Property!( "Light", "light", "public" );
+	mixin( Property!( _light, AccessModifier.Public ) );
 	/**
 	* The camera attached to this object
 	*/
-	mixin Property!( "Camera", "camera", "public" );
+	mixin( Property!( _camera, AccessModifier.Public ) );
 	/**
 	 * The object that this object belongs to
 	 */
-	mixin Property!( "GameObject", "parent" );
+	mixin( Property!( _parent, AccessModifier.Public ) );
 	/**
 	 * All of the objects which list this as parent
 	 */
-	mixin Property!( "GameObject[]", "children" );
-
-	mixin Signal!( string, string );
+	mixin( Property!( _children, AccessModifier.Public ) );
 
 	/**
 	 * Create a GameObject from a Yaml node.
@@ -117,6 +125,8 @@ public:
 		obj.transform.updateMatrix();
 		return obj;
 	}
+
+	mixin Signal!( string, string );
 
 	/**
 	 * Creates basic GameObject with transform and connection to transform's emitter.
@@ -215,14 +225,25 @@ public:
 	void onShutdown() { }
 	/// Called when the object collides with another object.
 	void onCollision( GameObject other ) { }
-
-private:
-	Component[ClassInfo] componentList;
 }
 
 class Transform
 {
+private:
+	GameObject _owner;
+
 public:
+	mixin Properties;
+
+	mixin( Property!( _owner, AccessModifier.Public ) );
+
+	vec3 position;
+	quat rotation;
+	vec3 scale;
+	//mixin EmmittingProperty!( "vec3", "position", "public" );
+	//mixin EmmittingProperty!( "quat", "rotation", "public" );
+	//mixin EmmittingProperty!( "vec3", "scale", "public" );
+
 	this( GameObject obj = null )
 	{
 		owner = obj;
@@ -238,14 +259,6 @@ public:
 		//destroy( rotation ); 
 		//destroy( scale );
 	}
-
-	mixin Property!( "GameObject", "owner" );
-	vec3 position;
-	quat rotation;
-	vec3 scale;
-	//mixin EmmittingProperty!( "vec3", "position", "public" );
-	//mixin EmmittingProperty!( "quat", "rotation", "public" );
-	//mixin EmmittingProperty!( "vec3", "scale", "public" );
 
 	/**
 	* This returns the object's position relative to the world origin, not the parent

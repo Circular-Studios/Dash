@@ -9,6 +9,15 @@ import core, graphics;
  */
 abstract class Component
 {
+private:
+	GameObject _owner;
+
+public:
+	/**
+	 * The GameObject that owns this component.
+	 */
+	mixin( Property!( _owner, AccessModifier.Public ) );
+
 	this( GameObject owner )
 	{
 		this.owner = owner;
@@ -22,9 +31,4 @@ abstract class Component
 	 * Function called on shutdown.
 	 */
 	abstract void shutdown();
-
-	/**
-	 * The GameObject that owns this component.
-	 */
-	mixin Property!( "GameObject", "owner", "public" );
 }

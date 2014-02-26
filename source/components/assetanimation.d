@@ -10,8 +10,11 @@ import gl3n.linalg;
 
 class AssetAnimation
 {
+private:
+	AnimationSet _animationSet;
+
 public:
-	mixin Property!( "AnimationSet", "animationSet", "public" );
+	mixin( Property!_animationSet );
 
 	this( string name, const(aiAnimation*) animation, const(aiNode*) boneHierarchy )
 	{

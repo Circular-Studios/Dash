@@ -11,13 +11,17 @@ import std.stdio, std.stream, std.format, std.math;
 
 class Mesh : Component
 {
+private:
+	uint _glVertexArray, _numVertices, _numIndices, _glIndexBuffer, _glVertexBuffer;
+	bool _animated;
+
 public:
-	mixin Property!( "bool", "animated", "protected" );
-	mixin Property!( "uint", "glVertexArray", "protected" );
-	mixin Property!( "uint", "numVertices", "protected" );
-	mixin Property!( "uint", "numIndices", "protected" );
-	mixin BackedProperty!( "uint", "_glIndexBuffer", "glIndexBuffer" );
-	mixin BackedProperty!( "uint", "_glVertexBuffer", "glVertexBuffer" );
+	mixin( Property!_glVertexArray );
+	mixin( Property!_numVertices );
+	mixin( Property!_numIndices );
+	mixin( Property!_glIndexBuffer );
+	mixin( Property!_glVertexBuffer );
+	mixin( Property!_animated );
 
 	this( string filePath, const(aiMesh*) mesh )
 	{
@@ -224,16 +228,5 @@ public:
 	{
 		glDeleteBuffers( 1, &_glVertexBuffer );
 		glDeleteBuffers( 1, &_glVertexArray );
-	}
-
-private:
-	union
-	{
-		uint _glIndexBuffer;
-	}
-
-	union
-	{
-		uint _glVertexBuffer;
 	}
 }

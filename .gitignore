@@ -177,3 +177,5 @@ test-results/
 *.exe_cv
 *.dll
 *.dll_cv
+__dummy.html
+docs.json

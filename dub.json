@@ -23,6 +23,7 @@
 	"mainSourceFile": "source/app.d",
 	"sourcePaths": [ "source/" ],
 	"importPaths": [ "source/" ],
+	"-ddoxFilterArgs": [ "--min-protection=Protected" ],
 
 	"importPaths-windows": [ "third_party/DWinProgramming/WindowsAPI" ],
 	"libs-windows": [
@@ -36,32 +37,5 @@
 				"version": "~master",
 				"optional": true
 			}
-	},
-
-	"buildTypes": {
-		"doc": {
-			"buildOptions": [
-				"syntaxOnly"
-			],
-			"dflags": [
-				"-Dfdoc/__dummy.html",
-				"-Xfdoc/doc.json"
-			],
-			"postBuildCommands": [
-				"dub run ddox -- filter doc/doc.json filter --ex dyaml --ex yaml --ex ddox --ex vibe --ex derelict",
-				"dub run ddox -- generate-html doc/doc.json doc/",
-				"rm -f doc/__dummy.html"
-			]
-		}
-	},
-	"subPackages": [
-		{
-			"name": "bootstrapper",
-			"targetName": "bootstrapper",
-			"versions": [ "Bootstrapper" ],
-			"sourcePaths": [ "source/bootstrapper" ],
-			"importPaths": [ "source/bootstrapper" ],
-			"mainSourceFile": "source/bootstrapper/bootstrapper.d"
-		}
-	]
+	}
 }

@@ -1,0 +1,6298 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/><!-- using block title in layout.dt--><!-- using block ddox.defs in ddox.layout.dt--><!-- using block ddox.title in ddox.layout.dt-->
+		<title>Module derelict.opengl3.functions</title>
+		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav"><!-- using block navigation in layout.dt-->
+						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">components</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../components/animation.html" class=" module">animation</a>
+							</li>
+							<li>
+								<a href="../../components/assetanimation.html" class=" module">assetanimation</a>
+							</li>
+							<li>
+								<a href="../../components/assets.html" class=" module">assets</a>
+							</li>
+							<li>
+								<a href="../../components/camera.html" class=" module">camera</a>
+							</li>
+							<li>
+								<a href="../../components/component.html" class=" module">component</a>
+							</li>
+							<li>
+								<a href="../../components/lights.html" class=" module">lights</a>
+							</li>
+							<li>
+								<a href="../../components/material.html" class=" module">material</a>
+							</li>
+							<li>
+								<a href="../../components/mesh.html" class=" module">mesh</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">core</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../core/dgame.html" class=" module">dgame</a>
+							</li>
+							<li>
+								<a href="../../core/gameobject.html" class=" module">gameobject</a>
+							</li>
+							<li>
+								<a href="../../core/gameobjectcollection.html" class=" module">gameobjectcollection</a>
+							</li>
+							<li>
+								<a href="../../core/prefabs.html" class=" module">prefabs</a>
+							</li>
+							<li>
+								<a href="../../core/properties.html" class=" module">properties</a>
+							</li>
+							<li>
+								<a href="../../core/reflection.html" class=" module">reflection</a>
+							</li>
+						</ul>
+							</li>
+							<li class=" tree-view">
+								<a href="#" class="package">derelict</a>
+						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">assimp3</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/assimp3/assimp.html" class=" module">assimp</a>
+							</li>
+							<li>
+								<a href="../../derelict/assimp3/types.html" class=" module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">freeimage</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/freeimage/freeimage.html" class=" module">freeimage</a>
+							</li>
+							<li>
+								<a href="../../derelict/freeimage/functions.html" class=" module">functions</a>
+							</li>
+							<li>
+								<a href="../../derelict/freeimage/types.html" class=" module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li class=" tree-view">
+								<a href="#" class="package">opengl3</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/opengl3/arb.html" class=" module">arb</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/cgl.html" class=" module">cgl</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/constants.html" class=" module">constants</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/deprecatedConstants.html" class=" module">deprecatedConstants</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/deprecatedFunctions.html" class=" module">deprecatedFunctions</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/ext.html" class=" module">ext</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/functions.html" class="selected module">functions</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/gl.html" class=" module">gl</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/gl3.html" class=" module">gl3</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/glx.html" class=" module">glx</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/glxext.html" class=" module">glxext</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/internal.html" class=" module">internal</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/types.html" class=" module">types</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/wgl.html" class=" module">wgl</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/wglext.html" class=" module">wglext</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">util</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/util/exception.html" class=" module">exception</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/loader.html" class=" module">loader</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/sharedlib.html" class=" module">sharedlib</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/system.html" class=" module">system</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/wintypes.html" class=" module">wintypes</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/xtypes.html" class=" module">xtypes</a>
+							</li>
+						</ul>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">graphics</a>
+						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">adapters</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../graphics/adapters/adapter.html" class=" module">adapter</a>
+							</li>
+							<li>
+								<a href="../../graphics/adapters/linux.html" class=" module">linux</a>
+							</li>
+							<li>
+								<a href="../../graphics/adapters/mac.html" class=" module">mac</a>
+							</li>
+							<li>
+								<a href="../../graphics/adapters/win32.html" class=" module">win32</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../graphics/adapters.html" class=" module">adapters</a>
+							</li>
+							<li>
+								<a href="../../graphics/graphics.html" class=" module">graphics</a>
+							</li>
+							<li>
+								<a href="../../graphics/shaders.html" class=" module">shaders</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">utility</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../utility/config.html" class=" module">config</a>
+							</li>
+							<li>
+								<a href="../../utility/filepath.html" class=" module">filepath</a>
+							</li>
+							<li>
+								<a href="../../utility/input.html" class=" module">input</a>
+							</li>
+							<li>
+								<a href="../../utility/output.html" class=" module">output</a>
+							</li>
+							<li>
+								<a href="../../utility/time.html" class=" module">time</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../components.html" class=" module">components</a>
+							</li>
+							<li>
+								<a href="../../core.html" class=" module">core</a>
+							</li>
+							<li>
+								<a href="../../graphics.html" class=" module">graphics</a>
+							</li>
+							<li>
+								<a href="../../utility.html" class=" module">utility</a>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../symbols.js"></script>
+	<script type="application/javascript">
+		//<![CDATA[
+		var symbolSearchRootDir = "../../";		$('#symbolSearchPane').show();
+		//]]>
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Module derelict.opengl3.functions</h1><!-- using block body in layout.dt--><!-- using block ddox.description in ddox.layout.dt-->
+			<p></p>
+<!-- using block ddox.sections in ddox.layout.dt-->
+			<section></section><!-- using block ddox.members in ddox.layout.dt-->
+			<section>
+				<h2>Global variables</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="glActiveTexture" href="../../derelict/opengl3/functions/glActiveTexture.html">
+								<code>glActiveTexture</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glAttachShader" href="../../derelict/opengl3/functions/glAttachShader.html">
+								<code>glAttachShader</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glBeginConditionalRender" href="../../derelict/opengl3/functions/glBeginConditionalRender.html">
+								<code>glBeginConditionalRender</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glBeginQuery" href="../../derelict/opengl3/functions/glBeginQuery.html">
+								<code>glBeginQuery</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glBeginTransformFeedback" href="../../derelict/opengl3/functions/glBeginTransformFeedback.html">
+								<code>glBeginTransformFeedback</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glBindAttribLocation" href="../../derelict/opengl3/functions/glBindAttribLocation.html">
+								<code>glBindAttribLocation</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, const(char)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glBindBuffer" href="../../derelict/opengl3/functions/glBindBuffer.html">
+								<code>glBindBuffer</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glBindBufferBase" href="../../derelict/opengl3/functions/glBindBufferBase.html">
+								<code>glBindBufferBase</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glBindBufferRange" href="../../derelict/opengl3/functions/glBindBufferRange.html">
+								<code>glBindBufferRange</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glBindFragDataLocation" href="../../derelict/opengl3/functions/glBindFragDataLocation.html">
+								<code>glBindFragDataLocation</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, const(char)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glBindTexture" href="../../derelict/opengl3/functions/glBindTexture.html">
+								<code>glBindTexture</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glBlendColor" href="../../derelict/opengl3/functions/glBlendColor.html">
+								<code>glBlendColor</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(float, float, float, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glBlendEquation" href="../../derelict/opengl3/functions/glBlendEquation.html">
+								<code>glBlendEquation</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glBlendEquationi" href="../../derelict/opengl3/functions/glBlendEquationi.html">
+								<code>glBlendEquationi</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glBlendEquationSeparate" href="../../derelict/opengl3/functions/glBlendEquationSeparate.html">
+								<code>glBlendEquationSeparate</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glBlendEquationSeparatei" href="../../derelict/opengl3/functions/glBlendEquationSeparatei.html">
+								<code>glBlendEquationSeparatei</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glBlendFunc" href="../../derelict/opengl3/functions/glBlendFunc.html">
+								<code>glBlendFunc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glBlendFunci" href="../../derelict/opengl3/functions/glBlendFunci.html">
+								<code>glBlendFunci</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glBlendFuncSeparate" href="../../derelict/opengl3/functions/glBlendFuncSeparate.html">
+								<code>glBlendFuncSeparate</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glBlendFuncSeparatei" href="../../derelict/opengl3/functions/glBlendFuncSeparatei.html">
+								<code>glBlendFuncSeparatei</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glBufferData" href="../../derelict/opengl3/functions/glBufferData.html">
+								<code>glBufferData</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, const(void)*, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glBufferSubData" href="../../derelict/opengl3/functions/glBufferSubData.html">
+								<code>glBufferSubData</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glClampColor" href="../../derelict/opengl3/functions/glClampColor.html">
+								<code>glClampColor</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glClear" href="../../derelict/opengl3/functions/glClear.html">
+								<code>glClear</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glClearBufferfi" href="../../derelict/opengl3/functions/glClearBufferfi.html">
+								<code>glClearBufferfi</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, float, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glClearBufferfv" href="../../derelict/opengl3/functions/glClearBufferfv.html">
+								<code>glClearBufferfv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glClearBufferiv" href="../../derelict/opengl3/functions/glClearBufferiv.html">
+								<code>glClearBufferiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glClearBufferuiv" href="../../derelict/opengl3/functions/glClearBufferuiv.html">
+								<code>glClearBufferuiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glClearColor" href="../../derelict/opengl3/functions/glClearColor.html">
+								<code>glClearColor</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(float, float, float, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glClearDepth" href="../../derelict/opengl3/functions/glClearDepth.html">
+								<code>glClearDepth</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(double)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glClearStencil" href="../../derelict/opengl3/functions/glClearStencil.html">
+								<code>glClearStencil</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glColorMask" href="../../derelict/opengl3/functions/glColorMask.html">
+								<code>glColorMask</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(ubyte, ubyte, ubyte, ubyte)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glColorMaski" href="../../derelict/opengl3/functions/glColorMaski.html">
+								<code>glColorMaski</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, ubyte, ubyte, ubyte, ubyte)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glCompileShader" href="../../derelict/opengl3/functions/glCompileShader.html">
+								<code>glCompileShader</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glCompressedTexImage1D" href="../../derelict/opengl3/functions/glCompressedTexImage1D.html">
+								<code>glCompressedTexImage1D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, int, int, int, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glCompressedTexImage2D" href="../../derelict/opengl3/functions/glCompressedTexImage2D.html">
+								<code>glCompressedTexImage2D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, int, int, int, int, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glCompressedTexImage3D" href="../../derelict/opengl3/functions/glCompressedTexImage3D.html">
+								<code>glCompressedTexImage3D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, int, int, int, int, int, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glCompressedTexSubImage1D" href="../../derelict/opengl3/functions/glCompressedTexSubImage1D.html">
+								<code>glCompressedTexSubImage1D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, uint, int, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glCompressedTexSubImage2D" href="../../derelict/opengl3/functions/glCompressedTexSubImage2D.html">
+								<code>glCompressedTexSubImage2D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, int, int, uint, int, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glCompressedTexSubImage3D" href="../../derelict/opengl3/functions/glCompressedTexSubImage3D.html">
+								<code>glCompressedTexSubImage3D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, int, int, int, int, uint, int, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glCopyTexImage1D" href="../../derelict/opengl3/functions/glCopyTexImage1D.html">
+								<code>glCopyTexImage1D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glCopyTexImage2D" href="../../derelict/opengl3/functions/glCopyTexImage2D.html">
+								<code>glCopyTexImage2D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, int, int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glCopyTexSubImage1D" href="../../derelict/opengl3/functions/glCopyTexSubImage1D.html">
+								<code>glCopyTexSubImage1D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glCopyTexSubImage2D" href="../../derelict/opengl3/functions/glCopyTexSubImage2D.html">
+								<code>glCopyTexSubImage2D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glCopyTexSubImage3D" href="../../derelict/opengl3/functions/glCopyTexSubImage3D.html">
+								<code>glCopyTexSubImage3D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, int, int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glCreateProgram" href="../../derelict/opengl3/functions/glCreateProgram.html">
+								<code>glCreateProgram</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow uint function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glCreateShader" href="../../derelict/opengl3/functions/glCreateShader.html">
+								<code>glCreateShader</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow uint function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glCullFace" href="../../derelict/opengl3/functions/glCullFace.html">
+								<code>glCullFace</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glDeleteBuffers" href="../../derelict/opengl3/functions/glDeleteBuffers.html">
+								<code>glDeleteBuffers</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glDeleteProgram" href="../../derelict/opengl3/functions/glDeleteProgram.html">
+								<code>glDeleteProgram</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glDeleteQueries" href="../../derelict/opengl3/functions/glDeleteQueries.html">
+								<code>glDeleteQueries</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glDeleteShader" href="../../derelict/opengl3/functions/glDeleteShader.html">
+								<code>glDeleteShader</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glDeleteTextures" href="../../derelict/opengl3/functions/glDeleteTextures.html">
+								<code>glDeleteTextures</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glDepthFunc" href="../../derelict/opengl3/functions/glDepthFunc.html">
+								<code>glDepthFunc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glDepthMask" href="../../derelict/opengl3/functions/glDepthMask.html">
+								<code>glDepthMask</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(ubyte)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glDepthRange" href="../../derelict/opengl3/functions/glDepthRange.html">
+								<code>glDepthRange</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(double, double)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glDetachShader" href="../../derelict/opengl3/functions/glDetachShader.html">
+								<code>glDetachShader</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glDisable" href="../../derelict/opengl3/functions/glDisable.html">
+								<code>glDisable</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glDisablei" href="../../derelict/opengl3/functions/glDisablei.html">
+								<code>glDisablei</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glDisableVertexAttribArray" href="../../derelict/opengl3/functions/glDisableVertexAttribArray.html">
+								<code>glDisableVertexAttribArray</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glDrawArrays" href="../../derelict/opengl3/functions/glDrawArrays.html">
+								<code>glDrawArrays</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glDrawArraysInstanced" href="../../derelict/opengl3/functions/glDrawArraysInstanced.html">
+								<code>glDrawArraysInstanced</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glDrawBuffer" href="../../derelict/opengl3/functions/glDrawBuffer.html">
+								<code>glDrawBuffer</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glDrawBuffers" href="../../derelict/opengl3/functions/glDrawBuffers.html">
+								<code>glDrawBuffers</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glDrawElements" href="../../derelict/opengl3/functions/glDrawElements.html">
+								<code>glDrawElements</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glDrawElementsInstanced" href="../../derelict/opengl3/functions/glDrawElementsInstanced.html">
+								<code>glDrawElementsInstanced</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, const(void)*, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glDrawRangeElements" href="../../derelict/opengl3/functions/glDrawRangeElements.html">
+								<code>glDrawRangeElements</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint, int, uint, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glEnable" href="../../derelict/opengl3/functions/glEnable.html">
+								<code>glEnable</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glEnablei" href="../../derelict/opengl3/functions/glEnablei.html">
+								<code>glEnablei</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glEnableVertexAttribArray" href="../../derelict/opengl3/functions/glEnableVertexAttribArray.html">
+								<code>glEnableVertexAttribArray</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glEndConditionalRender" href="../../derelict/opengl3/functions/glEndConditionalRender.html">
+								<code>glEndConditionalRender</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glEndQuery" href="../../derelict/opengl3/functions/glEndQuery.html">
+								<code>glEndQuery</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glEndTransformFeedback" href="../../derelict/opengl3/functions/glEndTransformFeedback.html">
+								<code>glEndTransformFeedback</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glFinish" href="../../derelict/opengl3/functions/glFinish.html">
+								<code>glFinish</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glFlush" href="../../derelict/opengl3/functions/glFlush.html">
+								<code>glFlush</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glFramebufferTexture" href="../../derelict/opengl3/functions/glFramebufferTexture.html">
+								<code>glFramebufferTexture</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glFrontFace" href="../../derelict/opengl3/functions/glFrontFace.html">
+								<code>glFrontFace</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGenBuffers" href="../../derelict/opengl3/functions/glGenBuffers.html">
+								<code>glGenBuffers</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGenQueries" href="../../derelict/opengl3/functions/glGenQueries.html">
+								<code>glGenQueries</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGenTextures" href="../../derelict/opengl3/functions/glGenTextures.html">
+								<code>glGenTextures</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetActiveAttrib" href="../../derelict/opengl3/functions/glGetActiveAttrib.html">
+								<code>glGetActiveAttrib</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int, int*, int*, uint*, char*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetActiveUniform" href="../../derelict/opengl3/functions/glGetActiveUniform.html">
+								<code>glGetActiveUniform</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int, int*, int*, uint*, char*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetAttachedShaders" href="../../derelict/opengl3/functions/glGetAttachedShaders.html">
+								<code>glGetAttachedShaders</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int*, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetAttribLocation" href="../../derelict/opengl3/functions/glGetAttribLocation.html">
+								<code>glGetAttribLocation</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(uint, const(char)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetBooleani_v" href="../../derelict/opengl3/functions/glGetBooleani_v.html">
+								<code>glGetBooleani_v</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, ubyte*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetBooleanv" href="../../derelict/opengl3/functions/glGetBooleanv.html">
+								<code>glGetBooleanv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, ubyte*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetBufferParameteri64v" href="../../derelict/opengl3/functions/glGetBufferParameteri64v.html">
+								<code>glGetBufferParameteri64v</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, long*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetBufferParameteriv" href="../../derelict/opengl3/functions/glGetBufferParameteriv.html">
+								<code>glGetBufferParameteriv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetBufferPointerv" href="../../derelict/opengl3/functions/glGetBufferPointerv.html">
+								<code>glGetBufferPointerv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetBufferSubData" href="../../derelict/opengl3/functions/glGetBufferSubData.html">
+								<code>glGetBufferSubData</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetCompressedTexImage" href="../../derelict/opengl3/functions/glGetCompressedTexImage.html">
+								<code>glGetCompressedTexImage</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetDoublev" href="../../derelict/opengl3/functions/glGetDoublev.html">
+								<code>glGetDoublev</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, double*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetError" href="../../derelict/opengl3/functions/glGetError.html">
+								<code>glGetError</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow uint function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetFloatv" href="../../derelict/opengl3/functions/glGetFloatv.html">
+								<code>glGetFloatv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, float*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetFragDataLocation" href="../../derelict/opengl3/functions/glGetFragDataLocation.html">
+								<code>glGetFragDataLocation</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(uint, const(char)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetInteger64i_v" href="../../derelict/opengl3/functions/glGetInteger64i_v.html">
+								<code>glGetInteger64i_v</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, long*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetIntegeri_v" href="../../derelict/opengl3/functions/glGetIntegeri_v.html">
+								<code>glGetIntegeri_v</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetIntegerv" href="../../derelict/opengl3/functions/glGetIntegerv.html">
+								<code>glGetIntegerv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetPointerv" href="../../derelict/opengl3/functions/glGetPointerv.html">
+								<code>glGetPointerv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetProgramInfoLog" href="../../derelict/opengl3/functions/glGetProgramInfoLog.html">
+								<code>glGetProgramInfoLog</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int*, char*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetProgramiv" href="../../derelict/opengl3/functions/glGetProgramiv.html">
+								<code>glGetProgramiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetQueryiv" href="../../derelict/opengl3/functions/glGetQueryiv.html">
+								<code>glGetQueryiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetQueryObjectiv" href="../../derelict/opengl3/functions/glGetQueryObjectiv.html">
+								<code>glGetQueryObjectiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetQueryObjectuiv" href="../../derelict/opengl3/functions/glGetQueryObjectuiv.html">
+								<code>glGetQueryObjectuiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetShaderInfoLog" href="../../derelict/opengl3/functions/glGetShaderInfoLog.html">
+								<code>glGetShaderInfoLog</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int*, char*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetShaderiv" href="../../derelict/opengl3/functions/glGetShaderiv.html">
+								<code>glGetShaderiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetShaderSource" href="../../derelict/opengl3/functions/glGetShaderSource.html">
+								<code>glGetShaderSource</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int*, char*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetString" href="../../derelict/opengl3/functions/glGetString.html">
+								<code>glGetString</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow const(char*) function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetStringi" href="../../derelict/opengl3/functions/glGetStringi.html">
+								<code>glGetStringi</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow const(char)* function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetTexImage" href="../../derelict/opengl3/functions/glGetTexImage.html">
+								<code>glGetTexImage</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, uint, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetTexLevelParameterfv" href="../../derelict/opengl3/functions/glGetTexLevelParameterfv.html">
+								<code>glGetTexLevelParameterfv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, float*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetTexLevelParameteriv" href="../../derelict/opengl3/functions/glGetTexLevelParameteriv.html">
+								<code>glGetTexLevelParameteriv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetTexParameterfv" href="../../derelict/opengl3/functions/glGetTexParameterfv.html">
+								<code>glGetTexParameterfv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, float*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetTexParameterIiv" href="../../derelict/opengl3/functions/glGetTexParameterIiv.html">
+								<code>glGetTexParameterIiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetTexParameterIuiv" href="../../derelict/opengl3/functions/glGetTexParameterIuiv.html">
+								<code>glGetTexParameterIuiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetTexParameteriv" href="../../derelict/opengl3/functions/glGetTexParameteriv.html">
+								<code>glGetTexParameteriv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetTransformFeedbackVarying" href="../../derelict/opengl3/functions/glGetTransformFeedbackVarying.html">
+								<code>glGetTransformFeedbackVarying</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int, int*, int*, uint*, char*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetUniformfv" href="../../derelict/opengl3/functions/glGetUniformfv.html">
+								<code>glGetUniformfv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, float*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetUniformiv" href="../../derelict/opengl3/functions/glGetUniformiv.html">
+								<code>glGetUniformiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetUniformLocation" href="../../derelict/opengl3/functions/glGetUniformLocation.html">
+								<code>glGetUniformLocation</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(uint, const(char)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetUniformuiv" href="../../derelict/opengl3/functions/glGetUniformuiv.html">
+								<code>glGetUniformuiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetVertexAttribdv" href="../../derelict/opengl3/functions/glGetVertexAttribdv.html">
+								<code>glGetVertexAttribdv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, double*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetVertexAttribfv" href="../../derelict/opengl3/functions/glGetVertexAttribfv.html">
+								<code>glGetVertexAttribfv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, float*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetVertexAttribIiv" href="../../derelict/opengl3/functions/glGetVertexAttribIiv.html">
+								<code>glGetVertexAttribIiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetVertexAttribIuiv" href="../../derelict/opengl3/functions/glGetVertexAttribIuiv.html">
+								<code>glGetVertexAttribIuiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetVertexAttribiv" href="../../derelict/opengl3/functions/glGetVertexAttribiv.html">
+								<code>glGetVertexAttribiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glGetVertexAttribPointerv" href="../../derelict/opengl3/functions/glGetVertexAttribPointerv.html">
+								<code>glGetVertexAttribPointerv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glHint" href="../../derelict/opengl3/functions/glHint.html">
+								<code>glHint</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glIsBuffer" href="../../derelict/opengl3/functions/glIsBuffer.html">
+								<code>glIsBuffer</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow ubyte function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glIsEnabled" href="../../derelict/opengl3/functions/glIsEnabled.html">
+								<code>glIsEnabled</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow ubyte function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glIsEnabledi" href="../../derelict/opengl3/functions/glIsEnabledi.html">
+								<code>glIsEnabledi</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow ubyte function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glIsProgram" href="../../derelict/opengl3/functions/glIsProgram.html">
+								<code>glIsProgram</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow ubyte function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glIsQuery" href="../../derelict/opengl3/functions/glIsQuery.html">
+								<code>glIsQuery</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow ubyte function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glIsShader" href="../../derelict/opengl3/functions/glIsShader.html">
+								<code>glIsShader</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow ubyte function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glIsTexture" href="../../derelict/opengl3/functions/glIsTexture.html">
+								<code>glIsTexture</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow ubyte function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glLineWidth" href="../../derelict/opengl3/functions/glLineWidth.html">
+								<code>glLineWidth</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glLinkProgram" href="../../derelict/opengl3/functions/glLinkProgram.html">
+								<code>glLinkProgram</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glLogicOp" href="../../derelict/opengl3/functions/glLogicOp.html">
+								<code>glLogicOp</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glMapBuffer" href="../../derelict/opengl3/functions/glMapBuffer.html">
+								<code>glMapBuffer</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void* function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glMinSampleShading" href="../../derelict/opengl3/functions/glMinSampleShading.html">
+								<code>glMinSampleShading</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glMultiDrawArrays" href="../../derelict/opengl3/functions/glMultiDrawArrays.html">
+								<code>glMultiDrawArrays</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(int)*, const(int)*, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glMultiDrawElements" href="../../derelict/opengl3/functions/glMultiDrawElements.html">
+								<code>glMultiDrawElements</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(int)*, uint, const(void)*, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glPixelStoref" href="../../derelict/opengl3/functions/glPixelStoref.html">
+								<code>glPixelStoref</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glPixelStorei" href="../../derelict/opengl3/functions/glPixelStorei.html">
+								<code>glPixelStorei</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glPointParameterf" href="../../derelict/opengl3/functions/glPointParameterf.html">
+								<code>glPointParameterf</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glPointParameterfv" href="../../derelict/opengl3/functions/glPointParameterfv.html">
+								<code>glPointParameterfv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glPointParameteri" href="../../derelict/opengl3/functions/glPointParameteri.html">
+								<code>glPointParameteri</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glPointParameteriv" href="../../derelict/opengl3/functions/glPointParameteriv.html">
+								<code>glPointParameteriv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glPointSize" href="../../derelict/opengl3/functions/glPointSize.html">
+								<code>glPointSize</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glPolygonMode" href="../../derelict/opengl3/functions/glPolygonMode.html">
+								<code>glPolygonMode</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glPolygonOffset" href="../../derelict/opengl3/functions/glPolygonOffset.html">
+								<code>glPolygonOffset</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(float, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glPrimitiveRestartIndex" href="../../derelict/opengl3/functions/glPrimitiveRestartIndex.html">
+								<code>glPrimitiveRestartIndex</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glReadBuffer" href="../../derelict/opengl3/functions/glReadBuffer.html">
+								<code>glReadBuffer</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glReadPixels" href="../../derelict/opengl3/functions/glReadPixels.html">
+								<code>glReadPixels</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, int, int, uint, uint, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glSampleCoverage" href="../../derelict/opengl3/functions/glSampleCoverage.html">
+								<code>glSampleCoverage</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(float, ubyte)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glScissor" href="../../derelict/opengl3/functions/glScissor.html">
+								<code>glScissor</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glShaderSource" href="../../derelict/opengl3/functions/glShaderSource.html">
+								<code>glShaderSource</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, const(char*)*, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glStencilFunc" href="../../derelict/opengl3/functions/glStencilFunc.html">
+								<code>glStencilFunc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glStencilFuncSeparate" href="../../derelict/opengl3/functions/glStencilFuncSeparate.html">
+								<code>glStencilFuncSeparate</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glStencilMask" href="../../derelict/opengl3/functions/glStencilMask.html">
+								<code>glStencilMask</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glStencilMaskSeparate" href="../../derelict/opengl3/functions/glStencilMaskSeparate.html">
+								<code>glStencilMaskSeparate</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glStencilOp" href="../../derelict/opengl3/functions/glStencilOp.html">
+								<code>glStencilOp</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glStencilOpSeparate" href="../../derelict/opengl3/functions/glStencilOpSeparate.html">
+								<code>glStencilOpSeparate</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glTexBuffer" href="../../derelict/opengl3/functions/glTexBuffer.html">
+								<code>glTexBuffer</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glTexImage1D" href="../../derelict/opengl3/functions/glTexImage1D.html">
+								<code>glTexImage1D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, int, uint, uint, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glTexImage2D" href="../../derelict/opengl3/functions/glTexImage2D.html">
+								<code>glTexImage2D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, int, int, uint, uint, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glTexImage3D" href="../../derelict/opengl3/functions/glTexImage3D.html">
+								<code>glTexImage3D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, int, int, int, uint, uint, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glTexParameterf" href="../../derelict/opengl3/functions/glTexParameterf.html">
+								<code>glTexParameterf</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glTexParameterfv" href="../../derelict/opengl3/functions/glTexParameterfv.html">
+								<code>glTexParameterfv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glTexParameteri" href="../../derelict/opengl3/functions/glTexParameteri.html">
+								<code>glTexParameteri</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glTexParameterIiv" href="../../derelict/opengl3/functions/glTexParameterIiv.html">
+								<code>glTexParameterIiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glTexParameterIuiv" href="../../derelict/opengl3/functions/glTexParameterIuiv.html">
+								<code>glTexParameterIuiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glTexParameteriv" href="../../derelict/opengl3/functions/glTexParameteriv.html">
+								<code>glTexParameteriv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glTexSubImage1D" href="../../derelict/opengl3/functions/glTexSubImage1D.html">
+								<code>glTexSubImage1D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, uint, uint, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glTexSubImage2D" href="../../derelict/opengl3/functions/glTexSubImage2D.html">
+								<code>glTexSubImage2D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, int, int, uint, uint, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glTexSubImage3D" href="../../derelict/opengl3/functions/glTexSubImage3D.html">
+								<code>glTexSubImage3D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, int, int, int, int, uint, uint, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glTransformFeedbackVaryings" href="../../derelict/opengl3/functions/glTransformFeedbackVaryings.html">
+								<code>glTransformFeedbackVaryings</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, const(char*)*, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform1f" href="../../derelict/opengl3/functions/glUniform1f.html">
+								<code>glUniform1f</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform1fv" href="../../derelict/opengl3/functions/glUniform1fv.html">
+								<code>glUniform1fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform1i" href="../../derelict/opengl3/functions/glUniform1i.html">
+								<code>glUniform1i</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform1iv" href="../../derelict/opengl3/functions/glUniform1iv.html">
+								<code>glUniform1iv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform1ui" href="../../derelict/opengl3/functions/glUniform1ui.html">
+								<code>glUniform1ui</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform1uiv" href="../../derelict/opengl3/functions/glUniform1uiv.html">
+								<code>glUniform1uiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform2f" href="../../derelict/opengl3/functions/glUniform2f.html">
+								<code>glUniform2f</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, float, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform2fv" href="../../derelict/opengl3/functions/glUniform2fv.html">
+								<code>glUniform2fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform2i" href="../../derelict/opengl3/functions/glUniform2i.html">
+								<code>glUniform2i</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform2iv" href="../../derelict/opengl3/functions/glUniform2iv.html">
+								<code>glUniform2iv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform2ui" href="../../derelict/opengl3/functions/glUniform2ui.html">
+								<code>glUniform2ui</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform2uiv" href="../../derelict/opengl3/functions/glUniform2uiv.html">
+								<code>glUniform2uiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform3f" href="../../derelict/opengl3/functions/glUniform3f.html">
+								<code>glUniform3f</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, float, float, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform3fv" href="../../derelict/opengl3/functions/glUniform3fv.html">
+								<code>glUniform3fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform3i" href="../../derelict/opengl3/functions/glUniform3i.html">
+								<code>glUniform3i</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform3iv" href="../../derelict/opengl3/functions/glUniform3iv.html">
+								<code>glUniform3iv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform3ui" href="../../derelict/opengl3/functions/glUniform3ui.html">
+								<code>glUniform3ui</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform3uiv" href="../../derelict/opengl3/functions/glUniform3uiv.html">
+								<code>glUniform3uiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform4f" href="../../derelict/opengl3/functions/glUniform4f.html">
+								<code>glUniform4f</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, float, float, float, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform4fv" href="../../derelict/opengl3/functions/glUniform4fv.html">
+								<code>glUniform4fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform4i" href="../../derelict/opengl3/functions/glUniform4i.html">
+								<code>glUniform4i</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform4iv" href="../../derelict/opengl3/functions/glUniform4iv.html">
+								<code>glUniform4iv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform4ui" href="../../derelict/opengl3/functions/glUniform4ui.html">
+								<code>glUniform4ui</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, uint, uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniform4uiv" href="../../derelict/opengl3/functions/glUniform4uiv.html">
+								<code>glUniform4uiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniformMatrix2fv" href="../../derelict/opengl3/functions/glUniformMatrix2fv.html">
+								<code>glUniformMatrix2fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, ubyte, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniformMatrix2x3fv" href="../../derelict/opengl3/functions/glUniformMatrix2x3fv.html">
+								<code>glUniformMatrix2x3fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, ubyte, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniformMatrix2x4fv" href="../../derelict/opengl3/functions/glUniformMatrix2x4fv.html">
+								<code>glUniformMatrix2x4fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, ubyte, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniformMatrix3fv" href="../../derelict/opengl3/functions/glUniformMatrix3fv.html">
+								<code>glUniformMatrix3fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, ubyte, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniformMatrix3x2fv" href="../../derelict/opengl3/functions/glUniformMatrix3x2fv.html">
+								<code>glUniformMatrix3x2fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, ubyte, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniformMatrix3x4fv" href="../../derelict/opengl3/functions/glUniformMatrix3x4fv.html">
+								<code>glUniformMatrix3x4fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, ubyte, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniformMatrix4fv" href="../../derelict/opengl3/functions/glUniformMatrix4fv.html">
+								<code>glUniformMatrix4fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, ubyte, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniformMatrix4x2fv" href="../../derelict/opengl3/functions/glUniformMatrix4x2fv.html">
+								<code>glUniformMatrix4x2fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, ubyte, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUniformMatrix4x3fv" href="../../derelict/opengl3/functions/glUniformMatrix4x3fv.html">
+								<code>glUniformMatrix4x3fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, ubyte, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUnmapBuffer" href="../../derelict/opengl3/functions/glUnmapBuffer.html">
+								<code>glUnmapBuffer</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow ubyte function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glUseProgram" href="../../derelict/opengl3/functions/glUseProgram.html">
+								<code>glUseProgram</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glValidateProgram" href="../../derelict/opengl3/functions/glValidateProgram.html">
+								<code>glValidateProgram</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib1d" href="../../derelict/opengl3/functions/glVertexAttrib1d.html">
+								<code>glVertexAttrib1d</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, double)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib1dv" href="../../derelict/opengl3/functions/glVertexAttrib1dv.html">
+								<code>glVertexAttrib1dv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(double)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib1f" href="../../derelict/opengl3/functions/glVertexAttrib1f.html">
+								<code>glVertexAttrib1f</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib1fv" href="../../derelict/opengl3/functions/glVertexAttrib1fv.html">
+								<code>glVertexAttrib1fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib1s" href="../../derelict/opengl3/functions/glVertexAttrib1s.html">
+								<code>glVertexAttrib1s</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, short)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib1sv" href="../../derelict/opengl3/functions/glVertexAttrib1sv.html">
+								<code>glVertexAttrib1sv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(short)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib2d" href="../../derelict/opengl3/functions/glVertexAttrib2d.html">
+								<code>glVertexAttrib2d</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, double, double)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib2dv" href="../../derelict/opengl3/functions/glVertexAttrib2dv.html">
+								<code>glVertexAttrib2dv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(double)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib2f" href="../../derelict/opengl3/functions/glVertexAttrib2f.html">
+								<code>glVertexAttrib2f</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, float, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib2fv" href="../../derelict/opengl3/functions/glVertexAttrib2fv.html">
+								<code>glVertexAttrib2fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib2s" href="../../derelict/opengl3/functions/glVertexAttrib2s.html">
+								<code>glVertexAttrib2s</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, short, short)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib2sv" href="../../derelict/opengl3/functions/glVertexAttrib2sv.html">
+								<code>glVertexAttrib2sv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(short)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib3d" href="../../derelict/opengl3/functions/glVertexAttrib3d.html">
+								<code>glVertexAttrib3d</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, double, double, double)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib3dv" href="../../derelict/opengl3/functions/glVertexAttrib3dv.html">
+								<code>glVertexAttrib3dv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(double)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib3f" href="../../derelict/opengl3/functions/glVertexAttrib3f.html">
+								<code>glVertexAttrib3f</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, float, float, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib3fv" href="../../derelict/opengl3/functions/glVertexAttrib3fv.html">
+								<code>glVertexAttrib3fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib3s" href="../../derelict/opengl3/functions/glVertexAttrib3s.html">
+								<code>glVertexAttrib3s</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, short, short, short)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib3sv" href="../../derelict/opengl3/functions/glVertexAttrib3sv.html">
+								<code>glVertexAttrib3sv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(short)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib4bv" href="../../derelict/opengl3/functions/glVertexAttrib4bv.html">
+								<code>glVertexAttrib4bv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(byte)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib4d" href="../../derelict/opengl3/functions/glVertexAttrib4d.html">
+								<code>glVertexAttrib4d</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, double, double, double, double)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib4dv" href="../../derelict/opengl3/functions/glVertexAttrib4dv.html">
+								<code>glVertexAttrib4dv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(double)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib4f" href="../../derelict/opengl3/functions/glVertexAttrib4f.html">
+								<code>glVertexAttrib4f</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, float, float, float, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib4fv" href="../../derelict/opengl3/functions/glVertexAttrib4fv.html">
+								<code>glVertexAttrib4fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib4iv" href="../../derelict/opengl3/functions/glVertexAttrib4iv.html">
+								<code>glVertexAttrib4iv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib4Nbv" href="../../derelict/opengl3/functions/glVertexAttrib4Nbv.html">
+								<code>glVertexAttrib4Nbv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(byte)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib4Niv" href="../../derelict/opengl3/functions/glVertexAttrib4Niv.html">
+								<code>glVertexAttrib4Niv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib4Nsv" href="../../derelict/opengl3/functions/glVertexAttrib4Nsv.html">
+								<code>glVertexAttrib4Nsv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(short)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib4Nub" href="../../derelict/opengl3/functions/glVertexAttrib4Nub.html">
+								<code>glVertexAttrib4Nub</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, ubyte, ubyte, ubyte, ubyte)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib4Nubv" href="../../derelict/opengl3/functions/glVertexAttrib4Nubv.html">
+								<code>glVertexAttrib4Nubv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(ubyte)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib4Nuiv" href="../../derelict/opengl3/functions/glVertexAttrib4Nuiv.html">
+								<code>glVertexAttrib4Nuiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib4Nusv" href="../../derelict/opengl3/functions/glVertexAttrib4Nusv.html">
+								<code>glVertexAttrib4Nusv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(ushort)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib4s" href="../../derelict/opengl3/functions/glVertexAttrib4s.html">
+								<code>glVertexAttrib4s</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, short, short, short, short)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib4sv" href="../../derelict/opengl3/functions/glVertexAttrib4sv.html">
+								<code>glVertexAttrib4sv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(short)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib4ubv" href="../../derelict/opengl3/functions/glVertexAttrib4ubv.html">
+								<code>glVertexAttrib4ubv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(ubyte)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib4uiv" href="../../derelict/opengl3/functions/glVertexAttrib4uiv.html">
+								<code>glVertexAttrib4uiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttrib4usv" href="../../derelict/opengl3/functions/glVertexAttrib4usv.html">
+								<code>glVertexAttrib4usv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(ushort)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribDivisor" href="../../derelict/opengl3/functions/glVertexAttribDivisor.html">
+								<code>glVertexAttribDivisor</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribI1i" href="../../derelict/opengl3/functions/glVertexAttribI1i.html">
+								<code>glVertexAttribI1i</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribI1iv" href="../../derelict/opengl3/functions/glVertexAttribI1iv.html">
+								<code>glVertexAttribI1iv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribI1ui" href="../../derelict/opengl3/functions/glVertexAttribI1ui.html">
+								<code>glVertexAttribI1ui</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribI1uiv" href="../../derelict/opengl3/functions/glVertexAttribI1uiv.html">
+								<code>glVertexAttribI1uiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribI2i" href="../../derelict/opengl3/functions/glVertexAttribI2i.html">
+								<code>glVertexAttribI2i</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribI2iv" href="../../derelict/opengl3/functions/glVertexAttribI2iv.html">
+								<code>glVertexAttribI2iv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribI2ui" href="../../derelict/opengl3/functions/glVertexAttribI2ui.html">
+								<code>glVertexAttribI2ui</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribI2uiv" href="../../derelict/opengl3/functions/glVertexAttribI2uiv.html">
+								<code>glVertexAttribI2uiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribI3i" href="../../derelict/opengl3/functions/glVertexAttribI3i.html">
+								<code>glVertexAttribI3i</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribI3iv" href="../../derelict/opengl3/functions/glVertexAttribI3iv.html">
+								<code>glVertexAttribI3iv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribI3ui" href="../../derelict/opengl3/functions/glVertexAttribI3ui.html">
+								<code>glVertexAttribI3ui</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribI3uiv" href="../../derelict/opengl3/functions/glVertexAttribI3uiv.html">
+								<code>glVertexAttribI3uiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribI4bv" href="../../derelict/opengl3/functions/glVertexAttribI4bv.html">
+								<code>glVertexAttribI4bv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(byte)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribI4i" href="../../derelict/opengl3/functions/glVertexAttribI4i.html">
+								<code>glVertexAttribI4i</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribI4iv" href="../../derelict/opengl3/functions/glVertexAttribI4iv.html">
+								<code>glVertexAttribI4iv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribI4sv" href="../../derelict/opengl3/functions/glVertexAttribI4sv.html">
+								<code>glVertexAttribI4sv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(short)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribI4ubv" href="../../derelict/opengl3/functions/glVertexAttribI4ubv.html">
+								<code>glVertexAttribI4ubv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(ubyte)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribI4ui" href="../../derelict/opengl3/functions/glVertexAttribI4ui.html">
+								<code>glVertexAttribI4ui</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribI4uiv" href="../../derelict/opengl3/functions/glVertexAttribI4uiv.html">
+								<code>glVertexAttribI4uiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribI4usv" href="../../derelict/opengl3/functions/glVertexAttribI4usv.html">
+								<code>glVertexAttribI4usv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(ushort)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribIPointer" href="../../derelict/opengl3/functions/glVertexAttribIPointer.html">
+								<code>glVertexAttribIPointer</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, int, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glVertexAttribPointer" href="../../derelict/opengl3/functions/glVertexAttribPointer.html">
+								<code>glVertexAttribPointer</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, ubyte, int, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="glViewport" href="../../derelict/opengl3/functions/glViewport.html">
+								<code>glViewport</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Aliases</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glActiveTexture" href="../../derelict/opengl3/functions/da_glActiveTexture.html">
+								<code>da_glActiveTexture</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glAttachShader" href="../../derelict/opengl3/functions/da_glAttachShader.html">
+								<code>da_glAttachShader</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glBeginConditionalRender" href="../../derelict/opengl3/functions/da_glBeginConditionalRender.html">
+								<code>da_glBeginConditionalRender</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glBeginQuery" href="../../derelict/opengl3/functions/da_glBeginQuery.html">
+								<code>da_glBeginQuery</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glBeginTransformFeedback" href="../../derelict/opengl3/functions/da_glBeginTransformFeedback.html">
+								<code>da_glBeginTransformFeedback</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glBindAttribLocation" href="../../derelict/opengl3/functions/da_glBindAttribLocation.html">
+								<code>da_glBindAttribLocation</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, const(char)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glBindBuffer" href="../../derelict/opengl3/functions/da_glBindBuffer.html">
+								<code>da_glBindBuffer</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glBindBufferBase" href="../../derelict/opengl3/functions/da_glBindBufferBase.html">
+								<code>da_glBindBufferBase</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glBindBufferRange" href="../../derelict/opengl3/functions/da_glBindBufferRange.html">
+								<code>da_glBindBufferRange</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glBindFragDataLocation" href="../../derelict/opengl3/functions/da_glBindFragDataLocation.html">
+								<code>da_glBindFragDataLocation</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, const(char)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glBindTexture" href="../../derelict/opengl3/functions/da_glBindTexture.html">
+								<code>da_glBindTexture</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glBlendColor" href="../../derelict/opengl3/functions/da_glBlendColor.html">
+								<code>da_glBlendColor</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(float, float, float, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glBlendEquation" href="../../derelict/opengl3/functions/da_glBlendEquation.html">
+								<code>da_glBlendEquation</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glBlendEquationi" href="../../derelict/opengl3/functions/da_glBlendEquationi.html">
+								<code>da_glBlendEquationi</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glBlendEquationSeparate" href="../../derelict/opengl3/functions/da_glBlendEquationSeparate.html">
+								<code>da_glBlendEquationSeparate</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glBlendEquationSeparatei" href="../../derelict/opengl3/functions/da_glBlendEquationSeparatei.html">
+								<code>da_glBlendEquationSeparatei</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glBlendFunc" href="../../derelict/opengl3/functions/da_glBlendFunc.html">
+								<code>da_glBlendFunc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glBlendFunci" href="../../derelict/opengl3/functions/da_glBlendFunci.html">
+								<code>da_glBlendFunci</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glBlendFuncSeparate" href="../../derelict/opengl3/functions/da_glBlendFuncSeparate.html">
+								<code>da_glBlendFuncSeparate</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glBlendFuncSeparatei" href="../../derelict/opengl3/functions/da_glBlendFuncSeparatei.html">
+								<code>da_glBlendFuncSeparatei</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glBufferData" href="../../derelict/opengl3/functions/da_glBufferData.html">
+								<code>da_glBufferData</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, const(void)*, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glBufferSubData" href="../../derelict/opengl3/functions/da_glBufferSubData.html">
+								<code>da_glBufferSubData</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glClampColor" href="../../derelict/opengl3/functions/da_glClampColor.html">
+								<code>da_glClampColor</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glClear" href="../../derelict/opengl3/functions/da_glClear.html">
+								<code>da_glClear</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glClearBufferfi" href="../../derelict/opengl3/functions/da_glClearBufferfi.html">
+								<code>da_glClearBufferfi</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, float, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glClearBufferfv" href="../../derelict/opengl3/functions/da_glClearBufferfv.html">
+								<code>da_glClearBufferfv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glClearBufferiv" href="../../derelict/opengl3/functions/da_glClearBufferiv.html">
+								<code>da_glClearBufferiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glClearBufferuiv" href="../../derelict/opengl3/functions/da_glClearBufferuiv.html">
+								<code>da_glClearBufferuiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glClearColor" href="../../derelict/opengl3/functions/da_glClearColor.html">
+								<code>da_glClearColor</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(float, float, float, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glClearDepth" href="../../derelict/opengl3/functions/da_glClearDepth.html">
+								<code>da_glClearDepth</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(double)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glClearStencil" href="../../derelict/opengl3/functions/da_glClearStencil.html">
+								<code>da_glClearStencil</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glColorMask" href="../../derelict/opengl3/functions/da_glColorMask.html">
+								<code>da_glColorMask</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(ubyte, ubyte, ubyte, ubyte)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glColorMaski" href="../../derelict/opengl3/functions/da_glColorMaski.html">
+								<code>da_glColorMaski</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, ubyte, ubyte, ubyte, ubyte)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glCompileShader" href="../../derelict/opengl3/functions/da_glCompileShader.html">
+								<code>da_glCompileShader</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glCompressedTexImage1D" href="../../derelict/opengl3/functions/da_glCompressedTexImage1D.html">
+								<code>da_glCompressedTexImage1D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, int, int, int, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glCompressedTexImage2D" href="../../derelict/opengl3/functions/da_glCompressedTexImage2D.html">
+								<code>da_glCompressedTexImage2D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, int, int, int, int, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glCompressedTexImage3D" href="../../derelict/opengl3/functions/da_glCompressedTexImage3D.html">
+								<code>da_glCompressedTexImage3D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, int, int, int, int, int, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glCompressedTexSubImage1D" href="../../derelict/opengl3/functions/da_glCompressedTexSubImage1D.html">
+								<code>da_glCompressedTexSubImage1D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, uint, int, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glCompressedTexSubImage2D" href="../../derelict/opengl3/functions/da_glCompressedTexSubImage2D.html">
+								<code>da_glCompressedTexSubImage2D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, int, int, uint, int, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glCompressedTexSubImage3D" href="../../derelict/opengl3/functions/da_glCompressedTexSubImage3D.html">
+								<code>da_glCompressedTexSubImage3D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, int, int, int, int, uint, int, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glCopyTexImage1D" href="../../derelict/opengl3/functions/da_glCopyTexImage1D.html">
+								<code>da_glCopyTexImage1D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glCopyTexImage2D" href="../../derelict/opengl3/functions/da_glCopyTexImage2D.html">
+								<code>da_glCopyTexImage2D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, int, int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glCopyTexSubImage1D" href="../../derelict/opengl3/functions/da_glCopyTexSubImage1D.html">
+								<code>da_glCopyTexSubImage1D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glCopyTexSubImage2D" href="../../derelict/opengl3/functions/da_glCopyTexSubImage2D.html">
+								<code>da_glCopyTexSubImage2D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glCopyTexSubImage3D" href="../../derelict/opengl3/functions/da_glCopyTexSubImage3D.html">
+								<code>da_glCopyTexSubImage3D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, int, int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glCreateProgram" href="../../derelict/opengl3/functions/da_glCreateProgram.html">
+								<code>da_glCreateProgram</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow uint function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glCreateShader" href="../../derelict/opengl3/functions/da_glCreateShader.html">
+								<code>da_glCreateShader</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow uint function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glCullFace" href="../../derelict/opengl3/functions/da_glCullFace.html">
+								<code>da_glCullFace</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glDeleteBuffers" href="../../derelict/opengl3/functions/da_glDeleteBuffers.html">
+								<code>da_glDeleteBuffers</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glDeleteProgram" href="../../derelict/opengl3/functions/da_glDeleteProgram.html">
+								<code>da_glDeleteProgram</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glDeleteQueries" href="../../derelict/opengl3/functions/da_glDeleteQueries.html">
+								<code>da_glDeleteQueries</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glDeleteShader" href="../../derelict/opengl3/functions/da_glDeleteShader.html">
+								<code>da_glDeleteShader</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glDeleteTextures" href="../../derelict/opengl3/functions/da_glDeleteTextures.html">
+								<code>da_glDeleteTextures</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glDepthFunc" href="../../derelict/opengl3/functions/da_glDepthFunc.html">
+								<code>da_glDepthFunc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glDepthMask" href="../../derelict/opengl3/functions/da_glDepthMask.html">
+								<code>da_glDepthMask</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(ubyte)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glDepthRange" href="../../derelict/opengl3/functions/da_glDepthRange.html">
+								<code>da_glDepthRange</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(double, double)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glDetachShader" href="../../derelict/opengl3/functions/da_glDetachShader.html">
+								<code>da_glDetachShader</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glDisable" href="../../derelict/opengl3/functions/da_glDisable.html">
+								<code>da_glDisable</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glDisablei" href="../../derelict/opengl3/functions/da_glDisablei.html">
+								<code>da_glDisablei</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glDisableVertexAttribArray" href="../../derelict/opengl3/functions/da_glDisableVertexAttribArray.html">
+								<code>da_glDisableVertexAttribArray</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glDrawArrays" href="../../derelict/opengl3/functions/da_glDrawArrays.html">
+								<code>da_glDrawArrays</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glDrawArraysInstanced" href="../../derelict/opengl3/functions/da_glDrawArraysInstanced.html">
+								<code>da_glDrawArraysInstanced</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glDrawBuffer" href="../../derelict/opengl3/functions/da_glDrawBuffer.html">
+								<code>da_glDrawBuffer</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glDrawBuffers" href="../../derelict/opengl3/functions/da_glDrawBuffers.html">
+								<code>da_glDrawBuffers</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glDrawElements" href="../../derelict/opengl3/functions/da_glDrawElements.html">
+								<code>da_glDrawElements</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glDrawElementsInstanced" href="../../derelict/opengl3/functions/da_glDrawElementsInstanced.html">
+								<code>da_glDrawElementsInstanced</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, const(void)*, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glDrawRangeElements" href="../../derelict/opengl3/functions/da_glDrawRangeElements.html">
+								<code>da_glDrawRangeElements</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint, int, uint, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glEnable" href="../../derelict/opengl3/functions/da_glEnable.html">
+								<code>da_glEnable</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glEnablei" href="../../derelict/opengl3/functions/da_glEnablei.html">
+								<code>da_glEnablei</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glEnableVertexAttribArray" href="../../derelict/opengl3/functions/da_glEnableVertexAttribArray.html">
+								<code>da_glEnableVertexAttribArray</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glEndConditionalRender" href="../../derelict/opengl3/functions/da_glEndConditionalRender.html">
+								<code>da_glEndConditionalRender</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glEndQuery" href="../../derelict/opengl3/functions/da_glEndQuery.html">
+								<code>da_glEndQuery</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glEndTransformFeedback" href="../../derelict/opengl3/functions/da_glEndTransformFeedback.html">
+								<code>da_glEndTransformFeedback</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glFinish" href="../../derelict/opengl3/functions/da_glFinish.html">
+								<code>da_glFinish</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glFlush" href="../../derelict/opengl3/functions/da_glFlush.html">
+								<code>da_glFlush</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glFramebufferTexture" href="../../derelict/opengl3/functions/da_glFramebufferTexture.html">
+								<code>da_glFramebufferTexture</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glFrontFace" href="../../derelict/opengl3/functions/da_glFrontFace.html">
+								<code>da_glFrontFace</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGenBuffers" href="../../derelict/opengl3/functions/da_glGenBuffers.html">
+								<code>da_glGenBuffers</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGenQueries" href="../../derelict/opengl3/functions/da_glGenQueries.html">
+								<code>da_glGenQueries</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGenTextures" href="../../derelict/opengl3/functions/da_glGenTextures.html">
+								<code>da_glGenTextures</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetActiveAttrib" href="../../derelict/opengl3/functions/da_glGetActiveAttrib.html">
+								<code>da_glGetActiveAttrib</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int, int*, int*, uint*, char*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetActiveUniform" href="../../derelict/opengl3/functions/da_glGetActiveUniform.html">
+								<code>da_glGetActiveUniform</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int, int*, int*, uint*, char*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetAttachedShaders" href="../../derelict/opengl3/functions/da_glGetAttachedShaders.html">
+								<code>da_glGetAttachedShaders</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int*, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetAttribLocation" href="../../derelict/opengl3/functions/da_glGetAttribLocation.html">
+								<code>da_glGetAttribLocation</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(uint, const(char)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetBooleani_v" href="../../derelict/opengl3/functions/da_glGetBooleani_v.html">
+								<code>da_glGetBooleani_v</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, ubyte*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetBooleanv" href="../../derelict/opengl3/functions/da_glGetBooleanv.html">
+								<code>da_glGetBooleanv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, ubyte*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetBufferParameteri64v" href="../../derelict/opengl3/functions/da_glGetBufferParameteri64v.html">
+								<code>da_glGetBufferParameteri64v</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, long*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetBufferParameteriv" href="../../derelict/opengl3/functions/da_glGetBufferParameteriv.html">
+								<code>da_glGetBufferParameteriv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetBufferPointerv" href="../../derelict/opengl3/functions/da_glGetBufferPointerv.html">
+								<code>da_glGetBufferPointerv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetBufferSubData" href="../../derelict/opengl3/functions/da_glGetBufferSubData.html">
+								<code>da_glGetBufferSubData</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetCompressedTexImage" href="../../derelict/opengl3/functions/da_glGetCompressedTexImage.html">
+								<code>da_glGetCompressedTexImage</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetDoublev" href="../../derelict/opengl3/functions/da_glGetDoublev.html">
+								<code>da_glGetDoublev</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, double*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetError" href="../../derelict/opengl3/functions/da_glGetError.html">
+								<code>da_glGetError</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow uint function()</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetFloatv" href="../../derelict/opengl3/functions/da_glGetFloatv.html">
+								<code>da_glGetFloatv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, float*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetFragDataLocation" href="../../derelict/opengl3/functions/da_glGetFragDataLocation.html">
+								<code>da_glGetFragDataLocation</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(uint, const(char)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetInteger64i_v" href="../../derelict/opengl3/functions/da_glGetInteger64i_v.html">
+								<code>da_glGetInteger64i_v</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, long*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetIntegeri_v" href="../../derelict/opengl3/functions/da_glGetIntegeri_v.html">
+								<code>da_glGetIntegeri_v</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetIntegerv" href="../../derelict/opengl3/functions/da_glGetIntegerv.html">
+								<code>da_glGetIntegerv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetPointerv" href="../../derelict/opengl3/functions/da_glGetPointerv.html">
+								<code>da_glGetPointerv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetProgramInfoLog" href="../../derelict/opengl3/functions/da_glGetProgramInfoLog.html">
+								<code>da_glGetProgramInfoLog</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int*, char*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetProgramiv" href="../../derelict/opengl3/functions/da_glGetProgramiv.html">
+								<code>da_glGetProgramiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetQueryiv" href="../../derelict/opengl3/functions/da_glGetQueryiv.html">
+								<code>da_glGetQueryiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetQueryObjectiv" href="../../derelict/opengl3/functions/da_glGetQueryObjectiv.html">
+								<code>da_glGetQueryObjectiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetQueryObjectuiv" href="../../derelict/opengl3/functions/da_glGetQueryObjectuiv.html">
+								<code>da_glGetQueryObjectuiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetShaderInfoLog" href="../../derelict/opengl3/functions/da_glGetShaderInfoLog.html">
+								<code>da_glGetShaderInfoLog</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int*, char*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetShaderiv" href="../../derelict/opengl3/functions/da_glGetShaderiv.html">
+								<code>da_glGetShaderiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetShaderSource" href="../../derelict/opengl3/functions/da_glGetShaderSource.html">
+								<code>da_glGetShaderSource</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int*, char*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetString" href="../../derelict/opengl3/functions/da_glGetString.html">
+								<code>da_glGetString</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow const(char*) function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetStringi" href="../../derelict/opengl3/functions/da_glGetStringi.html">
+								<code>da_glGetStringi</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow const(char)* function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetTexImage" href="../../derelict/opengl3/functions/da_glGetTexImage.html">
+								<code>da_glGetTexImage</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, uint, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetTexLevelParameterfv" href="../../derelict/opengl3/functions/da_glGetTexLevelParameterfv.html">
+								<code>da_glGetTexLevelParameterfv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, float*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetTexLevelParameteriv" href="../../derelict/opengl3/functions/da_glGetTexLevelParameteriv.html">
+								<code>da_glGetTexLevelParameteriv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetTexParameterfv" href="../../derelict/opengl3/functions/da_glGetTexParameterfv.html">
+								<code>da_glGetTexParameterfv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, float*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetTexParameterIiv" href="../../derelict/opengl3/functions/da_glGetTexParameterIiv.html">
+								<code>da_glGetTexParameterIiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetTexParameterIuiv" href="../../derelict/opengl3/functions/da_glGetTexParameterIuiv.html">
+								<code>da_glGetTexParameterIuiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetTexParameteriv" href="../../derelict/opengl3/functions/da_glGetTexParameteriv.html">
+								<code>da_glGetTexParameteriv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetTransformFeedbackVarying" href="../../derelict/opengl3/functions/da_glGetTransformFeedbackVarying.html">
+								<code>da_glGetTransformFeedbackVarying</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int, int*, int*, uint*, char*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetUniformfv" href="../../derelict/opengl3/functions/da_glGetUniformfv.html">
+								<code>da_glGetUniformfv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, float*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetUniformiv" href="../../derelict/opengl3/functions/da_glGetUniformiv.html">
+								<code>da_glGetUniformiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetUniformLocation" href="../../derelict/opengl3/functions/da_glGetUniformLocation.html">
+								<code>da_glGetUniformLocation</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow int function(uint, const(char)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetUniformuiv" href="../../derelict/opengl3/functions/da_glGetUniformuiv.html">
+								<code>da_glGetUniformuiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetVertexAttribdv" href="../../derelict/opengl3/functions/da_glGetVertexAttribdv.html">
+								<code>da_glGetVertexAttribdv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, double*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetVertexAttribfv" href="../../derelict/opengl3/functions/da_glGetVertexAttribfv.html">
+								<code>da_glGetVertexAttribfv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, float*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetVertexAttribIiv" href="../../derelict/opengl3/functions/da_glGetVertexAttribIiv.html">
+								<code>da_glGetVertexAttribIiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetVertexAttribIuiv" href="../../derelict/opengl3/functions/da_glGetVertexAttribIuiv.html">
+								<code>da_glGetVertexAttribIuiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetVertexAttribiv" href="../../derelict/opengl3/functions/da_glGetVertexAttribiv.html">
+								<code>da_glGetVertexAttribiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glGetVertexAttribPointerv" href="../../derelict/opengl3/functions/da_glGetVertexAttribPointerv.html">
+								<code>da_glGetVertexAttribPointerv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glHint" href="../../derelict/opengl3/functions/da_glHint.html">
+								<code>da_glHint</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glIsBuffer" href="../../derelict/opengl3/functions/da_glIsBuffer.html">
+								<code>da_glIsBuffer</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow ubyte function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glIsEnabled" href="../../derelict/opengl3/functions/da_glIsEnabled.html">
+								<code>da_glIsEnabled</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow ubyte function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glIsEnabledi" href="../../derelict/opengl3/functions/da_glIsEnabledi.html">
+								<code>da_glIsEnabledi</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow ubyte function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glIsProgram" href="../../derelict/opengl3/functions/da_glIsProgram.html">
+								<code>da_glIsProgram</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow ubyte function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glIsQuery" href="../../derelict/opengl3/functions/da_glIsQuery.html">
+								<code>da_glIsQuery</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow ubyte function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glIsShader" href="../../derelict/opengl3/functions/da_glIsShader.html">
+								<code>da_glIsShader</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow ubyte function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glIsTexture" href="../../derelict/opengl3/functions/da_glIsTexture.html">
+								<code>da_glIsTexture</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow ubyte function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glLineWidth" href="../../derelict/opengl3/functions/da_glLineWidth.html">
+								<code>da_glLineWidth</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glLinkProgram" href="../../derelict/opengl3/functions/da_glLinkProgram.html">
+								<code>da_glLinkProgram</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glLogicOp" href="../../derelict/opengl3/functions/da_glLogicOp.html">
+								<code>da_glLogicOp</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glMapBuffer" href="../../derelict/opengl3/functions/da_glMapBuffer.html">
+								<code>da_glMapBuffer</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void* function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glMinSampleShading" href="../../derelict/opengl3/functions/da_glMinSampleShading.html">
+								<code>da_glMinSampleShading</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glMultiDrawArrays" href="../../derelict/opengl3/functions/da_glMultiDrawArrays.html">
+								<code>da_glMultiDrawArrays</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(int)*, const(int)*, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glMultiDrawElements" href="../../derelict/opengl3/functions/da_glMultiDrawElements.html">
+								<code>da_glMultiDrawElements</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(int)*, uint, const(void)*, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glPixelStoref" href="../../derelict/opengl3/functions/da_glPixelStoref.html">
+								<code>da_glPixelStoref</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glPixelStorei" href="../../derelict/opengl3/functions/da_glPixelStorei.html">
+								<code>da_glPixelStorei</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glPointParameterf" href="../../derelict/opengl3/functions/da_glPointParameterf.html">
+								<code>da_glPointParameterf</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glPointParameterfv" href="../../derelict/opengl3/functions/da_glPointParameterfv.html">
+								<code>da_glPointParameterfv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glPointParameteri" href="../../derelict/opengl3/functions/da_glPointParameteri.html">
+								<code>da_glPointParameteri</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glPointParameteriv" href="../../derelict/opengl3/functions/da_glPointParameteriv.html">
+								<code>da_glPointParameteriv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glPointSize" href="../../derelict/opengl3/functions/da_glPointSize.html">
+								<code>da_glPointSize</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glPolygonMode" href="../../derelict/opengl3/functions/da_glPolygonMode.html">
+								<code>da_glPolygonMode</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glPolygonOffset" href="../../derelict/opengl3/functions/da_glPolygonOffset.html">
+								<code>da_glPolygonOffset</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(float, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glPrimitiveRestartIndex" href="../../derelict/opengl3/functions/da_glPrimitiveRestartIndex.html">
+								<code>da_glPrimitiveRestartIndex</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glReadBuffer" href="../../derelict/opengl3/functions/da_glReadBuffer.html">
+								<code>da_glReadBuffer</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glReadPixels" href="../../derelict/opengl3/functions/da_glReadPixels.html">
+								<code>da_glReadPixels</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, int, int, uint, uint, void*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glSampleCoverage" href="../../derelict/opengl3/functions/da_glSampleCoverage.html">
+								<code>da_glSampleCoverage</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(float, ubyte)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glScissor" href="../../derelict/opengl3/functions/da_glScissor.html">
+								<code>da_glScissor</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glShaderSource" href="../../derelict/opengl3/functions/da_glShaderSource.html">
+								<code>da_glShaderSource</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, const(char*)*, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glStencilFunc" href="../../derelict/opengl3/functions/da_glStencilFunc.html">
+								<code>da_glStencilFunc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glStencilFuncSeparate" href="../../derelict/opengl3/functions/da_glStencilFuncSeparate.html">
+								<code>da_glStencilFuncSeparate</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glStencilMask" href="../../derelict/opengl3/functions/da_glStencilMask.html">
+								<code>da_glStencilMask</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glStencilMaskSeparate" href="../../derelict/opengl3/functions/da_glStencilMaskSeparate.html">
+								<code>da_glStencilMaskSeparate</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glStencilOp" href="../../derelict/opengl3/functions/da_glStencilOp.html">
+								<code>da_glStencilOp</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glStencilOpSeparate" href="../../derelict/opengl3/functions/da_glStencilOpSeparate.html">
+								<code>da_glStencilOpSeparate</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glTexBuffer" href="../../derelict/opengl3/functions/da_glTexBuffer.html">
+								<code>da_glTexBuffer</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glTexImage1D" href="../../derelict/opengl3/functions/da_glTexImage1D.html">
+								<code>da_glTexImage1D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, int, uint, uint, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glTexImage2D" href="../../derelict/opengl3/functions/da_glTexImage2D.html">
+								<code>da_glTexImage2D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, int, int, uint, uint, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glTexImage3D" href="../../derelict/opengl3/functions/da_glTexImage3D.html">
+								<code>da_glTexImage3D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, int, int, int, uint, uint, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glTexParameterf" href="../../derelict/opengl3/functions/da_glTexParameterf.html">
+								<code>da_glTexParameterf</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glTexParameterfv" href="../../derelict/opengl3/functions/da_glTexParameterfv.html">
+								<code>da_glTexParameterfv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glTexParameteri" href="../../derelict/opengl3/functions/da_glTexParameteri.html">
+								<code>da_glTexParameteri</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glTexParameterIiv" href="../../derelict/opengl3/functions/da_glTexParameterIiv.html">
+								<code>da_glTexParameterIiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glTexParameterIuiv" href="../../derelict/opengl3/functions/da_glTexParameterIuiv.html">
+								<code>da_glTexParameterIuiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glTexParameteriv" href="../../derelict/opengl3/functions/da_glTexParameteriv.html">
+								<code>da_glTexParameteriv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glTexSubImage1D" href="../../derelict/opengl3/functions/da_glTexSubImage1D.html">
+								<code>da_glTexSubImage1D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, uint, uint, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glTexSubImage2D" href="../../derelict/opengl3/functions/da_glTexSubImage2D.html">
+								<code>da_glTexSubImage2D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, int, int, uint, uint, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glTexSubImage3D" href="../../derelict/opengl3/functions/da_glTexSubImage3D.html">
+								<code>da_glTexSubImage3D</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, int, int, int, int, uint, uint, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glTransformFeedbackVaryings" href="../../derelict/opengl3/functions/da_glTransformFeedbackVaryings.html">
+								<code>da_glTransformFeedbackVaryings</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, const(char*)*, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform1f" href="../../derelict/opengl3/functions/da_glUniform1f.html">
+								<code>da_glUniform1f</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform1fv" href="../../derelict/opengl3/functions/da_glUniform1fv.html">
+								<code>da_glUniform1fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform1i" href="../../derelict/opengl3/functions/da_glUniform1i.html">
+								<code>da_glUniform1i</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform1iv" href="../../derelict/opengl3/functions/da_glUniform1iv.html">
+								<code>da_glUniform1iv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform1ui" href="../../derelict/opengl3/functions/da_glUniform1ui.html">
+								<code>da_glUniform1ui</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform1uiv" href="../../derelict/opengl3/functions/da_glUniform1uiv.html">
+								<code>da_glUniform1uiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform2f" href="../../derelict/opengl3/functions/da_glUniform2f.html">
+								<code>da_glUniform2f</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, float, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform2fv" href="../../derelict/opengl3/functions/da_glUniform2fv.html">
+								<code>da_glUniform2fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform2i" href="../../derelict/opengl3/functions/da_glUniform2i.html">
+								<code>da_glUniform2i</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform2iv" href="../../derelict/opengl3/functions/da_glUniform2iv.html">
+								<code>da_glUniform2iv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform2ui" href="../../derelict/opengl3/functions/da_glUniform2ui.html">
+								<code>da_glUniform2ui</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform2uiv" href="../../derelict/opengl3/functions/da_glUniform2uiv.html">
+								<code>da_glUniform2uiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform3f" href="../../derelict/opengl3/functions/da_glUniform3f.html">
+								<code>da_glUniform3f</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, float, float, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform3fv" href="../../derelict/opengl3/functions/da_glUniform3fv.html">
+								<code>da_glUniform3fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform3i" href="../../derelict/opengl3/functions/da_glUniform3i.html">
+								<code>da_glUniform3i</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform3iv" href="../../derelict/opengl3/functions/da_glUniform3iv.html">
+								<code>da_glUniform3iv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform3ui" href="../../derelict/opengl3/functions/da_glUniform3ui.html">
+								<code>da_glUniform3ui</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform3uiv" href="../../derelict/opengl3/functions/da_glUniform3uiv.html">
+								<code>da_glUniform3uiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform4f" href="../../derelict/opengl3/functions/da_glUniform4f.html">
+								<code>da_glUniform4f</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, float, float, float, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform4fv" href="../../derelict/opengl3/functions/da_glUniform4fv.html">
+								<code>da_glUniform4fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform4i" href="../../derelict/opengl3/functions/da_glUniform4i.html">
+								<code>da_glUniform4i</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform4iv" href="../../derelict/opengl3/functions/da_glUniform4iv.html">
+								<code>da_glUniform4iv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform4ui" href="../../derelict/opengl3/functions/da_glUniform4ui.html">
+								<code>da_glUniform4ui</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, uint, uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniform4uiv" href="../../derelict/opengl3/functions/da_glUniform4uiv.html">
+								<code>da_glUniform4uiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniformMatrix2fv" href="../../derelict/opengl3/functions/da_glUniformMatrix2fv.html">
+								<code>da_glUniformMatrix2fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, ubyte, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniformMatrix2x3fv" href="../../derelict/opengl3/functions/da_glUniformMatrix2x3fv.html">
+								<code>da_glUniformMatrix2x3fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, ubyte, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniformMatrix2x4fv" href="../../derelict/opengl3/functions/da_glUniformMatrix2x4fv.html">
+								<code>da_glUniformMatrix2x4fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, ubyte, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniformMatrix3fv" href="../../derelict/opengl3/functions/da_glUniformMatrix3fv.html">
+								<code>da_glUniformMatrix3fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, ubyte, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniformMatrix3x2fv" href="../../derelict/opengl3/functions/da_glUniformMatrix3x2fv.html">
+								<code>da_glUniformMatrix3x2fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, ubyte, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniformMatrix3x4fv" href="../../derelict/opengl3/functions/da_glUniformMatrix3x4fv.html">
+								<code>da_glUniformMatrix3x4fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, ubyte, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniformMatrix4fv" href="../../derelict/opengl3/functions/da_glUniformMatrix4fv.html">
+								<code>da_glUniformMatrix4fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, ubyte, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniformMatrix4x2fv" href="../../derelict/opengl3/functions/da_glUniformMatrix4x2fv.html">
+								<code>da_glUniformMatrix4x2fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, ubyte, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUniformMatrix4x3fv" href="../../derelict/opengl3/functions/da_glUniformMatrix4x3fv.html">
+								<code>da_glUniformMatrix4x3fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, ubyte, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUnmapBuffer" href="../../derelict/opengl3/functions/da_glUnmapBuffer.html">
+								<code>da_glUnmapBuffer</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow ubyte function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glUseProgram" href="../../derelict/opengl3/functions/da_glUseProgram.html">
+								<code>da_glUseProgram</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glValidateProgram" href="../../derelict/opengl3/functions/da_glValidateProgram.html">
+								<code>da_glValidateProgram</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib1d" href="../../derelict/opengl3/functions/da_glVertexAttrib1d.html">
+								<code>da_glVertexAttrib1d</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, double)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib1dv" href="../../derelict/opengl3/functions/da_glVertexAttrib1dv.html">
+								<code>da_glVertexAttrib1dv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(double)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib1f" href="../../derelict/opengl3/functions/da_glVertexAttrib1f.html">
+								<code>da_glVertexAttrib1f</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib1fv" href="../../derelict/opengl3/functions/da_glVertexAttrib1fv.html">
+								<code>da_glVertexAttrib1fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib1s" href="../../derelict/opengl3/functions/da_glVertexAttrib1s.html">
+								<code>da_glVertexAttrib1s</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, short)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib1sv" href="../../derelict/opengl3/functions/da_glVertexAttrib1sv.html">
+								<code>da_glVertexAttrib1sv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(short)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib2d" href="../../derelict/opengl3/functions/da_glVertexAttrib2d.html">
+								<code>da_glVertexAttrib2d</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, double, double)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib2dv" href="../../derelict/opengl3/functions/da_glVertexAttrib2dv.html">
+								<code>da_glVertexAttrib2dv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(double)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib2f" href="../../derelict/opengl3/functions/da_glVertexAttrib2f.html">
+								<code>da_glVertexAttrib2f</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, float, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib2fv" href="../../derelict/opengl3/functions/da_glVertexAttrib2fv.html">
+								<code>da_glVertexAttrib2fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib2s" href="../../derelict/opengl3/functions/da_glVertexAttrib2s.html">
+								<code>da_glVertexAttrib2s</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, short, short)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib2sv" href="../../derelict/opengl3/functions/da_glVertexAttrib2sv.html">
+								<code>da_glVertexAttrib2sv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(short)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib3d" href="../../derelict/opengl3/functions/da_glVertexAttrib3d.html">
+								<code>da_glVertexAttrib3d</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, double, double, double)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib3dv" href="../../derelict/opengl3/functions/da_glVertexAttrib3dv.html">
+								<code>da_glVertexAttrib3dv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(double)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib3f" href="../../derelict/opengl3/functions/da_glVertexAttrib3f.html">
+								<code>da_glVertexAttrib3f</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, float, float, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib3fv" href="../../derelict/opengl3/functions/da_glVertexAttrib3fv.html">
+								<code>da_glVertexAttrib3fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib3s" href="../../derelict/opengl3/functions/da_glVertexAttrib3s.html">
+								<code>da_glVertexAttrib3s</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, short, short, short)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib3sv" href="../../derelict/opengl3/functions/da_glVertexAttrib3sv.html">
+								<code>da_glVertexAttrib3sv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(short)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib4bv" href="../../derelict/opengl3/functions/da_glVertexAttrib4bv.html">
+								<code>da_glVertexAttrib4bv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(byte)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib4d" href="../../derelict/opengl3/functions/da_glVertexAttrib4d.html">
+								<code>da_glVertexAttrib4d</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, double, double, double, double)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib4dv" href="../../derelict/opengl3/functions/da_glVertexAttrib4dv.html">
+								<code>da_glVertexAttrib4dv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(double)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib4f" href="../../derelict/opengl3/functions/da_glVertexAttrib4f.html">
+								<code>da_glVertexAttrib4f</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, float, float, float, float)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib4fv" href="../../derelict/opengl3/functions/da_glVertexAttrib4fv.html">
+								<code>da_glVertexAttrib4fv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(float)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib4iv" href="../../derelict/opengl3/functions/da_glVertexAttrib4iv.html">
+								<code>da_glVertexAttrib4iv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib4Nbv" href="../../derelict/opengl3/functions/da_glVertexAttrib4Nbv.html">
+								<code>da_glVertexAttrib4Nbv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(byte)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib4Niv" href="../../derelict/opengl3/functions/da_glVertexAttrib4Niv.html">
+								<code>da_glVertexAttrib4Niv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib4Nsv" href="../../derelict/opengl3/functions/da_glVertexAttrib4Nsv.html">
+								<code>da_glVertexAttrib4Nsv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(short)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib4Nub" href="../../derelict/opengl3/functions/da_glVertexAttrib4Nub.html">
+								<code>da_glVertexAttrib4Nub</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, ubyte, ubyte, ubyte, ubyte)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib4Nubv" href="../../derelict/opengl3/functions/da_glVertexAttrib4Nubv.html">
+								<code>da_glVertexAttrib4Nubv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(ubyte)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib4Nuiv" href="../../derelict/opengl3/functions/da_glVertexAttrib4Nuiv.html">
+								<code>da_glVertexAttrib4Nuiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib4Nusv" href="../../derelict/opengl3/functions/da_glVertexAttrib4Nusv.html">
+								<code>da_glVertexAttrib4Nusv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(ushort)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib4s" href="../../derelict/opengl3/functions/da_glVertexAttrib4s.html">
+								<code>da_glVertexAttrib4s</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, short, short, short, short)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib4sv" href="../../derelict/opengl3/functions/da_glVertexAttrib4sv.html">
+								<code>da_glVertexAttrib4sv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(short)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib4ubv" href="../../derelict/opengl3/functions/da_glVertexAttrib4ubv.html">
+								<code>da_glVertexAttrib4ubv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(ubyte)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib4uiv" href="../../derelict/opengl3/functions/da_glVertexAttrib4uiv.html">
+								<code>da_glVertexAttrib4uiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttrib4usv" href="../../derelict/opengl3/functions/da_glVertexAttrib4usv.html">
+								<code>da_glVertexAttrib4usv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(ushort)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribDivisor" href="../../derelict/opengl3/functions/da_glVertexAttribDivisor.html">
+								<code>da_glVertexAttribDivisor</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribI1i" href="../../derelict/opengl3/functions/da_glVertexAttribI1i.html">
+								<code>da_glVertexAttribI1i</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribI1iv" href="../../derelict/opengl3/functions/da_glVertexAttribI1iv.html">
+								<code>da_glVertexAttribI1iv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribI1ui" href="../../derelict/opengl3/functions/da_glVertexAttribI1ui.html">
+								<code>da_glVertexAttribI1ui</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribI1uiv" href="../../derelict/opengl3/functions/da_glVertexAttribI1uiv.html">
+								<code>da_glVertexAttribI1uiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribI2i" href="../../derelict/opengl3/functions/da_glVertexAttribI2i.html">
+								<code>da_glVertexAttribI2i</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribI2iv" href="../../derelict/opengl3/functions/da_glVertexAttribI2iv.html">
+								<code>da_glVertexAttribI2iv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribI2ui" href="../../derelict/opengl3/functions/da_glVertexAttribI2ui.html">
+								<code>da_glVertexAttribI2ui</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribI2uiv" href="../../derelict/opengl3/functions/da_glVertexAttribI2uiv.html">
+								<code>da_glVertexAttribI2uiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribI3i" href="../../derelict/opengl3/functions/da_glVertexAttribI3i.html">
+								<code>da_glVertexAttribI3i</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribI3iv" href="../../derelict/opengl3/functions/da_glVertexAttribI3iv.html">
+								<code>da_glVertexAttribI3iv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribI3ui" href="../../derelict/opengl3/functions/da_glVertexAttribI3ui.html">
+								<code>da_glVertexAttribI3ui</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribI3uiv" href="../../derelict/opengl3/functions/da_glVertexAttribI3uiv.html">
+								<code>da_glVertexAttribI3uiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribI4bv" href="../../derelict/opengl3/functions/da_glVertexAttribI4bv.html">
+								<code>da_glVertexAttribI4bv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(byte)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribI4i" href="../../derelict/opengl3/functions/da_glVertexAttribI4i.html">
+								<code>da_glVertexAttribI4i</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribI4iv" href="../../derelict/opengl3/functions/da_glVertexAttribI4iv.html">
+								<code>da_glVertexAttribI4iv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(int)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribI4sv" href="../../derelict/opengl3/functions/da_glVertexAttribI4sv.html">
+								<code>da_glVertexAttribI4sv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(short)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribI4ubv" href="../../derelict/opengl3/functions/da_glVertexAttribI4ubv.html">
+								<code>da_glVertexAttribI4ubv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(ubyte)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribI4ui" href="../../derelict/opengl3/functions/da_glVertexAttribI4ui.html">
+								<code>da_glVertexAttribI4ui</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, uint, uint, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribI4uiv" href="../../derelict/opengl3/functions/da_glVertexAttribI4uiv.html">
+								<code>da_glVertexAttribI4uiv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(uint)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribI4usv" href="../../derelict/opengl3/functions/da_glVertexAttribI4usv.html">
+								<code>da_glVertexAttribI4usv</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, const(ushort)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribIPointer" href="../../derelict/opengl3/functions/da_glVertexAttribIPointer.html">
+								<code>da_glVertexAttribIPointer</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, int, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glVertexAttribPointer" href="../../derelict/opengl3/functions/da_glVertexAttribPointer.html">
+								<code>da_glVertexAttribPointer</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(uint, int, uint, ubyte, int, const(void)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="da_glViewport" href="../../derelict/opengl3/functions/da_glViewport.html">
+								<code>da_glViewport</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(Windows) nothrow void function(int, int, int, int)</code>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Authors</h2><!-- using block ddox.authors in ddox.layout.dt-->
+
+			</section>
+			<section>
+				<h2>Copyright</h2><!-- using block ddox.copyright in ddox.layout.dt-->
+
+			</section>
+			<section>
+				<h2>License</h2><!-- using block ddox.license in ddox.layout.dt-->
+
+			</section>
+		</div>
+	</body>
+</html>

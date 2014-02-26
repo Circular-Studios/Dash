@@ -9,23 +9,23 @@ class Animation : Component
 {
 public:
 	mixin Property!( "AssetAnimation", "animationData", "public" );
-	mixin Property!( "int", "currentAnimation", "public" );
-	mixin Property!( "float", "currentPosition", "public" );
-	mixin Property!( "Bone[]", "currentPose", "public" );
+	mixin Property!( "int", "currentAnim", "public" );
+	mixin Property!( "float", "currentAnimTime", "public" );
+	mixin Property!( "mat4[]", "currBoneTransforms", "public" );
 
 	this( AssetAnimation assetAnimation)
 	{
 		super( null );
 
-		currentAnimation = 0;
-		currentPosition = 0.0f;
+		currentAnim = 0;
+		currentAnimTime = 0.0f;
 		animationData = assetAnimation;
 		//currentPose = animationData.getPose();
 	}
 
 	override void update()
 	{
-
+		getFrameTransforms( 0.0f );
 	}
 
 	override void shutdown()
@@ -33,10 +33,11 @@ public:
 
 	}
 
-	class Bone
+	void getFrameTransforms( float changeInTime )
 	{
-		Bone parent;
-		Bone[] children;
-		mat4 offset;
+		// Update currentanimtime based on changeintime
+		
+		// Calculate and store array of bonetransforms to pass to the shader
+		//currBoneTransforms = animationData.getTransformsAtTime( currentAnimTime );
 	}
 }

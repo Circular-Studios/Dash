@@ -12,30 +12,41 @@ class AssetAnimation
 {
 public:
 	mixin Property!( "AnimationSet", "animationSet", "public" );
+	mixin Property!( "int", "amount", "public" );
+	mixin Property!( "int", "amountAnim", "public" );
 
-	this( string name, const(aiAnimation*) animation, const(aiNode*) boneHierarchy )
+	this( string name, const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) boneHierarchy )
 	{
 		_animationSet.duration = cast(float)animation.mDuration;
 		_animationSet.fps = cast(float)animation.mTicksPerSecond;
 		
-		_animationSet.boneAnimData = makeBonesFromNode( animation, boneHierarchy, null );
+		_animationSet.boneAnimData = makeBonesFromNode( animation, mesh, boneHierarchy, null );
 	}
+
+	// Convert 'bones' to 'nodes' (They are not all bones, yet are needed to place bones in correct position
+	// Currently some actual bones do not have keys and some nodes do have keys? Why?
+	// Position keys correct, either 1 or amt of animation
 	
-	// PROBLEM! To get the parent you cant call makeBoneFromNode, otherwise it will be extra new nodes. Instead pass in parent node (if there is one)
-	Bone makeBonesFromNode( const(aiAnimation*) animation, const(aiNode*) bones, Bone parent )
+	Bone makeBonesFromNode( const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) bones, Bone parent )
 	{
 		Bone bone = new Bone();
 		bone.name = cast(string)bones.mName.data;
+		bone.id = findBoneWithName( bone.name, mesh );
+
+		if(bone.id != -1)
+		{
+			_amount++;
+		}
 		
+		assignCorrectAnimationData( animation, bone );
+
 		if( parent !is null )
 			bone.parent = parent;
 		
 		for(int i = 0; i < bones.mNumChildren; i++)
 		{
-			bone.children ~= makeBonesFromNode( animation, bones.mChildren[i], bone );
+			bone.children ~= makeBonesFromNode( animation, mesh, bones.mChildren[i], bone );
 		}
-		
-		assignCorrectAnimationData( animation, bone );
 		
 		return bone;
 	}
@@ -50,6 +61,9 @@ public:
 				// Assign the bone animation data to the bone
 				boneToAssign.positionKeys = convertVectorArray( animation.mChannels[ i ].mPositionKeys,
 																animation.mChannels[ i ].mNumPositionKeys );
+				int iii = boneToAssign.positionKeys.length;
+				const(aiNodeAnim*) temp = animation.mChannels[ i ];
+				_amountAnim++;
 			}
 			else
 			{
@@ -69,26 +83,27 @@ public:
 
 		return keys;
 	}
+
+	mat4[] getTransformsAtTime( float time )
+	{
+		mat4[] boneTransforms;
+
+		return boneTransforms;
+	}
 	
 	// Find bone with name in our structure
-	/*Bone findBoneWithName(string name, Bone bone)
+	int findBoneWithName( string name, const(aiMesh*) mesh )
 	{
-		if(name == bone.name)
+		for(int i = 0; i < mesh.mNumBones; i++)
 		{
-			return bone;
-		}
-
-		for(int i = 0; i < bone.children.length; i++)
-		{
-			Bone temp = findBoneWithName(name, bone.children[i]);
-			if(temp !is null)
+			if( name == cast(string)mesh.mBones[i].mName.data )
 			{
-				return temp;
+				return i;
 			}
 		}
 
-		return null;
-	}*/
+		return -1;
+	}
 
 	void shutdown()
 	{
@@ -104,6 +119,7 @@ public:
 	class Bone
 	{
 		string name;
+		int id;
 		Bone parent;
 		Bone[] children;
 		vec3[] positionKeys;

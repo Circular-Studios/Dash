@@ -47,7 +47,7 @@ public static:
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Meshes ) )
 		{
 			// Load mesh
-			const aiScene* scene = aiImportFile(( file.fullPath ~ "\0" ).ptr,
+			const aiScene* scene = aiImportFile( ( file.fullPath ~ "\0" ).ptr,
 			                                    aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
 			                                    aiProcess_JoinIdenticalVertices | aiProcess_SortByPType );
 												//| aiProcess_FlipWindingOrder );

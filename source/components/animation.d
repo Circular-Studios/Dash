@@ -38,6 +38,6 @@ public:
 		// Update currentanimtime based on changeintime
 		
 		// Calculate and store array of bonetransforms to pass to the shader
-		//currBoneTransforms = animationData.getTransformsAtTime( currentAnimTime );
+		currBoneTransforms = animationData.getTransformsAtTime( currentAnimTime );
 	}
 }

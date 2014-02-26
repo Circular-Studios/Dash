@@ -9,7 +9,7 @@ private:
 	vec3 _color;
 
 public:
-	mixin( Property!( _color, "color", AccessModifier.Public ) );
+	mixin( Property!( _color, AccessModifier.Public ) );
 
 	this( vec3 color )
 	{
@@ -43,7 +43,7 @@ private:
 	vec3 _direction;
 
 public:
-	mixin( Property!( _direction, "direction", AccessModifier.Public ) );
+	mixin( Property!( _direction, AccessModifier.Public ) );
 
 	this( vec3 color, vec3 direction )
 	{

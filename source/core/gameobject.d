@@ -25,31 +25,31 @@ public:
 	/**
 	 * The current transform of the object.
 	 */
-	mixin( Property!_transform );
+	mixin( Property!( _transform, AccessModifier.Public ) );
 	/**
 	 * The Material belonging to the object
 	 */
-	mixin( Property!_material );
+	mixin( Property!( _material, AccessModifier.Public ) );
 	/**
 	 * The Mesh belonging to the object
 	 */
-	mixin( Property!_mesh );
+	mixin( Property!( _mesh, AccessModifier.Public ) );
 	/**
 	* The light attached to this object
 	*/
-	mixin( Property!_light );
+	mixin( Property!( _light, AccessModifier.Public ) );
 	/**
 	* The camera attached to this object
 	*/
-	mixin( Property!_camera );
+	mixin( Property!( _camera, AccessModifier.Public ) );
 	/**
 	 * The object that this object belongs to
 	 */
-	mixin( Property!_parent );
+	mixin( Property!( _parent, AccessModifier.Public ) );
 	/**
 	 * All of the objects which list this as parent
 	 */
-	mixin( Property!_children );
+	mixin( Property!( _children, AccessModifier.Public ) );
 
 	/**
 	 * Create a GameObject from a Yaml node.
@@ -235,7 +235,7 @@ private:
 public:
 	mixin Properties;
 
-	mixin( Property!( _owner, "owner", AccessModifier.Public ) );
+	mixin( Property!( _owner, AccessModifier.Public ) );
 
 	vec3 position;
 	quat rotation;

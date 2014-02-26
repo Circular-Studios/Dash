@@ -77,6 +77,7 @@ public:
 	
 	abstract void messageLoop();
 
+
 	final void initializeDeferredRendering()
 	{
 		//http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/

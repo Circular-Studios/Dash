@@ -16,7 +16,7 @@ public:
 	/**
 	 * The GameObject that owns this component.
 	 */
-	mixin( Property!( _owner, "owner", AccessModifier.Public ) );
+	mixin( Property!( _owner, AccessModifier.Public ) );
 
 	this( GameObject owner )
 	{

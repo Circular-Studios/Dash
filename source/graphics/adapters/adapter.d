@@ -1,8 +1,5 @@
 module graphics.adapters.adapter;
-import core.gameobject, core.properties;
-import components;
-import graphics.shaders;
-import utility.config, utility.output;
+import core, components, graphics, utility;
 
 import gl3n.linalg;
 import derelict.opengl3.gl3;
@@ -33,33 +30,39 @@ else
 abstract class Adapter
 {
 private:
-	uint deferredFrameBuffer;
-	uint diffuseRenderTexture; //Alpha channel stores Specular exponent
-	uint normalRenderTexture; //Alpha channel stores nothing right now
-	uint depthRenderTexture;
-	Camera activeCamera;
+	GLDeviceContext _deviceContext;
+	GLRenderContext _renderContext;
+
+	uint _width, _screenWidth;
+	uint _height, _screenHeight;
+	bool _fullscreen, _backfaceCulling, _vsync;
+	float _fov, _near, _far;
+	uint _deferredFrameBuffer, _diffuseRenderTexture, _normalRenderTexture, _depthRenderTexture;
+	// Do not add properties for:
 	mat4 projection;
-	//To be cleared after a draw call:
+	Camera activeCamera;
 	AmbientLight ambientLight;
 	DirectionalLight[] directionalLights;
 	PointLight[] pointLights;
 	SpotLight[] spotLights;
-
 public:
-	// Graphics contexts
-	mixin Property!( "GLDeviceContext", "deviceContext", "protected" );
-	mixin Property!( "GLRenderContext", "renderContext", "protected" );
+	mixin( Property!_deviceContext );
+	mixin( Property!_renderContext );
 
-	mixin Property!( "uint", "width", "protected" );
-	mixin Property!( "uint", "screenWidth", "protected" );
-	mixin Property!( "uint", "height", "protected" );
-	mixin Property!( "uint", "screenHeight", "protected" );
-	mixin Property!( "bool", "fullscreen", "protected" );
-	mixin Property!( "bool", "backfaceCulling", "protected" );
-	mixin Property!( "bool", "vsync", "protected" );
-	mixin Property!( "float", "fov", "protected" );
-	mixin Property!( "float", "near", "protected" );
-	mixin Property!( "float", "far", "protected" );
+	mixin( Property!_width );
+	mixin( Property!_screenWidth );
+	mixin( Property!_height );
+	mixin( Property!_screenHeight );
+	mixin( Property!_fullscreen );
+	mixin( Property!_backfaceCulling );
+	mixin( Property!_vsync );
+	mixin( Property!_fov );
+	mixin( Property!_near );
+	mixin( Property!_far );
+	mixin( Property!_deferredFrameBuffer );
+	mixin( Property!_diffuseRenderTexture ); //Alpha channel stores Specular exponent
+	mixin( Property!_normalRenderTexture ); //Alpha channel stores nothing important
+	mixin( Property!_depthRenderTexture );
 	
 
 	/**
@@ -81,19 +84,20 @@ public:
 	
 	abstract void messageLoop();
 
+
 	final void initializeDeferredRendering()
 	{
 		//http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
 
 		//Create the frame buffer, which will contain the textures to render to
 		deferredFrameBuffer = 0;
-		glGenFramebuffers( 1, &deferredFrameBuffer );
+		glGenFramebuffers( 1, &_deferredFrameBuffer );
 		glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
 
 		//Generate our 3 textures
-		glGenTextures( 1, &diffuseRenderTexture );
-		glGenTextures( 1, &normalRenderTexture );
-		glGenTextures( 1, &depthRenderTexture );
+		glGenTextures( 1, &_diffuseRenderTexture );
+		glGenTextures( 1, &_normalRenderTexture );
+		glGenTextures( 1, &_depthRenderTexture );
 
 		//For each texture, we bind it to our active texture, and set the format and filtering
 		glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
@@ -150,7 +154,7 @@ public:
 		glEnable( GL_DEPTH_TEST );
 		glDisable( GL_BLEND );
 
-		glUseProgram( Shaders[GeometryShader].programID );
+		
 	}
 	
 	/**
@@ -162,7 +166,19 @@ public:
 	final void drawObject( GameObject object )
 	{
 		// set the shader
-		auto shader = Shaders[GeometryShader];
+		Shader shader;
+		if( object.mesh.animated )
+		{
+			glUseProgram( Shaders[AnimatedGeometryShader].programID );
+			shader = Shaders[AnimatedGeometryShader];
+			
+		}
+		else // not animated mesh
+		{
+			glUseProgram( Shaders[GeometryShader].programID );
+			shader = Shaders[GeometryShader];
+		}
+
 		glBindVertexArray( object.mesh.glVertexArray );
 
 		shader.bindUniformMatrix4fv( ShaderUniform.World , object.transform.matrix );
@@ -194,7 +210,7 @@ public:
 		glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-		auto shader = Shaders[LightingShader];
+		auto shader = Shaders[DirectionalLightShader];
 		glUseProgram( shader.programID );
 		
 		// bind geometry pass outputs

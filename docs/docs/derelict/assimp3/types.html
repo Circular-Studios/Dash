@@ -1,0 +1,3097 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/><!-- using block title in layout.dt--><!-- using block ddox.defs in ddox.layout.dt--><!-- using block ddox.title in ddox.layout.dt-->
+		<title>Module derelict.assimp3.types</title>
+		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav"><!-- using block navigation in layout.dt-->
+						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">components</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../components/animation.html" class=" module">animation</a>
+							</li>
+							<li>
+								<a href="../../components/assetanimation.html" class=" module">assetanimation</a>
+							</li>
+							<li>
+								<a href="../../components/assets.html" class=" module">assets</a>
+							</li>
+							<li>
+								<a href="../../components/camera.html" class=" module">camera</a>
+							</li>
+							<li>
+								<a href="../../components/component.html" class=" module">component</a>
+							</li>
+							<li>
+								<a href="../../components/lights.html" class=" module">lights</a>
+							</li>
+							<li>
+								<a href="../../components/material.html" class=" module">material</a>
+							</li>
+							<li>
+								<a href="../../components/mesh.html" class=" module">mesh</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">core</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../core/dgame.html" class=" module">dgame</a>
+							</li>
+							<li>
+								<a href="../../core/gameobject.html" class=" module">gameobject</a>
+							</li>
+							<li>
+								<a href="../../core/gameobjectcollection.html" class=" module">gameobjectcollection</a>
+							</li>
+							<li>
+								<a href="../../core/prefabs.html" class=" module">prefabs</a>
+							</li>
+							<li>
+								<a href="../../core/properties.html" class=" module">properties</a>
+							</li>
+							<li>
+								<a href="../../core/reflection.html" class=" module">reflection</a>
+							</li>
+						</ul>
+							</li>
+							<li class=" tree-view">
+								<a href="#" class="package">derelict</a>
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">assimp3</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/assimp3/assimp.html" class=" module">assimp</a>
+							</li>
+							<li>
+								<a href="../../derelict/assimp3/types.html" class="selected module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">freeimage</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/freeimage/freeimage.html" class=" module">freeimage</a>
+							</li>
+							<li>
+								<a href="../../derelict/freeimage/functions.html" class=" module">functions</a>
+							</li>
+							<li>
+								<a href="../../derelict/freeimage/types.html" class=" module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">opengl3</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/opengl3/arb.html" class=" module">arb</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/cgl.html" class=" module">cgl</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/constants.html" class=" module">constants</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/deprecatedConstants.html" class=" module">deprecatedConstants</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/deprecatedFunctions.html" class=" module">deprecatedFunctions</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/ext.html" class=" module">ext</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/functions.html" class=" module">functions</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/gl.html" class=" module">gl</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/gl3.html" class=" module">gl3</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/glx.html" class=" module">glx</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/glxext.html" class=" module">glxext</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/internal.html" class=" module">internal</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/types.html" class=" module">types</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/wgl.html" class=" module">wgl</a>
+							</li>
+							<li>
+								<a href="../../derelict/opengl3/wglext.html" class=" module">wglext</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">util</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../derelict/util/exception.html" class=" module">exception</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/loader.html" class=" module">loader</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/sharedlib.html" class=" module">sharedlib</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/system.html" class=" module">system</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/wintypes.html" class=" module">wintypes</a>
+							</li>
+							<li>
+								<a href="../../derelict/util/xtypes.html" class=" module">xtypes</a>
+							</li>
+						</ul>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">graphics</a>
+						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">adapters</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../graphics/adapters/adapter.html" class=" module">adapter</a>
+							</li>
+							<li>
+								<a href="../../graphics/adapters/linux.html" class=" module">linux</a>
+							</li>
+							<li>
+								<a href="../../graphics/adapters/mac.html" class=" module">mac</a>
+							</li>
+							<li>
+								<a href="../../graphics/adapters/win32.html" class=" module">win32</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../graphics/adapters.html" class=" module">adapters</a>
+							</li>
+							<li>
+								<a href="../../graphics/graphics.html" class=" module">graphics</a>
+							</li>
+							<li>
+								<a href="../../graphics/shaders.html" class=" module">shaders</a>
+							</li>
+						</ul>
+							</li>
+							<li class="collapsed tree-view">
+								<a href="#" class="package">utility</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../utility/config.html" class=" module">config</a>
+							</li>
+							<li>
+								<a href="../../utility/filepath.html" class=" module">filepath</a>
+							</li>
+							<li>
+								<a href="../../utility/input.html" class=" module">input</a>
+							</li>
+							<li>
+								<a href="../../utility/output.html" class=" module">output</a>
+							</li>
+							<li>
+								<a href="../../utility/time.html" class=" module">time</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../components.html" class=" module">components</a>
+							</li>
+							<li>
+								<a href="../../core.html" class=" module">core</a>
+							</li>
+							<li>
+								<a href="../../graphics.html" class=" module">graphics</a>
+							</li>
+							<li>
+								<a href="../../utility.html" class=" module">utility</a>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../symbols.js"></script>
+	<script type="application/javascript">
+		//<![CDATA[
+		var symbolSearchRootDir = "../../";		$('#symbolSearchPane').show();
+		//]]>
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Module derelict.assimp3.types</h1><!-- using block body in layout.dt--><!-- using block ddox.description in ddox.layout.dt-->
+			<p></p>
+<!-- using block ddox.sections in ddox.layout.dt-->
+			<section></section><!-- using block ddox.members in ddox.layout.dt-->
+			<section>
+				<h2>Functions</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiComponent_COLORSn" href="../../derelict/assimp3/types/aiComponent_COLORSn.html">
+								<code>aiComponent_COLORSn</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiComponent_TEXCOORDSn" href="../../derelict/assimp3/types/aiComponent_TEXCOORDSn.html">
+								<code>aiComponent_TEXCOORDSn</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Structs</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiAnimation" href="../../derelict/assimp3/types/aiAnimation.html">
+								<code>aiAnimation</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiAnimMesh" href="../../derelict/assimp3/types/aiAnimMesh.html">
+								<code>aiAnimMesh</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiBone" href="../../derelict/assimp3/types/aiBone.html">
+								<code>aiBone</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiCamera" href="../../derelict/assimp3/types/aiCamera.html">
+								<code>aiCamera</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiColor3D" href="../../derelict/assimp3/types/aiColor3D.html">
+								<code>aiColor3D</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiColor4D" href="../../derelict/assimp3/types/aiColor4D.html">
+								<code>aiColor4D</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiExportDataBlob" href="../../derelict/assimp3/types/aiExportDataBlob.html">
+								<code>aiExportDataBlob</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiExportFormatDesc" href="../../derelict/assimp3/types/aiExportFormatDesc.html">
+								<code>aiExportFormatDesc</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiFace" href="../../derelict/assimp3/types/aiFace.html">
+								<code>aiFace</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiFile" href="../../derelict/assimp3/types/aiFile.html">
+								<code>aiFile</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiFileIO" href="../../derelict/assimp3/types/aiFileIO.html">
+								<code>aiFileIO</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiLight" href="../../derelict/assimp3/types/aiLight.html">
+								<code>aiLight</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiLogStream" href="../../derelict/assimp3/types/aiLogStream.html">
+								<code>aiLogStream</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiMaterial" href="../../derelict/assimp3/types/aiMaterial.html">
+								<code>aiMaterial</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiMaterialProperty" href="../../derelict/assimp3/types/aiMaterialProperty.html">
+								<code>aiMaterialProperty</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiMatrix3x3" href="../../derelict/assimp3/types/aiMatrix3x3.html">
+								<code>aiMatrix3x3</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiMatrix4x4" href="../../derelict/assimp3/types/aiMatrix4x4.html">
+								<code>aiMatrix4x4</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiMemoryInfo" href="../../derelict/assimp3/types/aiMemoryInfo.html">
+								<code>aiMemoryInfo</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiMesh" href="../../derelict/assimp3/types/aiMesh.html">
+								<code>aiMesh</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiMeshAnim" href="../../derelict/assimp3/types/aiMeshAnim.html">
+								<code>aiMeshAnim</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiMeshKey" href="../../derelict/assimp3/types/aiMeshKey.html">
+								<code>aiMeshKey</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiNode" href="../../derelict/assimp3/types/aiNode.html">
+								<code>aiNode</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiNodeAnim" href="../../derelict/assimp3/types/aiNodeAnim.html">
+								<code>aiNodeAnim</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiPlane" href="../../derelict/assimp3/types/aiPlane.html">
+								<code>aiPlane</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiPropertyStore" href="../../derelict/assimp3/types/aiPropertyStore.html">
+								<code>aiPropertyStore</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiQuaternion" href="../../derelict/assimp3/types/aiQuaternion.html">
+								<code>aiQuaternion</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiQuatKey" href="../../derelict/assimp3/types/aiQuatKey.html">
+								<code>aiQuatKey</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiRay" href="../../derelict/assimp3/types/aiRay.html">
+								<code>aiRay</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiScene" href="../../derelict/assimp3/types/aiScene.html">
+								<code>aiScene</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiString" href="../../derelict/assimp3/types/aiString.html">
+								<code>aiString</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTexel" href="../../derelict/assimp3/types/aiTexel.html">
+								<code>aiTexel</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTexture" href="../../derelict/assimp3/types/aiTexture.html">
+								<code>aiTexture</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiUVTransform" href="../../derelict/assimp3/types/aiUVTransform.html">
+								<code>aiUVTransform</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiVector2D" href="../../derelict/assimp3/types/aiVector2D.html">
+								<code>aiVector2D</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiVector3D" href="../../derelict/assimp3/types/aiVector3D.html">
+								<code>aiVector3D</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiVectorKey" href="../../derelict/assimp3/types/aiVectorKey.html">
+								<code>aiVectorKey</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiVertexWeight" href="../../derelict/assimp3/types/aiVertexWeight.html">
+								<code>aiVertexWeight</code>
+							</a>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Enum values</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiAnimBehaviour_CONSTANT" href="../../derelict/assimp3/types/aiAnimBehaviour_CONSTANT.html">
+								<code>aiAnimBehaviour_CONSTANT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiAnimBehaviour_DEFAULT" href="../../derelict/assimp3/types/aiAnimBehaviour_DEFAULT.html">
+								<code>aiAnimBehaviour_DEFAULT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiAnimBehaviour_LINEAR" href="../../derelict/assimp3/types/aiAnimBehaviour_LINEAR.html">
+								<code>aiAnimBehaviour_LINEAR</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiAnimBehaviour_REPEAT" href="../../derelict/assimp3/types/aiAnimBehaviour_REPEAT.html">
+								<code>aiAnimBehaviour_REPEAT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiBlendMode_Additive" href="../../derelict/assimp3/types/aiBlendMode_Additive.html">
+								<code>aiBlendMode_Additive</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiBlendMode_Default" href="../../derelict/assimp3/types/aiBlendMode_Default.html">
+								<code>aiBlendMode_Default</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiComponent_ANIMATIONS" href="../../derelict/assimp3/types/aiComponent_ANIMATIONS.html">
+								<code>aiComponent_ANIMATIONS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiComponent_BONEWEIGHTS" href="../../derelict/assimp3/types/aiComponent_BONEWEIGHTS.html">
+								<code>aiComponent_BONEWEIGHTS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiComponent_CAMERAS" href="../../derelict/assimp3/types/aiComponent_CAMERAS.html">
+								<code>aiComponent_CAMERAS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiComponent_COLORS" href="../../derelict/assimp3/types/aiComponent_COLORS.html">
+								<code>aiComponent_COLORS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiComponent_LIGHTS" href="../../derelict/assimp3/types/aiComponent_LIGHTS.html">
+								<code>aiComponent_LIGHTS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiComponent_MATERIALS" href="../../derelict/assimp3/types/aiComponent_MATERIALS.html">
+								<code>aiComponent_MATERIALS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiComponent_MESHES" href="../../derelict/assimp3/types/aiComponent_MESHES.html">
+								<code>aiComponent_MESHES</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiComponent_NORMALS" href="../../derelict/assimp3/types/aiComponent_NORMALS.html">
+								<code>aiComponent_NORMALS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiComponent_TANGENTS_AND_BITANGENTS" href="../../derelict/assimp3/types/aiComponent_TANGENTS_AND_BITANGENTS.html">
+								<code>aiComponent_TANGENTS_AND_BITANGENTS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiComponent_TEXCOORDS" href="../../derelict/assimp3/types/aiComponent_TEXCOORDS.html">
+								<code>aiComponent_TEXCOORDS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiComponent_TEXTURES" href="../../derelict/assimp3/types/aiComponent_TEXTURES.html">
+								<code>aiComponent_TEXTURES</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiDefaultLogStream_DEBUGGER" href="../../derelict/assimp3/types/aiDefaultLogStream_DEBUGGER.html">
+								<code>aiDefaultLogStream_DEBUGGER</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiDefaultLogStream_FILE" href="../../derelict/assimp3/types/aiDefaultLogStream_FILE.html">
+								<code>aiDefaultLogStream_FILE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiDefaultLogStream_STDERR" href="../../derelict/assimp3/types/aiDefaultLogStream_STDERR.html">
+								<code>aiDefaultLogStream_STDERR</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiDefaultLogStream_STDOUT" href="../../derelict/assimp3/types/aiDefaultLogStream_STDOUT.html">
+								<code>aiDefaultLogStream_STDOUT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiLightSourceType_DIRECTIONAL" href="../../derelict/assimp3/types/aiLightSourceType_DIRECTIONAL.html">
+								<code>aiLightSourceType_DIRECTIONAL</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiLightSourceType_POINT" href="../../derelict/assimp3/types/aiLightSourceType_POINT.html">
+								<code>aiLightSourceType_POINT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiLightSourceType_SPOT" href="../../derelict/assimp3/types/aiLightSourceType_SPOT.html">
+								<code>aiLightSourceType_SPOT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiLightSourceType_UNDEFINED" href="../../derelict/assimp3/types/aiLightSourceType_UNDEFINED.html">
+								<code>aiLightSourceType_UNDEFINED</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiOrigin_CUR" href="../../derelict/assimp3/types/aiOrigin_CUR.html">
+								<code>aiOrigin_CUR</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiOrigin_END" href="../../derelict/assimp3/types/aiOrigin_END.html">
+								<code>aiOrigin_END</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiOrigin_SET" href="../../derelict/assimp3/types/aiOrigin_SET.html">
+								<code>aiOrigin_SET</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiPrimitiveType_LINE" href="../../derelict/assimp3/types/aiPrimitiveType_LINE.html">
+								<code>aiPrimitiveType_LINE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiPrimitiveType_POINT" href="../../derelict/assimp3/types/aiPrimitiveType_POINT.html">
+								<code>aiPrimitiveType_POINT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiPrimitiveType_POLYGON" href="../../derelict/assimp3/types/aiPrimitiveType_POLYGON.html">
+								<code>aiPrimitiveType_POLYGON</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiPrimitiveType_TRIANGLE" href="../../derelict/assimp3/types/aiPrimitiveType_TRIANGLE.html">
+								<code>aiPrimitiveType_TRIANGLE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcessPreset_TargetRealtime_Fast" href="../../derelict/assimp3/types/aiProcessPreset_TargetRealtime_Fast.html">
+								<code>aiProcessPreset_TargetRealtime_Fast</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcessPreset_TargetRealtime_MaxQuality" href="../../derelict/assimp3/types/aiProcessPreset_TargetRealtime_MaxQuality.html">
+								<code>aiProcessPreset_TargetRealtime_MaxQuality</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcessPreset_TargetRealtime_Quality" href="../../derelict/assimp3/types/aiProcessPreset_TargetRealtime_Quality.html">
+								<code>aiProcessPreset_TargetRealtime_Quality</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_CalcTangentSpace" href="../../derelict/assimp3/types/aiProcess_CalcTangentSpace.html">
+								<code>aiProcess_CalcTangentSpace</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_ConvertToLeftHanded" href="../../derelict/assimp3/types/aiProcess_ConvertToLeftHanded.html">
+								<code>aiProcess_ConvertToLeftHanded</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_Debone" href="../../derelict/assimp3/types/aiProcess_Debone.html">
+								<code>aiProcess_Debone</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_FindDegenerates" href="../../derelict/assimp3/types/aiProcess_FindDegenerates.html">
+								<code>aiProcess_FindDegenerates</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_FindInstances" href="../../derelict/assimp3/types/aiProcess_FindInstances.html">
+								<code>aiProcess_FindInstances</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_FindInvalidData" href="../../derelict/assimp3/types/aiProcess_FindInvalidData.html">
+								<code>aiProcess_FindInvalidData</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_FixInFacingNormals" href="../../derelict/assimp3/types/aiProcess_FixInFacingNormals.html">
+								<code>aiProcess_FixInFacingNormals</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_FlipUVs" href="../../derelict/assimp3/types/aiProcess_FlipUVs.html">
+								<code>aiProcess_FlipUVs</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_FlipWindingOrder" href="../../derelict/assimp3/types/aiProcess_FlipWindingOrder.html">
+								<code>aiProcess_FlipWindingOrder</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_GenNormals" href="../../derelict/assimp3/types/aiProcess_GenNormals.html">
+								<code>aiProcess_GenNormals</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_GenSmoothNormals" href="../../derelict/assimp3/types/aiProcess_GenSmoothNormals.html">
+								<code>aiProcess_GenSmoothNormals</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_GenUVCoords" href="../../derelict/assimp3/types/aiProcess_GenUVCoords.html">
+								<code>aiProcess_GenUVCoords</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_ImproveCacheLocality" href="../../derelict/assimp3/types/aiProcess_ImproveCacheLocality.html">
+								<code>aiProcess_ImproveCacheLocality</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_JoinIdenticalVertices" href="../../derelict/assimp3/types/aiProcess_JoinIdenticalVertices.html">
+								<code>aiProcess_JoinIdenticalVertices</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_LimitBoneWeights" href="../../derelict/assimp3/types/aiProcess_LimitBoneWeights.html">
+								<code>aiProcess_LimitBoneWeights</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_MakeLeftHanded" href="../../derelict/assimp3/types/aiProcess_MakeLeftHanded.html">
+								<code>aiProcess_MakeLeftHanded</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_OptimizeGraph" href="../../derelict/assimp3/types/aiProcess_OptimizeGraph.html">
+								<code>aiProcess_OptimizeGraph</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_OptimizeMeshes" href="../../derelict/assimp3/types/aiProcess_OptimizeMeshes.html">
+								<code>aiProcess_OptimizeMeshes</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_PreTransformVertices" href="../../derelict/assimp3/types/aiProcess_PreTransformVertices.html">
+								<code>aiProcess_PreTransformVertices</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_RemoveComponent" href="../../derelict/assimp3/types/aiProcess_RemoveComponent.html">
+								<code>aiProcess_RemoveComponent</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_RemoveRedundantMaterials" href="../../derelict/assimp3/types/aiProcess_RemoveRedundantMaterials.html">
+								<code>aiProcess_RemoveRedundantMaterials</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_SortByPType" href="../../derelict/assimp3/types/aiProcess_SortByPType.html">
+								<code>aiProcess_SortByPType</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_SplitByBoneCount" href="../../derelict/assimp3/types/aiProcess_SplitByBoneCount.html">
+								<code>aiProcess_SplitByBoneCount</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_SplitLargeMeshes" href="../../derelict/assimp3/types/aiProcess_SplitLargeMeshes.html">
+								<code>aiProcess_SplitLargeMeshes</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_TransformUVCoords" href="../../derelict/assimp3/types/aiProcess_TransformUVCoords.html">
+								<code>aiProcess_TransformUVCoords</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_Triangulate" href="../../derelict/assimp3/types/aiProcess_Triangulate.html">
+								<code>aiProcess_Triangulate</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiProcess_ValidateDataStructure" href="../../derelict/assimp3/types/aiProcess_ValidateDataStructure.html">
+								<code>aiProcess_ValidateDataStructure</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiPTI_Buffer" href="../../derelict/assimp3/types/aiPTI_Buffer.html">
+								<code>aiPTI_Buffer</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiPTI_Float" href="../../derelict/assimp3/types/aiPTI_Float.html">
+								<code>aiPTI_Float</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiPTI_Integer" href="../../derelict/assimp3/types/aiPTI_Integer.html">
+								<code>aiPTI_Integer</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiPTI_String" href="../../derelict/assimp3/types/aiPTI_String.html">
+								<code>aiPTI_String</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiReturn_FAILURE" href="../../derelict/assimp3/types/aiReturn_FAILURE.html">
+								<code>aiReturn_FAILURE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiReturn_OUTOFMEMORY" href="../../derelict/assimp3/types/aiReturn_OUTOFMEMORY.html">
+								<code>aiReturn_OUTOFMEMORY</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiReturn_SUCCESS" href="../../derelict/assimp3/types/aiReturn_SUCCESS.html">
+								<code>aiReturn_SUCCESS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiShadingMode_Blinn" href="../../derelict/assimp3/types/aiShadingMode_Blinn.html">
+								<code>aiShadingMode_Blinn</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiShadingMode_CookTorrance" href="../../derelict/assimp3/types/aiShadingMode_CookTorrance.html">
+								<code>aiShadingMode_CookTorrance</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiShadingMode_Flat" href="../../derelict/assimp3/types/aiShadingMode_Flat.html">
+								<code>aiShadingMode_Flat</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiShadingMode_Fresnel" href="../../derelict/assimp3/types/aiShadingMode_Fresnel.html">
+								<code>aiShadingMode_Fresnel</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiShadingMode_Gouraud" href="../../derelict/assimp3/types/aiShadingMode_Gouraud.html">
+								<code>aiShadingMode_Gouraud</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiShadingMode_Minnaert" href="../../derelict/assimp3/types/aiShadingMode_Minnaert.html">
+								<code>aiShadingMode_Minnaert</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiShadingMode_NoShading" href="../../derelict/assimp3/types/aiShadingMode_NoShading.html">
+								<code>aiShadingMode_NoShading</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiShadingMode_OrenNayer" href="../../derelict/assimp3/types/aiShadingMode_OrenNayer.html">
+								<code>aiShadingMode_OrenNayer</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiShadingMode_Phong" href="../../derelict/assimp3/types/aiShadingMode_Phong.html">
+								<code>aiShadingMode_Phong</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiShadingMode_Toon" href="../../derelict/assimp3/types/aiShadingMode_Toon.html">
+								<code>aiShadingMode_Toon</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureFlags_IgnoreAlpha" href="../../derelict/assimp3/types/aiTextureFlags_IgnoreAlpha.html">
+								<code>aiTextureFlags_IgnoreAlpha</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureFlags_Invert" href="../../derelict/assimp3/types/aiTextureFlags_Invert.html">
+								<code>aiTextureFlags_Invert</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureFlags_UseAlpha" href="../../derelict/assimp3/types/aiTextureFlags_UseAlpha.html">
+								<code>aiTextureFlags_UseAlpha</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureMapMode_Clamp" href="../../derelict/assimp3/types/aiTextureMapMode_Clamp.html">
+								<code>aiTextureMapMode_Clamp</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureMapMode_Decal" href="../../derelict/assimp3/types/aiTextureMapMode_Decal.html">
+								<code>aiTextureMapMode_Decal</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureMapMode_Mirror" href="../../derelict/assimp3/types/aiTextureMapMode_Mirror.html">
+								<code>aiTextureMapMode_Mirror</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureMapMode_Wrap" href="../../derelict/assimp3/types/aiTextureMapMode_Wrap.html">
+								<code>aiTextureMapMode_Wrap</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureMapping_BOX" href="../../derelict/assimp3/types/aiTextureMapping_BOX.html">
+								<code>aiTextureMapping_BOX</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureMapping_CYLINDER" href="../../derelict/assimp3/types/aiTextureMapping_CYLINDER.html">
+								<code>aiTextureMapping_CYLINDER</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureMapping_OTHER" href="../../derelict/assimp3/types/aiTextureMapping_OTHER.html">
+								<code>aiTextureMapping_OTHER</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureMapping_PLANE" href="../../derelict/assimp3/types/aiTextureMapping_PLANE.html">
+								<code>aiTextureMapping_PLANE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureMapping_SPHERE" href="../../derelict/assimp3/types/aiTextureMapping_SPHERE.html">
+								<code>aiTextureMapping_SPHERE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureMapping_UV" href="../../derelict/assimp3/types/aiTextureMapping_UV.html">
+								<code>aiTextureMapping_UV</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureOp_Add" href="../../derelict/assimp3/types/aiTextureOp_Add.html">
+								<code>aiTextureOp_Add</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureOp_Divide" href="../../derelict/assimp3/types/aiTextureOp_Divide.html">
+								<code>aiTextureOp_Divide</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureOp_Multiply" href="../../derelict/assimp3/types/aiTextureOp_Multiply.html">
+								<code>aiTextureOp_Multiply</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureOp_SignedAdd" href="../../derelict/assimp3/types/aiTextureOp_SignedAdd.html">
+								<code>aiTextureOp_SignedAdd</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureOp_SmoothAdd" href="../../derelict/assimp3/types/aiTextureOp_SmoothAdd.html">
+								<code>aiTextureOp_SmoothAdd</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureOp_Subtract" href="../../derelict/assimp3/types/aiTextureOp_Subtract.html">
+								<code>aiTextureOp_Subtract</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureType_AMBIENT" href="../../derelict/assimp3/types/aiTextureType_AMBIENT.html">
+								<code>aiTextureType_AMBIENT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureType_DIFFUSE" href="../../derelict/assimp3/types/aiTextureType_DIFFUSE.html">
+								<code>aiTextureType_DIFFUSE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureType_DISPLACEMENT" href="../../derelict/assimp3/types/aiTextureType_DISPLACEMENT.html">
+								<code>aiTextureType_DISPLACEMENT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureType_EMISSIVE" href="../../derelict/assimp3/types/aiTextureType_EMISSIVE.html">
+								<code>aiTextureType_EMISSIVE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureType_HEIGHT" href="../../derelict/assimp3/types/aiTextureType_HEIGHT.html">
+								<code>aiTextureType_HEIGHT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureType_LIGHTMAP" href="../../derelict/assimp3/types/aiTextureType_LIGHTMAP.html">
+								<code>aiTextureType_LIGHTMAP</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureType_NONE" href="../../derelict/assimp3/types/aiTextureType_NONE.html">
+								<code>aiTextureType_NONE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureType_NORMALS" href="../../derelict/assimp3/types/aiTextureType_NORMALS.html">
+								<code>aiTextureType_NORMALS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureType_OPACITY" href="../../derelict/assimp3/types/aiTextureType_OPACITY.html">
+								<code>aiTextureType_OPACITY</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureType_REFLECTION" href="../../derelict/assimp3/types/aiTextureType_REFLECTION.html">
+								<code>aiTextureType_REFLECTION</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureType_SHININESS" href="../../derelict/assimp3/types/aiTextureType_SHININESS.html">
+								<code>aiTextureType_SHININESS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureType_SPECULAR" href="../../derelict/assimp3/types/aiTextureType_SPECULAR.html">
+								<code>aiTextureType_SPECULAR</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureType_UNKNOWN" href="../../derelict/assimp3/types/aiTextureType_UNKNOWN.html">
+								<code>aiTextureType_UNKNOWN</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_FAVOUR_SPEED" href="../../derelict/assimp3/types/AI_CONFIG_FAVOUR_SPEED.html">
+								<code>AI_CONFIG_FAVOUR_SPEED</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_GLOB_MEASURE_TIME" href="../../derelict/assimp3/types/AI_CONFIG_GLOB_MEASURE_TIME.html">
+								<code>AI_CONFIG_GLOB_MEASURE_TIME</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_AC_EVAL_SUBDIVISION" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_AC_EVAL_SUBDIVISION.html">
+								<code>AI_CONFIG_IMPORT_AC_EVAL_SUBDIVISION</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_AC_SEPARATE_BFCULL" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_AC_SEPARATE_BFCULL.html">
+								<code>AI_CONFIG_IMPORT_AC_SEPARATE_BFCULL</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_ASE_RECONSTRUCT_NORMALS" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_ASE_RECONSTRUCT_NORMALS.html">
+								<code>AI_CONFIG_IMPORT_ASE_RECONSTRUCT_NORMALS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_GLOBAL_KEYFRAME" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_GLOBAL_KEYFRAME.html">
+								<code>AI_CONFIG_IMPORT_GLOBAL_KEYFRAME</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_IFC_CUSTOM_TRIANGULATION" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_IFC_CUSTOM_TRIANGULATION.html">
+								<code>AI_CONFIG_IMPORT_IFC_CUSTOM_TRIANGULATION</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_IFC_SKIP_CURVE_REPRESENTATIONS" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_IFC_SKIP_CURVE_REPRESENTATIONS.html">
+								<code>AI_CONFIG_IMPORT_IFC_SKIP_CURVE_REPRESENTATIONS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_IFC_SKIP_SPACE_REPRESENTATIONS" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_IFC_SKIP_SPACE_REPRESENTATIONS.html">
+								<code>AI_CONFIG_IMPORT_IFC_SKIP_SPACE_REPRESENTATIONS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_IRR_ANIM_FPS" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_IRR_ANIM_FPS.html">
+								<code>AI_CONFIG_IMPORT_IRR_ANIM_FPS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_LWO_ONE_LAYER_ONLY" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_LWO_ONE_LAYER_ONLY.html">
+								<code>AI_CONFIG_IMPORT_LWO_ONE_LAYER_ONLY</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_LWS_ANIM_END" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_LWS_ANIM_END.html">
+								<code>AI_CONFIG_IMPORT_LWS_ANIM_END</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_LWS_ANIM_START" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_LWS_ANIM_START.html">
+								<code>AI_CONFIG_IMPORT_LWS_ANIM_START</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_MD2_KEYFRAME" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_MD2_KEYFRAME.html">
+								<code>AI_CONFIG_IMPORT_MD2_KEYFRAME</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_MD3_HANDLE_MULTIPART" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_MD3_HANDLE_MULTIPART.html">
+								<code>AI_CONFIG_IMPORT_MD3_HANDLE_MULTIPART</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_MD3_KEYFRAME" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_MD3_KEYFRAME.html">
+								<code>AI_CONFIG_IMPORT_MD3_KEYFRAME</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_MD3_SHADER_SRC" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_MD3_SHADER_SRC.html">
+								<code>AI_CONFIG_IMPORT_MD3_SHADER_SRC</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_MD3_SKIN_NAME" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_MD3_SKIN_NAME.html">
+								<code>AI_CONFIG_IMPORT_MD3_SKIN_NAME</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_MD5_NO_ANIM_AUTOLOAD" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_MD5_NO_ANIM_AUTOLOAD.html">
+								<code>AI_CONFIG_IMPORT_MD5_NO_ANIM_AUTOLOAD</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_MDC_KEYFRAME" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_MDC_KEYFRAME.html">
+								<code>AI_CONFIG_IMPORT_MDC_KEYFRAME</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_MDL_COLORMAP" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_MDL_COLORMAP.html">
+								<code>AI_CONFIG_IMPORT_MDL_COLORMAP</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_MDL_KEYFRAME" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_MDL_KEYFRAME.html">
+								<code>AI_CONFIG_IMPORT_MDL_KEYFRAME</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_OGRE_MATERIAL_FILE" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_OGRE_MATERIAL_FILE.html">
+								<code>AI_CONFIG_IMPORT_OGRE_MATERIAL_FILE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_OGRE_TEXTURETYPE_FROM_FILENAME" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_OGRE_TEXTURETYPE_FROM_FILENAME.html">
+								<code>AI_CONFIG_IMPORT_OGRE_TEXTURETYPE_FROM_FILENAME</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_SMD_KEYFRAME" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_SMD_KEYFRAME.html">
+								<code>AI_CONFIG_IMPORT_SMD_KEYFRAME</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_TER_MAKE_UVS" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_TER_MAKE_UVS.html">
+								<code>AI_CONFIG_IMPORT_TER_MAKE_UVS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_UNREAL_HANDLE_FLAGS" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_UNREAL_HANDLE_FLAGS.html">
+								<code>AI_CONFIG_IMPORT_UNREAL_HANDLE_FLAGS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_IMPORT_UNREAL_KEYFRAME" href="../../derelict/assimp3/types/AI_CONFIG_IMPORT_UNREAL_KEYFRAME.html">
+								<code>AI_CONFIG_IMPORT_UNREAL_KEYFRAME</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_PP_CT_MAX_SMOOTHING_ANGLE" href="../../derelict/assimp3/types/AI_CONFIG_PP_CT_MAX_SMOOTHING_ANGLE.html">
+								<code>AI_CONFIG_PP_CT_MAX_SMOOTHING_ANGLE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_PP_CT_TEXTURE_CHANNEL_INDEX" href="../../derelict/assimp3/types/AI_CONFIG_PP_CT_TEXTURE_CHANNEL_INDEX.html">
+								<code>AI_CONFIG_PP_CT_TEXTURE_CHANNEL_INDEX</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_PP_DB_ALL_OR_NONE" href="../../derelict/assimp3/types/AI_CONFIG_PP_DB_ALL_OR_NONE.html">
+								<code>AI_CONFIG_PP_DB_ALL_OR_NONE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_PP_DB_THRESHOLD" href="../../derelict/assimp3/types/AI_CONFIG_PP_DB_THRESHOLD.html">
+								<code>AI_CONFIG_PP_DB_THRESHOLD</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_PP_FD_REMOVE" href="../../derelict/assimp3/types/AI_CONFIG_PP_FD_REMOVE.html">
+								<code>AI_CONFIG_PP_FD_REMOVE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_PP_FID_ANIM_ACCURACY" href="../../derelict/assimp3/types/AI_CONFIG_PP_FID_ANIM_ACCURACY.html">
+								<code>AI_CONFIG_PP_FID_ANIM_ACCURACY</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_PP_GSN_MAX_SMOOTHING_ANGLE" href="../../derelict/assimp3/types/AI_CONFIG_PP_GSN_MAX_SMOOTHING_ANGLE.html">
+								<code>AI_CONFIG_PP_GSN_MAX_SMOOTHING_ANGLE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_PP_ICL_PTCACHE_SIZE" href="../../derelict/assimp3/types/AI_CONFIG_PP_ICL_PTCACHE_SIZE.html">
+								<code>AI_CONFIG_PP_ICL_PTCACHE_SIZE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_PP_LBW_MAX_WEIGHTS" href="../../derelict/assimp3/types/AI_CONFIG_PP_LBW_MAX_WEIGHTS.html">
+								<code>AI_CONFIG_PP_LBW_MAX_WEIGHTS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_PP_OG_EXCLUDE_LIST" href="../../derelict/assimp3/types/AI_CONFIG_PP_OG_EXCLUDE_LIST.html">
+								<code>AI_CONFIG_PP_OG_EXCLUDE_LIST</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_PP_PTV_KEEP_HIERARCHY" href="../../derelict/assimp3/types/AI_CONFIG_PP_PTV_KEEP_HIERARCHY.html">
+								<code>AI_CONFIG_PP_PTV_KEEP_HIERARCHY</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_PP_PTV_NORMALIZE" href="../../derelict/assimp3/types/AI_CONFIG_PP_PTV_NORMALIZE.html">
+								<code>AI_CONFIG_PP_PTV_NORMALIZE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_PP_RRM_EXCLUDE_LIST" href="../../derelict/assimp3/types/AI_CONFIG_PP_RRM_EXCLUDE_LIST.html">
+								<code>AI_CONFIG_PP_RRM_EXCLUDE_LIST</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_PP_RVC_FLAGS" href="../../derelict/assimp3/types/AI_CONFIG_PP_RVC_FLAGS.html">
+								<code>AI_CONFIG_PP_RVC_FLAGS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_PP_SBBC_MAX_BONES" href="../../derelict/assimp3/types/AI_CONFIG_PP_SBBC_MAX_BONES.html">
+								<code>AI_CONFIG_PP_SBBC_MAX_BONES</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_PP_SBP_REMOVE" href="../../derelict/assimp3/types/AI_CONFIG_PP_SBP_REMOVE.html">
+								<code>AI_CONFIG_PP_SBP_REMOVE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_PP_SLM_TRIANGLE_LIMIT" href="../../derelict/assimp3/types/AI_CONFIG_PP_SLM_TRIANGLE_LIMIT.html">
+								<code>AI_CONFIG_PP_SLM_TRIANGLE_LIMIT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_PP_SLM_VERTEX_LIMIT" href="../../derelict/assimp3/types/AI_CONFIG_PP_SLM_VERTEX_LIMIT.html">
+								<code>AI_CONFIG_PP_SLM_VERTEX_LIMIT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_CONFIG_PP_TUV_EVALUATE" href="../../derelict/assimp3/types/AI_CONFIG_PP_TUV_EVALUATE.html">
+								<code>AI_CONFIG_PP_TUV_EVALUATE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_BLEND_FUNC" href="../../derelict/assimp3/types/AI_MATKEY_BLEND_FUNC.html">
+								<code>AI_MATKEY_BLEND_FUNC</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_BUMPSCALING" href="../../derelict/assimp3/types/AI_MATKEY_BUMPSCALING.html">
+								<code>AI_MATKEY_BUMPSCALING</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_COLOR_AMBIENT" href="../../derelict/assimp3/types/AI_MATKEY_COLOR_AMBIENT.html">
+								<code>AI_MATKEY_COLOR_AMBIENT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_COLOR_DIFFUSE" href="../../derelict/assimp3/types/AI_MATKEY_COLOR_DIFFUSE.html">
+								<code>AI_MATKEY_COLOR_DIFFUSE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_COLOR_EMISSIVE" href="../../derelict/assimp3/types/AI_MATKEY_COLOR_EMISSIVE.html">
+								<code>AI_MATKEY_COLOR_EMISSIVE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_COLOR_REFLECTIVE" href="../../derelict/assimp3/types/AI_MATKEY_COLOR_REFLECTIVE.html">
+								<code>AI_MATKEY_COLOR_REFLECTIVE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_COLOR_SPECULAR" href="../../derelict/assimp3/types/AI_MATKEY_COLOR_SPECULAR.html">
+								<code>AI_MATKEY_COLOR_SPECULAR</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_COLOR_TRANSPARENT" href="../../derelict/assimp3/types/AI_MATKEY_COLOR_TRANSPARENT.html">
+								<code>AI_MATKEY_COLOR_TRANSPARENT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_ENABLE_WIREFRAM" href="../../derelict/assimp3/types/AI_MATKEY_ENABLE_WIREFRAM.html">
+								<code>AI_MATKEY_ENABLE_WIREFRAM</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_GLOBAL_BACKGROUND_IMAGE" href="../../derelict/assimp3/types/AI_MATKEY_GLOBAL_BACKGROUND_IMAGE.html">
+								<code>AI_MATKEY_GLOBAL_BACKGROUND_IMAGE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_MAPPING" href="../../derelict/assimp3/types/AI_MATKEY_MAPPING.html">
+								<code>AI_MATKEY_MAPPING</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_MAPPINGMODE_U" href="../../derelict/assimp3/types/AI_MATKEY_MAPPINGMODE_U.html">
+								<code>AI_MATKEY_MAPPINGMODE_U</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_MAPPINGMODE_V" href="../../derelict/assimp3/types/AI_MATKEY_MAPPINGMODE_V.html">
+								<code>AI_MATKEY_MAPPINGMODE_V</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_NAME" href="../../derelict/assimp3/types/AI_MATKEY_NAME.html">
+								<code>AI_MATKEY_NAME</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_OPACITY" href="../../derelict/assimp3/types/AI_MATKEY_OPACITY.html">
+								<code>AI_MATKEY_OPACITY</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_REFLECTIVITY" href="../../derelict/assimp3/types/AI_MATKEY_REFLECTIVITY.html">
+								<code>AI_MATKEY_REFLECTIVITY</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_REFRACTI" href="../../derelict/assimp3/types/AI_MATKEY_REFRACTI.html">
+								<code>AI_MATKEY_REFRACTI</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_SHADING_MODEL" href="../../derelict/assimp3/types/AI_MATKEY_SHADING_MODEL.html">
+								<code>AI_MATKEY_SHADING_MODEL</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_SHININESS" href="../../derelict/assimp3/types/AI_MATKEY_SHININESS.html">
+								<code>AI_MATKEY_SHININESS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_SHININESS_STRENGTH" href="../../derelict/assimp3/types/AI_MATKEY_SHININESS_STRENGTH.html">
+								<code>AI_MATKEY_SHININESS_STRENGTH</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_TEXBLEND" href="../../derelict/assimp3/types/AI_MATKEY_TEXBLEND.html">
+								<code>AI_MATKEY_TEXBLEND</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_TEXFLAGS" href="../../derelict/assimp3/types/AI_MATKEY_TEXFLAGS.html">
+								<code>AI_MATKEY_TEXFLAGS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_TEXMAP_AXIS" href="../../derelict/assimp3/types/AI_MATKEY_TEXMAP_AXIS.html">
+								<code>AI_MATKEY_TEXMAP_AXIS</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_TEXOP" href="../../derelict/assimp3/types/AI_MATKEY_TEXOP.html">
+								<code>AI_MATKEY_TEXOP</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_TEXTURE" href="../../derelict/assimp3/types/AI_MATKEY_TEXTURE.html">
+								<code>AI_MATKEY_TEXTURE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_TWOSIDED" href="../../derelict/assimp3/types/AI_MATKEY_TWOSIDED.html">
+								<code>AI_MATKEY_TWOSIDED</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_UVTRANSFORM" href="../../derelict/assimp3/types/AI_MATKEY_UVTRANSFORM.html">
+								<code>AI_MATKEY_UVTRANSFORM</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MATKEY_UVWSRC" href="../../derelict/assimp3/types/AI_MATKEY_UVWSRC.html">
+								<code>AI_MATKEY_UVWSRC</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_SCENE_FLAGS_INCOMPLETE" href="../../derelict/assimp3/types/AI_SCENE_FLAGS_INCOMPLETE.html">
+								<code>AI_SCENE_FLAGS_INCOMPLETE</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_SCENE_FLAGS_NON_VERBOSE_FORMAT" href="../../derelict/assimp3/types/AI_SCENE_FLAGS_NON_VERBOSE_FORMAT.html">
+								<code>AI_SCENE_FLAGS_NON_VERBOSE_FORMAT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_SCENE_FLAGS_TERRAIN" href="../../derelict/assimp3/types/AI_SCENE_FLAGS_TERRAIN.html">
+								<code>AI_SCENE_FLAGS_TERRAIN</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_SCENE_FLAGS_VALIDATED" href="../../derelict/assimp3/types/AI_SCENE_FLAGS_VALIDATED.html">
+								<code>AI_SCENE_FLAGS_VALIDATED</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_SCENE_FLAGS_VALIDATION_WARNING" href="../../derelict/assimp3/types/AI_SCENE_FLAGS_VALIDATION_WARNING.html">
+								<code>AI_SCENE_FLAGS_VALIDATION_WARNING</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_UVTRAFO_ALL" href="../../derelict/assimp3/types/AI_UVTRAFO_ALL.html">
+								<code>AI_UVTRAFO_ALL</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_UVTRAFO_ROTATION" href="../../derelict/assimp3/types/AI_UVTRAFO_ROTATION.html">
+								<code>AI_UVTRAFO_ROTATION</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_UVTRAFO_SCALING" href="../../derelict/assimp3/types/AI_UVTRAFO_SCALING.html">
+								<code>AI_UVTRAFO_SCALING</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_UVTRAFO_TRANSLATION" href="../../derelict/assimp3/types/AI_UVTRAFO_TRANSLATION.html">
+								<code>AI_UVTRAFO_TRANSLATION</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="ASSIMP_CFLAGS_DEBUG" href="../../derelict/assimp3/types/ASSIMP_CFLAGS_DEBUG.html">
+								<code>ASSIMP_CFLAGS_DEBUG</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="ASSIMP_CFLAGS_NOBOOST" href="../../derelict/assimp3/types/ASSIMP_CFLAGS_NOBOOST.html">
+								<code>ASSIMP_CFLAGS_NOBOOST</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="ASSIMP_CFLAGS_SHARED" href="../../derelict/assimp3/types/ASSIMP_CFLAGS_SHARED.html">
+								<code>ASSIMP_CFLAGS_SHARED</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="ASSIMP_CFLAGS_SINGLETHREADED" href="../../derelict/assimp3/types/ASSIMP_CFLAGS_SINGLETHREADED.html">
+								<code>ASSIMP_CFLAGS_SINGLETHREADED</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="ASSIMP_CFLAGS_STLPORT" href="../../derelict/assimp3/types/ASSIMP_CFLAGS_STLPORT.html">
+								<code>ASSIMP_CFLAGS_STLPORT</code>
+							</a>
+						</td>
+						<td>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Global variables</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_DEBONE_THRESHOLD" href="../../derelict/assimp3/types/AI_DEBONE_THRESHOLD.html">
+								<code>AI_DEBONE_THRESHOLD</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">float</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_DEFAULT_MATERIAL_NAME" href="../../derelict/assimp3/types/AI_DEFAULT_MATERIAL_NAME.html">
+								<code>AI_DEFAULT_MATERIAL_NAME</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">string</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_FALSE" href="../../derelict/assimp3/types/AI_FALSE.html">
+								<code>AI_FALSE</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_LMW_MAX_WEIGHTS" href="../../derelict/assimp3/types/AI_LMW_MAX_WEIGHTS.html">
+								<code>AI_LMW_MAX_WEIGHTS</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MAX_BONE_WEIGHTS" href="../../derelict/assimp3/types/AI_MAX_BONE_WEIGHTS.html">
+								<code>AI_MAX_BONE_WEIGHTS</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MAX_FACES" href="../../derelict/assimp3/types/AI_MAX_FACES.html">
+								<code>AI_MAX_FACES</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MAX_FACE_INDICES" href="../../derelict/assimp3/types/AI_MAX_FACE_INDICES.html">
+								<code>AI_MAX_FACE_INDICES</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MAX_NUMBER_OF_COLOR_SETS" href="../../derelict/assimp3/types/AI_MAX_NUMBER_OF_COLOR_SETS.html">
+								<code>AI_MAX_NUMBER_OF_COLOR_SETS</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MAX_NUMBER_OF_TEXTURECOORDS" href="../../derelict/assimp3/types/AI_MAX_NUMBER_OF_TEXTURECOORDS.html">
+								<code>AI_MAX_NUMBER_OF_TEXTURECOORDS</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_MAX_VERTICES" href="../../derelict/assimp3/types/AI_MAX_VERTICES.html">
+								<code>AI_MAX_VERTICES</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_SBBC_DEFAULT_MAX_BONES" href="../../derelict/assimp3/types/AI_SBBC_DEFAULT_MAX_BONES.html">
+								<code>AI_SBBC_DEFAULT_MAX_BONES</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_SLM_DEFAULT_MAX_TRIANGLES" href="../../derelict/assimp3/types/AI_SLM_DEFAULT_MAX_TRIANGLES.html">
+								<code>AI_SLM_DEFAULT_MAX_TRIANGLES</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_SLM_DEFAULT_MAX_VERTICES" href="../../derelict/assimp3/types/AI_SLM_DEFAULT_MAX_VERTICES.html">
+								<code>AI_SLM_DEFAULT_MAX_VERTICES</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="AI_TRUE" href="../../derelict/assimp3/types/AI_TRUE.html">
+								<code>AI_TRUE</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="MAXLEN" href="../../derelict/assimp3/types/MAXLEN.html">
+								<code>MAXLEN</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="PP_ICL_PTCACHE_SIZE" href="../../derelict/assimp3/types/PP_ICL_PTCACHE_SIZE.html">
+								<code>PP_ICL_PTCACHE_SIZE</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Aliases</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiAnimBehaviour" href="../../derelict/assimp3/types/aiAnimBehaviour.html">
+								<code>aiAnimBehaviour</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">uint</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiBlendMode" href="../../derelict/assimp3/types/aiBlendMode.html">
+								<code>aiBlendMode</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">uint</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiBool" href="../../derelict/assimp3/types/aiBool.html">
+								<code>aiBool</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiComponent" href="../../derelict/assimp3/types/aiComponent.html">
+								<code>aiComponent</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">uint</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiDefaultLogStream" href="../../derelict/assimp3/types/aiDefaultLogStream.html">
+								<code>aiDefaultLogStream</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">uint</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiFileCloseProc" href="../../derelict/assimp3/types/aiFileCloseProc.html">
+								<code>aiFileCloseProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiFileIO.html">aiFileIO</a>*, <a href="../../derelict/assimp3/types/aiFile.html">aiFile</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiFileFlushProc" href="../../derelict/assimp3/types/aiFileFlushProc.html">
+								<code>aiFileFlushProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(<a href="../../derelict/assimp3/types/aiFile.html">aiFile</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiFileOpenProc" href="../../derelict/assimp3/types/aiFileOpenProc.html">
+								<code>aiFileOpenProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow <a href="../../derelict/assimp3/types/aiFile.html">aiFile</a>* function(<a href="../../derelict/assimp3/types/aiFileIO.html">aiFileIO</a>*, const(char)*, const(char)*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiFileReadProc" href="../../derelict/assimp3/types/aiFileReadProc.html">
+								<code>aiFileReadProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow uint function(<a href="../../derelict/assimp3/types/aiFile.html">aiFile</a>*, char*, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiFileSeek" href="../../derelict/assimp3/types/aiFileSeek.html">
+								<code>aiFileSeek</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow int function(<a href="../../derelict/assimp3/types/aiFile.html">aiFile</a>*, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiFileTellProc" href="../../derelict/assimp3/types/aiFileTellProc.html">
+								<code>aiFileTellProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow uint function(<a href="../../derelict/assimp3/types/aiFile.html">aiFile</a>*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiFileWriteProc" href="../../derelict/assimp3/types/aiFileWriteProc.html">
+								<code>aiFileWriteProc</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow uint function(<a href="../../derelict/assimp3/types/aiFile.html">aiFile</a>*, const(char)*, uint, uint)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiLightSourceType" href="../../derelict/assimp3/types/aiLightSourceType.html">
+								<code>aiLightSourceType</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">uint</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiLogStreamCallback" href="../../derelict/assimp3/types/aiLogStreamCallback.html">
+								<code>aiLogStreamCallback</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">extern(C) nothrow void function(const(char)*, char*)</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiOrigin" href="../../derelict/assimp3/types/aiOrigin.html">
+								<code>aiOrigin</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">uint</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiPostProcessSteps" href="../../derelict/assimp3/types/aiPostProcessSteps.html">
+								<code>aiPostProcessSteps</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">uint</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiPrimitiveType" href="../../derelict/assimp3/types/aiPrimitiveType.html">
+								<code>aiPrimitiveType</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">uint</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiPropertyTypeInfo" href="../../derelict/assimp3/types/aiPropertyTypeInfo.html">
+								<code>aiPropertyTypeInfo</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">uint</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiReturn" href="../../derelict/assimp3/types/aiReturn.html">
+								<code>aiReturn</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">int</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiShadingMode" href="../../derelict/assimp3/types/aiShadingMode.html">
+								<code>aiShadingMode</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">uint</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureFlags" href="../../derelict/assimp3/types/aiTextureFlags.html">
+								<code>aiTextureFlags</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">uint</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureMapMode" href="../../derelict/assimp3/types/aiTextureMapMode.html">
+								<code>aiTextureMapMode</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">uint</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureMapping" href="../../derelict/assimp3/types/aiTextureMapping.html">
+								<code>aiTextureMapping</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">uint</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureOp" href="../../derelict/assimp3/types/aiTextureOp.html">
+								<code>aiTextureOp</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">uint</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiTextureType" href="../../derelict/assimp3/types/aiTextureType.html">
+								<code>aiTextureType</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">uint</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>
+							<a id="aiUserData" href="../../derelict/assimp3/types/aiUserData.html">
+								<code>aiUserData</code>
+							</a>
+						</td>
+						<td>
+<code class="prettyprint lang-d">void*</code>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Authors</h2><!-- using block ddox.authors in ddox.layout.dt-->
+
+			</section>
+			<section>
+				<h2>Copyright</h2><!-- using block ddox.copyright in ddox.layout.dt-->
+
+			</section>
+			<section>
+				<h2>License</h2><!-- using block ddox.license in ddox.layout.dt-->
+
+			</section>
+		</div>
+	</body>
+</html>

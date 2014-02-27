@@ -1,19 +1,28 @@
+/**
+ * Contains Prefabs and Prefab, manages creation and management of prefabs.
+ */
 module core.prefabs;
-import core.gameobject;
-import components;
-import utility.filepath, utility.config;
+import core, components, utility;
 
 import yaml;
 import gl3n.linalg;
 import std.variant;
 
+/**
+ * Prefabs manages prefabs and allows access to them.
+ */
 final abstract class Prefabs
 {
 public static:
-	alias prefabs this;
-
+	/// The AA of prefabs.
 	Prefab[string] prefabs;
 
+	/// Allows functions to be called on this like it were the AA.
+	alias prefabs this;
+
+	/**
+	 * Load and initialize all prefabs in FilePath.Resources.Prefabs.
+	 */
 	void initialize()
 	{
 		foreach( key; prefabs.keys )
@@ -39,9 +48,18 @@ public static:
 	}
 }
 
+/**
+ * A prefab that allows for quick object creation.
+ */
 final class Prefab
 {
 public:
+	/**
+	 * Create a prefab from a YAML node.
+	 * 
+	 * Params:
+	 * 	yml =			The YAML node to get info from.
+	 */
 	this( Node yml )
 	{
 		transform = new Transform;
@@ -87,12 +105,24 @@ public:
 		}
 	}
 
+	/**
+	 * Creates a default prefab with a transform and $(D null) scriptClass.
+	 */
 	this()
 	{
 		transform = new Transform;
 		scriptClass = null;
 	}
 
+	/**
+	 * Creates a GameObject instance from the prefab.
+	 * 
+	 * Params:
+	 * 	overrideScript =			Create the instance from this class type instead of the prefab's default.
+	 *
+	 * Returns:
+	 * 	The new GameObject from the Prefab.
+	 */
 	final GameObject createInstance( const ClassInfo overrideScript = null )
 	{
 		GameObject result;

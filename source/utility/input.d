@@ -2,7 +2,7 @@
  * Defines the static Input class, which is responsible for handling all keyboard/mouse/controller interactions.
  */
 module utility.input;
-import utility.config, utility.filepath, utility.output;
+import utility;
 
 import yaml;
 import std.typecons, std.conv;

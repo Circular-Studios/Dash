@@ -2,21 +2,24 @@
  * Defines the Component abstract class, which is the base for all components.
  */
 module components.component;
-import core.properties, core.gameobject;
-import graphics.shaders;
+import core, graphics;
 
 /**
  * Interface for components to implement.
  */
 abstract class Component
 {
-	/**
-	* The GameObject that owns this component.
-	*/
-	mixin Property!( "GameObject", "owner", "public" );
+private:
+	GameObject _owner;
 
-	/*
-	 * 
+public:
+	/**
+	 * The GameObject that owns this component.
+	 */
+	mixin( Property!( _owner, AccessModifier.Public ) );
+
+	/**
+	 * Creates a Component and assigns the owner.
 	 */
 	this( GameObject owner )
 	{

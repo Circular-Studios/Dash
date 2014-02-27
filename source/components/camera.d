@@ -2,43 +2,30 @@
  * Defines the Camera class, which controls the view matrix for the world.
  */
 module components.camera;
-import core.properties, core.gameobject;
-import components.component;
-import graphics.shaders;
+import core, components, graphics;
 
 import gl3n.linalg;
 
-import std.signals, std.conv;
+import std.conv;
 
+/**
+ * Camera manages the viewmatrix and audio listeners for the world.
+ */
 final class Camera : Component
 {
-public:	
-	mixin Signal!( string, string );
-
-	this(  )
+public:
+	this()
 	{
 		super( null );
-		_viewMatrixIsDirty = true;
 	}
 
 	override void update() { }
 	override void shutdown() { }
 
-	final @property ref mat4 viewMatrix()
-	{
-		if( _viewMatrixIsDirty )
-			updateViewMatrix();
-
-		return _viewMatrix;
-	}
+	mixin( DirtyGetter!( _viewMatrix, "updateViewMatrix" ) );
 
 private:
 	mat4 _viewMatrix;
-	bool _viewMatrixIsDirty;
-	final void setMatrixDirty( string prop, string newVal )
-	{
-		_viewMatrixIsDirty = true;
-	}
 
 	final void updateViewMatrix()
 	{

@@ -1,8 +1,5 @@
 module components.material;
-import core.properties;
-import components;
-import graphics.graphics, graphics.shaders;
-import utility.config;
+import core, components, graphics, utility;
 
 import yaml;
 import derelict.opengl3.gl3, derelict.freeimage.freeimage;
@@ -10,10 +7,13 @@ import std.variant, std.conv;
 
 final class Material : Component
 {
+private:
+	Texture _diffuse, _normal, _specular;
+
 public:
-	mixin Property!( "Texture", "diffuse" );
-	mixin Property!( "Texture", "normal" );
-	mixin Property!( "Texture", "specular" );
+	mixin( Property!_diffuse );
+	mixin( Property!_normal );
+	mixin( Property!_specular );
 
 	/**
 	* Create a Material from a Yaml node.
@@ -46,10 +46,13 @@ public:
 
 final class Texture
 {
+private:
+	uint _width, _height, _glID;
+
 public:
-	mixin Property!( "uint", "width" );
-	mixin Property!( "uint", "height" );
-	mixin Property!( "uint", "glID" );
+	mixin( Property!_width );
+	mixin( Property!_height );
+	mixin( Property!_glID );
 
 	this( string filePath )
 	{

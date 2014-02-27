@@ -55,8 +55,8 @@ immutable string pointlightFS = q{
 
 	void main( void )
 	{
-		color = texture( diffuseTexture, fPosition_s.xy );
-		normal = texture( normalTexture, fPosition_s.xy );
+		vec4 textureColor = texture( diffuseTexture, fPosition_s.xy ).xyz;
+		vec3 normal = texture( normalTexture, fPosition_s.xy ).xyz;
 
 	}
 };

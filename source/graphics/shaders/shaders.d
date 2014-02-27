@@ -1,9 +1,6 @@
 module graphics.shaders.shaders;
-import core.properties;
-import components;
-import graphics.graphics;
+import core, components, graphics, utility;
 import graphics.shaders.glsl;
-import utility.filepath, utility.output;
 
 import derelict.opengl3.gl3;
 import gl3n.linalg;
@@ -18,7 +15,8 @@ public enum : string
 	GeometryShader = "geometry",
 	AmbientLightShader = "ambientlight",
 	DirectionalLightShader = "direcionallight",
-	PointLightShader = "pointlight"
+	PointLightShader = "pointlight",
+	AnimatedGeometryShader = "animatedgeometry",
 }
 
 /*
@@ -50,12 +48,19 @@ public static:
 		shaders[ GeometryShader ] = new Shader( GeometryShader, geometryVS, geometryFS, true );
 		shaders[ AmbientLightShader ] = new Shader( AmbientLightShader, ambientlightVS, ambientlightFS, true );
 		shaders[ DirectionalLightShader ] = new Shader( DirectionalLightShader, directionallightVS, directionallightFS, true );
-		shaders[ PointLightShader ] = new Shader( PointLightShader, pointlightVS, pointlightFS, true );
+		//shaders[ PointLightShader ] = new Shader( PointLightShader, pointlightVS, pointlightFS, true );
+		shaders[ AnimatedGeometryShader ] = new Shader( AnimatedGeometryShader, animatedGeometryVS, geometryFS, true ); // Only VS changed, FS stays the same
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders, "*.fs.glsl" ) )
 		{
 			// Strip .fs from file name
 			string name = file.baseFileName[ 0..$-3 ];
-			if( name !in [ EnumMembers!ShaderUniform ] )
+			// if statement hitler
+			// blame: Tyler
+			if( name != GeometryShader &&
+			   name != AnimatedGeometryShader &&
+			   name != AmbientLightShader &&
+			   name != DirectionalLightShader &&
+			   name != PointLightShader )
 			{
 				shaders[ name ] = new Shader( name, file.directory ~ "\\" ~ name ~ ".vs.glsl", file.fullPath );
 			}
@@ -100,11 +105,15 @@ private:
 
 final package class Shader
 {
+private:
+	uint _programID, _vertexShaderID, _fragmentShaderID;
+	string _shaderName;
+
 public:
-	mixin Property!( "uint", "programID", "protected" );
-	mixin Property!( "uint", "vertexShaderID", "protected" );
-	mixin Property!( "uint", "fragmentShaderID", "protected" );
-	mixin Property!( "string", "shaderName", "protected" );
+	mixin( Property!_programID );
+	mixin( Property!_vertexShaderID );
+	mixin( Property!_fragmentShaderID );
+	mixin( Property!_shaderName );
 	protected int[string] uniformLocations;
 
 	this(string name, string vertex, string fragment, bool preloaded = false )
@@ -243,8 +252,8 @@ public:
 	 */
 	final void bindDirectionalLight( DirectionalLight light )
 	{
-		glUniform3f( getUniformLocation( ShaderUniform.DirectionalLightDirection ), light.direction.x, light.direction.y, light.direction.z );
-		glUniform3f( getUniformLocation( ShaderUniform.DirectionalLightColor ), light.color.x, light.color.y, light.color.z );
+		glUniform3f( getUniformLocation( ShaderUniform.LightDirection ), light.direction.x, light.direction.y, light.direction.z );
+		glUniform3f( getUniformLocation( ShaderUniform.LightColor ), light.color.x, light.color.y, light.color.z );
 	}
 
 	/*
@@ -262,3 +271,37 @@ public:
 }
 
 
+///
+/// Animated Geometry Shader
+///
+immutable string animatedGeometryVS = q{
+	#version 400
+
+	layout(location = 0) in vec3 vPosition_m;
+	layout(location = 1) in vec2 vUV;
+	layout(location = 2) in vec3 vNormal_m;
+	layout(location = 3) in vec3 vTangent_m;
+	layout(location = 4) in vec4 vBone_m;
+	layout(location = 5) in vec4 vWeight_m;
+
+	out vec4 fPosition_s;
+	out vec3 fNormal_w;
+	out vec2 fUV;
+	out vec3 fTangent_w;
+	out vec3 fBitangent_w;
+
+	uniform mat4 world;
+	uniform mat4 worldView;
+	uniform mat4 worldViewProj;
+
+	void main( void )
+	{
+		// gl_Position is like SV_Position
+		fPosition_s = worldViewProj * vec4( vPosition_m, 1.0f );
+		gl_Position = fPosition_s;
+		fUV = vUV;
+
+		fNormal_w = ( world * vec4( vNormal_m, 0.0f ) ).xyz;
+		fTangent_w =  ( world * vec4( vTangent_m, 0.0f ) ).xyz;
+	}
+};

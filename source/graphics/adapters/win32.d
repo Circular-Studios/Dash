@@ -2,9 +2,7 @@ module graphics.adapters.win32;
 
 version( Windows ):
 
-import core.dgame, core.gameobject, core.properties;
-import graphics.graphics, graphics.adapters.adapter;
-import utility.input, utility.output;
+import core, graphics, utility;
 
 import win32.windef, win32.winuser, win32.winbase;
 import win32.wingdi : PIXELFORMATDESCRIPTOR, SetPixelFormat, SwapBuffers;
@@ -56,11 +54,15 @@ LRESULT WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 
 final class Win32 : Adapter
 {
-public:
-	static @property Win32 get() { return cast(Win32)Graphics.adapter; }
+private:
+	HWND _hWnd;
+	HINSTANCE _hInstance;
 
-	mixin Property!( "HWND", "hWnd" );
-	mixin Property!( "HINSTANCE", "hInstance" );
+public:
+	mixin( Property!_hWnd );
+	mixin( Property!_hInstance );
+
+	static @property Win32 get() { return cast(Win32)Graphics.adapter; }
 
 	override void initialize()
 	{

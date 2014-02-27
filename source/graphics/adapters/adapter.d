@@ -63,7 +63,7 @@ public:
 		GeometryShader = "geometry",
 		AnimatedGeometryShader = "animatedGeometry",
 		LightingShader = "lighting",
-		WindowMesh = "WindowMesh"
+		WindowMesh = "unitsquare"
 	}
 
 	abstract void initialize();

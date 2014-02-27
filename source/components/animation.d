@@ -8,9 +8,9 @@ import gl3n.linalg;
 class Animation : Component
 {
 public:
-	mixin Property!( "AssetAnimation", "animationData", "public" );
-	mixin Property!( "int", "currentAnim", "public" );
-	mixin Property!( "float", "currentAnimTime", "public" );
+	mixin Property!( "AssetAnimation", "animationData", "private" );
+	mixin Property!( "int", "currentAnim", "private" );
+	mixin Property!( "float", "currentAnimTime", "private" );
 	mixin Property!( "mat4[]", "currBoneTransforms", "public" );
 
 	this( AssetAnimation assetAnimation)

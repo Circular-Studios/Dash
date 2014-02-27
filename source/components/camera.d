@@ -8,6 +8,9 @@ import gl3n.linalg;
 
 import std.conv;
 
+/**
+ * Camera manages the viewmatrix and audio listeners for the world.
+ */
 final class Camera : Component
 {
 public:

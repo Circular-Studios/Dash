@@ -18,6 +18,9 @@ public:
 	 */
 	mixin( Property!( _owner, AccessModifier.Public ) );
 
+	/**
+	 * Creates a Component and assigns the owner.
+	 */
 	this( GameObject owner )
 	{
 		this.owner = owner;

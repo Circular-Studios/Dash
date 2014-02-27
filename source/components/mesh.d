@@ -2,13 +2,51 @@
  * Defines the Mesh class, which controls all meshes loaded into the world.
  */
 module components.mesh;
-
 import core, components, graphics, utility;
 
 import derelict.opengl3.gl3, derelict.assimp3.assimp;
 
 import std.stdio, std.stream, std.format, std.math;
 
+/**
+ * Loads and manages meshes into OpenGL.
+ * 
+ * Supported formats:
+	3DS
+	BLEND (Blender 3D)
+	DAE/Collada
+	FBX
+	IFC-STEP
+	ASE
+	DXF
+	HMP
+	MD2
+	MD3
+	MD5
+	MDC
+	MDL
+	NFF
+	PLY
+	STL
+	X
+	OBJ
+	SMD
+	LWO
+	LXO
+	LWS
+	TER
+	AC3D
+	MS3D
+	COB
+	Q3BSP
+	XGL
+	CSM
+	BVH
+	B3D
+	NDO
+	Ogre XML
+	Q3D
+ */
 class Mesh : Component
 {
 private:
@@ -23,6 +61,13 @@ public:
 	mixin( Property!_glVertexBuffer );
 	mixin( Property!_animated );
 
+	/**
+	 * Creates a mesh.
+	 * 
+	 * Params:
+	 * 		filePath =			The path to the file.
+	 * 		mesh =				The AssImp mesh object to pull data from.
+	 */
 	this( string filePath, const(aiMesh*) mesh )
 	{
 		super( null );
@@ -219,11 +264,11 @@ public:
 		glBindVertexArray( 0 );
 	}
 
-	override void update()
-	{
+	override void update() { }
 
-	}
-
+	/**
+	 * Deletes mesh data stored on the GPU.
+	 */
 	override void shutdown()
 	{
 		glDeleteBuffers( 1, &_glVertexBuffer );

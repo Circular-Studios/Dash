@@ -1,11 +1,9 @@
 module components.assetanimation;
-
 import core.properties;
 import components.component;
-
-import derelict.assimp3.assimp;
 import utility.output;
 
+import derelict.assimp3.assimp;
 import gl3n.linalg;
 
 class AssetAnimation

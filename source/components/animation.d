@@ -1,5 +1,4 @@
 module components.animation;
-
 import core.properties;
 import components.component, components.assetanimation;
 

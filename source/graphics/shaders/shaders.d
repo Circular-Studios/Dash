@@ -35,7 +35,6 @@ public enum ShaderUniform
 	LightColor = "light.color",
 	LightRadius = "light.radius",
 	LightPosition = "light.pos",
-	AmbientLight = "ambientLight",
 	EyePosition = "eyePosition_w",
 	InverseViewProjection = "invViewProj",
 }
@@ -244,7 +243,7 @@ public:
 	 */
 	final void bindAmbientLight( AmbientLight light )
 	{
-		glUniform3f( getUniformLocation( ShaderUniform.AmbientLight ), light.color.x, light.color.y, light.color.z );
+		glUniform3f( getUniformLocation( ShaderUniform.LightColor ), light.color.x, light.color.y, light.color.z );
 	}
 
 	/*

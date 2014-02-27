@@ -62,18 +62,15 @@ class PointLight : Light
 {
 private:
 	float _radius;
-	Mesh _mesh;
 public:
 	/*
 	 * The area that lighting will be calculated for 
 	 */
 	mixin( Property!_radius );
-	mixin( Property!_mesh );
 
 	this( GameObject owner, vec3 color, float radius )
 	{
 		this.radius = radius;
-		mesh = Assets.get!Mesh( "8unitsphere" );
 		super( owner, color );
 	}
 }

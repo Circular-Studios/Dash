@@ -60,7 +60,7 @@ public:
 	mixin( Property!_near );
 	mixin( Property!_far );
 	mixin( Property!_deferredFrameBuffer );
-	mixin( Property!_diffuseRenderTexture ); //Alpha channel stores Specular exponent
+	mixin( Property!_diffuseRenderTexture ); //Alpha channel stores Specular map average
 	mixin( Property!_normalRenderTexture ); //Alpha channel stores nothing important
 	mixin( Property!_depthRenderTexture );
 	
@@ -70,7 +70,8 @@ public:
 	 **/
 	enum : string 
 	{
-		WindowMesh = "WindowMesh"
+		UnitSquare = "unitsquare",
+		UnitSphere = "unitsphere",
 	}
 
 	abstract void initialize();
@@ -203,51 +204,84 @@ public:
 		glDepthMask( GL_FALSE );
 		glDisable( GL_DEPTH_TEST );
 		glEnable( GL_BLEND );
-		// glBlendEquation( GL_FUNC_ADD );
-		// glBlendFunc(GL_ONE, GL_ONE );
+		glBlendEquation( GL_FUNC_ADD );
+		glBlendFunc(GL_ONE, GL_ONE );
 		
 		//This line switches back to the default framebuffer
 		glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-		auto shader = Shaders[DirectionalLightShader];
-		glUseProgram( shader.programID );
-		
-		// bind geometry pass outputs
-		// diffuse
-		glUniform1i( shader.getUniformLocation( ShaderUniform.DiffuseTexture ), 0 );
-		glActiveTexture( GL_TEXTURE0 );
-		glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
-		
-		// normal
-		glUniform1i( shader.getUniformLocation( ShaderUniform.NormalTexture ), 1 );
-		glActiveTexture( GL_TEXTURE1 );
-		glBindTexture( GL_TEXTURE_2D, normalRenderTexture );
-		
-		// depth
-		glUniform1i( shader.getUniformLocation( ShaderUniform.DepthTexture ), 2 );
-		glActiveTexture( GL_TEXTURE2 );
-		glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
-		
-		// bind the directional and ambient lights
-		if( directionalLights.length == 0 )
+		if( ambientLight !is null )
 		{
-			directionalLights ~= new DirectionalLight( null, vec3( 0, 0, 0 ), vec3( 0, 0, 0 ) );
-		}
-		if( ambientLight is null )
-		{
-			ambientLight = new AmbientLight( null, vec3( 0, 0, 0 ) );
-		}
-		shader.bindDirectionalLight( directionalLights[0] );
-		shader.bindAmbientLight( ambientLight );
+			auto shader = Shaders[ AmbientLightShader ];
+			glUseProgram( shader.programID );
 
-		// bind inverseViewProj for rebuilding world positions from pixel locations
-		shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-		                            ( projection * ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) ).inverse() );
+			// bind geometry pass outputs
+			// diffuse
+			glUniform1i( shader.getUniformLocation( ShaderUniform.DiffuseTexture ), 0 );
+			glActiveTexture( GL_TEXTURE0 );
+			glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
+			
+			// normal
+			glUniform1i( shader.getUniformLocation( ShaderUniform.NormalTexture ), 1 );
+			glActiveTexture( GL_TEXTURE1 );
+			glBindTexture( GL_TEXTURE_2D, normalRenderTexture );
+			
+			// depth
+			glUniform1i( shader.getUniformLocation( ShaderUniform.DepthTexture ), 2 );
+			glActiveTexture( GL_TEXTURE2 );
+			glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
+
+			shader.bindAmbientLight( ambientLight );
+			// bind inverseViewProj for rebuilding world positions from pixel locations
+			shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
+			                            ( projection * ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) ).inverse() );
+
+			// bind the window mesh for directional lights
+			glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
+			glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, null );
+		}
+
+		// bind shared directional light resources
+		if( directionalLights.length != 0 )
+		{
+			auto shader = Shaders[ DirectionalLightShader ];
+			glUseProgram( shader.programID );
+
+			// bind geometry pass outputs
+			// diffuse
+			glUniform1i( shader.getUniformLocation( ShaderUniform.DiffuseTexture ), 0 );
+			glActiveTexture( GL_TEXTURE0 );
+			glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
+			
+			// normal
+			glUniform1i( shader.getUniformLocation( ShaderUniform.NormalTexture ), 1 );
+			glActiveTexture( GL_TEXTURE1 );
+			glBindTexture( GL_TEXTURE_2D, normalRenderTexture );
+			
+			// depth
+			glUniform1i( shader.getUniformLocation( ShaderUniform.DepthTexture ), 2 );
+			glActiveTexture( GL_TEXTURE2 );
+			glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
+
+			// bind inverseViewProj for rebuilding world positions from pixel locations
+			shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
+			                            ( projection * ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) ).inverse() );
+			// bind the window mesh for directional lights
+			glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
+			// bind and draw directional lights
+			foreach( light; directionalLights )
+			{
+				shader.bindDirectionalLight( light );
+				glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, null );
+			}
+		}
+
+
+
+
 		
-		// bind the window mesh for directional lights`
-		glBindVertexArray( Assets.get!Mesh( WindowMesh ).glVertexArray );
-		glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, null );
+
 
 		// put it on the screen
 		swapBuffers();

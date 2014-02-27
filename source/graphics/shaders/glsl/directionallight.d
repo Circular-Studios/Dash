@@ -1,9 +1,9 @@
-module graphics.shaders.lightingGLSL;
+module graphics.shaders.glsl.directionallight;
 
 package:
 
 
-immutable string lightingVS = q{
+immutable string directionallightVS = q{
 	#version 400
 
 	layout(location = 0) in vec3 vPosition_s;
@@ -20,7 +20,7 @@ immutable string lightingVS = q{
 	}
 };
 
-immutable string lightingFS = q{
+immutable string directionallightFS = q{
 	#version 400
 
 	struct DirectionalLight
@@ -36,8 +36,7 @@ immutable string lightingFS = q{
 	uniform sampler2D diffuseTexture;
 	uniform sampler2D normalTexture;
 	uniform sampler2D depthTexture;
-	uniform DirectionalLight dirLight;
-	uniform vec3 ambientLight;
+	uniform DirectionalLight light;
 	uniform vec3 eyePosition_w;
 	uniform mat4 invViewProj;
 
@@ -67,9 +66,8 @@ immutable string lightingFS = q{
 		vec3 eyeDirection = normalize( ( pixelPosition_w - eyePosition_w).xyz );
 		float specularIntensity = clamp( dot( eyeDirection, reflect( -dirLight.direction, normal ) ), 0, 1 );
 
-		vec3 ambient = ( ambientLight * textureColor );
 		vec3 diffuse = ( diffuseIntensity * dirLight.color ) * textureColor;
 		vec3 specular = ( specularIntensity * dirLight.color ) * textureColor;
-		color = vec4( ( ambient + diffuse + specular ), 1.0f );
+		color = vec4( ( diffuse + specular ), 1.0f );
 	}
 };

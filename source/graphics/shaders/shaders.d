@@ -2,8 +2,7 @@ module graphics.shaders.shaders;
 import core.properties;
 import components;
 import graphics.graphics;
-import graphics.shaders.geometryGLSL;
-import graphics.shaders.lightingGLSL;
+import graphics.shaders.glsl;
 import utility.filepath, utility.output;
 
 import derelict.opengl3.gl3;
@@ -14,11 +13,12 @@ import std.string, std.traits;
 /*
  * Other shader related constants
  */
-
 public enum : string
 {
 	GeometryShader = "geometry",
-	LightingShader = "lighting"
+	AmbientLightShader = "ambientlight",
+	DirectionalLightShader = "direcionallight",
+	PointLightShader = "pointlight"
 }
 
 /*
@@ -33,11 +33,13 @@ public enum ShaderUniform
 	NormalTexture = "normalTexture",
 	SpecularTexture = "specularTexture",
 	DepthTexture = "depthTexture",
-	DirectionalLightDirection = "dirLight.direction",
-	DirectionalLightColor = "dirLight.color",
+	LightDirection = "light.direction",
+	LightColor = "light.color",
+	LightRadius = "light.radius",
+	LightPosition = "light.pos",
 	AmbientLight = "ambientLight",
 	EyePosition = "eyePosition_w",
-	InverseViewProjection = "invViewProj"
+	InverseViewProjection = "invViewProj",
 }
 
 final abstract class Shaders
@@ -46,12 +48,14 @@ public static:
 	final void initialize()
 	{
 		shaders[ GeometryShader ] = new Shader( GeometryShader, geometryVS, geometryFS, true );
-		shaders[ LightingShader ] = new Shader( LightingShader, lightingVS, lightingFS, true );
+		shaders[ AmbientLightShader ] = new Shader( AmbientLightShader, ambientlightVS, ambientlightFS, true );
+		shaders[ DirectionalLightShader ] = new Shader( DirectionalLightShader, directionallightVS, directionallightFS, true );
+		shaders[ PointLightShader ] = new Shader( PointLightShader, pointlightVS, pointlightFS, true );
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders, "*.fs.glsl" ) )
 		{
 			// Strip .fs from file name
 			string name = file.baseFileName[ 0..$-3 ];
-			if( name != GeometryShader && name != LightingShader )
+			if( name !in [ EnumMembers!ShaderUniform ] )
 			{
 				shaders[ name ] = new Shader( name, file.directory ~ "\\" ~ name ~ ".vs.glsl", file.fullPath );
 			}

@@ -1,4 +1,4 @@
-module graphics.shaders.geometryGLSL;
+module graphics.shaders.glsl.geometry;
 
 package:
 

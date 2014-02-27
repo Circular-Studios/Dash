@@ -168,12 +168,17 @@ private:
 }
 
 /**
- * UDA to be placed on the class that extends DGame
+ * Initializes reflection things.
  */
-struct Game( T ) if( is( T : DGame ) )
+static this()
 {
-	static this()
+	foreach( mod; ModuleInfo )
 	{
-		DGame.instance = new T;
+		foreach( klass; mod.localClasses )
+		{
+			// Find the appropriate game loop.
+			if( klass.base == typeid(DGame) )
+				DGame.instance = cast(DGame)klass.create();
+		}
 	}
 }

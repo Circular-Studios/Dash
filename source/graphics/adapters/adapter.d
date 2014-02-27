@@ -155,6 +155,7 @@ public:
 			glUseProgram( Shaders[AnimatedGeometryShader].programID );
 			shader = Shaders[AnimatedGeometryShader];
 			
+			shader.bindUniformMatrix4fv( ShaderUniform.Bones, object.animation.currBoneTransforms, object.animation.currBoneTransforms.length );
 		}
 		else // not animated mesh
 		{

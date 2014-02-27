@@ -25,6 +25,10 @@ public:
 	 */
 	mixin Property!( "Mesh", "mesh", "public" );
 	/**
+	 * The Animation belonging to the object
+	 */
+	mixin Property!( "Animation", "animation", "public" );
+	/**
 	* The light attached to this object
 	*/
 	mixin Property!( "Light", "light", "public" );
@@ -186,6 +190,8 @@ public:
 			material = cast(Material)newComponent;
 		else if( typeid( newComponent ) == typeid( Mesh ) )
 			mesh = cast(Mesh)newComponent;
+		else if( typeid( newComponent ) == typeid( Animation ) )
+			animation = cast(Animation)newComponent;
 		else if( typeid( newComponent ) == typeid( DirectionalLight ) || 
 				 typeid( newComponent ) == typeid( AmbientLight ) )
 			light = cast(Light)newComponent;

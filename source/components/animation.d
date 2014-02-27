@@ -20,6 +20,7 @@ public:
 		currentAnim = 0;
 		currentAnimTime = 0.0f;
 		animationData = assetAnimation;
+		getFrameTransforms( 0.0f );
 		//currentPose = animationData.getPose();
 	}
 

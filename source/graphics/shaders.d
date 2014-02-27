@@ -71,7 +71,8 @@ public enum ShaderUniform
 		DepthTexture = "depthTexture",
 		DirectionalLightDirection = "dirLight.direction",
 		DirectionalLightColor = "dirLight.color",
-		AmbientLight = "ambientLight"
+		AmbientLight = "ambientLight",
+		Bones = "bones"
 }
 
 final package class Shader
@@ -188,6 +189,19 @@ public:
 		auto currentUniform = getUniformLocation( uniform );
 
 		glUniformMatrix4fv( currentUniform, 1, true, matrix.value_ptr );
+	}
+
+	final void bindUniformMatrix4fv( ShaderUniform uniform, mat4[] matrices, int count )
+	{
+		float[] matptr;
+		foreach( matrix; matrices )
+		{
+			for( int i = 0; i < 16; i++ )
+			{
+				matptr ~= matrix.value_ptr()[i];
+			}
+		}
+		glUniformMatrix4fv( getUniformLocation( uniform ), count, true, matptr.ptr );
 	}
 
 	final void bindMaterial( Material material )
@@ -316,11 +330,19 @@ immutable string animatedGeometryVS = q{
 	uniform mat4 world;
 	uniform mat4 worldView;
 	uniform mat4 worldViewProj;
+	
+	uniform mat4[100] bones;
 
 	void main( void )
 	{
+		// Calculate vertex change from animation
+		mat4 boneTransform = bones[ int(vBone_m[ 0 ]) ] * vWeight_m[ 0 ];
+		boneTransform += bones[ int(vBone_m[ 1 ]) ] * vWeight_m[ 1 ];
+		boneTransform += bones[ int(vBone_m[ 2 ]) ] * vWeight_m[ 2 ];
+		boneTransform += bones[ int(vBone_m[ 3 ]) ] * vWeight_m[ 3 ];
+
 		// gl_Position is like SV_Position
-		fPosition_s = worldViewProj * vec4( vPosition_m, 1.0f );
+		fPosition_s = worldViewProj * ( boneTransform * vec4( vPosition_m, 1.0f ) );
 		gl_Position = fPosition_s;
 		fUV = vUV;
 

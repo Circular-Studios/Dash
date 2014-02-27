@@ -68,6 +68,11 @@ public:
 				// Assign the bone animation data to the bone
 				nodeToAssign.bone.positionKeys = convertVectorArray( animation.mChannels[ i ].mPositionKeys,
 																animation.mChannels[ i ].mNumPositionKeys );
+				nodeToAssign.bone.scaleKeys = convertVectorArray( animation.mChannels[ i ].mScalingKeys,
+																  animation.mChannels[ i ].mNumScalingKeys );
+				nodeToAssign.bone.rotationKeys = convertQuat( animation.mChannels[ i ].mRotationKeys,
+															  animation.mChannels[ i ].mNumRotationKeys );
+
 				int iii = nodeToAssign.bone.positionKeys.length;
 				const(aiNodeAnim*) temp = animation.mChannels[ i ];
 				_amountAnim++;
@@ -86,6 +91,18 @@ public:
 		{
 			aiVector3D vector = vectors[ i ].mValue;
 			keys ~= vec3( vector.x, vector.y, vector.z );
+		}
+
+		return keys;
+	}
+	// Go through array of keys and convert/store quat
+	quat[] convertQuat( const(aiQuatKey*) quaternions, int numKeys )
+	{
+		quat[] keys;
+		for( int i = 0; i < numKeys; i++ )
+		{
+			aiQuaternion quaternion = quaternions[ i ].mValue;
+			keys ~= quat( quaternion.x, quaternion.y, quaternion.z, quaternion.w );
 		}
 
 		return keys;
@@ -123,9 +140,9 @@ public:
 			if( node.bone.positionKeys.length > 0 )
 			{
 				mat4 boneTransform = mat4.identity;
-				//boneTransform.scale( node.bone.scaleKeys[ time ] );
-				//boneTransform *= node.bone.rotationKeys[ time ].to_matrix!( 4, 4 );
-				boneTransform.translate( node.bone.positionKeys[ 0 ].x, node.bone.positionKeys[ 0 ].y, node.bone.positionKeys[ 0 ].z );
+				boneTransform.scale( node.bone.scaleKeys[ 0 ].vector );
+				boneTransform = boneTransform * node.bone.rotationKeys[ 0 ].to_matrix!( 4, 4 );
+				boneTransform.translation( node.bone.positionKeys[ 0 ].vector );
 			
 				// FIX: Still need to get boneoffsets and multiply by it
 				finalTransform = ( boneTransform * parentTransform * node.transform );
@@ -147,8 +164,8 @@ public:
 			for( int i = 0; i < node.children.length; i++ )
 			{
 				// FIX: Still need to get nodeTransform and multiply by it
-				finalTransform = ( node.transform * parentTransform );
-				fillTransforms( transforms, node.children[ i ], time, finalTransform );
+				finalTransform = ( parentTransform * node.transform );
+				fillTransforms( transforms, node.children[ i ], time, parentTransform );
 			}
 		}
 	}
@@ -177,18 +194,7 @@ public:
 		return matrix;
 	}
 
-	/*final void updateMatrix()
-	{
-		_matrix = mat4.identity;
-		// Scale
-		_matrix.scale( scale.x, scale.y, scale.z );
-		// Rotate
-		_matrix = _matrix * rotation.to_matrix!( 4, 4 );
-		// Translate
-		_matrix.translate( position.x, position.y, position.z );
 
-		_matrixIsDirty = false;
-	}*/
 
 	void shutdown()
 	{
@@ -218,7 +224,7 @@ public:
 	{
 		int id;
 		vec3[] positionKeys;
-		//Quaternion[] rotationKeys;
-		//vec3[] scaleKeys;
+		quat[] rotationKeys;
+		vec3[] scaleKeys;
 	}
 }

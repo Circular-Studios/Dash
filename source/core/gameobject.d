@@ -9,6 +9,9 @@ import gl3n.linalg, gl3n.math;
 
 import std.signals, std.conv, std.variant;
 
+/**
+ * Manages all components and transform in the world. Can be overridden.
+ */
 class GameObject
 {
 private:
@@ -22,37 +25,29 @@ private:
 	Component[ClassInfo] componentList;
 
 public:
-	/**
-	 * The current transform of the object.
-	 */
+	/// The current transform of the object.
 	mixin( Property!( _transform, AccessModifier.Public ) );
-	/**
-	 * The Material belonging to the object
-	 */
+	/// The Material belonging to the object.
 	mixin( Property!( _material, AccessModifier.Public ) );
-	/**
-	 * The Mesh belonging to the object
-	 */
+	/// The Mesh belonging to the object.
 	mixin( Property!( _mesh, AccessModifier.Public ) );
-	/**
-	* The light attached to this object
-	*/
+	/// The light attached to this object.
 	mixin( Property!( _light, AccessModifier.Public ) );
-	/**
-	* The camera attached to this object
-	*/
+	/// The camera attached to this object.
 	mixin( Property!( _camera, AccessModifier.Public ) );
-	/**
-	 * The object that this object belongs to
-	 */
+	/// The object that this object belongs to.
 	mixin( Property!( _parent, AccessModifier.Public ) );
-	/**
-	 * All of the objects which list this as parent
-	 */
+	/// All of the objects which list this as parent
 	mixin( Property!( _children, AccessModifier.Public ) );
 
 	/**
 	 * Create a GameObject from a Yaml node.
+	 * 
+	 * Params:
+	 * 	yamlObj =			The YAML node to pull info from.
+	 * 
+	 * Returns:
+	 * 	A new game object with components and info pulled from yaml.
 	 */
 	static GameObject createFromYaml( Node yamlObj )
 	{

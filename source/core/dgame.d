@@ -4,16 +4,31 @@
 module core.dgame;
 import core, components, graphics, utility;
 
-enum GameState { Menu = 0, Game = 1, Reset = 2, Quit = 3 };
+/**
+ * The states the game can be in.
+ */
+enum GameState
+{
+	/// Render the menu, don't step physics.
+	Menu = 0,
+	/// The main game state.
+	Game = 1,
+	/// Reload all assets at the beginning of the next cycle.
+	Reset = 2,
+	/// Quit the game and the end of this cycle.
+	Quit = 3
+};
 
+/**
+ * The main game loop manager. Meant to be overridden.
+ */
 class DGame
 {
 public:
-	static
-	{
-		DGame instance;
-	}
+	/// The instance to be running from
+	static DGame instance;
 
+	/// Current state of the game
 	GameState currentState;
 
 	/**
@@ -101,8 +116,6 @@ protected:
 	 */
 	void onSaveState() { }
 
-	//UserInterface ui;
-
 private:
 	/**
 	 * Function called to initialize controllers.
@@ -154,6 +167,9 @@ private:
 	}
 }
 
+/**
+ * UDA to be placed on the class that extends DGame
+ */
 struct Game( T ) if( is( T : DGame ) )
 {
 	static this()

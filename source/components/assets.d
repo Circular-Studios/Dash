@@ -54,7 +54,7 @@ public static:
 
 			// If animation data, add animation
 			if(scene.mNumAnimations > 0)
-				animations[ file.baseFileName ] = new AssetAnimation( file.baseFileName, scene.mAnimations[0], scene.mMeshes[0], scene.mRootNode);
+				animations[ file.baseFileName ] = new AssetAnimation( scene.mAnimations[0], scene.mMeshes[0], scene.mRootNode );
 
 			// Add mesh
 			meshes[ file.baseFileName ] = new Mesh( file.fullPath, scene.mMeshes[0] );

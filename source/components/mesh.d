@@ -41,7 +41,8 @@ public:
 				int[][] vertBones = new int[][ mesh.mNumVertices ];
 				float[][] vertWeights = new float[][ mesh.mNumVertices ];
 				for( int i = 0; i < mesh.mNumBones; i++ )
-				{					
+				{		
+					const(aiBone*) bone = mesh.mBones[ i ];
 					for( int ii = 0; ii < mesh.mBones[ i ].mNumWeights; ii++ )
 					{
 						vertBones[ cast(int)mesh.mBones[ i ].mWeights[ ii ].mVertexId ] ~= i;

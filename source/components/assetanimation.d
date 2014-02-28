@@ -15,7 +15,7 @@ public:
 	mixin Property!( "int", "numberOfBones", "public" );
 	mixin Property!( "int", "amountAnim", "public" );
 
-	this( string name, const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) boneHierarchy )
+	this( const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) boneHierarchy )
 	{
 		_animationSet.duration = cast(float)animation.mDuration;
 		_animationSet.fps = cast(float)animation.mTicksPerSecond;
@@ -36,13 +36,13 @@ public:
 		if( nodeId != -1 )
 		{
 			// Create bone and assign bone data
-			node.bone = new Bone();
-			node.bone.id = nodeId;
-			node.transform = convertAIMatrix( mesh.mBones[ node.bone.id ].mOffsetMatrix );
-			assignCorrectAnimationData( animation, node );
-
+			node.id = nodeId;
+			node.transform = convertAIMatrix( mesh.mBones[ node.id ].mOffsetMatrix );
+		
 			_numberOfBones++;
 		}
+
+		assignCorrectAnimationData( animation, node );
 
 		// Assign parent
 		if( parent !is null )
@@ -65,15 +65,17 @@ public:
 			// If the names match
 			if( cast(string)animation.mChannels[ i ].mNodeName.data == nodeToAssign.name )
 			{
+				string name = cast(string)animation.mChannels[ i ].mNodeName.data;
+
 				// Assign the bone animation data to the bone
-				nodeToAssign.bone.positionKeys = convertVectorArray( animation.mChannels[ i ].mPositionKeys,
+				nodeToAssign.positionKeys = convertVectorArray( animation.mChannels[ i ].mPositionKeys,
 																animation.mChannels[ i ].mNumPositionKeys );
-				nodeToAssign.bone.scaleKeys = convertVectorArray( animation.mChannels[ i ].mScalingKeys,
+				nodeToAssign.scaleKeys = convertVectorArray( animation.mChannels[ i ].mScalingKeys,
 																  animation.mChannels[ i ].mNumScalingKeys );
-				nodeToAssign.bone.rotationKeys = convertQuat( animation.mChannels[ i ].mRotationKeys,
+				nodeToAssign.rotationKeys = convertQuat( animation.mChannels[ i ].mRotationKeys,
 															  animation.mChannels[ i ].mNumRotationKeys );
 
-				int iii = nodeToAssign.bone.positionKeys.length;
+				int iii = nodeToAssign.positionKeys.length;
 				const(aiNodeAnim*) temp = animation.mChannels[ i ];
 				_amountAnim++;
 			}
@@ -103,6 +105,7 @@ public:
 		{
 			aiQuaternion quaternion = quaternions[ i ].mValue;
 			keys ~= quat( quaternion.x, quaternion.y, quaternion.z, quaternion.w );
+			int ii = 0;
 		}
 
 		return keys;
@@ -126,47 +129,42 @@ public:
 	{
 		mat4[] boneTransforms = new mat4[ _numberOfBones ];
 
+		// Check shader/model
+		/*for( int i = 0; i < _numberOfBones; i++)
+		{
+			boneTransforms[ i ] = mat4.identity;
+		}*/
+
 		fillTransforms( boneTransforms, _animationSet.animNodes, time, mat4.identity );
 
 		return boneTransforms;
 	}
 
+	// NOTE: Where assigncorrectanimation data is going to cause issues
+	// NOTE: First pose should not modify the object, same position? Why?
 	void fillTransforms( mat4[] transforms, Node node, float time, mat4 parentTransform )
 	{
+		// Calculate matrix based on node.bone data and time
 		mat4 finalTransform;
-		if( node.bone !is null )
+		if( node.rotationKeys.length > 0 )
 		{
-			// Calculate matrix based on node.bone data and time
-			if( node.bone.positionKeys.length > 0 )
-			{
-				mat4 boneTransform = mat4.identity;
-				boneTransform.scale( node.bone.scaleKeys[ 0 ].vector );
-				boneTransform = boneTransform * node.bone.rotationKeys[ 0 ].to_matrix!( 4, 4 );
-				boneTransform.translation( node.bone.positionKeys[ 0 ].vector );
+			mat4 boneTransform = mat4.identity;
+			//boneTransform.scale( node.scaleKeys[ 0 ].vector );
+			boneTransform = boneTransform * node.rotationKeys[ 60 ].to_matrix!( 4, 4 );
+			//boneTransform.translation( node.positionKeys[ 0 ].vector );
 			
-				// FIX: Still need to get boneoffsets and multiply by it
-				finalTransform = ( boneTransform * parentTransform * node.transform );
-				transforms[ node.bone.id ] = finalTransform;
-			}
-			else
-			{
-				finalTransform = ( parentTransform * node.transform );
-			} 
-			
-			transforms[ node.bone.id ] = finalTransform;
-			for( int i = 0; i < node.children.length; i++ )
-			{
-				fillTransforms( transforms, node.children[ i ], time, finalTransform );
-			}
+			finalTransform = ( boneTransform * parentTransform * node.transform );
+			transforms[ node.id ] = finalTransform;
 		}
 		else
 		{
-			for( int i = 0; i < node.children.length; i++ )
-			{
-				// FIX: Still need to get nodeTransform and multiply by it
-				finalTransform = ( parentTransform * node.transform );
-				fillTransforms( transforms, node.children[ i ], time, parentTransform );
-			}
+			//finalTransform = ( parentTransform * node.transform );
+		} 
+		
+		// Store the transform in the correct place and check children
+		for( int i = 0; i < node.children.length; i++ )
+		{
+			fillTransforms( transforms, node.children[ i ], time, finalTransform );
 		}
 	}
 
@@ -215,16 +213,13 @@ public:
 		}
 
 		string name;
+		int id;
 		Node parent;
 		Node[] children;
-		Bone* bone;
-		mat4 transform;
-	}
-	struct Bone
-	{
-		int id;
+		
 		vec3[] positionKeys;
 		quat[] rotationKeys;
 		vec3[] scaleKeys;
+		mat4 transform;
 	}
 }

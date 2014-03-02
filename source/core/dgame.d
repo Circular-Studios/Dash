@@ -2,7 +2,8 @@
  * Defines the DGame class, the base class for all game logic.
  */
 module core.dgame;
-import core, components, graphics, utility;
+import core, components, graphics, utility, utility.awesomium;
+import std.string;
 
 /**
  * The states the game can be in.
@@ -44,9 +45,59 @@ public:
 	 */
 	final void run()
 	{
+
+		string URL = "http://google.com";
+		string OUTFILE = "./result.jpg";
+
+		
+		// Create the WebCore with the default options
+		awe_webcore_initialize_default();
+		
+		// Create a new WebView to load our page
+		awe_webview* webView = awe_webcore_create_webview(1024, 768, false);
+		
+		// Create our URL string
+		awe_string* url_str = awe_string_create_from_ascii(URL.toStringz(), URL.length);
+		
+		// Load the URL into our WebView instance
+		awe_webview_load_url(webView,
+		                     url_str,
+		                     awe_string_empty(),
+		                     awe_string_empty(),
+		                     awe_string_empty());
+		
+		// Destroy our URL string
+		awe_string_destroy(url_str);
+		
+		// Wait for WebView to finish loading the page
+		while(awe_webview_is_loading_page(webView))
+			awe_webcore_update();
+		
+		// Render our WebView to a buffer
+		const(awe_renderbuffer)* buffer = awe_webview_render(webView);
+		
+		// Make sure our buffer is not NULL; WebView::render will
+		// return NULL if the WebView process has crashed.
+		if(buffer !is null) {
+			// Create our filename string
+			awe_string* file_str = awe_string_create_from_ascii(OUTFILE.toStringz(), OUTFILE.length);
+			
+			// Save our RenderBuffer directly to a JPEG image
+			awe_renderbuffer_save_to_jpeg(buffer, file_str, 90);
+			
+			// Destroy our filename string
+			awe_string_destroy(file_str);
+		}
+		
+		// Destroy our WebView instance
+		awe_webview_destroy(webView);
+		
+		// Destroy our WebCore instance
+		awe_webcore_shutdown();
+
 		// Init tasks
 		//TaskManager.initialize();
-
+		/*
         start();
 
         // Loop until there is a quit message from the window or the user.
@@ -89,7 +140,7 @@ public:
 			Graphics.endDraw();
         }
 
-        stop();
+        stop();*/
 	}
 
 	//static Camera camera;

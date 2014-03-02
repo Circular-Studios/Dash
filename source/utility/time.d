@@ -45,7 +45,7 @@ public static:
 			second += delta;
 			if( second >= 1.0f )
 			{
-				Output.printValue( OutputType.Info, "Framerate", frameCount );
+				log( OutputType.Info, "Framerate: ", frameCount );
 				second = frameCount = 0;
 			}
 		}

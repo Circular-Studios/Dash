@@ -45,18 +45,23 @@ public:
 	 * 
 	 * Params:
 	 * 	yamlObj =			The YAML node to pull info from.
+	 * 	scriptOverride =	The ClassInfo to use to create the object. Overrides YAML setting.
 	 * 
 	 * Returns:
 	 * 	A new game object with components and info pulled from yaml.
 	 */
-	static GameObject createFromYaml( Node yamlObj )
+	static GameObject createFromYaml( Node yamlObj, const ClassInfo scriptOverride = null )
 	{
 		GameObject obj;
 		Variant prop;
 		Node innerNode;
 
 		// Try to get from script
-		if( Config.tryGet!string( "Script.ClassName", prop, yamlObj ) )
+		if( scriptOverride !is null )
+		{
+			obj = cast(GameObject)scriptOverride.create();
+		}
+		else if( Config.tryGet!string( "Script.ClassName", prop, yamlObj ) )
 		{
 			const ClassInfo scriptClass = ClassInfo.find( prop.get!string );
 

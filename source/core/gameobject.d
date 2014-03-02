@@ -114,7 +114,9 @@ public:
 
 		if( Config.tryGet!Light( "Light", prop, yamlObj ) )
 		{
-			obj.addComponent( prop.get!Light );
+			auto light = prop.get!Light;
+			obj.addComponent( light );
+			light.owner = obj;
 		}
 
 		obj.transform.updateMatrix();
@@ -192,7 +194,8 @@ public:
 		else if( typeid( newComponent ) == typeid( Mesh ) )
 			mesh = cast(Mesh)newComponent;
 		else if( typeid( newComponent ) == typeid( DirectionalLight ) || 
-				 typeid( newComponent ) == typeid( AmbientLight ) )
+				 typeid( newComponent ) == typeid( AmbientLight ) ||
+		         typeid( newComponent ) == typeid( PointLight ))
 			light = cast(Light)newComponent;
 		else if( typeid( newComponent ) == typeid( Camera ) )
 			camera = cast(Camera)newComponent;
@@ -226,18 +229,17 @@ class Transform
 {
 private:
 	GameObject _owner;
+	vec3 _position;
+	quat _rotation;
+	vec3 _scale;
 
 public:
 	mixin Properties;
 
 	mixin( Property!( _owner, AccessModifier.Public ) );
-
-	vec3 position;
-	quat rotation;
-	vec3 scale;
-	//mixin EmmittingProperty!( "vec3", "position", "public" );
-	//mixin EmmittingProperty!( "quat", "rotation", "public" );
-	//mixin EmmittingProperty!( "vec3", "scale", "public" );
+	mixin( Property!( _position, AccessModifier.Public ) );
+	mixin( Property!( _rotation, AccessModifier.Public ) );
+	mixin( Property!( _scale, AccessModifier.Public ) );
 
 	this( GameObject obj = null )
 	{

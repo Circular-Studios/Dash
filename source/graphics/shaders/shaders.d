@@ -8,15 +8,15 @@ import gl3n.linalg;
 import std.string, std.traits;
 
 /*
- * Other shader related constants
+ * String constants for shader names
  */
 public enum : string
 {
 	GeometryShader = "geometry",
+	AnimatedGeometryShader = "animatedgeometry",
 	AmbientLightShader = "ambientlight",
 	DirectionalLightShader = "direcionallight",
 	PointLightShader = "pointlight",
-	AnimatedGeometryShader = "animatedgeometry",
 }
 
 /*
@@ -24,19 +24,22 @@ public enum : string
  */
 public enum ShaderUniform 
 {
+	/// Matrices
 	World = "world",
 	WorldView = "worldView",
 	WorldViewProjection = "worldViewProj",
+	InverseViewProjection = "invViewProj",
+	/// Textures
 	DiffuseTexture = "diffuseTexture",
 	NormalTexture = "normalTexture",
 	SpecularTexture = "specularTexture",
 	DepthTexture = "depthTexture",
+	/// Lights
 	LightDirection = "light.direction",
 	LightColor = "light.color",
 	LightRadius = "light.radius",
-	LightPosition = "light.pos",
+	LightPosition = "light.pos_w",
 	EyePosition = "eyePosition_w",
-	InverseViewProjection = "invViewProj",
 }
 
 final abstract class Shaders
@@ -45,10 +48,10 @@ public static:
 	final void initialize()
 	{
 		shaders[ GeometryShader ] = new Shader( GeometryShader, geometryVS, geometryFS, true );
+		shaders[ AnimatedGeometryShader ] = new Shader( AnimatedGeometryShader, animatedGeometryVS, geometryFS, true ); // Only VS changed, FS stays the same
 		shaders[ AmbientLightShader ] = new Shader( AmbientLightShader, ambientlightVS, ambientlightFS, true );
 		shaders[ DirectionalLightShader ] = new Shader( DirectionalLightShader, directionallightVS, directionallightFS, true );
-		//shaders[ PointLightShader ] = new Shader( PointLightShader, pointlightVS, pointlightFS, true );
-		shaders[ AnimatedGeometryShader ] = new Shader( AnimatedGeometryShader, animatedGeometryVS, geometryFS, true ); // Only VS changed, FS stays the same
+		shaders[ PointLightShader ] = new Shader( PointLightShader, pointlightVS, pointlightFS, true );
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders, "*.fs.glsl" ) )
 		{
 			// Strip .fs from file name
@@ -208,11 +211,26 @@ public:
 		return uniformLocations[ uniform ];
 	}
 
+	/*
+	 * Pass through for glUniform1f
+	 */
 	final void bindUniform1f( ShaderUniform uniform, const float value )
 	{
 		glUniform1f( getUniformLocation( uniform ), value );
 	}
 
+	/*
+	 * Pass through for glUniform 3f
+	 * Passes to the shader in XYZ order
+	 */
+	final void bindUniform3f( ShaderUniform uniform, const vec3 value )
+	{
+		glUniform3f( getUniformLocation( uniform ), value.x, value.y, value.z );
+	}
+
+	/*
+	 *  pass through for glUniformMatrix4fv
+	 */
 	final void bindUniformMatrix4fv( ShaderUniform uniform, mat4 matrix )
 	{
 		glUniformMatrix4fv( getUniformLocation( uniform ), 1, true, matrix.value_ptr );
@@ -239,21 +257,32 @@ public:
 	}
 
 	/*
-	 * Set the ambient light
+	 * Bind an ambient light
 	 */
 	final void bindAmbientLight( AmbientLight light )
 	{
-		glUniform3f( getUniformLocation( ShaderUniform.LightColor ), light.color.x, light.color.y, light.color.z );
+		bindUniform3f( ShaderUniform.LightColor, light.color );
 	}
 
 	/*
-	 * Set the (currently only 1 possible) directional light
+	 * Bind a directional light
 	 */
 	final void bindDirectionalLight( DirectionalLight light )
 	{
-		glUniform3f( getUniformLocation( ShaderUniform.LightDirection ), light.direction.x, light.direction.y, light.direction.z );
-		glUniform3f( getUniformLocation( ShaderUniform.LightColor ), light.color.x, light.color.y, light.color.z );
+		bindUniform3f( ShaderUniform.LightDirection, light.direction );
+		bindUniform3f( ShaderUniform.LightColor, light.color );
 	}
+
+	/*
+	 * Bind a point light
+	 */
+	final void bindPointLight( PointLight light )
+	{
+		bindUniform3f( ShaderUniform.LightColor, light.color );
+		bindUniform3f( ShaderUniform.LightPosition, light.owner.transform.worldPosition );
+		bindUniform1f( ShaderUniform.LightRadius, light.radius );
+	}
+
 
 	/*
 	 * Sets the eye position for lighting calculations

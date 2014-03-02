@@ -7,31 +7,25 @@ import core, graphics;
 /**
  * Interface for components to implement.
  */
-abstract class Component
+interface IComponent
 {
-private:
-	GameObject _owner;
-
 public:
 	/**
 	 * The GameObject that owns this component.
 	 */
-	mixin( Property!( _owner, AccessModifier.Public ) );
-
-	/**
-	 * Creates a Component and assigns the owner.
-	 */
-	this( GameObject owner )
+	final @property ref GameObject owner()
 	{
-		this.owner = owner;
+		static GameObject owner;
+		
+		return owner;
 	}
 
 	/**
 	 * Function called on update.
 	 */
-	abstract void update();
+	void update();
 	/**
 	 * Function called on shutdown.
 	 */
-	abstract void shutdown();
+	void shutdown();
 }

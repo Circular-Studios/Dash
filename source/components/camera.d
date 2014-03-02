@@ -11,14 +11,9 @@ import std.conv;
 /**
  * Camera manages the viewmatrix and audio listeners for the world.
  */
-final class Camera : Component
+final class Camera : IComponent
 {
 public:
-	this()
-	{
-		super( null );
-	}
-
 	override void update() { }
 	override void shutdown() { }
 

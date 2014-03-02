@@ -22,7 +22,7 @@ private:
 	Camera _camera;
 	GameObject _parent;
 	GameObject[] _children;
-	Component[ClassInfo] componentList;
+	IComponent[TypeInfo] componentList;
 
 public:
 	/// The current transform of the object.
@@ -182,9 +182,9 @@ public:
 	/**
 	 * Adds a component to the object.
 	 */
-	final void addComponent( T )( T newComponent ) if( is( T : Component ) )
+	final void addComponent( T )( T newComponent ) if( is( T : IComponent ) )
 	{
-		componentList[ T.classinfo ] = newComponent;
+		componentList[ typeid(T) ] = newComponent;
 
 		// Add component to proper property
 		if( typeid( newComponent ) == typeid( Material ) )

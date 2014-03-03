@@ -4,12 +4,16 @@
 module components.icomponent;
 import core, graphics;
 
+import yaml;
+
 /**
  * Interface for components to implement.
  */
 interface IComponent
 {
 public:
+	static void function( Node, GameObject )[string] initializers;
+
 	/**
 	 * The GameObject that owns this component.
 	 */

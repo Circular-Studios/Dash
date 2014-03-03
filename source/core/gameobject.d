@@ -2,7 +2,7 @@
  * Defines the GameObject class, to be subclassed by scripts and instantiated for static objects.
  */
 module core.gameobject;
-import core, components, graphics, utility.config;
+import core, components, graphics, utility;
 
 import yaml;
 import gl3n.linalg, gl3n.math;
@@ -83,29 +83,19 @@ public:
 			obj = new GameObject;
 		}
 
-		if( Config.tryGet!string( "Camera", prop, yamlObj ) )
+		// Init components
+		foreach( string key, Node value; yamlObj )
 		{
-			auto cam = new Camera;
-			obj.addComponent( cam );
-			cam.owner = obj;
+			if( key == "Name" || key == "Script" || key == "Transform" || key == "Parent" || key == "InstanceOf" )
+				continue;
+
+			if( auto init = key in IComponent.initializers )
+				(*init)( value, obj );
+			else
+				logWarning( "Unknown key: ", key );
 		}
 
-		if( Config.tryGet!string( "Material", prop, yamlObj ) )
-		{
-			obj.addComponent( Assets.get!Material( prop.get!string ) );
-		}
-
-		if( Config.tryGet!string( "Mesh", prop, yamlObj ) )
-		{
-			obj.addComponent( Assets.get!Mesh( prop.get!string ) );
-
-			// If the mesh has animation also add animation component
-			if( Assets.get!Mesh( prop.get!string ).animated )
-			{
-				obj.addComponent( new Animation( Assets.get!AssetAnimation( prop.get!string ) ) );
-			}
-		}
-
+		// Init transform
 		if( Config.tryGet( "Transform", innerNode, yamlObj ) )
 		{
 			vec3 transVec;
@@ -115,11 +105,6 @@ public:
 				obj.transform.position = transVec;
 			if( Config.tryGet( "Rotation", transVec, innerNode ) )
 				obj.transform.rotation = quat.euler_rotation( radians(transVec.y), radians(transVec.z), radians(transVec.x) );
-		}
-
-		if( Config.tryGet!Light( "Light", prop, yamlObj ) )
-		{
-			obj.addComponent( prop.get!Light );
 		}
 
 		obj.transform.updateMatrix();

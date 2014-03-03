@@ -273,3 +273,19 @@ public:
 		glDeleteBuffers( 1, &_glVertexArray );
 	}
 }
+
+static this()
+{
+	import yaml;
+	IComponent.initializers[ "Mesh" ] = ( Node yml, GameObject obj )
+	{
+		auto mesh = Assets.get!Mesh( yml.get!string );
+		obj.addComponent( mesh );
+		
+		// If the mesh has animation also add animation component
+		if( mesh.animated )
+		{
+			obj.addComponent( new Animation( Assets.get!AssetAnimation( yml.get!string ) ) );
+		}
+	};
+}

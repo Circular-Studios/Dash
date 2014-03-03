@@ -81,3 +81,11 @@ public:
 		glDeleteBuffers( 1, &_glID );
 	}
 }
+
+static this()
+{
+	IComponent.initializers[ "Material" ] = ( Node yml, GameObject obj )
+	{
+		obj.addComponent( Assets.get!Material( yml.get!string ) );
+	};
+}

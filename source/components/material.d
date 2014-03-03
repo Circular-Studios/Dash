@@ -5,7 +5,7 @@ import yaml;
 import derelict.opengl3.gl3, derelict.freeimage.freeimage;
 import std.variant, std.conv;
 
-final class Material : Component
+final class Material : IComponent
 {
 private:
 	Texture _diffuse, _normal, _specular;
@@ -33,11 +33,6 @@ public:
 			obj.specular = Assets.get!Texture( prop.get!string );
 
 		return obj;
-	}
-
-	this()
-	{
-		super( null );
 	}
 
 	override void update() { }

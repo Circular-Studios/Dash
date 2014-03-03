@@ -1,10 +1,10 @@
 module components.animation;
 import core.properties;
-import components.component, components.assetanimation;
+import components.icomponent, components.assetanimation;
 
 import gl3n.linalg;
 
-class Animation : Component
+class Animation : IComponent
 {
 private:
 	AssetAnimation _animationData;
@@ -20,23 +20,15 @@ public:
 
 	this( AssetAnimation assetAnimation)
 	{
-		super( null );
-
 		currentAnimation = 0;
 		currentPosition = 0.0f;
 		animationData = assetAnimation;
 		//currentPose = animationData.getPose();
 	}
 
-	override void update()
-	{
+	override void update() { }
 
-	}
-
-	override void shutdown()
-	{
-
-	}
+	override void shutdown() { }
 
 	class Bone
 	{

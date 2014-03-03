@@ -2,7 +2,7 @@ module components;
 public:
 import components.animation;
 import components.assetanimation;
-import components.component;
+import components.icomponent;
 import components.assets;
 import components.material;
 import components.mesh;

@@ -3,7 +3,7 @@ import core, components, graphics;
 
 import gl3n.linalg;
 
-class Light : Component
+class Light : IComponent
 {
 private:
 	vec3 _color;
@@ -13,20 +13,12 @@ public:
 
 	this( vec3 color )
 	{
-		super( null );
-
 		this.color = color;
 	}
 	
-	override void update()
-	{
+	override void update() { }
 
-	}
-
-	override void shutdown()
-	{
-
-	}
+	override void shutdown() { }
 }
 
 class AmbientLight : Light 

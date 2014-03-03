@@ -47,7 +47,7 @@ import std.stdio, std.stream, std.format, std.math;
 	Ogre XML
 	Q3D
  */
-class Mesh : Component
+class Mesh : IComponent
 {
 private:
 	uint _glVertexArray, _numVertices, _numIndices, _glIndexBuffer, _glVertexBuffer;
@@ -70,8 +70,6 @@ public:
 	 */
 	this( string filePath, const(aiMesh*) mesh )
 	{
-		super( null );
-
 		int floatsPerVertex, vertexSize;
 		float[] outputData;
 		uint[] indices;

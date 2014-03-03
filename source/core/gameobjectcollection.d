@@ -8,13 +8,23 @@ import yaml;
 
 import std.path;
 
+/**
+ * Manages a collection of GameObjects.
+ */
 final class GameObjectCollection
 {
 public:
+	/// The AA of game objects managed.
+	GameObject[string] objects;
+
+	/// Allows functions to be called on this as if it were the AA.
 	alias objects this;
 
 	/**
 	 * Load all objects inside the specified folder in FilePath.Objects.
+	 * 
+	 * Params:
+	 * 	objectPath =			The folder location inside of /Objects to look for objects in.
 	 */
 	final void loadObjects( string objectPath = "" )
 	{
@@ -57,6 +67,9 @@ public:
 	/**
 	 * Call the given function on each game object.
 	 * 
+	 * Params:
+	 * 	func =				The function to call on each object.
+	 * 
 	 * Examples:
 	 * ---
 	 * goc.apply( go => go.update() );
@@ -84,10 +97,11 @@ public:
 		apply( go => go.draw() );
 	}
 
+	/**
+	 * Get the object with the given key.
+	 */
 	final GameObject opIndex( string key )
 	{
 		return objects[ key ];
 	}
-
-	GameObject[string] objects;
 }

@@ -6,37 +6,22 @@ import core, components, graphics;
 
 import gl3n.linalg;
 
-import std.signals, std.conv;
+import std.conv;
 
-final class Camera : Component
+/**
+ * Camera manages the viewmatrix and audio listeners for the world.
+ */
+final class Camera : IComponent
 {
-public:	
-	mixin Signal!( string, string );
-
-	this(  )
-	{
-		super( null );
-		_viewMatrixIsDirty = true;
-	}
-
+public:
 	override void update() { }
 	override void shutdown() { }
 
-	final @property ref mat4 viewMatrix()
-	{
-		if( _viewMatrixIsDirty )
-			updateViewMatrix();
-
-		return _viewMatrix;
-	}
+	mixin( DirtyGetter!( _viewMatrix, "updateViewMatrix" ) );
 
 private:
 	mat4 _viewMatrix;
-	bool _viewMatrixIsDirty;
-	final void setMatrixDirty( string prop, string newVal )
-	{
-		_viewMatrixIsDirty = true;
-	}
+
 	final void updateViewMatrix()
 	{
 		//Assuming pitch & yaw are in radians

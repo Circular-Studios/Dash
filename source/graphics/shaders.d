@@ -77,11 +77,15 @@ public enum ShaderUniform
 
 final package class Shader
 {
+private:
+	uint _programID, _vertexShaderID, _fragmentShaderID;
+	string _shaderName;
+
 public:
-	mixin Property!( "uint", "programID", "protected" );
-	mixin Property!( "uint", "vertexShaderID", "protected" );
-	mixin Property!( "uint", "fragmentShaderID", "protected" );
-	mixin Property!( "string", "shaderName", "protected" );
+	mixin( Property!_programID );
+	mixin( Property!_vertexShaderID );
+	mixin( Property!_fragmentShaderID );
+	mixin( Property!_shaderName );
 	protected int[string] uniformLocations;
 
 	this(string name, string vertex, string fragment, bool preloaded = false )

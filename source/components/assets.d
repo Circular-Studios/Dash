@@ -1,5 +1,5 @@
 /**
- * Defines the static Assets class, a static class which manages all textures, meshes, etc...
+ * Defines the static Assets class, a static class which manages all textures, meshes, materials, and animations.
  */
 module components.assets;
 import components, utility;
@@ -7,6 +7,9 @@ import components, utility;
 import yaml;
 import derelict.freeimage.freeimage, derelict.assimp3.assimp;
 
+/**
+ * Assets manages all assets that aren't code, GameObjects, or Prefabs.
+ */
 final abstract class Assets
 {
 public static:

@@ -1,19 +1,22 @@
 module components.assetanimation;
-
 import core.properties;
-import components.component;
-
-import derelict.assimp3.assimp;
+import components.icomponent;
 import utility.output;
 
+import derelict.assimp3.assimp;
 import gl3n.linalg;
 
 class AssetAnimation
 {
+private:
+	AnimationSet _animationSet;
+	int _numberOfBones;
+	int _amountAnim;
+
 public:
-	mixin Property!( "AnimationSet", "animationSet", "public" );
-	mixin Property!( "int", "numberOfBones", "public" );
-	mixin Property!( "int", "amountAnim", "public" );
+	mixin( Property!_animationSet );
+	mixin( Property!_numberOfBones );
+	mixin( Property!_amountAnim );
 
 	this( const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) boneHierarchy )
 	{

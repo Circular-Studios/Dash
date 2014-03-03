@@ -2,27 +2,74 @@
  * Defines the Mesh class, which controls all meshes loaded into the world.
  */
 module components.mesh;
-
 import core, components, graphics, utility;
 
 import derelict.opengl3.gl3, derelict.assimp3.assimp;
 
 import std.stdio, std.stream, std.format, std.math;
 
-class Mesh : Component
+/**
+ * Loads and manages meshes into OpenGL.
+ * 
+ * Supported formats:
+	3DS
+	BLEND (Blender 3D)
+	DAE/Collada
+	FBX
+	IFC-STEP
+	ASE
+	DXF
+	HMP
+	MD2
+	MD3
+	MD5
+	MDC
+	MDL
+	NFF
+	PLY
+	STL
+	X
+	OBJ
+	SMD
+	LWO
+	LXO
+	LWS
+	TER
+	AC3D
+	MS3D
+	COB
+	Q3BSP
+	XGL
+	CSM
+	BVH
+	B3D
+	NDO
+	Ogre XML
+	Q3D
+ */
+class Mesh : IComponent
 {
-public:
-	mixin Property!( "bool", "animated", "protected" );
-	mixin Property!( "uint", "glVertexArray", "protected" );
-	mixin Property!( "uint", "numVertices", "protected" );
-	mixin Property!( "uint", "numIndices", "protected" );
-	mixin BackedProperty!( "uint", "_glIndexBuffer", "glIndexBuffer" );
-	mixin BackedProperty!( "uint", "_glVertexBuffer", "glVertexBuffer" );
+private:
+	uint _glVertexArray, _numVertices, _numIndices, _glIndexBuffer, _glVertexBuffer;
+	bool _animated;
 
+public:
+	mixin( Property!_glVertexArray );
+	mixin( Property!_numVertices );
+	mixin( Property!_numIndices );
+	mixin( Property!_glIndexBuffer );
+	mixin( Property!_glVertexBuffer );
+	mixin( Property!_animated );
+
+	/**
+	 * Creates a mesh.
+	 * 
+	 * Params:
+	 * 		filePath =			The path to the file.
+	 * 		mesh =				The AssImp mesh object to pull data from.
+	 */
 	this( string filePath, const(aiMesh*) mesh )
 	{
-		super( null );
-
 		int floatsPerVertex, vertexSize;
 		float[] outputData;
 		uint[] indices;
@@ -216,25 +263,14 @@ public:
 		glBindVertexArray( 0 );
 	}
 
-	override void update()
-	{
+	override void update() { }
 
-	}
-
+	/**
+	 * Deletes mesh data stored on the GPU.
+	 */
 	override void shutdown()
 	{
 		glDeleteBuffers( 1, &_glVertexBuffer );
 		glDeleteBuffers( 1, &_glVertexArray );
-	}
-
-private:
-	union
-	{
-		uint _glIndexBuffer;
-	}
-
-	union
-	{
-		uint _glVertexBuffer;
 	}
 }

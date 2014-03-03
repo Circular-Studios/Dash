@@ -1,43 +1,41 @@
 module components.animation;
-
 import core.properties;
-import components.component, components.assetanimation;
+import components.icomponent, components.assetanimation;
 
 import gl3n.linalg;
 
-class Animation : Component
+class Animation : IComponent
 {
+private:
+	AssetAnimation _animationData;
+	int _currentAnim;
+	float _currentAnimTime;
+	mat4[] _currBoneTransforms;
+
 public:
-	mixin Property!( "AssetAnimation", "animationData", "private" );
-	mixin Property!( "int", "currentAnim", "private" );
-	mixin Property!( "float", "currentAnimTime", "private" );
-	mixin Property!( "mat4[]", "currBoneTransforms", "public" );
+	mixin( Property!_animationData );
+	mixin( Property!_currentAnim );
+	mixin( Property!_currentAnimTime );
+	mixin( Property!_currBoneTransforms );
 
 	this( AssetAnimation assetAnimation)
 	{
-		super( null );
-
-		currentAnim = 0;
-		currentAnimTime = 0.0f;
-		animationData = assetAnimation;
-		getFrameTransforms( 0.0f );
-		//currentPose = animationData.getPose();
+		_currentAnim = 0;
+		_currentAnimTime = 0.0f;
+		_animationData = assetAnimation;
 	}
 
-	override void update()
+	override void update() 
 	{
 		getFrameTransforms( 0.0f );
 	}
 
-	override void shutdown()
-	{
-
-	}
+	override void shutdown() { }
 
 	void getFrameTransforms( float changeInTime )
 	{
 		// Update currentanimtime based on changeintime
-		
+
 		// Calculate and store array of bonetransforms to pass to the shader
 		currBoneTransforms = animationData.getTransformsAtTime( currentAnimTime );
 	}

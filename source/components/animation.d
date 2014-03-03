@@ -1,6 +1,6 @@
 module components.animation;
 import core.properties;
-import components.component, components.assetanimation;
+import components.icomponent, components.assetanimation;
 
 import gl3n.linalg;
 

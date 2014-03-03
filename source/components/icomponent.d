@@ -1,7 +1,7 @@
 /**
  * Defines the Component abstract class, which is the base for all components.
  */
-module components.component;
+module components.icomponent;
 import core, graphics;
 
 /**

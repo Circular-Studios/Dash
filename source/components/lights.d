@@ -66,7 +66,7 @@ public:
 	/*
 	 * The area that lighting will be calculated for 
 	 */
-	mixin( Property!_radius );
+	mixin( Property!(_radius, AccessModifier.Public) );
 
 	this( GameObject owner, vec3 color, float radius )
 	{

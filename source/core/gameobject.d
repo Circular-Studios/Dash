@@ -117,6 +117,8 @@ public:
 			auto light = prop.get!Light;
 			obj.addComponent( light );
 			light.owner = obj;
+			if( typeid(light) == typeid(PointLight) )
+				light.owner.transform.scale.clear( (cast(PointLight)light).radius );
 		}
 
 		obj.transform.updateMatrix();
@@ -307,6 +309,8 @@ public:
 
 		_matrixIsDirty = false;
 	}
+
+
 
 private:
 	mat4 _matrix;

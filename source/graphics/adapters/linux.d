@@ -43,7 +43,7 @@ public:
 
 		if( display is null )
 		{
-			Output.printMessage( OutputType.Error, "Cannot connect to X server." );
+			logError( "Cannot connect to X server." );
 			return;
 		}
 
@@ -56,7 +56,7 @@ public:
 
 		if( xvi is null )
 		{
-			Output.printMessage( OutputType.Error, "No appropriate visual found." );
+			logError( "No appropriate visual found." );
 			return;
 		}
 

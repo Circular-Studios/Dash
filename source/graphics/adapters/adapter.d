@@ -245,7 +245,7 @@ public:
 
 			// bind the window mesh for directional lights
 			glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
-			glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, null );
+			glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSquare ).numVertices, GL_UNSIGNED_INT, null );
 		}
 
 		// Directional Lights
@@ -266,7 +266,7 @@ public:
 			foreach( light; directionalLights )
 			{
 				shader.bindDirectionalLight( light );
-				glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, null );
+				glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSquare ).numVertices, GL_UNSIGNED_INT, null );
 			}
 		}
 
@@ -281,8 +281,10 @@ public:
 			// bind inverseViewProj for rebuilding world positions from pixel locations
 			shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
 			                            ( projection * ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) ).inverse() );
+			shader.setEyePosition( activeCamera !is null ? activeCamera.owner.transform.worldPosition : vec3( 0, 0, 0 ) );
 			// bind the window mesh for directional lights
 			glBindVertexArray( Assets.get!Mesh( UnitSphere ).glVertexArray );
+			//glCullFace( GL_FRONT );
 			// bind and draw directional lights
 			foreach( light; pointLights )
 			{
@@ -290,8 +292,9 @@ public:
 				                            ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) *
 				                            light.owner.transform.matrix );
 				shader.bindPointLight( light );
-				glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, null );
+				glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSphere ).numVertices, GL_UNSIGNED_INT, null );
 			}
+			//glCullFace( GL_BACK );
 		}
 		
 		// put it on the screen

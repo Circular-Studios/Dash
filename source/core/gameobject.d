@@ -3,6 +3,7 @@
  */
 module core.gameobject;
 import core, components, graphics, utility.config;
+import utility;
 
 import yaml;
 import gl3n.linalg, gl3n.math;
@@ -118,7 +119,10 @@ public:
 			obj.addComponent( light );
 			light.owner = obj;
 			if( typeid(light) == typeid(PointLight) )
-				light.owner.transform.scale.clear( (cast(PointLight)light).radius );
+			{
+				light.owner.transform.scale = vec3( (cast(PointLight)light).radius );
+			}
+				
 		}
 
 		obj.transform.updateMatrix();

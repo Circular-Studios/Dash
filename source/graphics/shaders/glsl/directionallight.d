@@ -67,7 +67,7 @@ immutable string directionallightFS = q{
 		vec3 eyeDirection = normalize( ( pixelPosition_w - eyePosition_w).xyz );
 		float specularScale = clamp( dot( eyeDirection, reflect( -light.direction, normal ) ), 0, 1 );
 
-		vec3 diffuse = ( diffuseScale * light.color ) * textureColor.xyz;
+		vec3 diffuse = ( diffuseScale * light.color ) * textureColor;
 		// "8" is the reflectiveness
 		// textureColor.w is the shininess
 		// specularIntensity is the light's contribution

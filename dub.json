@@ -21,14 +21,18 @@
 	"targetName": "dash",
 	"targetType": "library",
 	"mainSourceFile": "source/app.d",
-	"sourcePaths": [ "source/", "third_party/Awesomium/" ],
-	"importPaths": [ "source/", "third_party/Awesomium/" ],
+	"sourcePaths": [ "source/" ],
+	"importPaths": [ "source/" ],
+	"libs": [
+		"Awesomium"
+	],
+
 	"-ddoxFilterArgs": [ "--min-protection=Protected" ],
 
 	"importPaths-windows": [ "third_party/DWinProgramming/WindowsAPI" ],
 	"libs-windows": [
 		"gdi32", "ole32", "kernel32",
-		"user32", "comctl32", "comdlg32" 
+		"user32", "comctl32", "comdlg32"
 	],
 
 	"dependencies-linux": {

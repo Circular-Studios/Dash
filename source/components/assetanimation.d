@@ -5,6 +5,7 @@ import utility.output;
 
 import derelict.assimp3.assimp;
 import gl3n.linalg;
+import std.string;
 
 class AssetAnimation
 {
@@ -26,12 +27,32 @@ public:
 		_animationSet.animNodes = makeNodesFromNode( animation, mesh, boneHierarchy, null );
 	}
 
-	// Currently some actual bones do not have keys and some nodes do have keys? Why?
-	// Pretty sure animation keys correct, if no data I believe the bones never change
+	// Each bone split up into four seperate nodes (translation -> preRotation -> Rotation -> Scale)
+	// Need to compile these four nodes into 1 node for each bone
 	Node makeNodesFromNode( const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) nodes, Node parent )
 	{
+		Node node;
+		string name = cast(string)nodes.mName.data[ 0 .. nodes.mName.length ];
+		int boneId = findNodeWithName( name, mesh );
+
+		// If the node is the translation segment of a bone add bone based on all of its parts (the next couple of children nodes)
+		// Else if the node is another segment of a bone add its data to the partial bone (the parent node)
+		// Else if the node is a full bone add it
+		if( checkEnd( name, "_$AssimpFbx$_Translation" ) )
+		{
+			
+		}
+		else if( boneId != -1)
+		{
+			node.id = boneId;
+			node.transform = convertAIMatrix( mesh.mBones[ node.id ].mOffsetMatrix );
+			assignCorrectAnimationData( animation, node );
+			
+			_numberOfBones++;
+		}
+
 		// Create this node
-		Node node = new Node( cast(string)nodes.mName.data );
+		/*Node node = new Node( cast(string)nodes.mName.data );
 		node.transform = convertAIMatrix( nodes.mTransformation );
 
 		// If this node is a bone
@@ -41,7 +62,7 @@ public:
 			// Create bone and assign bone data
 			node.id = nodeId;
 			node.transform = convertAIMatrix( mesh.mBones[ node.id ].mOffsetMatrix );
-		
+
 			_numberOfBones++;
 		}
 
@@ -56,7 +77,7 @@ public:
 		{
 			// Create it and assign to this node as a child
 			node.children ~= makeNodesFromNode( animation, mesh, nodes.mChildren[ i ], node );
-		}
+		}*/
 		
 		return node;
 	}
@@ -65,6 +86,8 @@ public:
 		// For each bone animation data
 		for( int i = 0; i < animation.mNumChannels; i++)
 		{
+			const(aiNodeAnim*) temp = animation.mChannels[ i ];
+
 			// If the names match
 			if( cast(string)animation.mChannels[ i ].mNodeName.data == nodeToAssign.name )
 			{
@@ -79,7 +102,7 @@ public:
 															  animation.mChannels[ i ].mNumRotationKeys );
 
 				int iii = nodeToAssign.positionKeys.length;
-				const(aiNodeAnim*) temp = animation.mChannels[ i ];
+				
 				_amountAnim++;
 			}
 			else
@@ -128,6 +151,22 @@ public:
 		return -1;
 	}
 
+	// Check if string stringToTest ends with string end
+	bool checkEnd( string stringToTest, string end )
+	{
+		if( stringToTest.length > end.length )
+		{
+			string temp = stringToTest[ (stringToTest.length - end.length) .. stringToTest.length ];
+
+			if( stringToTest[ (stringToTest.length - end.length) .. stringToTest.length ] == end )
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	mat4[] getTransformsAtTime( float time )
 	{
 		mat4[] boneTransforms = new mat4[ _numberOfBones ];
@@ -138,7 +177,7 @@ public:
 			boneTransforms[ i ] = mat4.identity;
 		}*/
 
-		fillTransforms( boneTransforms, _animationSet.animNodes, time, mat4.identity );
+		//fillTransforms( boneTransforms, _animationSet.animNodes, time, mat4.identity );
 
 		return boneTransforms;
 	}
@@ -153,15 +192,34 @@ public:
 		{
 			mat4 boneTransform = mat4.identity;
 			//boneTransform.scale( node.scaleKeys[ 0 ].vector );
-			boneTransform = boneTransform * node.rotationKeys[ 0 ].to_matrix!( 4, 4 );
-			//boneTransform.translation( node.positionKeys[ 0 ].vector );
+			/*if( node.rotationKeys.length > 1 )
+			{
+				// Get bone rotation information at frame
+				boneTransform = boneTransform * node.rotationKeys[ 50 ].to_matrix!( 4, 4 );
+			}
+			else
+			{
+				// No rotation animation for this bone, set to default first key
+				boneTransform = boneTransform * node.rotationKeys[ 0 ].to_matrix!( 4, 4 );
+			}*/
+			//boneTransform.scale( node.scaleKeys[ 0 ].vector );
+			if( node.positionKeys.length > 1 )
+			{
+				// Get bone rotation information at frame
+				boneTransform.translation( node.positionKeys[ 50 ].vector );
+			}
+			else
+			{
+				// No rotation animation for this bone, set to default first key
+				boneTransform.translation( node.positionKeys[ 0 ].vector );
+			}
 			
 			finalTransform = boneTransform; //( boneTransform * parentTransform * node.transform );
 			transforms[ node.id ] = finalTransform;
 		}
 		else
 		{
-			//finalTransform = ( parentTransform * node.transform );
+			finalTransform = ( parentTransform * node.transform );
 		} 
 		
 		// Store the transform in the correct place and check children

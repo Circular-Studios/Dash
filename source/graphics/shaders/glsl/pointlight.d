@@ -12,7 +12,7 @@ immutable string pointlightVS = q{
 	
 	out vec4 fPosition_s;
 	//out vec3 fNormal_w;
-	//out vec2 fUV;
+	out vec2 fUV;
 	//out vec3 fTangent_w;
 	//out vec3 fBitangent_w;
 	
@@ -23,7 +23,7 @@ immutable string pointlightVS = q{
 	void main( void )
 	{
 		// gl_Position is like SV_Position
-		fPosition_s = worldViewProj * vec4( vPosition_m, 1.0f );
+		fPosition_s = vec4( vPosition_m, 1.0f );
 		gl_Position = fPosition_s;
 		//fUV = vUV;
 		
@@ -61,10 +61,10 @@ immutable string pointlightFS = q{
 		vec2 UV = ( position_s + 1 ) / 2;
 		vec3 textureColor = texture( diffuseTexture, UV ).xyz;
 		float specularIntensity = texture( diffuseTexture, UV ).w;
-		vec3 normal = texture( normalTexture, UV ).xyz;
+		vec3 normal = normalize(texture( normalTexture, UV ).xyz);
 
 		// pixelPosition is essentially 3D screen space coordinates - x, y, z of the screen
-		vec3 pixelPosition_s = vec3( position_s, texture( depthTexture, UV ).x );
+		vec3 pixelPosition_s = vec3( position_s, (texture( depthTexture, UV ).x * 2 - 1));
 		// Multiplying screen space coordinates by the inverse viewProjection matrix gives you world coordinates
 		vec4 pixelPosition_w = ( invViewProj * vec4( pixelPosition_s, 1.0f ) );
 		pixelPosition_w /= pixelPosition_w.w;
@@ -75,22 +75,25 @@ immutable string pointlightFS = q{
 		lightDir = normalize( lightDir );
 
 		// attenuation = 1 / ( constant + linear*d + quadratic*d^2 )
-		float attenuation = 1; //1 / ( 1 + 2/light.radius*distance + 1/(light.radius*light.radius)*(distance*distance) );
+		// .005 is the cutoff, 75 is the intensity just hard coded for now
+		float attenuation = 10/pow(( max(distance-light.radius,0) /light.radius + 1),2);//( 1 + 2/light.radius*distance + 1/(light.radius*light.radius)*(distance*distance) );
+		attenuation = (attenuation - .005) / (1 - .005);
+		attenuation = max(attenuation,0);
 
 		// Diffuse lighting calculations
 		float diffuseScale = clamp( dot( normal, lightDir ), 0, 1 );
 		
 		// Specular lighting calculations
 		vec3 eyeDirection = normalize( pixelPosition_w.xyz - eyePosition_w );
-		float specularScale = clamp( dot( eyeDirection, reflect( lightDir, normal ) ), 0, 1 );
+		float specularScale = clamp( dot( eyeDirection, normalize(reflect( lightDir, normal )) ), 0, 1 );
 		
-		vec3 diffuse = ( diffuseScale * light.color ) * textureColor * attenuation;
+		vec3 diffuse = ( diffuseScale * light.color ) * textureColor ;
 		// "8" is the reflectiveness
 		// textureColor.w is the shininess
 		// specularIntensity is the light's contribution
 		vec3 specular = ( pow( specularScale, 8 ) * light.color * specularIntensity);
-		color = vec4( ( diffuse + specular ), 1.0f ) ;
-		//color = vec4( 1.0f, 0.0f, 0.0f, 1.0f );
+		color = vec4( (diffuse + specular)* attenuation, 1.0f ) ;
+		//color = vec4( textureColor, 1.0f );
 		
 	}
 };

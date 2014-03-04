@@ -55,9 +55,10 @@ immutable string directionallightFS = q{
 		vec3 textureColor = texture( diffuseTexture, fUV ).xyz;
 		float specularIntensity = texture( diffuseTexture, fUV ).w;
 		vec3 normal = texture( normalTexture, fUV ).xyz;
+		vec3 lightDir = normalize( light.direction );
 
 		// Diffuse lighting calculations
-		float diffuseScale = clamp( dot( normal, -light.direction ), 0, 1 );
+		float diffuseScale = clamp( dot( normal, -lightDir ), 0, 1 );
 
 		// Specular lighting calculations
 		// pixelPosition is essentially 3D screen space coordinates - x, y, z of the screen
@@ -65,7 +66,7 @@ immutable string directionallightFS = q{
 		// Multiplying screen space coordinates by the inverse viewProjection matrix gives you world coordinates
 		vec3 pixelPosition_w = ( invViewProj * vec4( pixelPosition_s, 1.0f ) ).xyz;
 		vec3 eyeDirection = normalize( ( pixelPosition_w - eyePosition_w).xyz );
-		float specularScale = clamp( dot( eyeDirection, reflect( -light.direction, normal ) ), 0, 1 );
+		float specularScale = clamp( dot( eyeDirection, reflect( -lightDir, normal ) ), 0, 1 );
 
 		vec3 diffuse = ( diffuseScale * light.color ) * textureColor;
 		// "8" is the reflectiveness

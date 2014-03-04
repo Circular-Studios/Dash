@@ -283,14 +283,14 @@ public:
 			                            ( projection * ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) ).inverse() );
 			shader.setEyePosition( activeCamera !is null ? activeCamera.owner.transform.worldPosition : vec3( 0, 0, 0 ) );
 			// bind the window mesh for directional lights
-			glBindVertexArray( Assets.get!Mesh( UnitSphere ).glVertexArray );
+			glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
 			//glCullFace( GL_FRONT );
 			// bind and draw directional lights
 			foreach( light; pointLights )
 			{
-				shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , projection * 
-				                            ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) *
-				                            light.owner.transform.matrix );
+		//		shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , projection * 
+		//		                            ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) *
+		//		                            light.owner.transform.matrix );
 				shader.bindPointLight( light );
 				glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSphere ).numVertices, GL_UNSIGNED_INT, null );
 			}

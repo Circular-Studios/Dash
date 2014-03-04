@@ -235,17 +235,17 @@ class Transform
 {
 private:
 	GameObject _owner;
-	vec3 _position;
-	quat _rotation;
-	vec3 _scale;
 
 public:
 	mixin Properties;
 
+	// these should remain public fields, properties return copies not references
+	vec3 position;
+	quat rotation;
+	vec3 scale;
+
 	mixin( Property!( _owner, AccessModifier.Public ) );
-	mixin( Property!( _position, AccessModifier.Public ) );
-	mixin( Property!( _rotation, AccessModifier.Public ) );
-	mixin( Property!( _scale, AccessModifier.Public ) );
+
 
 	this( GameObject obj = null )
 	{

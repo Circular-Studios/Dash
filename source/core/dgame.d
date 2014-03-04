@@ -48,26 +48,6 @@ public:
 
 		string URL = "http://google.com";
 		string OUTFILE = "./result.jpg";
-
-		
-		// Create the WebCore with the default options
-		awe_webcore_initialize_default();
-		
-		// Create a new WebView to load our page
-		awe_webview* webView = awe_webcore_create_webview(1024, 768, false);
-		
-		// Create our URL string
-		awe_string* url_str = awe_string_create_from_ascii(URL.toStringz(), URL.length);
-		
-		// Load the URL into our WebView instance
-		awe_webview_load_url(webView,
-		                     url_str,
-		                     awe_string_empty(),
-		                     awe_string_empty(),
-		                     awe_string_empty());
-		
-		// Destroy our URL string
-		awe_string_destroy(url_str);
 		
 		// Wait for WebView to finish loading the page
 		while(awe_webview_is_loading_page(webView))
@@ -90,10 +70,7 @@ public:
 		}
 		
 		// Destroy our WebView instance
-		awe_webview_destroy(webView);
-		
-		// Destroy our WebCore instance
-		awe_webcore_shutdown();
+
 
 		// Init tasks
 		//TaskManager.initialize();
@@ -118,6 +95,9 @@ public:
 
 			// Update input
 			Input.update();
+
+			// Update webcore
+			awe_webcore_update();
 
 			// Update physics
 			//if( currentState == GameState.Game )
@@ -182,6 +162,7 @@ private:
 		Graphics.initialize();
 		Assets.initialize();
 		Prefabs.initialize();
+		awe_webcore_initialize_default();
 		//Physics.initialize();
 
         //ui = new UserInterface( this );
@@ -195,6 +176,7 @@ private:
 	final void stop()
 	{
 		onShutdown();
+		awe_webcore_shutdown();
 		Assets.shutdown();
 		Graphics.shutdown();
 	}

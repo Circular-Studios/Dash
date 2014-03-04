@@ -53,40 +53,37 @@ public:
 	static GameObject createFromYaml( Node yamlObj, const ClassInfo scriptOverride = null )
 	{
 		GameObject obj;
-		Variant prop;
+		string prop;
 		Node innerNode;
-
+		
 		// Try to get from script
 		if( scriptOverride !is null )
 		{
 			obj = cast(GameObject)scriptOverride.create();
 		}
-		else if( Config.tryGet!string( "Script.ClassName", prop, yamlObj ) )
+		else
 		{
-			const ClassInfo scriptClass = ClassInfo.find( prop.get!string );
-
-			if( Config.tryGet!string( "InstanceOf", prop, yamlObj ) )
+			// Get class to create script from
+			const ClassInfo scriptClass = Config.tryGet( "Script.ClassName", prop, yamlObj )
+					? ClassInfo.find( prop )
+					: null;
+			
+			if( Config.tryGet( "InstanceOf", prop, yamlObj ) )
 			{
-				obj = Prefabs[ prop.get!string ].createInstance( scriptClass );
+				obj = Prefabs[ prop ].createInstance( scriptClass );
 			}
 			else
 			{
-				obj = cast(GameObject)scriptClass.create();
+				obj = scriptClass
+						? cast(GameObject)scriptClass.create()
+						: new GameObject;
 			}
 		}
-		else if( Config.tryGet!string( "InstanceOf", prop, yamlObj ) )
-		{
-			obj = Prefabs[ prop.get!string ].createInstance();
-		}
-		else
-		{
-			obj = new GameObject;
-		}
-
+		
 		// Init components
 		foreach( string key, Node value; yamlObj )
 		{
-			if( key == "Name" || key == "Script" || key == "Transform" || key == "Parent" || key == "InstanceOf" )
+			if( key == "Name" || key == "Script" || key == "Parent" || key == "InstanceOf" || key == "Transform" )
 				continue;
 
 			if( auto init = key in IComponent.initializers )

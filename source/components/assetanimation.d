@@ -24,64 +24,70 @@ public:
 		_animationSet.duration = cast(float)animation.mDuration;
 		_animationSet.fps = cast(float)animation.mTicksPerSecond;
 		
-		_animationSet.animNodes = makeNodesFromNode( animation, mesh, boneHierarchy, null );
+		// Currently assuming bone hierarchy is in slot 1 and mesh transform is default
+		_animationSet.animNodes = makeNodesFromNode( animation, mesh, boneHierarchy.mChildren[ 1 ], null );
 	}
 
-	// Each bone split up into four seperate nodes (translation -> preRotation -> Rotation -> Scale)
+	// Each bone split up into four seperate nodes (translation -> preRotation -> Rotation -> Scale -> Bone)
 	// Need to compile these four nodes into 1 node for each bone
-	Node makeNodesFromNode( const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) nodes, Node parent )
+	// Currently loading one bone in correctly, need to add in storing the rest of the bone data, then continuing on for children
+	Node makeNodesFromNode( const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) currNode, Node parent)
 	{
-		Node node;
-		string name = cast(string)nodes.mName.data[ 0 .. nodes.mName.length ];
+		string name = cast(string)currNode.mName.data[ 0 .. currNode.mName.length ];
 		int boneId = findNodeWithName( name, mesh );
-
+		Node node;
 		// If the node is the translation segment of a bone add bone based on all of its parts (the next couple of children nodes)
 		// Else if the node is another segment of a bone add its data to the partial bone (the parent node)
 		// Else if the node is a full bone add it
 		if( checkEnd( name, "_$AssimpFbx$_Translation" ) )
 		{
-			
+			node = new Node( name );
+			node.id = boneId;
+			assignAnimationData( animation, currNode, node, "Position" );
+			/*currNode = currNode.mChildren[ 0 ];
+			assignAnimationData( animation, node, "RotationP" );
+			currNode = currNode.mChildren[ 0 ];
+			assignAnimationData( animation, node, "Rotation" );
+			currNode = currNode.mChildren[ 0 ];
+			assignAnimationData( animation, node, "Scale" );
+			currNode = currNode.mChildren[ 0 ];
+			node.transform = convertAIMatrix( mesh.mBones[ node.id ].mOffsetMatrix );*/
+		}
+		else if( checkEnd( name, "_$AssimpFbx$_PreRotation" ) )
+		{
+			//assignAnimationData( animation, currNode, parent, "RotationP");
+		}
+		else if( checkEnd( name, "_$AssimpFbx$_Rotation" ) )
+		{
+			assignAnimationData( animation, currNode, parent, "Rotation");
+		}
+		else if( checkEnd( name, "_$AssimpFbx$_Scaling" ) )
+		{
+			assignAnimationData( animation, currNode, parent, "Scale");
 		}
 		else if( boneId != -1)
 		{
+			node = new Node( name );
 			node.id = boneId;
 			node.transform = convertAIMatrix( mesh.mBones[ node.id ].mOffsetMatrix );
-			assignCorrectAnimationData( animation, node );
+			assignAnimationData( animation, currNode, node, "All" );
 			
 			_numberOfBones++;
 		}
 
-		// Create this node
-		/*Node node = new Node( cast(string)nodes.mName.data );
-		node.transform = convertAIMatrix( nodes.mTransformation );
-
-		// If this node is a bone
-		int nodeId = findNodeWithName( node.name, mesh );
-		if( nodeId != -1 )
-		{
-			// Create bone and assign bone data
-			node.id = nodeId;
-			node.transform = convertAIMatrix( mesh.mBones[ node.id ].mOffsetMatrix );
-
-			_numberOfBones++;
-		}
-
-		assignCorrectAnimationData( animation, node );
-
-		// Assign parent
-		if( parent !is null )
-			node.parent = parent;
-		
 		// For each child node
-		for( int i = 0; i < nodes.mNumChildren; i++ )
+		for( int i = 0; i < currNode.mNumChildren; i++ )
 		{
 			// Create it and assign to this node as a child
-			node.children ~= makeNodesFromNode( animation, mesh, nodes.mChildren[ i ], node );
-		}*/
+			if( node !is null)
+				node.children ~= makeNodesFromNode( animation, mesh, currNode.mChildren[ i ], node );
+			else
+				makeNodesFromNode( animation, mesh, currNode.mChildren[ i ], parent );
+		}
 		
 		return node;
 	}
-	void assignCorrectAnimationData( const(aiAnimation*) animation, Node nodeToAssign )
+	void assignAnimationData( const(aiAnimation*) animation, const(aiNode)* nodeToCheck, Node nodeToAssign, string data )
 	{
 		// For each bone animation data
 		for( int i = 0; i < animation.mNumChannels; i++)
@@ -89,19 +95,28 @@ public:
 			const(aiNodeAnim*) temp = animation.mChannels[ i ];
 
 			// If the names match
-			if( cast(string)animation.mChannels[ i ].mNodeName.data == nodeToAssign.name )
+			if( animation.mChannels[ i ].mNodeName == nodeToCheck.mName )
 			{
 				string name = cast(string)animation.mChannels[ i ].mNodeName.data;
 
 				// Assign the bone animation data to the bone
-				nodeToAssign.positionKeys = convertVectorArray( animation.mChannels[ i ].mPositionKeys,
+				if( data == "All" || data == "Position" )
+				{
+					nodeToAssign.positionKeys = convertVectorArray( animation.mChannels[ i ].mPositionKeys,
 																animation.mChannels[ i ].mNumPositionKeys );
-				nodeToAssign.scaleKeys = convertVectorArray( animation.mChannels[ i ].mScalingKeys,
+				}
+				
+				if( data == "All" || data == "Scale" )
+				{
+					nodeToAssign.scaleKeys = convertVectorArray( animation.mChannels[ i ].mScalingKeys,
 																  animation.mChannels[ i ].mNumScalingKeys );
-				nodeToAssign.rotationKeys = convertQuat( animation.mChannels[ i ].mRotationKeys,
-															  animation.mChannels[ i ].mNumRotationKeys );
-
-				int iii = nodeToAssign.positionKeys.length;
+				}
+				
+				if( data == "All" || data == "RotationP" || data == "Rotation" )
+				{
+					nodeToAssign.rotationKeys = convertQuat( animation.mChannels[ i ].mRotationKeys,
+															 animation.mChannels[ i ].mNumRotationKeys );
+				}
 				
 				_amountAnim++;
 			}

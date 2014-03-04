@@ -4,8 +4,6 @@
 module components.assets;
 import components, utility;
 
-import std.datetime;
-
 import yaml;
 import derelict.freeimage.freeimage, derelict.assimp3.assimp;
 
@@ -44,9 +42,6 @@ public static:
 	 */
 	final void initialize()
 	{
-		auto start = Clock.currTime;
-		logInfo( "Assets initialization:" );
-
 		DerelictFI.load();
 
 		// Initial assimp start
@@ -89,9 +84,6 @@ public static:
 		textures.rehash();
 		materials.rehash();
 		animations.rehash();
-
-		auto end = Clock.currTime;
-		logInfo( "Assets init time: ", end - start );
 	}
 
 	/**

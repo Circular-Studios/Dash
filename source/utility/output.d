@@ -3,7 +3,7 @@
  */
 module utility.output;
 import utility.config;
-import std.stdio;
+import std.stdio, std.functional;
 
 /**
  * The types of output.
@@ -34,9 +34,10 @@ enum Verbosity
 }
 
 /// Alias for Output.printMessage
-alias Output.printMessage log;
-/// Alias for Output.printValue
-alias Output.printValue logValue;
+alias Output.log log;
+alias logInfo		= curry!( Output.log, OutputType.Info );
+alias logWarning	= curry!( Output.log, OutputType.Warning );
+alias logError		= curry!( Output.log, OutputType.Error );
 
 /**
  * Static class for handling interactions with the console.
@@ -53,28 +54,19 @@ public static:
 	}
 
 	/**
-	 * Print a generic message to the console.
+	 * Print a message to the console.
 	 */
-	final void printMessage( A... )( OutputType type, A messages )
+	final void log( A... )( OutputType type, A messages )
 	{
 		if( shouldPrint( type ) )
 		{
 			write( getHeader( type ) );
-
+			
 			foreach( msg; messages )
 				write( msg );
-
+			
 			writeln();
 		}
-	}
-
-	/**
-	 * Print the value of a variable.
-	 */
-	final void printValue( T )( OutputType type, string varName, T value )
-	{
-		if( shouldPrint( type ) )
-			writefln( "%s %s: %s", getHeader( type ), varName, value );
 	}
 
 private:
@@ -92,15 +84,15 @@ private:
 		{
 			case OutputType.Info:
 				//SetConsoleTextAttribute( hConsole, 15 );
-				return "[INFO]   ";
+				return "[INFO]    ";
 			case OutputType.Warning:
 				//SetConsoleTextAttribute( hConsole, 14 );
-				return "[WARNING]";
+				return "[WARNING] ";
 			case OutputType.Error:
 				//SetConsoleTextAttribute( hConsole, 12 );
-				return "[ERROR]  ";
+				return "[ERROR]   ";
 			default:
-				return "         ";
+				return "          ";
 		}
 	}
 

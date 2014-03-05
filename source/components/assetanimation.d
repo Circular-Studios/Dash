@@ -1,6 +1,6 @@
 module components.assetanimation;
 import core.properties;
-import components.component;
+import components.icomponent;
 import utility.output;
 
 import derelict.assimp3.assimp;

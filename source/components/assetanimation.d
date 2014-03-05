@@ -28,43 +28,46 @@ public:
 		Node temp = _animationSet.animNodes;
 		Node temp2 = _animationSet.animNodes.children[ 0 ];
 		Node temp3 = _animationSet.animNodes.children[ 0 ].children[ 0 ];
-		Node temp4 = _animationSet.animNodes.children[ 0 ].children[ 0 ].children[ 0 ];
 	}
 
 	// Each bone has one of two setups:
 	// Split up into five seperate nodes (translation -> preRotation -> Rotation -> Scale -> Bone)
 	// Or the bone is one node in the hierarchy
-	Node makeNodesFromNode( const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) currNode, Node returnNode)
-	{
+	Node makeNodesFromNode( const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) currNode, Node returnNode )
+	{ 
 		string name = cast(string)currNode.mName.data[ 0 .. currNode.mName.length ];
-		
+		int id = findNodeWithName( name, mesh );
 		Node node;
 		// If the node is the translation segment of a bone add bone based on all of its parts (the next couple of children nodes)
 		// Else if the node is another segment of a bone add its data to the partial bone (the parent node)
 		// Else if the node is a full bone add it
 
-		if( findNodeWithName( name, mesh ) != -1 )
+		if( id != -1 )
 		{
 			node = new Node( name );
-			node.id = findNodeWithName( name, mesh );
+			node.id = id;
 			node.transform = convertAIMatrix( mesh.mBones[ node.id ].mOffsetMatrix );
 			assignAnimationData( animation, node );
 
 			returnNode = node;
 			_numberOfBones++;
 		}
+		else
+		{
+			node = returnNode;
+		}
 
 		// For each child node
 		for( int i = 0; i < currNode.mNumChildren; i++ )
 		{
 			// Create it and assign to this node as a child
-			node.children ~= makeNodesFromNode( animation, mesh, currNode.mChildren[ i ], node );
+			if( id != -1 )
+				node.children ~= makeNodesFromNode( animation, mesh, currNode.mChildren[ i ], node );
+			else
+				return makeNodesFromNode( animation, mesh, currNode.mChildren[ i ], node );
 		}
-		
-		if( node !is null )
-			return node;
-		else
-			return returnNode;
+
+		return node;
 	}
 	void assignAnimationData( const(aiAnimation*) animation, Node nodeToAssign )
 	{
@@ -169,7 +172,11 @@ public:
 			boneTransforms[ i ] = mat4.identity;
 		}*/
 
-		//fillTransforms( boneTransforms, _animationSet.animNodes, time, mat4.identity );
+		fillTransforms( boneTransforms, _animationSet.animNodes, time, mat4.identity );
+
+		mat4 temp = boneTransforms[ 0 ];
+		mat4 temp2 = boneTransforms[ 1 ];
+		mat4 temp3 = boneTransforms[ 2 ];
 
 		return boneTransforms;
 	}
@@ -180,40 +187,15 @@ public:
 	{
 		// Calculate matrix based on node.bone data and time
 		mat4 finalTransform;
-		if( node.rotationKeys.length > 0 )
-		{
-			mat4 boneTransform = mat4.identity;
-			//boneTransform.scale( node.scaleKeys[ 0 ].vector );
-			/*if( node.rotationKeys.length > 1 )
-			{
-				// Get bone rotation information at frame
-				boneTransform = boneTransform * node.rotationKeys[ 50 ].to_matrix!( 4, 4 );
-			}
-			else
-			{
-				// No rotation animation for this bone, set to default first key
-				boneTransform = boneTransform * node.rotationKeys[ 0 ].to_matrix!( 4, 4 );
-			}*/
-			//boneTransform.scale( node.scaleKeys[ 0 ].vector );
-			if( node.positionKeys.length > 1 )
-			{
-				// Get bone rotation information at frame
-				boneTransform.translation( node.positionKeys[ 50 ].vector );
-			}
-			else
-			{
-				// No rotation animation for this bone, set to default first key
-				boneTransform.translation( node.positionKeys[ 0 ].vector );
-			}
+
+		mat4 boneTransform = mat4.identity;
+		//boneTransform.scale( node.scaleKeys[ 0 ].vector );
+		boneTransform = boneTransform * node.rotationKeys[ 0 ].to_matrix!( 4, 4 );
+		//boneTransform.translation( node.positionKeys[ 0 ].vector );
 			
-			finalTransform = boneTransform; //( boneTransform * parentTransform * node.transform );
-			transforms[ node.id ] = finalTransform;
-		}
-		else
-		{
-			finalTransform = ( parentTransform * node.transform );
-		} 
-		
+		finalTransform = parentTransform * boneTransform; //( boneTransform * parentTransform * node.transform );
+ 		transforms[ node.id ] = finalTransform;
+
 		// Store the transform in the correct place and check children
 		for( int i = 0; i < node.children.length; i++ )
 		{
@@ -244,8 +226,6 @@ public:
 
 		return matrix;
 	}
-
-
 
 	void shutdown()
 	{

@@ -2,10 +2,15 @@
  * Handles the creation and life cycle of a web view
  */
 
-module components.awesomiumView;
+module components.userinterface;
 import utility.awesomium, components;
 
-class awesomiumView : Component
+class UserInterface
+{
+
+}
+
+class AwesomiumView : Component
 {
 private:
 	uint _width, _height;

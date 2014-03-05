@@ -46,35 +46,8 @@ public:
 	final void run()
 	{
 
-		string URL = "http://google.com";
-		string OUTFILE = "./result.jpg";
-		
-		// Wait for WebView to finish loading the page
-		while(awe_webview_is_loading_page(webView))
-			awe_webcore_update();
-		
-		// Render our WebView to a buffer
-		const(awe_renderbuffer)* buffer = awe_webview_render(webView);
-		
-		// Make sure our buffer is not NULL; WebView::render will
-		// return NULL if the WebView process has crashed.
-		if(buffer !is null) {
-			// Create our filename string
-			awe_string* file_str = awe_string_create_from_ascii(OUTFILE.toStringz(), OUTFILE.length);
-			
-			// Save our RenderBuffer directly to a JPEG image
-			awe_renderbuffer_save_to_jpeg(buffer, file_str, 90);
-			
-			// Destroy our filename string
-			awe_string_destroy(file_str);
-		}
-		
-		// Destroy our WebView instance
-
-
 		// Init tasks
 		//TaskManager.initialize();
-		/*
         start();
 
         // Loop until there is a quit message from the window or the user.
@@ -120,7 +93,7 @@ public:
 			Graphics.endDraw();
         }
 
-        stop();*/
+        stop();
 	}
 
 	//static Camera camera;

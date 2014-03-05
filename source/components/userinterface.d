@@ -3,37 +3,61 @@
  */
 
 module components.userinterface;
+import core;
 import utility.awesomium, components;
+import std.string;
 
 class UserInterface
 {
 
 }
 
-class AwesomiumView : Component
+class AwesomiumView : Texture, IComponent
 {
 private:
-	uint _width, _height;
 	awe_webview* webView;
 	awe_string* urlString;
+	ubyte[] glBuffer;
 
 public:
-	this(uint w, uint h, string fP)
+	this( uint w, uint h, string filePath, GameObject owner )
 	{
 		_width = w;
 		_height = h;
+		glBuffer = new ubyte[_width*_height*4];
+		this.owner = owner;
 
-		webView = awe_webcore_create_webview(_width, _height, false);
-		urlString = awe_string_create_from_ascii(fP.toStringz(), fP.length);
+		super( cast(ubyte*)null );
+
+		webView = awe_webcore_create_webview( _width, _height, false );
+		urlString = awe_string_create_from_ascii( filePath.toStringz(), filePath.length );
 
 		awe_webview_load_url(webView,
 		                     urlString,
 		                     awe_string_empty(),
 		                     awe_string_empty(),
 		                     awe_string_empty());
+
+		// Wait for WebView to finish loading the page
+		while(awe_webview_is_loading_page(webView))
+			awe_webcore_update();
 		
 		// Destroy our URL string
-		awe_string_destroy(urlString);
+		awe_string_destroy( urlString );
+	}
+
+	override void update()
+	{
+		awe_webcore_update();
+
+		if ( webView && awe_webview_is_dirty( webView ) )
+		{
+			const(awe_renderbuffer)* buffer = awe_webview_render( webView );
+
+			awe_renderbuffer_copy_to( buffer, glBuffer.ptr, awe_renderbuffer_get_rowspan( buffer ), 4, false, true );
+
+			updateBuffer( glBuffer.ptr );
+		}
 	}
 
 	override void shutdown()

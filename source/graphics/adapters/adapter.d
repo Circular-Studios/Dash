@@ -283,18 +283,16 @@ public:
 			                            ( projection * ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) ).inverse() );
 			shader.setEyePosition( activeCamera !is null ? activeCamera.owner.transform.worldPosition : vec3( 0, 0, 0 ) );
 			// bind the window mesh for directional lights
-			glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
-			//glCullFace( GL_FRONT );
+			glBindVertexArray( Assets.get!Mesh( UnitSphere ).glVertexArray );
 			// bind and draw directional lights
 			foreach( light; pointLights )
 			{
-		//		shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , projection * 
-		//		                            ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) *
-		//		                            light.owner.transform.matrix );
+				shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , projection * 
+				                            ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) *
+				                            light.owner.transform.matrix );
 				shader.bindPointLight( light );
 				glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSphere ).numVertices, GL_UNSIGNED_INT, null );
 			}
-			//glCullFace( GL_BACK );
 		}
 		
 		// put it on the screen
@@ -377,6 +375,15 @@ protected:
 	final void updateProjection()
 	{
 		projection = mat4.perspective( cast(float)width, cast(float)height, fov, near, far );
+	/*projection = mat4.identity;
+		float aspect = width/height;
+		float f = 1/tan((fov*3.14159/360)/2);
+		projection[0][0] = f/aspect;
+		projection[1][1] = f;
+		projection[2][2] = (far + near) / (near - far);
+		projection[3][3] = 0;
+		projection[2][3] = (2*far*near)/(near-far);
+		projection[3][2] = -1; */
 	}
 
 private:

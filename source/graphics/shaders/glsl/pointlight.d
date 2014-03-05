@@ -23,7 +23,7 @@ immutable string pointlightVS = q{
 	void main( void )
 	{
 		// gl_Position is like SV_Position
-		fPosition_s = vec4( vPosition_m, 1.0f );
+		fPosition_s = worldViewProj * vec4( vPosition_m, 1.0f );
 		gl_Position = fPosition_s;
 		//fUV = vUV;
 		
@@ -71,14 +71,14 @@ immutable string pointlightFS = q{
 
 		// calculate normalized light direction, distance
 		vec3 lightDir = light.pos_w - pixelPosition_w.xyz;
-		float distance = length( lightDir );
+		float distance = sqrt( dot(lightDir,lightDir) );
 		lightDir = normalize( lightDir );
 
 		// attenuation = 1 / ( constant + linear*d + quadratic*d^2 )
-		// .005 is the cutoff, 75 is the intensity just hard coded for now
-		float attenuation = 10/pow(( max(distance-light.radius,0) /light.radius + 1),2);//( 1 + 2/light.radius*distance + 1/(light.radius*light.radius)*(distance*distance) );
+		// .005 is the cutoff, 10 is the intensity just hard coded for now
+		float attenuation = max( light.radius-distance, 0) / light.radius; //( 1 + 2/light.radius*distance + 1/(light.radius*light.radius)*(distance*distance) );
 		attenuation = (attenuation - .005) / (1 - .005);
-		attenuation = max(attenuation,0);
+		attenuation = max(attenuation, 0);
 
 		// Diffuse lighting calculations
 		float diffuseScale = clamp( dot( normal, lightDir ), 0, 1 );
@@ -93,7 +93,7 @@ immutable string pointlightFS = q{
 		// specularIntensity is the light's contribution
 		vec3 specular = ( pow( specularScale, 8 ) * light.color * specularIntensity);
 		color = vec4( (diffuse + specular)* attenuation, 1.0f ) ;
-		//color = vec4( textureColor, 1.0f );
+		//color = vec4( vec3(1,0,0) * attenuation, 1.0f );
 		
 	}
 };

@@ -3,7 +3,7 @@ import core, components, graphics, utility;
 
 import yaml;
 import derelict.opengl3.gl3, derelict.freeimage.freeimage;
-import std.variant, std.conv;
+import std.variant, std.conv, std.string;
 
 final class Material : IComponent
 {
@@ -11,7 +11,7 @@ private:
 	Texture _diffuse, _normal, _specular;
 
 public:
-	mixin( Property!_diffuse );
+	mixin( Property!(_diffuse, AccessModifier.Public) );
 	mixin( Property!_normal );
 	mixin( Property!_specular );
 
@@ -39,10 +39,25 @@ public:
 	override void shutdown() { }
 }
 
-final class Texture
+class Texture
 {
-private:
+protected:
 	uint _width, _height, _glID;
+
+	this( ubyte* buffer )
+	{
+		glGenTextures( 1, &_glID );
+		glBindTexture( GL_TEXTURE_2D, glID );
+		updateBuffer( buffer );
+
+		glBindTexture( GL_TEXTURE_2D, 0 );
+	}
+
+	void updateBuffer( ubyte* buffer )
+	{
+		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_BGRA ,GL_UNSIGNED_BYTE, cast(GLvoid*)buffer );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+	}
 
 public:
 	mixin( Property!_width );
@@ -57,22 +72,9 @@ public:
 		width = FreeImage_GetWidth( imageData );
 		height = FreeImage_GetHeight( imageData );
 
-		glGenTextures( 1, &_glID );
-		glBindTexture( GL_TEXTURE_2D, glID );
-		glTexImage2D(
-					 GL_TEXTURE_2D,
-					 0,
-					 GL_RGBA,
-					 width,
-					 height,
-					 0,
-					 GL_BGRA, //FreeImage loads in BGR format because fuck you
-					 GL_UNSIGNED_BYTE,
-					 cast(GLvoid*)FreeImage_GetBits( imageData ) );
-		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+		this( cast(ubyte*)FreeImage_GetBits( imageData ) );
 
 		FreeImage_Unload( imageData );
-		glBindTexture( GL_TEXTURE_2D, 0 );
 	}
 
 	void shutdown()

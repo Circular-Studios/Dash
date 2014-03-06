@@ -40,6 +40,8 @@ public:
 	/// All of the objects which list this as parent
 	mixin( Property!( _children, AccessModifier.Public ) );
 
+	string name;
+
 	/**
 	 * Create a GameObject from a Yaml node.
 	 * 
@@ -79,18 +81,9 @@ public:
 						: new GameObject;
 			}
 		}
-		
-		// Init components
-		foreach( string key, Node value; yamlObj )
-		{
-			if( key == "Name" || key == "Script" || key == "Parent" || key == "InstanceOf" || key == "Transform" )
-				continue;
 
-			if( auto init = key in IComponent.initializers )
-				obj.addComponent( (*init)( value, obj ) );
-			else
-				logWarning( "Unknown key: ", key );
-		}
+		// set object name
+		obj.name = yamlObj[ "Name" ].as!string;
 
 		// Init transform
 		if( Config.tryGet( "Transform", innerNode, yamlObj ) )
@@ -102,6 +95,18 @@ public:
 				obj.transform.position = transVec;
 			if( Config.tryGet( "Rotation", transVec, innerNode ) )
 				obj.transform.rotation = quat.euler_rotation( radians(transVec.y), radians(transVec.z), radians(transVec.x) );
+		}
+		
+		// Init components
+		foreach( string key, Node value; yamlObj )
+		{
+			if( key == "Name" || key == "Script" || key == "Parent" || key == "InstanceOf" || key == "Transform" )
+				continue;
+
+			if( auto init = key in IComponent.initializers )
+				obj.addComponent( (*init)( value, obj ) );
+			else
+				logWarning( "Unknown key: ", key );
 		}
 
 		obj.transform.updateMatrix();
@@ -206,14 +211,13 @@ private:
 public:
 	mixin Properties;
 
-	mixin( Property!( _owner, AccessModifier.Public ) );
-
+	// these should remain public fields, properties return copies not references
 	vec3 position;
 	quat rotation;
 	vec3 scale;
-	//mixin EmmittingProperty!( "vec3", "position", "public" );
-	//mixin EmmittingProperty!( "quat", "rotation", "public" );
-	//mixin EmmittingProperty!( "vec3", "scale", "public" );
+
+	mixin( Property!( _owner, AccessModifier.Public ) );
+
 
 	this( GameObject obj = null )
 	{

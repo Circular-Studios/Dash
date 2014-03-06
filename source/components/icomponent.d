@@ -11,6 +11,8 @@ import yaml;
  */
 interface IComponent
 {
+private:
+	static GameObject[ IComponent ] owners;
 public:
 	/**
 	 * Functions to call when creating components.
@@ -44,5 +46,3 @@ public:
 	 */
 	void shutdown();
 }
-
-private GameObject[ IComponent ] owners;

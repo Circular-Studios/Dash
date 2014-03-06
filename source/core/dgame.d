@@ -4,6 +4,8 @@
 module core.dgame;
 import core, components, graphics, utility;
 
+import std.datetime;
+
 /**
  * The states the game can be in.
  */
@@ -125,17 +127,32 @@ private:
 		currentState = GameState.Game;
         //camera = null;
 
+		logInfo( "Initializing..." );
+		auto start = Clock.currTime;
+		auto subStart = start;
+
 		Config.initialize();
 		Input.initialize();
 		Output.initialize();
+
+		logInfo( "Graphics initialization:" );
+		subStart = Clock.currTime;
 		Graphics.initialize();
+		logInfo( "Graphics init time: ", Clock.currTime - subStart );
+
+		logInfo( "Assets initialization:" );
+		subStart = Clock.currTime;
 		Assets.initialize();
+		logInfo( "Assets init time: ", Clock.currTime - subStart );
+
 		Prefabs.initialize();
 		//Physics.initialize();
 
         //ui = new UserInterface( this );
 
         onInitialize();
+
+		logInfo( "Total init time: ", Clock.currTime - start );
 	}
 
 	/**

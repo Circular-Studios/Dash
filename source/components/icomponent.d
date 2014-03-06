@@ -11,17 +11,30 @@ import yaml;
  */
 shared interface IComponent
 {
+private:
+	static GameObject[ IComponent ] owners;
 public:
+	/**
+	 * Functions to call when creating components.
+	 */
 	static shared(IComponent) function( Node, shared GameObject )[string] initializers;
 
 	/**
 	 * The GameObject that owns this component.
 	 */
-	final @property ref shared(GameObject) owner()
+	final @property shared(GameObject) owner()
 	{
-		static shared(GameObject) owner;
-		
-		return owner;
+		auto owner = this in owners;
+		if( owner )
+			return *owner;
+		else
+			return null;
+	}
+
+	/// ditto
+	final @property void owner( shared GameObject newOwner )
+	{
+		owners[ this ] = newOwner;
 	}
 
 	/**

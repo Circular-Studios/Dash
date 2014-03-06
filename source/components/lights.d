@@ -102,9 +102,6 @@ static this()
 		obj.light = yml.get!Light;
 		obj.light.owner = obj;
 
-		logInfo("owner.name: ", obj.light.owner.name);
-		logInfo("obj.name: ", obj.name);
-
 		return obj.light;
 	};
 }

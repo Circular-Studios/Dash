@@ -43,3 +43,14 @@ public:
 		super( color );
 	}
 }
+
+static this()
+{
+	import yaml;
+	IComponent.initializers[ "Light" ] = ( Node yml, GameObject obj )
+	{
+		obj.light = yml.get!Light;
+		obj.light.owner = obj;
+		return obj.light;
+	};
+}

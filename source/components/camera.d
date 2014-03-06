@@ -5,7 +5,6 @@ module components.camera;
 import core, components, graphics;
 
 import gl3n.linalg;
-
 import std.conv;
 
 /**
@@ -42,4 +41,15 @@ private:
 
 		_viewMatrixIsDirty = false;
 	}
+}
+
+static this()
+{
+	import yaml;
+	IComponent.initializers[ "Camera" ] = ( Node yml, GameObject obj )
+	{
+		obj.camera = new Camera;
+		obj.camera.owner = obj;
+		return obj.camera;
+	};
 }

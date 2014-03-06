@@ -77,8 +77,8 @@ immutable string pointlightFS = q{
 		// attenuation = 1 / ( constant + linear*d + quadratic*d^2 )
 		// .005 is the cutoff, 10 is the intensity just hard coded for now
 		float attenuation = max( light.radius-distance, 0) / light.radius; //( 1 + 2/light.radius*distance + 1/(light.radius*light.radius)*(distance*distance) );
-		attenuation = (attenuation - .005) / (1 - .005);
-		attenuation = max(attenuation, 0);
+		//attenuation = (attenuation - .005) / (1 - .005);
+		//attenuation = max(attenuation, 0);
 
 		// Diffuse lighting calculations
 		float diffuseScale = clamp( dot( normal, lightDir ), 0, 1 );

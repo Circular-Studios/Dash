@@ -49,6 +49,8 @@ static this()
 	import yaml;
 	IComponent.initializers[ "Light" ] = ( Node yml, shared GameObject obj )
 	{
-		obj.addComponent( cast(shared)yml.get!Light );
+		obj.light = cast(shared)yml.get!Light;
+		obj.light.owner = obj;
+		return obj.light;
 	};
 }

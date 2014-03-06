@@ -86,6 +86,7 @@ static this()
 {
 	IComponent.initializers[ "Material" ] = ( Node yml, shared GameObject obj )
 	{
-		obj.addComponent( Assets.get!Material( yml.get!string ) );
+		obj.material = Assets.get!Material( yml.get!string );
+		return obj.material;
 	};
 }

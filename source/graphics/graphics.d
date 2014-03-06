@@ -1,9 +1,16 @@
 module graphics.graphics;
 import graphics.adapters, graphics.shaders;
 
-final abstract class Graphics
+shared GraphicsManager Graphics;
+
+shared static this()
 {
-public static:
+	Graphics = new shared GraphicsManager;
+}
+
+shared final class GraphicsManager
+{
+public:
 	Adapter adapter;
 	alias adapter this;
 
@@ -42,4 +49,7 @@ public static:
 		Shaders.shutdown();
 		adapter.shutdown();
 	}
+
+private:
+	this() { }
 }

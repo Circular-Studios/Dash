@@ -12,7 +12,7 @@ import std.signals, std.conv, std.variant;
 /**
  * Manages all components and transform in the world. Can be overridden.
  */
-class GameObject
+shared class GameObject
 {
 private:
 	Transform _transform;
@@ -50,16 +50,16 @@ public:
 	 * Returns:
 	 * 	A new game object with components and info pulled from yaml.
 	 */
-	static GameObject createFromYaml( Node yamlObj, const ClassInfo scriptOverride = null )
+	static shared(GameObject) createFromYaml( Node yamlObj, const ClassInfo scriptOverride = null )
 	{
-		GameObject obj;
+		shared GameObject obj;
 		string prop;
 		Node innerNode;
-		
+
 		// Try to get from script
 		if( scriptOverride !is null )
 		{
-			obj = cast(GameObject)scriptOverride.create();
+			obj = cast(shared GameObject)scriptOverride.create();
 		}
 		else
 		{
@@ -75,8 +75,8 @@ public:
 			else
 			{
 				obj = scriptClass
-						? cast(GameObject)scriptClass.create()
-						: new GameObject;
+						? cast(shared GameObject)scriptClass.create()
+						: new shared GameObject;
 			}
 		}
 		
@@ -97,11 +97,11 @@ public:
 		{
 			vec3 transVec;
 			if( Config.tryGet( "Scale", transVec, innerNode ) )
-				obj.transform.scale = transVec;
+				obj.transform.scale = cast(shared)vec3( transVec );
 			if( Config.tryGet( "Position", transVec, innerNode ) )
-				obj.transform.position = transVec;
+				obj.transform.position = cast(shared)vec3( transVec );
 			if( Config.tryGet( "Rotation", transVec, innerNode ) )
-				obj.transform.rotation = quat.euler_rotation( radians(transVec.y), radians(transVec.z), radians(transVec.x) );
+				obj.transform.rotation = cast(shared)quat.euler_rotation( radians(transVec.y), radians(transVec.z), radians(transVec.x) );
 		}
 
 		obj.transform.updateMatrix();
@@ -115,7 +115,7 @@ public:
 	 */
 	this()
 	{
-		transform = new Transform( this );
+		transform = new shared Transform( this );
 		transform.connect( &emit );
 	}
 
@@ -169,20 +169,20 @@ public:
 	/**
 	 * Adds a component to the object.
 	 */
-	final void addComponent( T )( T newComponent ) if( is( T : IComponent ) )
+	final void addComponent( T )( shared T newComponent ) if( is( T : IComponent ) )
 	{
 		componentList[ typeid(T) ] = newComponent;
 
 		// Add component to proper property
 		if( typeid( newComponent ) == typeid( Material ) )
-			material = cast(Material)newComponent;
+			material = cast(shared Material)newComponent;
 		else if( typeid( newComponent ) == typeid( Mesh ) )
-			mesh = cast(Mesh)newComponent;
+			mesh = cast(shared Mesh)newComponent;
 		else if( typeid( newComponent ) == typeid( DirectionalLight ) || 
 				 typeid( newComponent ) == typeid( AmbientLight ) )
-			light = cast(Light)newComponent;
+			light = cast(shared Light)newComponent;
 		else if( typeid( newComponent ) == typeid( Camera ) )
-			camera = cast(Camera)newComponent;
+			camera = cast(shared Camera)newComponent;
 	}
 
 	/**
@@ -193,7 +193,7 @@ public:
 		return componentList[ T.classinfo ];
 	}
 
-	final void addChild( GameObject object )
+	final void addChild( shared GameObject object )
 	{
 		object._children ~= object;
 		object.parent = this;
@@ -209,7 +209,7 @@ public:
 	void onCollision( GameObject other ) { }
 }
 
-class Transform
+shared class Transform
 {
 private:
 	GameObject _owner;
@@ -226,7 +226,7 @@ public:
 	//mixin EmmittingProperty!( "quat", "rotation", "public" );
 	//mixin EmmittingProperty!( "vec3", "scale", "public" );
 
-	this( GameObject obj = null )
+	this( shared GameObject obj = null )
 	{
 		owner = obj;
 		position = vec3(0,0,0);

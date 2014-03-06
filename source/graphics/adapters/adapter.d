@@ -27,7 +27,7 @@ else
 	alias uint GLDeviceContext;
 }
 
-abstract class Adapter
+shared abstract class Adapter
 {
 private:
 	GLDeviceContext _deviceContext;
@@ -84,13 +84,13 @@ public:
 
 		//Create the frame buffer, which will contain the textures to render to
 		deferredFrameBuffer = 0;
-		glGenFramebuffers( 1, &_deferredFrameBuffer );
+		glGenFramebuffers( 1, cast(uint*)&_deferredFrameBuffer );
 		glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
 
 		//Generate our 3 textures
-		glGenTextures( 1, &_diffuseRenderTexture );
-		glGenTextures( 1, &_normalRenderTexture );
-		glGenTextures( 1, &_depthRenderTexture );
+		glGenTextures( 1, cast(uint*)&_diffuseRenderTexture );
+		glGenTextures( 1, cast(uint*)&_normalRenderTexture );
+		glGenTextures( 1, cast(uint*)&_depthRenderTexture );
 
 		//For each texture, we bind it to our active texture, and set the format and filtering
 		glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
@@ -225,11 +225,11 @@ public:
 		// bind the directional and ambient lights
 		if( directionalLight is null )
 		{
-			directionalLight = new DirectionalLight( vec3(), vec3() );
+			directionalLight = new shared DirectionalLight( vec3(), vec3() );
 		}
 		if( ambientLight is null )
 		{
-			ambientLight = new AmbientLight( vec3() );
+			ambientLight = new shared AmbientLight( vec3() );
 		}
 		shader.bindDirectionalLight( directionalLight );
 		shader.bindAmbientLight( ambientLight );
@@ -248,13 +248,13 @@ public:
 		directionalLight = null;
 	}
 
-	final void addLight( Light light )
+	final void addLight( shared Light light )
 	{
 		if( typeid( light ) == typeid( AmbientLight ) )
 		{
 			if( ambientLight is null )
 			{
-				ambientLight = cast(AmbientLight)light;
+				ambientLight = cast(shared AmbientLight)light;
 			}
 			else
 				log( OutputType.Info, "Attemtping to add multiple ambient lights to the scene.  Ignoring additional ambient lights." );
@@ -263,7 +263,7 @@ public:
 		{
 			if( directionalLight is null )
 			{
-				directionalLight = cast(DirectionalLight)light;
+				directionalLight = cast(shared DirectionalLight)light;
 			}
 			else
 				log( OutputType.Info, "Attemtping to add multiple directional lights to the scene.  Ignoring additional directional lights." );
@@ -274,7 +274,7 @@ public:
 		}
 	}
 
-	final void setCamera( Camera camera )
+	final void setCamera( shared Camera camera )
 	{
 		activeCamera = camera;
 	}

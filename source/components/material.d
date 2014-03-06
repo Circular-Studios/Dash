@@ -5,7 +5,7 @@ import yaml;
 import derelict.opengl3.gl3, derelict.freeimage.freeimage;
 import std.variant, std.conv;
 
-final class Material : IComponent
+shared final class Material : IComponent
 {
 private:
 	Texture _diffuse, _normal, _specular;
@@ -18,9 +18,9 @@ public:
 	/**
 	* Create a Material from a Yaml node.
 	*/
-	static Material createFromYaml( Node yamlObj )
+	static shared(Material) createFromYaml( Node yamlObj )
 	{
-		auto obj = new Material;
+		auto obj = new shared Material;
 		Variant prop;
 
 		if( Config.tryGet!string( "Diffuse", prop, yamlObj ) )
@@ -39,7 +39,7 @@ public:
 	override void shutdown() { }
 }
 
-final class Texture
+shared final class Texture
 {
 private:
 	uint _width, _height, _glID;
@@ -57,7 +57,7 @@ public:
 		width = FreeImage_GetWidth( imageData );
 		height = FreeImage_GetHeight( imageData );
 
-		glGenTextures( 1, &_glID );
+		glGenTextures( 1, cast(uint*)&_glID );
 		glBindTexture( GL_TEXTURE_2D, glID );
 		glTexImage2D(
 					 GL_TEXTURE_2D,
@@ -78,13 +78,13 @@ public:
 	void shutdown()
 	{
 		glBindTexture( GL_TEXTURE_2D, 0 );
-		glDeleteBuffers( 1, &_glID );
+		glDeleteBuffers( 1, cast(uint*)&_glID );
 	}
 }
 
 static this()
 {
-	IComponent.initializers[ "Material" ] = ( Node yml, GameObject obj )
+	IComponent.initializers[ "Material" ] = ( Node yml, shared GameObject obj )
 	{
 		obj.addComponent( Assets.get!Material( yml.get!string ) );
 	};

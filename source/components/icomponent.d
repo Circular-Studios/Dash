@@ -9,17 +9,17 @@ import yaml;
 /**
  * Interface for components to implement.
  */
-interface IComponent
+shared interface IComponent
 {
 public:
-	static void function( Node, GameObject )[string] initializers;
+	static void function( Node, shared GameObject )[string] initializers;
 
 	/**
 	 * The GameObject that owns this component.
 	 */
-	final @property ref GameObject owner()
+	final @property ref shared(GameObject) owner()
 	{
-		static GameObject owner;
+		static shared(GameObject) owner;
 		
 		return owner;
 	}

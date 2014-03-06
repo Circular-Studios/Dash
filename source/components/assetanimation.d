@@ -6,7 +6,7 @@ import utility.output;
 import derelict.assimp3.assimp;
 import gl3n.linalg;
 
-class AssetAnimation
+shared class AssetAnimation
 {
 private:
 	AnimationSet _animationSet;
@@ -23,9 +23,9 @@ public:
 	}
 
 	// PROBLEM! To get the parent you cant call makeBoneFromNode, otherwise it will be extra new nodes. Instead pass in parent node (if there is one)
-	Bone makeBoneFromNode( const(aiAnimation*) animation, const(aiNode*) bones )
+	shared(Bone) makeBoneFromNode( const(aiAnimation*) animation, const(aiNode*) bones )
 	{
-		Bone temp = new Bone( cast(string)bones.mName.data );
+		auto temp = new shared Bone( cast(string)bones.mName.data );
 		
 		if( !(bones.mParent !is null) )
 			temp.parent = makeBoneFromNode( animation, bones.mParent );
@@ -39,7 +39,7 @@ public:
 
 		return temp;
 	}
-	void assignCorrectAnimationData( const(aiAnimation*) animation, Bone boneToAssign )
+	void assignCorrectAnimationData( const(aiAnimation*) animation, shared Bone boneToAssign )
 	{
 		// For each bone animation data
 		for( int i = 0; i < animation.mNumChannels; i++)
@@ -48,7 +48,7 @@ public:
 			if( cast(string)animation.mChannels[ i ].mNodeName.data == boneToAssign.name )
 			{
 				// Assign the bone animation data to the bone
-				boneToAssign.positionKeys = convertVectorArray( animation.mChannels[ i ].mPositionKeys,
+				boneToAssign.positionKeys = cast(shared)convertVectorArray( animation.mChannels[ i ].mPositionKeys,
 																animation.mChannels[ i ].mNumPositionKeys );
 			}
 			else
@@ -95,17 +95,17 @@ public:
 
 	}
 
-	struct AnimationSet
+	shared struct AnimationSet
 	{
 		float duration;
 		float fps;
 		Bone boneAnimData;
 	}
-	class Bone
+	shared class Bone
 	{
 		this( string boneName )
 		{
-			name = boneName;
+			name = boneName.dup;
 		}
 
 		string name;

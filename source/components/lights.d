@@ -3,7 +3,7 @@ import core, components, graphics;
 
 import gl3n.linalg;
 
-class Light : IComponent
+shared class Light : IComponent
 {
 private:
 	vec3 _color;
@@ -13,7 +13,7 @@ public:
 
 	this( vec3 color )
 	{
-		this.color = color;
+		this.color = cast(shared)vec3( color );
 	}
 	
 	override void update() { }
@@ -21,7 +21,7 @@ public:
 	override void shutdown() { }
 }
 
-class AmbientLight : Light 
+shared class AmbientLight : Light 
 { 
 	this( vec3 color )
 	{
@@ -29,7 +29,7 @@ class AmbientLight : Light
 	}
 }
 
-class DirectionalLight : Light
+shared class DirectionalLight : Light
 {
 private:
 	vec3 _direction;
@@ -39,7 +39,7 @@ public:
 
 	this( vec3 color, vec3 direction )
 	{
-		this.direction = direction;
+		this.direction = cast(shared)vec3( direction );
 		super( color );
 	}
 }
@@ -47,8 +47,8 @@ public:
 static this()
 {
 	import yaml;
-	IComponent.initializers[ "Light" ] = ( Node yml, GameObject obj )
+	IComponent.initializers[ "Light" ] = ( Node yml, shared GameObject obj )
 	{
-		obj.addComponent( yml.get!Light );
+		obj.addComponent( cast(shared)yml.get!Light );
 	};
 }

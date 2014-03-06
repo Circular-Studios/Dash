@@ -51,7 +51,7 @@ public static:
 /**
  * A prefab that allows for quick object creation.
  */
-final class Prefab
+final class Prefab : GameObject
 {
 public:
 	/**
@@ -62,103 +62,23 @@ public:
 	 */
 	this( Node yml )
 	{
-		transform = new Transform;
-		Variant prop;
-		Node innerNode;
-
-		// Try to get from script
-		if( Config.tryGet!string( "Script.ClassName", prop, yml ) )
-			scriptClass = ClassInfo.find( prop.get!string );
-		else
-			scriptClass = null;
-
-		if( Config.tryGet!string( "Camera", prop, yml ) )
-		{
-			//TODO: Setup camera
-		}
-
-		if( Config.tryGet!string( "Material", prop, yml ) )
-			componentReferences ~= Assets.get!Material( prop.get!string );
-
-		if( Config.tryGet!string( "AwesomiumView", prop, yml ) )
-		{
-			//TODO: Initialize Awesomium view
-		}
-
-		if( Config.tryGet!string( "Mesh", prop, yml ) )
-			componentReferences ~= Assets.get!Mesh( prop.get!string );
-
-		if( Config.tryGet( "Transform", innerNode, yml ) )
-		{
-			vec3 transVec;
-			if( Config.tryGet( "Scale", transVec, innerNode ) )
-				transform.scale = transVec;
-			if( Config.tryGet( "Position", transVec, innerNode ) )
-				transform.position = transVec;
-			if( Config.tryGet( "Rotation", transVec, innerNode ) )
-				transform.rotation = quat.euler_rotation( transVec.y, transVec.z, transVec.x );
-		}
-
-		if( Config.tryGet!Light( "Light", prop, innerNode ) )
-		{
-			componentReferences ~= prop.get!Light;
-		}
-	}
-
-	/**
-	 * Creates a default prefab with a transform and $(D null) scriptClass.
-	 */
-	this()
-	{
-		transform = new Transform;
-		scriptClass = null;
+		this.yaml = yml;
 	}
 
 	/**
 	 * Creates a GameObject instance from the prefab.
 	 * 
 	 * Params:
-	 * 	overrideScript =			Create the instance from this class type instead of the prefab's default.
+	 * 	scriptOverride =			Create the instance from this class type instead of the prefab's default.
 	 *
 	 * Returns:
 	 * 	The new GameObject from the Prefab.
 	 */
-	final GameObject createInstance( const ClassInfo overrideScript = null )
+	final GameObject createInstance( const ClassInfo scriptOverride = null )
 	{
-		GameObject result;
-
-		auto script = overrideScript is null ? scriptClass : overrideScript;
-
-		if( script )
-			result = cast(GameObject)script.create();
-		else
-			result = new GameObject;
-
-		result.transform.scale.vector[ 0..3 ] = transform.scale.vector[ 0..3 ];
-		result.transform.position.vector[ 0..3 ] = transform.position.vector[ 0..3 ];
-		result.transform.rotation.x = transform.rotation.x;
-		result.transform.rotation.y = transform.rotation.y;
-		result.transform.rotation.z = transform.rotation.z;
-		//result.transform.rotation.w = transform.rotation.w;
-
-		foreach( cpn; componentReferences )
-			result.addComponent( cpn );
-
-		foreach( cpncls; componentCreations )
-		{
-			auto inst = cast(Component)cpncls.create();
-			result.addComponent( inst );
-			inst.owner = result;
-		}
-
-		result.transform.updateMatrix();
-
-		return result;
+		return GameObject.createFromYaml( yaml, scriptOverride );
 	}
 
 private:
-	const ClassInfo scriptClass;
-	Transform transform;
-	Component[] componentReferences;
-	ClassInfo[] componentCreations;
+	Node yaml;
 }

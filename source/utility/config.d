@@ -258,7 +258,7 @@ Light constructAmbientLight( ref Node node )
 	vec3 color;
 	Config.tryGet( "Color", color, node );
 	
-	return new AmbientLight( null, color );
+	return new AmbientLight( color );
 }
 
 Light constructDirectionalLight( ref Node node )
@@ -269,7 +269,7 @@ Light constructDirectionalLight( ref Node node )
 	Config.tryGet( "Color", color, node );
 	Config.tryGet( "Direction", dir, node );
 
-	return new DirectionalLight( null, color, dir );
+	return new DirectionalLight( color, dir );
 }
 
 Light constructPointLight( ref Node node )
@@ -280,7 +280,7 @@ Light constructPointLight( ref Node node )
 	Config.tryGet( "Color", color, node );
 	Config.tryGet( "Radius", radius, node );
 
-	return new PointLight( null, color, radius );
+	return new PointLight( color, radius );
 }
 
 

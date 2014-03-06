@@ -37,7 +37,10 @@ private:
 	uint _height, _screenHeight;
 	bool _fullscreen, _backfaceCulling, _vsync;
 	float _fov, _near, _far;
-	uint _deferredFrameBuffer, _diffuseRenderTexture, _normalRenderTexture, _depthRenderTexture;
+	uint deferredFrameBuffer;
+	uint diffuseRenderTexture; //Alpha channel stores Specular map average
+	uint normalRenderTexture; //Alpha channel stores nothing important
+	uint depthRenderTexture;
 	// Do not add properties for:
 	mat4 projection;
 	Camera activeCamera;
@@ -59,11 +62,6 @@ public:
 	mixin( Property!_fov );
 	mixin( Property!_near );
 	mixin( Property!_far );
-	mixin( Property!_deferredFrameBuffer );
-	mixin( Property!_diffuseRenderTexture ); //Alpha channel stores Specular map average
-	mixin( Property!_normalRenderTexture ); //Alpha channel stores nothing important
-	mixin( Property!_depthRenderTexture );
-	
 
 	/**
 	 *  Constant strings for various parts of the render pipeline
@@ -92,13 +90,13 @@ public:
 
 		//Create the frame buffer, which will contain the textures to render to
 		deferredFrameBuffer = 0;
-		glGenFramebuffers( 1, &_deferredFrameBuffer );
+		glGenFramebuffers( 1, &deferredFrameBuffer );
 		glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
 
 		//Generate our 3 textures
-		glGenTextures( 1, &_diffuseRenderTexture );
-		glGenTextures( 1, &_normalRenderTexture );
-		glGenTextures( 1, &_depthRenderTexture );
+		glGenTextures( 1, &diffuseRenderTexture );
+		glGenTextures( 1, &normalRenderTexture );
+		glGenTextures( 1, &depthRenderTexture );
 
 		//For each texture, we bind it to our active texture, and set the format and filtering
 		glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
@@ -202,7 +200,6 @@ public:
 	{
 		void bindGeometryOutputs( Shader shader )
 		{
-			// bind geometry pass outputs
 			// diffuse
 			glUniform1i( shader.getUniformLocation( ShaderUniform.DiffuseTexture ), 0 );
 			glActiveTexture( GL_TEXTURE0 );
@@ -243,7 +240,7 @@ public:
 			shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
 			                            ( projection * ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) ).inverse() );
 
-			// bind the window mesh for directional lights
+			// bind the window mesh for ambient lights
 			glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
 			glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSquare ).numVertices, GL_UNSIGNED_INT, null );
 		}
@@ -260,8 +257,10 @@ public:
 			shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
 			                            ( projection * ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) ).inverse() );
 			shader.setEyePosition( activeCamera !is null ? activeCamera.owner.transform.worldPosition : vec3( 0, 0, 0 ) );
+
 			// bind the window mesh for directional lights
 			glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
+
 			// bind and draw directional lights
 			foreach( light; directionalLights )
 			{
@@ -282,14 +281,17 @@ public:
 			shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
 			                            ( projection * ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) ).inverse() );
 			shader.setEyePosition( activeCamera !is null ? activeCamera.owner.transform.worldPosition : vec3( 0, 0, 0 ) );
-			// bind the window mesh for directional lights
+
+			// bind the sphere mesh for point lights
 			glBindVertexArray( Assets.get!Mesh( UnitSphere ).glVertexArray );
-			// bind and draw directional lights
+
+			// bind and draw point lights
 			foreach( light; pointLights )
 			{
+			//	logInfo(light.owner.name);
 				shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , projection * 
 				                            ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) *
-				                            light.owner.transform.matrix );
+				                            light.getTransform() );
 				shader.bindPointLight( light );
 				glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSphere ).numVertices, GL_UNSIGNED_INT, null );
 			}

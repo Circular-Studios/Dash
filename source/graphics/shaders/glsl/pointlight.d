@@ -93,7 +93,7 @@ immutable string pointlightFS = q{
 		// specularIntensity is the light's contribution
 		vec3 specular = ( pow( specularScale, 8 ) * light.color * specularIntensity);
 		color = vec4( (diffuse + specular)* attenuation, 1.0f ) ;
-		//color = vec4( vec3(1,0,0) * attenuation, 1.0f );
+		//color = vec4( vec3(1,0,0), 1.0f );
 		
 	}
 };

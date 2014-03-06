@@ -2,8 +2,7 @@
  * Defines the GameObject class, to be subclassed by scripts and instantiated for static objects.
  */
 module core.gameobject;
-import core, components, graphics, utility.config;
-import utility;
+import core, components, graphics, utility;
 
 import yaml;
 import gl3n.linalg, gl3n.math;
@@ -41,6 +40,8 @@ public:
 	/// All of the objects which list this as parent
 	mixin( Property!( _children, AccessModifier.Public ) );
 
+	string name;
+
 	/**
 	 * Create a GameObject from a Yaml node.
 	 * 
@@ -54,59 +55,37 @@ public:
 	static GameObject createFromYaml( Node yamlObj, const ClassInfo scriptOverride = null )
 	{
 		GameObject obj;
-		Variant prop;
+		string prop;
 		Node innerNode;
-
+		
 		// Try to get from script
 		if( scriptOverride !is null )
 		{
 			obj = cast(GameObject)scriptOverride.create();
 		}
-		else if( Config.tryGet!string( "Script.ClassName", prop, yamlObj ) )
+		else
 		{
-			const ClassInfo scriptClass = ClassInfo.find( prop.get!string );
-
-			if( Config.tryGet!string( "InstanceOf", prop, yamlObj ) )
+			// Get class to create script from
+			const ClassInfo scriptClass = Config.tryGet( "Script.ClassName", prop, yamlObj )
+					? ClassInfo.find( prop )
+					: null;
+			
+			if( Config.tryGet( "InstanceOf", prop, yamlObj ) )
 			{
-				obj = Prefabs[ prop.get!string ].createInstance( scriptClass );
+				obj = Prefabs[ prop ].createInstance( scriptClass );
 			}
 			else
 			{
-				obj = cast(GameObject)scriptClass.create();
-			}
-		}
-		else if( Config.tryGet!string( "InstanceOf", prop, yamlObj ) )
-		{
-			obj = Prefabs[ prop.get!string ].createInstance();
-		}
-		else
-		{
-			obj = new GameObject;
-		}
-
-		if( Config.tryGet!string( "Camera", prop, yamlObj ) )
-		{
-			auto cam = new Camera;
-			obj.addComponent( cam );
-			cam.owner = obj;
-		}
-
-		if( Config.tryGet!string( "Material", prop, yamlObj ) )
-		{
-			obj.addComponent( Assets.get!Material( prop.get!string ) );
-		}
-
-		if( Config.tryGet!string( "Mesh", prop, yamlObj ) )
-		{
-			obj.addComponent( Assets.get!Mesh( prop.get!string ) );
-
-			// If the mesh has animation also add animation component
-			if( Assets.get!Mesh( prop.get!string ).animated )
-			{
-				obj.addComponent( new Animation( Assets.get!AssetAnimation( prop.get!string ) ) );
+				obj = scriptClass
+						? cast(GameObject)scriptClass.create()
+						: new GameObject;
 			}
 		}
 
+		// set object name
+		obj.name = yamlObj[ "Name" ].as!string;
+
+		// Init transform
 		if( Config.tryGet( "Transform", innerNode, yamlObj ) )
 		{
 			vec3 transVec;
@@ -117,17 +96,17 @@ public:
 			if( Config.tryGet( "Rotation", transVec, innerNode ) )
 				obj.transform.rotation = quat.euler_rotation( radians(transVec.y), radians(transVec.z), radians(transVec.x) );
 		}
-
-		if( Config.tryGet!Light( "Light", prop, yamlObj ) )
+		
+		// Init components
+		foreach( string key, Node value; yamlObj )
 		{
-			auto light = prop.get!Light;
-			obj.addComponent( light );
-			light.owner = obj;
-			if( typeid(light) == typeid(PointLight) )
-			{
-				light.owner.transform.scale = vec3( (cast(PointLight)light).radius );
-			}
-				
+			if( key == "Name" || key == "Script" || key == "Parent" || key == "InstanceOf" || key == "Transform" )
+				continue;
+
+			if( auto init = key in IComponent.initializers )
+				obj.addComponent( (*init)( value, obj ) );
+			else
+				logWarning( "Unknown key: ", key );
 		}
 
 		obj.transform.updateMatrix();
@@ -198,18 +177,6 @@ public:
 	final void addComponent( T )( T newComponent ) if( is( T : IComponent ) )
 	{
 		componentList[ typeid(T) ] = newComponent;
-
-		// Add component to proper property
-		if( typeid( newComponent ) == typeid( Material ) )
-			material = cast(Material)newComponent;
-		else if( typeid( newComponent ) == typeid( Mesh ) )
-			mesh = cast(Mesh)newComponent;
-		else if( typeid( newComponent ) == typeid( DirectionalLight ) || 
-				 typeid( newComponent ) == typeid( AmbientLight ) ||
-		         typeid( newComponent ) == typeid( PointLight ))
-			light = cast(Light)newComponent;
-		else if( typeid( newComponent ) == typeid( Camera ) )
-			camera = cast(Camera)newComponent;
 	}
 
 	/**
@@ -318,8 +285,6 @@ public:
 
 		_matrixIsDirty = false;
 	}
-
-
 
 private:
 	mat4 _matrix;

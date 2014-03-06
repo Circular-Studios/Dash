@@ -279,13 +279,14 @@ static this()
 	import yaml;
 	IComponent.initializers[ "Mesh" ] = ( Node yml, GameObject obj )
 	{
-		auto mesh = Assets.get!Mesh( yml.get!string );
-		obj.addComponent( mesh );
+		obj.mesh = Assets.get!Mesh( yml.get!string );
 		
 		// If the mesh has animation also add animation component
-		if( mesh.animated )
+		if( obj.mesh.animated )
 		{
 			obj.addComponent( new Animation( Assets.get!AssetAnimation( yml.get!string ) ) );
 		}
+
+		return obj.mesh;
 	};
 }

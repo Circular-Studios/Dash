@@ -12,7 +12,7 @@ import yaml;
 interface IComponent
 {
 public:
-	static void function( Node, GameObject )[string] initializers;
+	static IComponent function( Node, GameObject )[string] initializers;
 
 	/**
 	 * The GameObject that owns this component.

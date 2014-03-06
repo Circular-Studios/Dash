@@ -87,7 +87,7 @@ public:
 				continue;
 
 			if( auto init = key in IComponent.initializers )
-				(*init)( value, obj );
+				obj.addComponent( (*init)( value, obj ) );
 			else
 				logWarning( "Unknown key: ", key );
 		}
@@ -172,17 +172,6 @@ public:
 	final void addComponent( T )( T newComponent ) if( is( T : IComponent ) )
 	{
 		componentList[ typeid(T) ] = newComponent;
-
-		// Add component to proper property
-		if( typeid( newComponent ) == typeid( Material ) )
-			material = cast(Material)newComponent;
-		else if( typeid( newComponent ) == typeid( Mesh ) )
-			mesh = cast(Mesh)newComponent;
-		else if( typeid( newComponent ) == typeid( DirectionalLight ) || 
-				 typeid( newComponent ) == typeid( AmbientLight ) )
-			light = cast(Light)newComponent;
-		else if( typeid( newComponent ) == typeid( Camera ) )
-			camera = cast(Camera)newComponent;
 	}
 
 	/**

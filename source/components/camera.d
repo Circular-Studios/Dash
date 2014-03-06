@@ -48,8 +48,8 @@ static this()
 	import yaml;
 	IComponent.initializers[ "Camera" ] = ( Node yml, GameObject obj )
 	{
-		auto cam = new Camera;
-		cam.owner = obj;
-		obj.addComponent( cam );
+		obj.camera = new Camera;
+		obj.camera.owner = obj;
+		return obj.camera;
 	};
 }

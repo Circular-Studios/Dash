@@ -49,6 +49,7 @@ static this()
 	import yaml;
 	IComponent.initializers[ "Light" ] = ( Node yml, GameObject obj )
 	{
-		obj.addComponent( yml.get!Light );
+		obj.light = yml.get!Light;
+		return obj.light;
 	};
 }

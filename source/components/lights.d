@@ -50,7 +50,7 @@ public:
 /*
  * Point Light data
  */
-class PointLight : Light
+shared class PointLight : Light
 {
 private:
 	float _radius;
@@ -68,14 +68,14 @@ public:
 		super( color );
 	}
 
-	public mat4 getTransform()
+	public shared(mat4) getTransform()
 	{
 		_matrix = mat4.identity;
 		// Scale
-		_matrix.scale( radius, radius, radius );
+		(cast()_matrix).scale( radius, radius, radius );
 		// Translate
 		vec3 position = owner.transform.worldPosition;
-		_matrix.translate( position.x, position.y, position.z );
+		(cast()_matrix).translate( position.x, position.y, position.z );
 		return _matrix;
 	}
 
@@ -84,7 +84,7 @@ public:
 /*
  * SpotLight Stub
  */
-class SpotLight : Light
+shared class SpotLight : Light
 {
 public:
 	this( vec3 color )

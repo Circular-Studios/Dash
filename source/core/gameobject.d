@@ -7,7 +7,7 @@ import core, components, graphics, utility;
 import yaml;
 import gl3n.linalg, gl3n.math;
 
-import std.signals, std.conv, std.variant;
+import std.conv, std.variant;
 
 /**
  * Manages all components and transform in the world. Can be overridden.
@@ -113,15 +113,13 @@ public:
 		return obj;
 	}
 
-	mixin Signal!( string, string );
-
 	/**
 	 * Creates basic GameObject with transform and connection to transform's emitter.
 	 */
 	this()
 	{
 		transform = new shared Transform( this );
-		transform.connect( &emit );
+		//transform.connect( &emit );
 	}
 
 	~this()
@@ -267,8 +265,6 @@ public:
 		else
 			return owner.parent.transform.matrix * _matrix;
 	}
-
-	mixin Signal!( string, string );
 
 	/**
 	 * Rebuilds the object's matrix

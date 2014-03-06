@@ -1,16 +1,9 @@
 module graphics.graphics;
 import graphics.adapters, graphics.shaders;
 
-shared GraphicsManager Graphics;
-
-shared static this()
+final abstract class Graphics
 {
-	Graphics = new shared GraphicsManager;
-}
-
-shared final class GraphicsManager
-{
-public:
+public static:
 	Adapter adapter;
 	alias adapter this;
 

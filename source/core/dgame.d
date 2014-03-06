@@ -24,11 +24,11 @@ enum GameState
 /**
  * The main game loop manager. Meant to be overridden.
  */
-class DGame
+shared class DGame
 {
 public:
 	/// The instance to be running from
-	static DGame instance;
+	shared static DGame instance;
 
 	/// Current state of the game
 	GameState currentState;
@@ -187,7 +187,7 @@ private:
 /**
  * Initializes reflection things.
  */
-static this()
+shared static this()
 {
 	foreach( mod; ModuleInfo )
 	{
@@ -195,7 +195,7 @@ static this()
 		{
 			// Find the appropriate game loop.
 			if( klass.base == typeid(DGame) )
-				DGame.instance = cast(DGame)klass.create();
+				DGame.instance = cast(shared DGame)klass.create();
 		}
 	}
 }

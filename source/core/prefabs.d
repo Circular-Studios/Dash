@@ -58,7 +58,7 @@ public:
 /**
  * A prefab that allows for quick object creation.
  */
-shared final class Prefab : GameObject
+shared final class Prefab
 {
 public:
 	/**
@@ -87,5 +87,5 @@ public:
 	}
 
 private:
-	Node yaml;
+	immutable Node yaml;
 }

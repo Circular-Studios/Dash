@@ -9,7 +9,7 @@ import gl3n.linalg;
 shared class AssetAnimation
 {
 private:
-	AnimationSet _animationSet;
+	shared AnimationSet _animationSet;
 
 public:
 	mixin( Property!_animationSet );

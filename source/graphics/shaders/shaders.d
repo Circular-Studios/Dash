@@ -240,7 +240,7 @@ public:
 	/*
 	 * Binds diffuse, normal, and specular textures to the shader
 	 */
-	final void bindMaterial( Material material )
+	final void bindMaterial( shared Material material )
 	{
 		//This is finding the uniform for the given texture, and setting that texture to the appropriate one for the object
 		glUniform1i( getUniformLocation( ShaderUniform.DiffuseTexture ), 0 );
@@ -259,7 +259,7 @@ public:
 	/*
 	 * Bind an ambient light
 	 */
-	final void bindAmbientLight( AmbientLight light )
+	final void bindAmbientLight( shared AmbientLight light )
 	{
 		bindUniform3f( ShaderUniform.LightColor, light.color );
 	}
@@ -267,7 +267,7 @@ public:
 	/*
 	 * Bind a directional light
 	 */
-	final void bindDirectionalLight( DirectionalLight light )
+	final void bindDirectionalLight( shared DirectionalLight light )
 	{
 		bindUniform3f( ShaderUniform.LightDirection, light.direction );
 		bindUniform3f( ShaderUniform.LightColor, light.color );
@@ -276,7 +276,7 @@ public:
 	/*
 	 * Bind a point light
 	 */
-	final void bindPointLight( PointLight light )
+	final void bindPointLight( shared PointLight light )
 	{
 		bindUniform3f( ShaderUniform.LightColor, light.color );
 		bindUniform3f( ShaderUniform.LightPosition, light.owner.transform.worldPosition );

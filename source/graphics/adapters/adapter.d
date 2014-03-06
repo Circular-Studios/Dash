@@ -27,7 +27,7 @@ else
 	alias uint GLDeviceContext;
 }
 
-shared abstract class Adapter
+abstract class Adapter
 {
 private:
 	GLDeviceContext _deviceContext;
@@ -43,11 +43,11 @@ private:
 	uint depthRenderTexture;
 	// Do not add properties for:
 	mat4 projection;
-	Camera activeCamera;
-	AmbientLight ambientLight;
-	DirectionalLight[] directionalLights;
-	PointLight[] pointLights;
-	SpotLight[] spotLights;
+	shared Camera activeCamera;
+	shared AmbientLight ambientLight;
+	shared DirectionalLight[] directionalLights;
+	shared PointLight[] pointLights;
+	shared SpotLight[] spotLights;
 public:
 	mixin( Property!_deviceContext );
 	mixin( Property!_renderContext );
@@ -90,13 +90,13 @@ public:
 
 		//Create the frame buffer, which will contain the textures to render to
 		deferredFrameBuffer = 0;
-		glGenFramebuffers( 1, cast(uint*)&_deferredFrameBuffer );
+		glGenFramebuffers( 1, &deferredFrameBuffer );
 		glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
 
 		//Generate our 3 textures
-		glGenTextures( 1, cast(uint*)&diffuseRenderTexture );
-		glGenTextures( 1, cast(uint*)&normalRenderTexture );
-		glGenTextures( 1, cast(uint*)&depthRenderTexture );
+		glGenTextures( 1, &diffuseRenderTexture );
+		glGenTextures( 1, &normalRenderTexture );
+		glGenTextures( 1, &depthRenderTexture );
 
 		//For each texture, we bind it to our active texture, and set the format and filtering
 		glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
@@ -165,7 +165,7 @@ public:
 	final void drawObject( shared GameObject object )
 	{
 		// set the shader
-		shared Shader shader;
+		Shader shader;
 		if( object.mesh.animated )
 		{
 			glUseProgram( Shaders[AnimatedGeometryShader].programID );
@@ -182,8 +182,8 @@ public:
 
 		shader.bindUniformMatrix4fv( ShaderUniform.World , object.transform.matrix );
 		shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , projection * 
-										( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) *
-										object.transform.matrix );
+										( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) *
+		                            	object.transform.matrix );
 
 		shader.bindMaterial( object.material );
 
@@ -238,7 +238,7 @@ public:
 			shader.bindAmbientLight( ambientLight );
 			// bind inverseViewProj for rebuilding world positions from pixel locations
 			shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-			                            ( projection * ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) ).inverse() );
+			                            ( projection * ( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) ).inverse() );
 
 			// bind the window mesh for ambient lights
 			glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
@@ -255,7 +255,7 @@ public:
 
 			// bind inverseViewProj for rebuilding world positions from pixel locations
 			shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-			                            ( projection * ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) ).inverse() );
+			                            ( projection * ( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) ).inverse() );
 			shader.setEyePosition( activeCamera !is null ? activeCamera.owner.transform.worldPosition : vec3( 0, 0, 0 ) );
 
 			// bind the window mesh for directional lights
@@ -279,7 +279,7 @@ public:
 
 			// bind inverseViewProj for rebuilding world positions from pixel locations
 			shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-			                            ( projection * ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) ).inverse() );
+			                            ( projection * ( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) ).inverse() );
 			shader.setEyePosition( activeCamera !is null ? activeCamera.owner.transform.worldPosition : vec3( 0, 0, 0 ) );
 
 			// bind the sphere mesh for point lights
@@ -290,7 +290,7 @@ public:
 			{
 			//	logInfo(light.owner.name);
 				shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , projection * 
-				                            ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) *
+				                            ( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) *
 				                            light.getTransform() );
 				shader.bindPointLight( light );
 				glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSphere ).numVertices, GL_UNSIGNED_INT, null );
@@ -339,7 +339,7 @@ public:
 		}
 		else
 		{
-			log( OutputType.Warning, "Attempting to add unknown light type, light ignored." );
+			logWarning( "Attempting to add unknown light type, light ignored." );
 		}
 	}
 

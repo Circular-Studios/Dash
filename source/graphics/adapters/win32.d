@@ -52,7 +52,7 @@ LRESULT WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 	return 0;
 }
 
-shared final class Win32 : Adapter
+final class Win32 : Adapter
 {
 private:
 	HWND _hWnd;
@@ -73,7 +73,7 @@ public:
 		screenWidth = GetSystemMetrics( SM_CXSCREEN );
 		screenHeight = GetSystemMetrics( SM_CYSCREEN );
 		
-		hInstance = cast(shared)GetModuleHandle( null );
+		hInstance = GetModuleHandle( null );
 		
 		WNDCLASSEX wcex = {
 			WNDCLASSEX.sizeof,
@@ -100,10 +100,10 @@ public:
 		
 		HGLRC handle;
 		
-		deviceContext = cast(shared)GetDC( cast(void*)hWnd );		
-		SetPixelFormat( cast(void*)deviceContext, 1, &pfd );
-		renderContext = cast(shared)wglCreateContext( cast(void*)deviceContext );
-		wglMakeCurrent( cast(void*)deviceContext, cast(void*)renderContext );
+		deviceContext = GetDC( hWnd );		
+		SetPixelFormat( deviceContext, 1, &pfd );
+		renderContext = wglCreateContext( deviceContext );
+		wglMakeCurrent( deviceContext, renderContext );
 		
 		DerelictGL3.reload();
 		

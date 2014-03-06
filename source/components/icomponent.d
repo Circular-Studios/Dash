@@ -12,7 +12,7 @@ import yaml;
 shared interface IComponent
 {
 private:
-	static GameObject[ IComponent ] owners;
+	shared static GameObject[ shared IComponent ] owners;
 public:
 	/**
 	 * Functions to call when creating components.

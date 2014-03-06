@@ -2,21 +2,35 @@
  * Defines the DGame class, the base class for all game logic.
  */
 module core.dgame;
-import core.prefabs, core.properties;
-import components.assets;
-import graphics.graphics;
-import utility.time, utility.config, utility.output, utility.input;
+import core, components, graphics, utility;
 
-enum GameState { Menu = 0, Game = 1, Reset = 2, Quit = 3 };
+import std.datetime;
 
+/**
+ * The states the game can be in.
+ */
+enum GameState
+{
+	/// Render the menu, don't step physics.
+	Menu = 0,
+	/// The main game state.
+	Game = 1,
+	/// Reload all assets at the beginning of the next cycle.
+	Reset = 2,
+	/// Quit the game and the end of this cycle.
+	Quit = 3
+};
+
+/**
+ * The main game loop manager. Meant to be overridden.
+ */
 class DGame
 {
 public:
-	static
-	{
-		mixin Property!( "DGame", "instance" );
-	}
+	/// The instance to be running from
+	static DGame instance;
 
+	/// Current state of the game
 	GameState currentState;
 
 	/**
@@ -104,8 +118,6 @@ protected:
 	 */
 	void onSaveState() { }
 
-	//UserInterface ui;
-
 private:
 	/**
 	 * Function called to initialize controllers.
@@ -115,17 +127,32 @@ private:
 		currentState = GameState.Game;
         //camera = null;
 
+		logInfo( "Initializing..." );
+		auto start = Clock.currTime;
+		auto subStart = start;
+
 		Config.initialize();
 		Input.initialize();
 		Output.initialize();
+
+		logInfo( "Graphics initialization:" );
+		subStart = Clock.currTime;
 		Graphics.initialize();
+		logInfo( "Graphics init time: ", Clock.currTime - subStart );
+
+		logInfo( "Assets initialization:" );
+		subStart = Clock.currTime;
 		Assets.initialize();
+		logInfo( "Assets init time: ", Clock.currTime - subStart );
+
 		Prefabs.initialize();
 		//Physics.initialize();
 
         //ui = new UserInterface( this );
 
         onInitialize();
+
+		logInfo( "Total init time: ", Clock.currTime - start );
 	}
 
 	/**
@@ -157,10 +184,18 @@ private:
 	}
 }
 
-struct Game( T ) if( is( T : DGame ) )
+/**
+ * Initializes reflection things.
+ */
+static this()
 {
-	static this()
+	foreach( mod; ModuleInfo )
 	{
-		DGame.instance = new T;
+		foreach( klass; mod.localClasses )
+		{
+			// Find the appropriate game loop.
+			if( klass.base == typeid(DGame) )
+				DGame.instance = cast(DGame)klass.create();
+		}
 	}
 }

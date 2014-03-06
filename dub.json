@@ -1,0 +1,41 @@
+{
+	"name": "dash",
+	"description": "A game engine in dlang.",
+	"copyright": "2013 - 2014",
+	"license": "MIT",
+	"authors": [ 
+		"Colden Cullen",
+		"Brandon Littell",
+		"Eric Christenson",
+		"Tyler Wozniak",
+		"Sean Brennan",
+		"Timothy Reynolds"
+		],
+	"dependencies": {
+		"derelict-gl3": "~master",
+		"derelict-fi": "~master",
+		"derelict-assimp3": "~master",
+		"dyaml": "~master",
+		"gl3n" : "~master"
+	},
+	"targetName": "dash",
+	"targetType": "library",
+	"mainSourceFile": "source/app.d",
+	"sourcePaths": [ "source/" ],
+	"importPaths": [ "source/" ],
+	"-ddoxFilterArgs": [ "--min-protection=Protected" ],
+
+	"importPaths-windows": [ "third_party/DWinProgramming/WindowsAPI" ],
+	"libs-windows": [
+		"gdi32", "ole32", "kernel32",
+		"user32", "comctl32", "comdlg32" 
+	],
+
+	"dependencies-linux": {
+		"x11": 
+			{
+				"version": "~master",
+				"optional": true
+			}
+	}
+}

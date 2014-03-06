@@ -2,9 +2,7 @@
 
 version( linux ):
 
-import core.gameobject, core.dgame;
-import graphics.graphics, graphics.adapters.adapter;
-import utility.output;
+import core, graphics, utility;
 
 import x11.X, x11.Xlib, x11.Xutil;
 import derelict.opengl3.gl3, derelict.opengl3.glx, derelict.opengl3.glxext;
@@ -45,7 +43,7 @@ public:
 
 		if( display is null )
 		{
-			Output.printMessage( OutputType.Error, "Cannot connect to X server." );
+			logError( "Cannot connect to X server." );
 			return;
 		}
 
@@ -58,7 +56,7 @@ public:
 
 		if( xvi is null )
 		{
-			Output.printMessage( OutputType.Error, "No appropriate visual found." );
+			logError( "No appropriate visual found." );
 			return;
 		}
 
@@ -86,7 +84,7 @@ public:
 		// Set front face
 		glFrontFace( GL_CW );
 
-		glClearColor( 0.5f, 0.5f, 0.5f, 1.0f );
+		glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
 	}
 	
 	override void shutdown()

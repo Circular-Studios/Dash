@@ -2,21 +2,29 @@
  * Defines the GameObjectCollection class, which manages game objects and allows for batch operations on them.
  */
 module core.gameobjectcollection;
-import core.gameobject;
-import graphics.shaders;
-import utility.filepath, utility.config;
+import core, graphics, utility;
 
 import yaml;
 
 import std.path;
 
+/**
+ * Manages a collection of GameObjects.
+ */
 final class GameObjectCollection
 {
 public:
+	/// The AA of game objects managed.
+	GameObject[string] objects;
+
+	/// Allows functions to be called on this as if it were the AA.
 	alias objects this;
 
 	/**
 	 * Load all objects inside the specified folder in FilePath.Objects.
+	 * 
+	 * Params:
+	 * 	objectPath =			The folder location inside of /Objects to look for objects in.
 	 */
 	final void loadObjects( string objectPath = "" )
 	{
@@ -26,18 +34,19 @@ public:
 			buildNormalizedPath( FilePath.Resources.Objects, objectPath ),
 			( Node yml )
 			{
-				auto name = yml[ "Name" ].as!string;
+				//auto name = yml[ "Name" ].as!string;
 
 				// Create the object
 				auto object = GameObject.createFromYaml( yml );
 				// Add to collection
-				objects[ name ] = object;
+				objects[ object.name ] = object;
 
 				// If parent is specified, add it to the map
 				string parentName;
 				if( Config.tryGet( "Parent", parentName, yml ) )
 				{
 					parents[ object ] = parentName;
+					//logInfo("Parent:", parentName, " for ", object.name );
 				}
 			} );
 
@@ -58,6 +67,9 @@ public:
 
 	/**
 	 * Call the given function on each game object.
+	 * 
+	 * Params:
+	 * 	func =				The function to call on each object.
 	 * 
 	 * Examples:
 	 * ---
@@ -86,10 +98,11 @@ public:
 		apply( go => go.draw() );
 	}
 
+	/**
+	 * Get the object with the given key.
+	 */
 	final GameObject opIndex( string key )
 	{
 		return objects[ key ];
 	}
-
-	GameObject[string] objects;
 }

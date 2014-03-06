@@ -2,99 +2,90 @@
  * Defines the GameObject class, to be subclassed by scripts and instantiated for static objects.
  */
 module core.gameobject;
-import core.prefabs, core.properties;
-import components;
-import graphics.graphics, graphics.shaders;
-import utility.config;
+import core, components, graphics, utility;
 
 import yaml;
 import gl3n.linalg, gl3n.math;
 
 import std.signals, std.conv, std.variant;
 
+/**
+ * Manages all components and transform in the world. Can be overridden.
+ */
 class GameObject
 {
-public:
-	/**
-	 * The current transform of the object.
-	 */
-	mixin Property!( "Transform", "transform", "public" );
-	/**
-	 * The Material belonging to the object
-	 */
-	mixin Property!( "Material", "material", "public" );
-	/**
-	 * The Mesh belonging to the object
-	 */
-	mixin Property!( "Mesh", "mesh", "public" );
-	/**
-	* The light attached to this object
-	*/
-	mixin Property!( "Light", "light", "public" );
-	/**
-	* The camera attached to this object
-	*/
-	mixin Property!( "Camera", "camera", "public" );
-	/**
-	 * The object that this object belongs to
-	 */
-	mixin Property!( "GameObject", "parent" );
-	/**
-	 * All of the objects which list this as parent
-	 */
-	mixin Property!( "GameObject[]", "children" );
+private:
+	Transform _transform;
+	Material _material;
+	Mesh _mesh;
+	Light _light;
+	Camera _camera;
+	GameObject _parent;
+	GameObject[] _children;
+	IComponent[TypeInfo] componentList;
 
-	mixin Signal!( string, string );
+public:
+	/// The current transform of the object.
+	mixin( Property!( _transform, AccessModifier.Public ) );
+	/// The Material belonging to the object.
+	mixin( Property!( _material, AccessModifier.Public ) );
+	/// The Mesh belonging to the object.
+	mixin( Property!( _mesh, AccessModifier.Public ) );
+	/// The light attached to this object.
+	mixin( Property!( _light, AccessModifier.Public ) );
+	/// The camera attached to this object.
+	mixin( Property!( _camera, AccessModifier.Public ) );
+	/// The object that this object belongs to.
+	mixin( Property!( _parent, AccessModifier.Public ) );
+	/// All of the objects which list this as parent
+	mixin( Property!( _children, AccessModifier.Public ) );
+
+	string name;
 
 	/**
 	 * Create a GameObject from a Yaml node.
+	 * 
+	 * Params:
+	 * 	yamlObj =			The YAML node to pull info from.
+	 * 	scriptOverride =	The ClassInfo to use to create the object. Overrides YAML setting.
+	 * 
+	 * Returns:
+	 * 	A new game object with components and info pulled from yaml.
 	 */
-	static GameObject createFromYaml( Node yamlObj )
+	static GameObject createFromYaml( Node yamlObj, const ClassInfo scriptOverride = null )
 	{
 		GameObject obj;
-		Variant prop;
+		string prop;
 		Node innerNode;
-
+		
 		// Try to get from script
-		if( Config.tryGet!string( "Script.ClassName", prop, yamlObj ) )
+		if( scriptOverride !is null )
 		{
-			const ClassInfo scriptClass = ClassInfo.find( prop.get!string );
-
-			if( Config.tryGet!string( "InstanceOf", prop, yamlObj ) )
-			{
-				obj = Prefabs[ prop.get!string ].createInstance( scriptClass );
-			}
-			else
-			{
-				obj = cast(GameObject)scriptClass.create();
-			}
-		}
-		else if( Config.tryGet!string( "InstanceOf", prop, yamlObj ) )
-		{
-			obj = Prefabs[ prop.get!string ].createInstance();
+			obj = cast(GameObject)scriptOverride.create();
 		}
 		else
 		{
-			obj = new GameObject;
+			// Get class to create script from
+			const ClassInfo scriptClass = Config.tryGet( "Script.ClassName", prop, yamlObj )
+					? ClassInfo.find( prop )
+					: null;
+			
+			if( Config.tryGet( "InstanceOf", prop, yamlObj ) )
+			{
+				obj = Prefabs[ prop ].createInstance( scriptClass );
+			}
+			else
+			{
+				obj = scriptClass
+						? cast(GameObject)scriptClass.create()
+						: new GameObject;
+			}
 		}
 
-		if( Config.tryGet!string( "Camera", prop, yamlObj ) )
-		{
-			auto cam = new Camera;
-			obj.addComponent( cam );
-			cam.owner = obj;
-		}
+		// set object name
+		obj.name = yamlObj[ "Name" ].as!string;
 
-		if( Config.tryGet!string( "Material", prop, yamlObj ) )
-		{
-			obj.addComponent( Assets.get!Material( prop.get!string ) );
-		}
-
-		if( Config.tryGet!string( "Mesh", prop, yamlObj ) )
-		{
-			obj.addComponent( Assets.get!Mesh( prop.get!string ) );
-		}
-
+		// Init transform
 		if( Config.tryGet( "Transform", innerNode, yamlObj ) )
 		{
 			vec3 transVec;
@@ -105,15 +96,24 @@ public:
 			if( Config.tryGet( "Rotation", transVec, innerNode ) )
 				obj.transform.rotation = quat.euler_rotation( radians(transVec.y), radians(transVec.z), radians(transVec.x) );
 		}
-
-		if( Config.tryGet!Light( "Light", prop, yamlObj ) )
+		
+		// Init components
+		foreach( string key, Node value; yamlObj )
 		{
-			obj.addComponent( prop.get!Light );
+			if( key == "Name" || key == "Script" || key == "Parent" || key == "InstanceOf" || key == "Transform" )
+				continue;
+
+			if( auto init = key in IComponent.initializers )
+				obj.addComponent( (*init)( value, obj ) );
+			else
+				logWarning( "Unknown key: ", key );
 		}
 
 		obj.transform.updateMatrix();
 		return obj;
 	}
+
+	mixin Signal!( string, string );
 
 	/**
 	 * Creates basic GameObject with transform and connection to transform's emitter.
@@ -174,20 +174,9 @@ public:
 	/**
 	 * Adds a component to the object.
 	 */
-	final void addComponent( T )( T newComponent ) if( is( T : Component ) )
+	final void addComponent( T )( T newComponent ) if( is( T : IComponent ) )
 	{
-		componentList[ T.classinfo ] = newComponent;
-
-		// Add component to proper property
-		if( typeid( newComponent ) == typeid( Material ) )
-			material = cast(Material)newComponent;
-		else if( typeid( newComponent ) == typeid( Mesh ) )
-			mesh = cast(Mesh)newComponent;
-		else if( typeid( newComponent ) == typeid( DirectionalLight ) || 
-				 typeid( newComponent ) == typeid( AmbientLight ) )
-			light = cast(Light)newComponent;
-		else if( typeid( newComponent ) == typeid( Camera ) )
-			camera = cast(Camera)newComponent;
+		componentList[ typeid(T) ] = newComponent;
 	}
 
 	/**
@@ -212,14 +201,24 @@ public:
 	void onShutdown() { }
 	/// Called when the object collides with another object.
 	void onCollision( GameObject other ) { }
-
-private:
-	Component[ClassInfo] componentList;
 }
 
 class Transform
 {
+private:
+	GameObject _owner;
+
 public:
+	mixin Properties;
+
+	// these should remain public fields, properties return copies not references
+	vec3 position;
+	quat rotation;
+	vec3 scale;
+
+	mixin( Property!( _owner, AccessModifier.Public ) );
+
+
 	this( GameObject obj = null )
 	{
 		owner = obj;
@@ -235,14 +234,6 @@ public:
 		//destroy( rotation ); 
 		//destroy( scale );
 	}
-
-	mixin Property!( "GameObject", "owner" );
-	vec3 position;
-	quat rotation;
-	vec3 scale;
-	//mixin EmmittingProperty!( "vec3", "position", "public" );
-	//mixin EmmittingProperty!( "quat", "rotation", "public" );
-	//mixin EmmittingProperty!( "vec3", "scale", "public" );
 
 	/**
 	* This returns the object's position relative to the world origin, not the parent
@@ -279,21 +270,25 @@ public:
 
 	mixin Signal!( string, string );
 
+	/**
+	 * Rebuilds the object's matrix
+	 */
 	final void updateMatrix()
 	{
 		_matrix = mat4.identity;
 		// Scale
-		_matrix.scale([scale.x, scale.y, scale.z]);
-		//Rotate
-		_matrix.rotation( rotation.to_matrix!( 3, 3 ) );
+		_matrix.scale( scale.x, scale.y, scale.z );
+		// Rotate
+		_matrix = _matrix * rotation.to_matrix!( 4, 4 );
 		// Translate
-		_matrix.translation([position.x, position.y, position.z]);
+		_matrix.translate( position.x, position.y, position.z );
 
 		_matrixIsDirty = false;
 	}
 
 private:
 	mat4 _matrix;
+	// Update flag
 	bool _matrixIsDirty;
 
 	final void setMatrixDirty( string prop, string newVal )

@@ -2,7 +2,7 @@
  * Defines the static Input class, which is responsible for handling all keyboard/mouse/controller interactions.
  */
 module utility.input;
-import utility.config, utility.filepath, utility.output;
+import utility;
 
 import yaml;
 import std.typecons, std.conv;
@@ -132,7 +132,7 @@ public static:
 	 */
 	final bool isKeyDown( uint keyCode, bool checkPrevious = false )
 	{
-		return current[ keyCode ] && ( !checkPrevious || previous[ keyCode ] );
+		return current[ keyCode ] && ( !checkPrevious || !previous[ keyCode ] );
 	}
 
 	/**
@@ -144,7 +144,7 @@ public static:
 	 */
 	final bool isKeyUp( uint keyCode, bool checkPrevious = false )
 	{
-		return !current[ keyCode ] && ( !checkPrevious || !previous[ keyCode ] );
+		return !current[ keyCode ] && ( !checkPrevious || previous[ keyCode ] );
 	}
 
 	/**

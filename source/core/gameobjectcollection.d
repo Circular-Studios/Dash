@@ -11,7 +11,7 @@ import std.path;
 /**
  * Manages a collection of GameObjects.
  */
-final class GameObjectCollection
+shared final class GameObjectCollection
 {
 public:
 	/// The AA of game objects managed.
@@ -28,7 +28,7 @@ public:
 	 */
 	final void loadObjects( string objectPath = "" )
 	{
-		string[GameObject] parents;
+		string[shared GameObject] parents;
 
 		Config.processYamlDirectory(
 			buildNormalizedPath( FilePath.Resources.Objects, objectPath ),
@@ -75,7 +75,7 @@ public:
 	 * goc.apply( go => go.update() );
 	 * ---
 	 */
-	final void apply( void function( GameObject ) func )
+	final void apply( void function( shared GameObject ) func )
 	{
 		foreach( value; objects.values )
 			func( value );
@@ -100,7 +100,7 @@ public:
 	/**
 	 * Get the object with the given key.
 	 */
-	final GameObject opIndex( string key )
+	final shared(GameObject) opIndex( string key )
 	{
 		return objects[ key ];
 	}

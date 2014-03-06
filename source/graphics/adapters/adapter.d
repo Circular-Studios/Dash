@@ -149,14 +149,14 @@ public:
 
 		
 	}
-	
+
 	/**
 	 * draws an object for the geometry pass
 	 * beginDraw must be called before any calls of this function
 	 * Params:
 	 *	object = the object to be drawn
 	 */
-	final void drawObject( GameObject object )
+	final void drawObject( shared GameObject object )
 	{
 		// set the shader
 		shared Shader shader;

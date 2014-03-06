@@ -39,7 +39,7 @@ public:
 		{
 			auto name = object[ "Name" ].as!string;
 
-			prefabs[ name ] = new Prefab( object );
+			prefabs[ name ] = new shared Prefab( object );
 		}
 
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Prefabs, "*.yml" ) )

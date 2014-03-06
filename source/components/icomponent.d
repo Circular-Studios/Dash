@@ -12,7 +12,7 @@ import yaml;
 shared interface IComponent
 {
 public:
-	static IComponent function( Node, shared GameObject )[string] initializers;
+	static shared(IComponent) function( Node, shared GameObject )[string] initializers;
 
 	/**
 	 * The GameObject that owns this component.

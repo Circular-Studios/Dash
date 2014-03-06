@@ -237,9 +237,9 @@ public:
 	final @property vec3 worldPosition()
 	{
 		if( owner.parent is null )
-			return position;
+			return cast()position;
 		else
-			return owner.parent.transform.worldPosition + position;
+			return owner.parent.transform.worldPosition + cast()position;
 	}
 
 	/**
@@ -248,9 +248,9 @@ public:
 	final @property quat worldRotation()
 	{
 		if( owner.parent is null )
-			return rotation;
+			return cast()rotation;
 		else
-			return owner.parent.transform.worldRotation * rotation;
+			return owner.parent.transform.worldRotation * cast()rotation;
 	}
 
 	final @property mat4 matrix()
@@ -259,7 +259,7 @@ public:
 			updateMatrix();
 
 		if( owner.parent is null )
-			return _matrix;
+			return cast()_matrix;
 		else
 			return owner.parent.transform.matrix * _matrix;
 	}
@@ -273,11 +273,11 @@ public:
 	{
 		_matrix = mat4.identity;
 		// Scale
-		_matrix.scale( scale.x, scale.y, scale.z );
+		(cast()_matrix).scale( (cast()scale).x, (cast()scale).y, (cast()scale).z );
 		// Rotate
-		_matrix = _matrix * rotation.to_matrix!( 4, 4 );
+		_matrix = (cast()_matrix) * (cast()rotation).to_matrix!( 4, 4 );
 		// Translate
-		_matrix.translate( position.x, position.y, position.z );
+		(cast()_matrix).translate( (cast()position).x, (cast()position).y, (cast()position).z );
 
 		_matrixIsDirty = false;
 	}

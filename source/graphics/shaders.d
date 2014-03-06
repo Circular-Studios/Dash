@@ -350,8 +350,8 @@ immutable string animatedGeometryVS = q{
 		gl_Position = fPosition_s;
 		fUV = vUV;
 
-		fNormal_w = ( world * vec4( vNormal_m, 0.0f ) ).xyz;
-		fTangent_w =  ( world * vec4( vTangent_m, 0.0f ) ).xyz;
+		fNormal_w = ( world * boneTransform * vec4( vNormal_m, 0.0f ) ).xyz;
+		fTangent_w =  ( world * boneTransform * vec4( vTangent_m, 0.0f ) ).xyz;
 	}
 };
 

@@ -87,13 +87,13 @@ public:
 				// Get the vertex anim data
 				int[][] vertBones = new int[][ mesh.mNumVertices ];
 				float[][] vertWeights = new float[][ mesh.mNumVertices ];
-				for( int i = 0; i < mesh.mNumBones; i++ )
+				for( int bone = 0; bone < mesh.mNumBones; bone++ )
 				{		
-					const(aiBone*) bone = mesh.mBones[ i ];
-					for( int ii = 0; ii < mesh.mBones[ i ].mNumWeights; ii++ )
+					const(aiBone*) tempBone = mesh.mBones[ bone ];
+					for( int weight = 0; weight < mesh.mBones[ bone ].mNumWeights; weight++ )
 					{
-						vertBones[ cast(int)mesh.mBones[ i ].mWeights[ ii ].mVertexId ] ~= i;
-						vertWeights[ cast(int)mesh.mBones[ i ].mWeights[ ii ].mVertexId ] ~= mesh.mBones[ i ].mWeights[ ii ].mWeight;
+						vertBones[ cast(int)mesh.mBones[ bone ].mWeights[ weight ].mVertexId ] ~= bone;
+						vertWeights[ cast(int)mesh.mBones[ bone ].mWeights[ weight ].mVertexId ] ~= mesh.mBones[ bone ].mWeights[ weight ].mWeight;
 					}
 				}
 

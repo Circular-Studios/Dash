@@ -125,7 +125,7 @@ public:
 		for( int i = 0; i < numKeys; i++ )
 		{
 			aiQuatKey quaternion = quaternions[ i ];
-			keys ~= quat( quaternion.mValue.x, quaternion.mValue.y, quaternion.mValue.z, quaternion.mValue.w );
+			keys ~= quat( quaternion.mValue.w, quaternion.mValue.x, quaternion.mValue.y, quaternion.mValue.z );
 			int ii = 0;
 		}
 
@@ -189,7 +189,7 @@ public:
 		mat4 finalTransform;
 
 		mat4 boneTransform = mat4.identity;
-		//boneTransform.scale( node.scaleKeys[ 0 ].vector );
+		boneTransform.scale( node.scaleKeys[ 0 ].vector );
 		boneTransform = boneTransform * node.rotationKeys[ 0 ].to_matrix!( 4, 4 );
 		//boneTransform.translation( node.positionKeys[ 0 ].vector );
 			

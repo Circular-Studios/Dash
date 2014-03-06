@@ -6,25 +6,32 @@ import gl3n.linalg;
 
 import std.string, std.traits;
 
-final abstract class Shaders
+shared ShaderManager Shaders;
+
+shared static this()
 {
-public static:
+	Shaders = new shared ShaderManager;
+}
+
+shared final class ShaderManager
+{
+public:
 	final void initialize()
 	{
-		shaders[ "geometry" ] = new Shader( "geometry", geometryVS, geometryFS, true );
-		shaders[ "animatedGeometry" ] = new Shader( "animatedGeometry", animatedGeometryVS, geometryFS, true ); // Only VS changed, FS stays the same
-		shaders[ "lighting" ] = new Shader( "lighting", lightingVS, lightingFS, true );
+		shaders[ "geometry" ] = new shared Shader( "geometry", geometryVS, geometryFS, true );
+		shaders[ "animatedGeometry" ] = new shared Shader( "animatedGeometry", animatedGeometryVS, geometryFS, true ); // Only VS changed, FS stays the same
+		shaders[ "lighting" ] = new shared Shader( "lighting", lightingVS, lightingFS, true );
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders, "*.fs.glsl" ) )
 		{
 			// Strip .fs from file name
 			string name = file.baseFileName[ 0..$-3 ];
 			if(name != "geometry" && name != "lighting" && name != "animatedGeometry" )
 			{
-				shaders[ name ] = new Shader( name, file.directory ~ "\\" ~ name ~ ".vs.glsl", file.fullPath );
+				shaders[ name ] = new shared Shader( name, file.directory ~ "\\" ~ name ~ ".vs.glsl", file.fullPath );
 			}
 			else
 			{
-				log( OutputType.Warning, "Shader not loaded: Shader found which would overwrite " ~ name ~ " shader" );
+				logWarning( "Shader not loaded: Shader found which would overwrite " ~ name ~ " shader" );
 			}
 		}
 
@@ -46,12 +53,12 @@ public static:
 		}*/
 	}
 
-	final Shader opIndex( string name )
+	final shared(Shader) opIndex( string name )
 	{
 		return get( name );
 	}
 
-	final Shader get( string name )
+	final shared(Shader) get( string name )
 	{
 		auto shader = name in shaders;
 		return shader is null ? null : *shader;
@@ -59,22 +66,24 @@ public static:
 
 private:
 	Shader[string] shaders;
+
+	this() { }
 }
 
 public enum ShaderUniform 
 {
 	World = "world",
-		WorldView = "worldView",
-		WorldViewProjection = "worldViewProj",
-		DiffuseTexture = "diffuseTexture",
-		NormalTexture = "normalTexture",
-		DepthTexture = "depthTexture",
-		DirectionalLightDirection = "dirLight.direction",
-		DirectionalLightColor = "dirLight.color",
-		AmbientLight = "ambientLight"
+	WorldView = "worldView",
+	WorldViewProjection = "worldViewProj",
+	DiffuseTexture = "diffuseTexture",
+	NormalTexture = "normalTexture",
+	DepthTexture = "depthTexture",
+	DirectionalLightDirection = "dirLight.direction",
+	DirectionalLightColor = "dirLight.color",
+	AmbientLight = "ambientLight"
 }
 
-final package class Shader
+shared final package class Shader
 {
 private:
 	uint _programID, _vertexShaderID, _fragmentShaderID;

@@ -159,7 +159,7 @@ public:
 	final void drawObject( GameObject object )
 	{
 		// set the shader
-		Shader shader;
+		shared Shader shader;
 		if( object.mesh.animated )
 		{
 			glUseProgram( Shaders[AnimatedGeometryShader].programID );

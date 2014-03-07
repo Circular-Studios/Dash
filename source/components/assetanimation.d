@@ -167,34 +167,37 @@ public:
 		mat4[] boneTransforms = new mat4[ _numberOfBones ];
 
 		// Check shader/model
-		/*for( int i = 0; i < _numberOfBones; i++)
+		for( int i = 0; i < _numberOfBones; i++)
 		{
 			boneTransforms[ i ] = mat4.identity;
-		}*/
+		}
 
 		fillTransforms( boneTransforms, _animationSet.animNodes, time, mat4.identity );
 
-		mat4 temp = boneTransforms[ 0 ];
-		mat4 temp2 = boneTransforms[ 1 ];
-		mat4 temp3 = boneTransforms[ 2 ];
+		//mat4 temp = boneTransforms[ 0 ];
+		//mat4 temp2 = boneTransforms[ 1 ];
+		//mat4 temp3 = boneTransforms[ 2 ];
 
 		return boneTransforms;
 	}
 
-	// NOTE: Where assigncorrectanimation data is going to cause issues
-	// NOTE: First pose should not modify the object, same position? Why?
 	void fillTransforms( mat4[] transforms, Node node, float time, mat4 parentTransform )
 	{
 		// Calculate matrix based on node.bone data and time
 		mat4 finalTransform;
 
 		mat4 boneTransform = mat4.identity;
-		boneTransform.scale( node.scaleKeys[ 0 ].vector );
-		boneTransform = boneTransform * node.rotationKeys[ 0 ].to_matrix!( 4, 4 );
-		//boneTransform.translation( node.positionKeys[ 0 ].vector );
+		quat temp = quat( 0.0f, 0.707106f, -0.707106f, 0.0f );
+		
+		if( node.scaleKeys.length > cast(int)time )
+			boneTransform.scale( node.scaleKeys[ cast(int)time ].vector );
+		if( node.rotationKeys.length > cast(int)time )
+			boneTransform = boneTransform * node.rotationKeys[ cast(int)time ].to_matrix!( 4, 4 );
+		if( node.positionKeys.length > cast(int)time )
+			boneTransform.translation( node.positionKeys[ cast(int)time ].vector );
 			
-		finalTransform = parentTransform * boneTransform; //( boneTransform * parentTransform * node.transform );
- 		transforms[ node.id ] = finalTransform;
+		finalTransform = parentTransform * boneTransform;
+ 		transforms[ node.id ] = (temp.to_matrix!( 4, 4 ) * finalTransform) * node.transform;
 
 		// Store the transform in the correct place and check children
 		for( int i = 0; i < node.children.length; i++ )
@@ -208,20 +211,20 @@ public:
 		mat4 matrix = mat4.identity;
 
 		matrix[0][0] = aiMatrix.a1;
-		matrix[1][0] = aiMatrix.a2;
-		matrix[2][0] = aiMatrix.a3;
-		matrix[3][0] = aiMatrix.a4;
-		matrix[0][1] = aiMatrix.b1;
+		matrix[0][1] = aiMatrix.a2;
+		matrix[0][2] = aiMatrix.a3;
+		matrix[0][3] = aiMatrix.a4;
+		matrix[1][0] = aiMatrix.b1;
 		matrix[1][1] = aiMatrix.b2;
-		matrix[2][1] = aiMatrix.b3;
-		matrix[3][1] = aiMatrix.b4;
-		matrix[0][2] = aiMatrix.c1;
-		matrix[1][2] = aiMatrix.c2;
+		matrix[1][2] = aiMatrix.b3;
+		matrix[1][3] = aiMatrix.b4;
+		matrix[2][0] = aiMatrix.c1;
+		matrix[2][1] = aiMatrix.c2;
 		matrix[2][2] = aiMatrix.c3;
-		matrix[3][2] = aiMatrix.c4;
-		matrix[0][3] = aiMatrix.d1;
-		matrix[1][3] = aiMatrix.d2;
-		matrix[2][3] = aiMatrix.d3;
+		matrix[2][3] = aiMatrix.c4;
+		matrix[3][0] = aiMatrix.d1;
+		matrix[3][1] = aiMatrix.d2;
+		matrix[3][2] = aiMatrix.d3;
 		matrix[3][3] = aiMatrix.d4;
 
 		return matrix;

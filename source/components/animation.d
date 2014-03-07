@@ -35,8 +35,14 @@ public:
 	void getFrameTransforms( float changeInTime )
 	{
 		// Update currentanimtime based on changeintime
+		_currentAnimTime += 0.002;
+
+		if( _currentAnimTime > 96.0f )
+		{
+			_currentAnimTime = 0.0f;
+		}
 
 		// Calculate and store array of bonetransforms to pass to the shader
-		currBoneTransforms = animationData.getTransformsAtTime( currentAnimTime );
+		currBoneTransforms = animationData.getTransformsAtTime( _currentAnimTime );
 	}
 }

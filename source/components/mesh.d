@@ -85,7 +85,7 @@ public:
 				vertexSize = cast(int)(float.sizeof * floatsPerVertex);
 				
 				// Get the vertex anim data
-				int[][] vertBones = new int[][ mesh.mNumVertices ];
+				float[][] vertBones = new float[][ mesh.mNumVertices ];
 				float[][] vertWeights = new float[][ mesh.mNumVertices ];
 				for( int bone = 0; bone < mesh.mNumBones; bone++ )
 				{		

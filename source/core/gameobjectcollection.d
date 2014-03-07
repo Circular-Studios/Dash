@@ -6,7 +6,7 @@ import core, graphics, utility;
 
 import yaml;
 
-import std.path;
+import std.path, std.parallelism;
 
 /**
  * Manages a collection of GameObjects.
@@ -34,8 +34,6 @@ public:
 			buildNormalizedPath( FilePath.Resources.Objects, objectPath ),
 			( Node yml )
 			{
-				//auto name = yml[ "Name" ].as!string;
-
 				// Create the object
 				auto object = GameObject.createFromYaml( yml );
 				// Add to collection
@@ -70,32 +68,37 @@ public:
 	 * 
 	 * Params:
 	 * 	func =				The function to call on each object.
+	 * 	parallel =			Whether or not to execute function in parallel
 	 * 
 	 * Examples:
 	 * ---
 	 * goc.apply( go => go.update() );
 	 * ---
 	 */
-	final void apply( void function( shared GameObject ) func )
+	final void apply( void function( shared GameObject ) func, bool parallel = false )
 	{
-		foreach( value; objects.values )
-			func( value );
+		if( parallel )
+			foreach( value; parallel( objects.values ) )
+				func( value );
+		else
+			foreach( value; objects.values )
+				func( value );
 	}
 
 	/**
 	 * Update all game objects.
 	 */
-	final void update()
+	final void update( bool parallel = false )
 	{
-		apply( go => go.update() );
+		apply( go => go.update(), parallel );
 	}
 
 	/**
 	 * Draw all game objects.
 	 */
-	final void draw()
+	final void draw( bool parallel = false )
 	{
-		apply( go => go.draw() );
+		apply( go => go.draw(), parallel );
 	}
 
 	/**

@@ -29,29 +29,39 @@ public:
 	final void loadObjects( string objectPath = "" )
 	{
 		string[shared GameObject] parents;
+		string[][shared(GameObject)] children;
 
 		Config.processYamlDirectory(
 			buildNormalizedPath( FilePath.Resources.Objects, objectPath ),
 			( Node yml )
 			{
 				// Create the object
-				auto object = GameObject.createFromYaml( yml );
-				// Add to collection
-				objects[ object.name ] = object;
+				auto object = GameObject.createFromYaml( yml, parents, children );
 
-				// If parent is specified, add it to the map
-				string parentName;
-				if( Config.tryGet( "Parent", parentName, yml ) )
+				if( object.name != AnonymousName )
 				{
-					parents[ object ] = parentName;
-					//logInfo("Parent:", parentName, " for ", object.name );
+					// Add to collection
+					objects[ object.name ] = object;
 				}
-			} );
+				else
+				{
+					logError( "Anonymous objects at the top level are not supported." );
+					assert( false );
+				}
+
+				foreach( child; object.children )
+				{
+					objects[ child.name ] = child;
+					logInfo( "Adding child ", child.name, " of ", object.name, " to collection." );
+				}
+			}
+		);
 
 		foreach( object, parentName; parents )
-		{
 			objects[ parentName ].addChild( object );
-		}
+		foreach( object, childNames; children )
+			foreach( child; childNames )
+				object.addChild( objects[ child ] );
 	}
 
 	/**

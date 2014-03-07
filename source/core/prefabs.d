@@ -83,7 +83,9 @@ public:
 	 */
 	final shared(GameObject) createInstance( const ClassInfo scriptOverride = null )
 	{
-		return GameObject.createFromYaml( yaml, scriptOverride );
+		string[shared GameObject] parents;
+		string[][shared(GameObject)] children;
+		return GameObject.createFromYaml( yaml, parents, children, scriptOverride );
 	}
 
 private:

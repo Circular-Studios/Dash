@@ -15,7 +15,7 @@ import utility;
 import gl3n.linalg;
 import yaml;
 
-import std.array, std.conv, std.string, std.path, std.typecons, std.variant;
+import std.array, std.conv, std.string, std.path, std.typecons, std.variant, std.parallelism;
 
 /**
  * Static class which handles the configuration options and YAML interactions.
@@ -59,19 +59,32 @@ public static:
 
 	/**
 	 * Process all yaml files in a directory, and call the callback with all the root level nodes.
+	 * 
+	 * Params:
+	 * 	folder =				The folder to iterate over.
+	 * 	callback =				The function to call on each root level object.
+	 * 	concurrent =			Whether or not to run operation in parallel.
 	 */
-	final void processYamlDirectory( string folder, void delegate( Node ) callback )
+	final void processYamlDirectory( string folder, void delegate( Node ) callback, bool concurrent = false )
 	{
-		foreach( file; FilePath.scanDirectory( folder, "*.yml" ) )
+		auto files = FilePath.scanDirectory( folder, "*.yml" );
+		auto fileFunc = ( FilePath file )
 		{
 			auto object = Config.loadYaml( file.fullPath );
-
+			
 			if( object.isSequence() )
 				foreach( Node innerObj; object )
 					callback( innerObj );
 			else
 				callback( object );
-		}
+		};
+
+		if( concurrent )
+			foreach( file; parallel( files ) )
+				fileFunc( file );
+		else
+			foreach( file; files )
+				fileFunc( file );
 	}
 
 	/**

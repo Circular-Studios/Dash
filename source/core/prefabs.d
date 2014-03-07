@@ -81,10 +81,8 @@ public:
 	 * Returns:
 	 * 	The new GameObject from the Prefab.
 	 */
-	final shared(GameObject) createInstance( const ClassInfo scriptOverride = null )
+	final shared(GameObject) createInstance( ref string[shared GameObject] parents, ref string[][shared(GameObject)] children, const ClassInfo scriptOverride = null )
 	{
-		string[shared GameObject] parents;
-		string[][shared(GameObject)] children;
 		return GameObject.createFromYaml( yaml, parents, children, scriptOverride );
 	}
 

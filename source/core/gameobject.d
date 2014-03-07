@@ -75,7 +75,7 @@ public:
 			
 			if( Config.tryGet( "InstanceOf", prop, yamlObj ) )
 			{
-				obj = Prefabs[ prop ].createInstance( scriptClass );
+				obj = Prefabs[ prop ].createInstance( parents, children, scriptClass );
 			}
 			else
 			{

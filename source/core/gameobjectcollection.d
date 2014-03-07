@@ -68,16 +68,16 @@ public:
 	 * 
 	 * Params:
 	 * 	func =				The function to call on each object.
-	 * 	parallel =			Whether or not to execute function in parallel
+	 * 	concurrent =			Whether or not to execute function in parallel
 	 * 
 	 * Examples:
 	 * ---
 	 * goc.apply( go => go.update() );
 	 * ---
 	 */
-	final void apply( void function( shared GameObject ) func, bool parallel = false )
+	final void apply( void function( shared GameObject ) func, bool concurrent = false )
 	{
-		if( parallel )
+		if( concurrent )
 			foreach( value; parallel( objects.values ) )
 				func( value );
 		else
@@ -88,17 +88,17 @@ public:
 	/**
 	 * Update all game objects.
 	 */
-	final void update( bool parallel = false )
+	final void update( bool concurrent = false )
 	{
-		apply( go => go.update(), parallel );
+		apply( go => go.update(), concurrent );
 	}
 
 	/**
 	 * Draw all game objects.
 	 */
-	final void draw( bool parallel = false )
+	final void draw( bool concurrent = false )
 	{
-		apply( go => go.draw(), parallel );
+		apply( go => go.draw(), concurrent );
 	}
 
 	/**

@@ -36,7 +36,7 @@ private:
 	uint _width, _screenWidth;
 	uint _height, _screenHeight;
 	bool _fullscreen, _backfaceCulling, _vsync;
-	float _fov, _near, _far;
+	
 	uint deferredFrameBuffer;
 	uint diffuseRenderTexture; //Alpha channel stores Specular map average
 	uint normalRenderTexture; //Alpha channel stores nothing important
@@ -59,9 +59,7 @@ public:
 	mixin( Property!_fullscreen );
 	mixin( Property!_backfaceCulling );
 	mixin( Property!_vsync );
-	mixin( Property!_fov );
-	mixin( Property!_near );
-	mixin( Property!_far );
+	
 
 	/**
 	 *  Constant strings for various parts of the render pipeline
@@ -128,7 +126,6 @@ public:
 		GLenum[ 2 ] DrawBuffers = [ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 ];
 		glDrawBuffers( 2, DrawBuffers.ptr );
 		glViewport(0, 0, width, height);
-		updateProjection();
 
 		if( glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE )
 		{
@@ -153,6 +150,7 @@ public:
 		glEnable( GL_DEPTH_TEST );
 		glDisable( GL_BLEND );
 
+		updateProjection();
 		
 	}
 	
@@ -345,11 +343,13 @@ public:
 
 	/*
 	 * Set the camera to draw the scene from.
+	 * Should be called before beginDraw.
 	 * Do not change between calls of beginDraw and endDraw.
 	 */
 	final void setCamera( Camera camera )
 	{
 		activeCamera = camera;
+		updateProjection();
 	}
 
 protected:
@@ -369,14 +369,11 @@ protected:
 
 		backfaceCulling = Config.get!bool( "Graphics.BackfaceCulling" );
 		vsync = Config.get!bool( "Graphics.VSync" );
-		fov = Config.get!float( "Display.FieldOfView" );
-		near = Config.get!float( "Display.NearPlane" );
-		far = Config.get!float( "Display.FarPlane" );
 	}
 
 	final void updateProjection()
 	{
-		projection = mat4.perspective( cast(float)width, cast(float)height, fov, near, far );
+		projection = mat4.perspective( cast(float)width, cast(float)height, activeCamera.fov, activeCamera.near, activeCamera.far );
 	/*projection = mat4.identity;
 		float aspect = width/height;
 		float f = 1/tan((fov*3.14159/360)/2);

@@ -40,7 +40,7 @@ template DirtyGetter( alias field, string update, AccessModifier access = Access
 		"final " ~ access ~ " @property auto " ~ name ~ "(){" ~
 			"if(" ~ field.stringof ~ "IsDirty)" ~
 				update ~ "();"
-			"return " ~ field.stringof ~ ";}";
+			"return " ~ field.stringof ~ ";}\n";
 }
 
 void setDirty( alias field )()

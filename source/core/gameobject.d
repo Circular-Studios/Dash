@@ -273,11 +273,18 @@ public:
 	{
 		_matrix = mat4.identity;
 		// Scale
-		(cast()_matrix).scale( (cast()scale).x, (cast()scale).y, (cast()scale).z );
+		_matrix[ 0 ][ 0 ] = (cast()scale).x;
+		_matrix[ 1 ][ 1 ] = (cast()scale).y;
+		_matrix[ 2 ][ 2 ] = (cast()scale).z;
 		// Rotate
 		_matrix = (cast()_matrix) * (cast()rotation).to_matrix!( 4, 4 );
+
+		//logInfo( "Pre translate: ", cast()_matrix );
 		// Translate
-		(cast()_matrix).translate( (cast()position).x, (cast()position).y, (cast()position).z );
+		_matrix[ 0 ][ 3 ] = (cast()position).x;
+		_matrix[ 1 ][ 3 ] = (cast()position).y;
+		_matrix[ 2 ][ 3 ] = (cast()position).z;
+		//logInfo( "Post: ", cast()_matrix );
 
 		_matrixIsDirty = false;
 	}

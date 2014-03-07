@@ -72,10 +72,14 @@ public:
 	{
 		_matrix = mat4.identity;
 		// Scale
-		(cast()_matrix).scale( radius, radius, radius );
+		_matrix[ 0 ][ 0 ] = radius;
+		_matrix[ 1 ][ 1 ] = radius;
+		_matrix[ 2 ][ 2 ] = radius;
 		// Translate
 		vec3 position = owner.transform.worldPosition;
-		(cast()_matrix).translate( position.x, position.y, position.z );
+		_matrix[ 0 ][ 3 ] = (cast()position).x;
+		_matrix[ 1 ][ 3 ] = (cast()position).y;
+		_matrix[ 2 ][ 3 ] = (cast()position).z;
 		return _matrix;
 	}
 

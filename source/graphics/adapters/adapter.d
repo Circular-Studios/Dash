@@ -164,6 +164,11 @@ public:
 	 */
 	final void drawObject( shared GameObject object )
 	{
+		//logInfo( cast()object.name );
+
+		activeCamera._viewMatrixIsDirty = true;
+		object.transform.updateMatrix();
+
 		// set the shader
 		Shader shader;
 		if( object.mesh.animated )
@@ -184,6 +189,10 @@ public:
 		shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , projection * 
 										( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) *
 		                            	object.transform.matrix );
+
+
+		//logInfo( "Projection: ", projection );
+		//logInfo( "Camera: ", cast()activeCamera.viewMatrix );
 
 		shader.bindMaterial( object.material );
 

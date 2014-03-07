@@ -55,7 +55,7 @@ public:
 	 * Returns:
 	 * 	A new game object with components and info pulled from yaml.
 	 */
-	static shared(GameObject) createFromYaml( Node yamlObj, ref string[shared GameObject] parents, ref string[][shared(GameObject)] children, const ClassInfo scriptOverride = null )
+	static shared(GameObject) createFromYaml( Node yamlObj, ref string[shared GameObject] parents, ref string[][shared GameObject] children, const ClassInfo scriptOverride = null )
 	{
 		shared GameObject obj;
 		string prop;

@@ -29,7 +29,7 @@ public:
 	final void loadObjects( string objectPath = "" )
 	{
 		string[shared GameObject] parents;
-		string[][shared(GameObject)] children;
+		string[][shared GameObject] children;
 
 		Config.processYamlDirectory(
 			buildNormalizedPath( FilePath.Resources.Objects, objectPath ),

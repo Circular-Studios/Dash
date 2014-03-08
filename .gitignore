@@ -166,6 +166,11 @@ $RECYCLE.BIN/
 *.resources
 test-results/
 
+### SublimeText ###
+# workspace files are user-specific
+*.sublime-workspace
+*.sublime-project
+
 # ========================
 # Dash stuffs
 # ========================

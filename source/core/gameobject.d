@@ -135,6 +135,7 @@ public:
 	{
 		transform = new Transform( this );
 		transform.connect( &emit );
+		material = new Material();
 	}
 
 	~this()

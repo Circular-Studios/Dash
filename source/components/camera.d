@@ -2,7 +2,7 @@
  * Defines the Camera class, which controls the view matrix for the world.
  */
 module components.camera;
-import core, components, graphics;
+import core, components, graphics, utility;
 
 import gl3n.linalg;
 import std.conv;
@@ -12,11 +12,17 @@ import std.conv;
  */
 final class Camera : IComponent
 {
+private:
+	float _fov, _near, _far;
 public:
 	override void update() { }
 	override void shutdown() { }
 
 	mixin( DirtyGetter!( _viewMatrix, "updateViewMatrix" ) );
+
+	mixin( Property!( _fov, AccessModifier.Public ) );
+	mixin( Property!( _near, AccessModifier.Public )  );
+	mixin( Property!( _far, AccessModifier.Public )  );
 
 private:
 	mat4 _viewMatrix;
@@ -50,6 +56,15 @@ static this()
 	{
 		obj.camera = new Camera;
 		obj.camera.owner = obj;
+
+		//float fromYaml;
+		if( !Config.tryGet( "FOV", obj.camera._fov, yml ) )
+			logError( obj.name, " is missing FOV value for its camera. ");
+		if( !Config.tryGet( "Near", obj.camera._near, yml ) )
+			logError( obj.name, " is missing near plane value for its camera. ");
+		if( !Config.tryGet( "Far", obj.camera._far, yml ) )
+			logError( obj.name, " is missing Far plane value for its camera. ");
+
 		return obj.camera;
 	};
 }

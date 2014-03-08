@@ -171,6 +171,9 @@ test-results/
 *.sublime-workspace
 *.sublime-project
 
+# Merge leftovers
+*.orig
+
 # ========================
 # Dash stuffs
 # ========================

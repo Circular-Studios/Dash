@@ -86,6 +86,11 @@ public:
 
 	final void initializeDeferredRendering()
 	{
+		// Set depth buffer
+		glClearDepth( 1.0f );
+		// set values for clear
+		glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+
 		//http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
 
 		//Create the frame buffer, which will contain the textures to render to
@@ -338,7 +343,8 @@ public:
 				ambientLight = cast(AmbientLight)light;
 			}
 			else
-				log( OutputType.Warning, "Attemtping to add multiple ambient lights to the scene.  Ignoring additional ambient lights." );
+				log( OutputType.Warning, "Attemtping to add multiple ambient lights to the scene.  ",
+											"Ignoring additional ambient lights." );
 		}
 		else if( lightType == typeid( DirectionalLight ) )
 		{
@@ -390,16 +396,12 @@ protected:
 
 	final void updateProjection()
 	{
-		projection = mat4.perspective( cast(float)width, cast(float)height, activeCamera.fov, activeCamera.near, activeCamera.far );
-	/*projection = mat4.identity;
-		float aspect = width/height;
-		float f = 1/tan((fov*3.14159/360)/2);
-		projection[0][0] = f/aspect;
-		projection[1][1] = f;
-		projection[2][2] = (far + near) / (near - far);
-		projection[3][3] = 0;
-		projection[2][3] = (2*far*near)/(near-far);
-		projection[3][2] = -1; */
+		if( activeCamera )
+			projection = mat4.perspective( cast(float)width, cast(float)height,
+										 activeCamera.fov, activeCamera.near, 
+										 activeCamera.far );
+		else
+			projection = mat4.identity;
 	}
 
 private:

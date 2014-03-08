@@ -12,8 +12,13 @@ private:
 
 public:
 	mixin( Property!(_diffuse, AccessModifier.Public) );
-	mixin( Property!_normal );
-	mixin( Property!_specular );
+	mixin( Property!(_normal, AccessModifier.Public) );
+	mixin( Property!(_specular, AccessModifier.Public) );
+
+	this()
+	{
+		_diffuse = _normal = _specular = defaultTex;
+	}
 
 	/**
 	* Create a Material from a Yaml node.
@@ -82,4 +87,14 @@ public:
 		glBindTexture( GL_TEXTURE_2D, 0 );
 		glDeleteBuffers( 1, &_glID );
 	}
+}
+
+@property Texture defaultTex()
+{
+	static Texture def;
+
+	if( !def )
+		def = new Texture( [0, 0, 0, 255] );
+
+	return def;
 }

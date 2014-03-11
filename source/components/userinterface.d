@@ -9,7 +9,15 @@ import std.string;
 
 class UserInterface
 {
+private:
+	uint _height;
+	uint _width;
+	Mesh uiMesh;
+public:
+	this() 
+	{
 
+	}
 }
 
 class AwesomiumView : Texture, IComponent
@@ -52,9 +60,11 @@ public:
 
 		if ( webView && awe_webview_is_dirty( webView ) )
 		{
-			const(awe_renderbuffer)* buffer = awe_webview_render( webView );
+			const(awe_renderbuffer)* buffer = webView.awe_webview_render();
 
-			awe_renderbuffer_copy_to( buffer, glBuffer.ptr, awe_renderbuffer_get_rowspan( buffer ), 4, false, true );
+			//updateBuffer( buffer.awe_renderbuffer_get_buffer() );
+
+			buffer.awe_renderbuffer_copy_to( glBuffer.ptr, awe_renderbuffer_get_rowspan( buffer ), 4, false, true );
 
 			updateBuffer( glBuffer.ptr );
 		}

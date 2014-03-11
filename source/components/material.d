@@ -60,10 +60,17 @@ protected:
 
 	void updateBuffer( const ubyte* buffer )
 	{
+		// Set texture to update
+		glBindTexture( GL_TEXTURE_2D, glID );
+
+		// Update texture
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_BGRA ,GL_UNSIGNED_BYTE, cast(GLvoid*)buffer );
+		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_BGRA, GL_UNSIGNED_BYTE, cast(GLvoid*)buffer );
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+
+		// Cleanup, unbind
+		glBindTexture( GL_TEXTURE_2D, 0 );
 	}
 
 public:

@@ -81,7 +81,7 @@ public:
 				&WndProc,
 				0,
 				0,
-				hInstance,
+				cast(void*)hInstance,
 				null,
 				LoadCursor( null, IDC_ARROW ),
 				cast(HBRUSH)( COLOR_WINDOW + 1 ),

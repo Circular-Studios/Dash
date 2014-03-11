@@ -8,12 +8,19 @@ import yaml;
 import gl3n.linalg;
 import std.variant;
 
+shared PrefabManager Prefabs;
+
+shared static this()
+{
+	Prefabs = new shared PrefabManager;
+}
+
 /**
  * Prefabs manages prefabs and allows access to them.
  */
-final abstract class Prefabs
+shared final class PrefabManager
 {
-public static:
+public:
 	/// The AA of prefabs.
 	Prefab[string] prefabs;
 
@@ -32,7 +39,7 @@ public static:
 		{
 			auto name = object[ "Name" ].as!string;
 
-			prefabs[ name ] = new Prefab( object );
+			prefabs[ name ] = new shared Prefab( object );
 		}
 
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Prefabs, "*.yml" ) )
@@ -51,7 +58,7 @@ public static:
 /**
  * A prefab that allows for quick object creation.
  */
-final class Prefab : GameObject
+shared final class Prefab
 {
 public:
 	/**
@@ -74,11 +81,11 @@ public:
 	 * Returns:
 	 * 	The new GameObject from the Prefab.
 	 */
-	final GameObject createInstance( const ClassInfo scriptOverride = null )
+	final shared(GameObject) createInstance( const ClassInfo scriptOverride = null )
 	{
 		return GameObject.createFromYaml( yaml, scriptOverride );
 	}
 
 private:
-	Node yaml;
+	immutable Node yaml;
 }

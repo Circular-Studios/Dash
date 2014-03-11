@@ -7,12 +7,12 @@ import core, components, graphics, utility;
 import yaml;
 import gl3n.linalg, gl3n.math;
 
-import std.signals, std.conv, std.variant;
+import std.conv, std.variant;
 
 /**
  * Manages all components and transform in the world. Can be overridden.
  */
-class GameObject
+shared class GameObject
 {
 private:
 	Transform _transform;
@@ -52,9 +52,9 @@ public:
 	 * Returns:
 	 * 	A new game object with components and info pulled from yaml.
 	 */
-	static GameObject createFromYaml( Node yamlObj, const ClassInfo scriptOverride = null )
+	static shared(GameObject) createFromYaml( Node yamlObj, const ClassInfo scriptOverride = null )
 	{
-		GameObject obj;
+		shared GameObject obj;
 		string prop;
 		Node innerNode;
 
@@ -63,7 +63,7 @@ public:
 		// Try to get from script
 		if( scriptOverride !is null )
 		{
-			obj = cast(GameObject)scriptOverride.create();
+			obj = cast(shared GameObject)scriptOverride.create();
 		}
 		else
 		{
@@ -85,8 +85,8 @@ public:
 			else
 			{
 				obj = scriptClass
-						? cast(GameObject)scriptClass.create()
-						: new GameObject;
+						? cast(shared GameObject)scriptClass.create()
+						: new shared GameObject;
 			}
 		}
 
@@ -98,11 +98,11 @@ public:
 		{
 			vec3 transVec;
 			if( Config.tryGet( "Scale", transVec, innerNode ) )
-				obj.transform.scale = transVec;
+				obj.transform.scale = cast(shared)vec3( transVec );
 			if( Config.tryGet( "Position", transVec, innerNode ) )
-				obj.transform.position = transVec;
+				obj.transform.position = cast(shared)vec3( transVec );
 			if( Config.tryGet( "Rotation", transVec, innerNode ) )
-				obj.transform.rotation = quat.euler_rotation( radians(transVec.y), radians(transVec.z), radians(transVec.x) );
+				obj.transform.rotation = cast(shared)quat.euler_rotation( radians(transVec.y), radians(transVec.z), radians(transVec.x) );
 		}
 		
 		// Init components
@@ -121,15 +121,13 @@ public:
 		return obj;
 	}
 
-	mixin Signal!( string, string );
-
 	/**
 	 * Creates basic GameObject with transform and connection to transform's emitter.
 	 */
 	this()
 	{
-		transform = new Transform( this );
-		transform.connect( &emit );
+		transform = new shared Transform( this );
+		//transform.connect( &emit );
 	}
 
 	~this()
@@ -182,7 +180,7 @@ public:
 	/**
 	 * Adds a component to the object.
 	 */
-	final void addComponent( T )( T newComponent ) if( is( T : IComponent ) )
+	final void addComponent( T )( shared T newComponent ) if( is( T : IComponent ) )
 	{
 		componentList[ typeid(T) ] = newComponent;
 	}
@@ -195,7 +193,7 @@ public:
 		return componentList[ T.classinfo ];
 	}
 
-	final void addChild( GameObject object )
+	final void addChild( shared GameObject object )
 	{
 		object._children ~= object;
 		object.parent = this;
@@ -211,7 +209,7 @@ public:
 	void onCollision( GameObject other ) { }
 }
 
-class Transform
+shared class Transform
 {
 private:
 	GameObject _owner;
@@ -227,7 +225,7 @@ public:
 	mixin( Property!( _owner, AccessModifier.Public ) );
 
 
-	this( GameObject obj = null )
+	this( shared GameObject obj = null )
 	{
 		owner = obj;
 		position = vec3(0,0,0);
@@ -249,9 +247,9 @@ public:
 	final @property vec3 worldPosition()
 	{
 		if( owner.parent is null )
-			return position;
+			return cast()position;
 		else
-			return owner.parent.transform.worldPosition + position;
+			return owner.parent.transform.worldPosition + cast()position;
 	}
 
 	/**
@@ -260,9 +258,9 @@ public:
 	final @property quat worldRotation()
 	{
 		if( owner.parent is null )
-			return rotation;
+			return cast()rotation;
 		else
-			return owner.parent.transform.worldRotation * rotation;
+			return owner.parent.transform.worldRotation * cast()rotation;
 	}
 
 	final @property mat4 matrix()
@@ -271,12 +269,10 @@ public:
 			updateMatrix();
 
 		if( owner.parent is null )
-			return _matrix;
+			return cast()_matrix;
 		else
 			return owner.parent.transform.matrix * _matrix;
 	}
-
-	mixin Signal!( string, string );
 
 	/**
 	 * Rebuilds the object's matrix
@@ -285,11 +281,18 @@ public:
 	{
 		_matrix = mat4.identity;
 		// Scale
-		_matrix.scale( scale.x, scale.y, scale.z );
+		_matrix[ 0 ][ 0 ] = (cast()scale).x;
+		_matrix[ 1 ][ 1 ] = (cast()scale).y;
+		_matrix[ 2 ][ 2 ] = (cast()scale).z;
 		// Rotate
-		_matrix = _matrix * rotation.to_matrix!( 4, 4 );
+		_matrix = (cast()_matrix) * (cast()rotation).to_matrix!( 4, 4 );
+
+		//logInfo( "Pre translate: ", cast()_matrix );
 		// Translate
-		_matrix.translate( position.x, position.y, position.z );
+		_matrix[ 0 ][ 3 ] = (cast()position).x;
+		_matrix[ 1 ][ 3 ] = (cast()position).y;
+		_matrix[ 2 ][ 3 ] = (cast()position).z;
+		//logInfo( "Post: ", cast()_matrix );
 
 		_matrixIsDirty = false;
 	}

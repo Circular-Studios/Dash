@@ -6,12 +6,12 @@ import core, graphics, utility;
 
 import yaml;
 
-import std.path;
+import std.path, std.parallelism;
 
 /**
  * Manages a collection of GameObjects.
  */
-final class GameObjectCollection
+shared final class GameObjectCollection
 {
 public:
 	/// The AA of game objects managed.
@@ -28,14 +28,12 @@ public:
 	 */
 	final void loadObjects( string objectPath = "" )
 	{
-		string[GameObject] parents;
+		string[shared GameObject] parents;
 
 		Config.processYamlDirectory(
 			buildNormalizedPath( FilePath.Resources.Objects, objectPath ),
 			( Node yml )
 			{
-				//auto name = yml[ "Name" ].as!string;
-
 				// Create the object
 				auto object = GameObject.createFromYaml( yml );
 				// Add to collection
@@ -70,31 +68,44 @@ public:
 	 * 
 	 * Params:
 	 * 	func =				The function to call on each object.
+	 * 	concurrent =			Whether or not to execute function in parallel
 	 * 
 	 * Examples:
 	 * ---
 	 * goc.apply( go => go.update() );
 	 * ---
 	 */
-	final void apply( void function( GameObject ) func )
+	final void apply( void function( shared GameObject ) func, bool concurrent = false )
 	{
-		foreach( value; objects.values )
-			func( value );
+		if( concurrent )
+			foreach( value; parallel( objects.values ) )
+				func( value );
+		else
+			foreach( value; objects.values )
+				func( value );
 	}
 
 	/**
 	 * Update all game objects.
 	 */
-	final void update()
+	final void update( bool concurrent = false )
 	{
-		apply( go => go.update() );
+		apply( go => go.update(), concurrent );
 	}
 
 	/**
 	 * Draw all game objects.
 	 */
-	final void draw()
+	final void draw( bool concurrent = false )
 	{
-		apply( go => go.draw() );
+		apply( go => go.draw(), concurrent );
+	}
+
+	/**
+	 * Get the object with the given key.
+	 */
+	final shared(GameObject) opIndex( string key )
+	{
+		return objects[ key ];
 	}
 }

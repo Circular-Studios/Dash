@@ -34,17 +34,24 @@ enum Verbosity
 }
 
 /// Alias for Output.printMessage
-alias Output.log log;
-alias logInfo		= curry!( Output.log, OutputType.Info );
-alias logWarning	= curry!( Output.log, OutputType.Warning );
-alias logError		= curry!( Output.log, OutputType.Error );
+void log( A... )( OutputType type, A messages ) { Output.log( type, messages ); }
+alias logInfo		= curry!( log, OutputType.Info );
+alias logWarning	= curry!( log, OutputType.Warning );
+alias logError		= curry!( log, OutputType.Error );
+
+shared OutputManager Output;
+
+shared static this()
+{
+	Output = new shared OutputManager;
+}
 
 /**
  * Static class for handling interactions with the console.
  */
-final abstract class Output
+shared final class OutputManager
 {
-public static:
+public:
 	/**
 	 * Initialize the controller.
 	 */
@@ -56,7 +63,7 @@ public static:
 	/**
 	 * Print a message to the console.
 	 */
-	final void log( A... )( OutputType type, A messages )
+	synchronized final void log( A... )( OutputType type, A messages ) if( A.length > 0 )
 	{
 		if( shouldPrint( type ) )
 		{
@@ -74,6 +81,8 @@ private:
 	 * Caches the verbosity set in the config.
 	 */
 	Verbosity verbosity;
+
+	this() { }
 
 	/**
 	 * Gets the header for the given output type.

@@ -97,12 +97,4 @@ public:
 	{
 		apply( go => go.draw() );
 	}
-
-	/**
-	 * Get the object with the given key.
-	 */
-	final GameObject opIndex( string key )
-	{
-		return objects[ key ];
-	}
 }

@@ -37,8 +37,5 @@
 				"version": "~master",
 				"optional": true
 			}
-	},
-	"preBuildCommands": [
-		"git submodule update --init"
-	]
+	}
 }

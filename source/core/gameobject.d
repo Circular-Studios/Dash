@@ -9,6 +9,8 @@ import gl3n.linalg, gl3n.math;
 
 import std.conv, std.variant;
 
+enum AnonymousName = "__anonymous";
+
 /**
  * Manages all components and transform in the world. Can be overridden.
  */
@@ -52,7 +54,7 @@ public:
 	 * Returns:
 	 * 	A new game object with components and info pulled from yaml.
 	 */
-	static shared(GameObject) createFromYaml( Node yamlObj, const ClassInfo scriptOverride = null )
+	static shared(GameObject) createFromYaml( Node yamlObj, ref string[shared GameObject] parents, ref string[][shared GameObject] children, const ClassInfo scriptOverride = null )
 	{
 		shared GameObject obj;
 		string prop;
@@ -80,7 +82,7 @@ public:
 			
 			if( Config.tryGet( "InstanceOf", prop, yamlObj ) )
 			{
-				obj = Prefabs[ prop ].createInstance( scriptClass );
+				obj = Prefabs[ prop ].createInstance( parents, children, scriptClass );
 			}
 			else
 			{
@@ -103,6 +105,34 @@ public:
 				obj.transform.position = cast(shared)vec3( transVec );
 			if( Config.tryGet( "Rotation", transVec, innerNode ) )
 				obj.transform.rotation = cast(shared)quat.euler_rotation( radians(transVec.y), radians(transVec.z), radians(transVec.x) );
+		}
+
+		// If parent is specified, add it to the map
+		if( Config.tryGet( "Parent", prop, yamlObj ) )
+			parents[ obj ] = prop;
+
+		if( Config.tryGet( "Children", innerNode, yamlObj ) )
+		{
+			if( innerNode.isSequence )
+			{
+				foreach( Node child; innerNode )
+				{
+					if( child.isScalar )
+					{
+						// Add child name to map.
+						children[ obj ] ~= child.get!string;
+					}
+					else
+					{
+						// If inline object, create it and add it as a child.
+						obj.addChild( GameObject.createFromYaml( child, parents, children ) );
+					}
+				}
+			}
+			else
+			{
+				logWarning( "Scalar values and mappings in 'Children' of ", obj.name, " are not supported, and it is being ignored." );
+			}
 		}
 		
 		// Init components

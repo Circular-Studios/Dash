@@ -56,17 +56,19 @@ public:
 
 	override void update()
 	{
-		awe_webcore_update();
-
+		// No webview? No update.
 		if ( webView && awe_webview_is_dirty( webView ) )
 		{
 			const(awe_renderbuffer)* buffer = webView.awe_webview_render();
 
-			//updateBuffer( buffer.awe_renderbuffer_get_buffer() );
+			// Ensure the buffer exists
+			if ( buffer != null ) {
 
-			buffer.awe_renderbuffer_copy_to( glBuffer.ptr, awe_renderbuffer_get_rowspan( buffer ), 4, false, true );
+				buffer.awe_renderbuffer_copy_to( glBuffer.ptr, awe_renderbuffer_get_rowspan( buffer ), 4, false, true );
 
-			updateBuffer( glBuffer.ptr );
+				updateBuffer( glBuffer.ptr );
+			}
+
 		}
 	}
 

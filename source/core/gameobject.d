@@ -58,6 +58,8 @@ public:
 		string prop;
 		Node innerNode;
 
+		string objName = yamlObj[ "Name" ].as!string;
+		
 		// Try to get from script
 		if( scriptOverride !is null )
 		{
@@ -69,6 +71,12 @@ public:
 			const ClassInfo scriptClass = Config.tryGet( "Script.ClassName", prop, yamlObj )
 					? ClassInfo.find( prop )
 					: null;
+
+			// Check that if a Script.ClassName was provided that it was valid
+			if( Config.tryGet("Script.ClassName", prop, yamlObj ) && scriptClass is null )
+			{
+				logWarning( objName, ": Unable to find Script ClassName: ", prop );
+			}
 			
 			if( Config.tryGet( "InstanceOf", prop, yamlObj ) )
 			{
@@ -83,7 +91,7 @@ public:
 		}
 
 		// set object name
-		obj.name = yamlObj[ "Name" ].as!string;
+		obj.name = objName;
 
 		// Init transform
 		if( Config.tryGet( "Transform", innerNode, yamlObj ) )

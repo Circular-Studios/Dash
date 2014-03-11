@@ -36,7 +36,7 @@ private:
 	uint _width, _screenWidth;
 	uint _height, _screenHeight;
 	bool _fullscreen, _backfaceCulling, _vsync;
-	float _fov, _near, _far;
+	
 	uint deferredFrameBuffer;
 	uint diffuseRenderTexture; //Alpha channel stores Specular map average
 	uint normalRenderTexture; //Alpha channel stores nothing important
@@ -48,6 +48,8 @@ private:
 	shared DirectionalLight[] directionalLights;
 	shared PointLight[] pointLights;
 	shared SpotLight[] spotLights;
+	shared GameObject[] objectsInScene;
+
 public:
 	mixin( Property!_deviceContext );
 	mixin( Property!_renderContext );
@@ -59,9 +61,7 @@ public:
 	mixin( Property!_fullscreen );
 	mixin( Property!_backfaceCulling );
 	mixin( Property!_vsync );
-	mixin( Property!_fov );
-	mixin( Property!_near );
-	mixin( Property!_far );
+	
 
 	/**
 	 *  Constant strings for various parts of the render pipeline
@@ -86,6 +86,11 @@ public:
 
 	final void initializeDeferredRendering()
 	{
+		// Set depth buffer
+		glClearDepth( 1.0f );
+		// set values for clear
+		glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+
 		//http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
 
 		//Create the frame buffer, which will contain the textures to render to
@@ -128,7 +133,6 @@ public:
 		GLenum[ 2 ] DrawBuffers = [ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 ];
 		glDrawBuffers( 2, DrawBuffers.ptr );
 		glViewport(0, 0, width, height);
-		updateProjection();
 
 		if( glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE )
 		{
@@ -153,6 +157,7 @@ public:
 		glEnable( GL_DEPTH_TEST );
 		glDisable( GL_BLEND );
 
+		updateProjection();
 		
 	}
 
@@ -164,41 +169,7 @@ public:
 	 */
 	final void drawObject( shared GameObject object )
 	{
-		//logInfo( cast()object.name );
-
-		activeCamera._viewMatrixIsDirty = true;
-		object.transform.updateMatrix();
-
-		// set the shader
-		Shader shader;
-		if( object.mesh.animated )
-		{
-			glUseProgram( Shaders[AnimatedGeometryShader].programID );
-			shader = Shaders[AnimatedGeometryShader];
-			
-		}
-		else // not animated mesh
-		{
-			glUseProgram( Shaders[GeometryShader].programID );
-			shader = Shaders[GeometryShader];
-		}
-
-		glBindVertexArray( object.mesh.glVertexArray );
-
-		shader.bindUniformMatrix4fv( ShaderUniform.World , object.transform.matrix );
-		shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , projection * 
-										( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) *
-		                            	object.transform.matrix );
-
-
-		//logInfo( "Projection: ", projection );
-		//logInfo( "Camera: ", cast()activeCamera.viewMatrix );
-
-		shader.bindMaterial( object.material );
-
-		glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
-
-		glBindVertexArray(0);
+		objectsInScene ~= object;
 	}
 	
 	/**
@@ -207,104 +178,143 @@ public:
 	 */
 	final void endDraw()
 	{
-		void bindGeometryOutputs( Shader shader )
+
+		void drawObject( shared GameObject object )
 		{
-			// diffuse
-			glUniform1i( shader.getUniformLocation( ShaderUniform.DiffuseTexture ), 0 );
-			glActiveTexture( GL_TEXTURE0 );
-			glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
-			
-			// normal
-			glUniform1i( shader.getUniformLocation( ShaderUniform.NormalTexture ), 1 );
-			glActiveTexture( GL_TEXTURE1 );
-			glBindTexture( GL_TEXTURE_2D, normalRenderTexture );
-			
-			// depth
-			glUniform1i( shader.getUniformLocation( ShaderUniform.DepthTexture ), 2 );
-			glActiveTexture( GL_TEXTURE2 );
-			glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
-		}
-
-		// settings for light pass
-		glDepthMask( GL_FALSE );
-		glDisable( GL_DEPTH_TEST );
-		glEnable( GL_BLEND );
-		glBlendEquation( GL_FUNC_ADD );
-		glBlendFunc(GL_ONE, GL_ONE );
-		
-		//This line switches back to the default framebuffer
-		glBindFramebuffer( GL_FRAMEBUFFER, 0 );
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-		// Ambient Light
-		if( ambientLight !is null )
-		{
-			auto shader = Shaders[ AmbientLightShader ];
-			glUseProgram( shader.programID );
-
-			bindGeometryOutputs( shader );
-
-			shader.bindAmbientLight( ambientLight );
-			// bind inverseViewProj for rebuilding world positions from pixel locations
-			shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-			                            ( projection * ( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) ).inverse() );
-
-			// bind the window mesh for ambient lights
-			glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
-			glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSquare ).numVertices, GL_UNSIGNED_INT, null );
-		}
-
-		// Directional Lights
-		if( directionalLights.length != 0 )
-		{
-			auto shader = Shaders[ DirectionalLightShader ];
-			glUseProgram( shader.programID );
-
-			bindGeometryOutputs( shader );
-
-			// bind inverseViewProj for rebuilding world positions from pixel locations
-			shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-			                            ( projection * ( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) ).inverse() );
-			shader.setEyePosition( activeCamera !is null ? activeCamera.owner.transform.worldPosition : vec3( 0, 0, 0 ) );
-
-			// bind the window mesh for directional lights
-			glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
-
-			// bind and draw directional lights
-			foreach( light; directionalLights )
+			// set the shader
+			Shader shader;
+			if( object.mesh.animated )
 			{
-				shader.bindDirectionalLight( light );
+				glUseProgram( Shaders[AnimatedGeometryShader].programID );
+				shader = Shaders[AnimatedGeometryShader];
+				
+			}
+			else // not animated mesh
+			{
+				glUseProgram( Shaders[GeometryShader].programID );
+				shader = Shaders[GeometryShader];
+			}
+
+			glBindVertexArray( object.mesh.glVertexArray );
+
+			shader.bindUniformMatrix4fv( ShaderUniform.World , object.transform.matrix );
+			shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , projection * 
+											( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) *
+											object.transform.matrix );
+
+			shader.bindMaterial( object.material );
+
+			glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
+
+			glBindVertexArray(0);
+		}
+
+		void lightPass( )
+		{
+			void bindGeometryOutputs( Shader shader )
+			{
+				// diffuse
+				glUniform1i( shader.getUniformLocation( ShaderUniform.DiffuseTexture ), 0 );
+				glActiveTexture( GL_TEXTURE0 );
+				glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
+				
+				// normal
+				glUniform1i( shader.getUniformLocation( ShaderUniform.NormalTexture ), 1 );
+				glActiveTexture( GL_TEXTURE1 );
+				glBindTexture( GL_TEXTURE_2D, normalRenderTexture );
+				
+				// depth
+				glUniform1i( shader.getUniformLocation( ShaderUniform.DepthTexture ), 2 );
+				glActiveTexture( GL_TEXTURE2 );
+				glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
+			}
+
+			// settings for light pass
+			glDepthMask( GL_FALSE );
+			glDisable( GL_DEPTH_TEST );
+			glEnable( GL_BLEND );
+			glBlendEquation( GL_FUNC_ADD );
+			glBlendFunc(GL_ONE, GL_ONE );
+			
+			//This line switches back to the default framebuffer
+			glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+			glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+			// Ambient Light
+			if( ambientLight !is null )
+			{
+				auto shader = Shaders[ AmbientLightShader ];
+				glUseProgram( shader.programID );
+
+				bindGeometryOutputs( shader );
+
+				shader.bindAmbientLight( ambientLight );
+				// bind inverseViewProj for rebuilding world positions from pixel locations
+				shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
+				                            ( projection * ( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) ).inverse() );
+
+				// bind the window mesh for ambient lights
+				glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
 				glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSquare ).numVertices, GL_UNSIGNED_INT, null );
 			}
-		}
 
-		// Point Lights
-		if( pointLights.length != 0 )
-		{
-			auto shader = Shaders[ PointLightShader ];
-			glUseProgram( shader.programID );
-
-			bindGeometryOutputs( shader );
-
-			// bind inverseViewProj for rebuilding world positions from pixel locations
-			shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-			                            ( projection * ( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) ).inverse() );
-			shader.setEyePosition( activeCamera !is null ? activeCamera.owner.transform.worldPosition : vec3( 0, 0, 0 ) );
-
-			// bind the sphere mesh for point lights
-			glBindVertexArray( Assets.get!Mesh( UnitSphere ).glVertexArray );
-
-			// bind and draw point lights
-			foreach( light; pointLights )
+			// Directional Lights
+			if( directionalLights.length != 0 )
 			{
-			//	logInfo(light.owner.name);
-				shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , projection * 
-				                            ( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) *
-				                            light.getTransform() );
-				shader.bindPointLight( light );
-				glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSphere ).numVertices, GL_UNSIGNED_INT, null );
+				auto shader = Shaders[ DirectionalLightShader ];
+				glUseProgram( shader.programID );
+
+				bindGeometryOutputs( shader );
+
+				// bind inverseViewProj for rebuilding world positions from pixel locations
+				shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
+				                            ( projection * ( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) ).inverse() );
+				shader.setEyePosition( activeCamera !is null ? activeCamera.owner.transform.worldPosition : vec3( 0, 0, 0 ) );
+
+				// bind the window mesh for directional lights
+				glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
+
+				// bind and draw directional lights
+				foreach( light; directionalLights )
+				{
+					shader.bindDirectionalLight( light );
+					glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSquare ).numVertices, GL_UNSIGNED_INT, null );
+				}
+			}
+
+			// Point Lights
+			if( pointLights.length != 0 )
+			{
+				auto shader = Shaders[ PointLightShader ];
+				glUseProgram( shader.programID );
+
+				bindGeometryOutputs( shader );
+
+				// bind inverseViewProj for rebuilding world positions from pixel locations
+				shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
+				                            ( projection * ( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) ).inverse() );
+				shader.setEyePosition( activeCamera !is null ? activeCamera.owner.transform.worldPosition : vec3( 0, 0, 0 ) );
+
+				// bind the sphere mesh for point lights
+				glBindVertexArray( Assets.get!Mesh( UnitSphere ).glVertexArray );
+
+				// bind and draw point lights
+				foreach( light; pointLights )
+				{
+				//	logInfo(light.owner.name);
+					shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , projection * 
+					                            ( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) *
+					                            light.getTransform() );
+					shader.bindPointLight( light );
+					glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSphere ).numVertices, GL_UNSIGNED_INT, null );
+				}
 			}
 		}
+
+		foreach( obj; objectsInScene )
+			drawObject( obj );
+
+		lightPass();
 		
 		// put it on the screen
 		swapBuffers();
@@ -316,6 +326,7 @@ public:
 		directionalLights = [];
 		pointLights = [];
 		spotLights = [];
+		objectsInScene = [];
 	}
 
 	/*
@@ -332,7 +343,8 @@ public:
 				ambientLight = cast(shared AmbientLight)light;
 			}
 			else
-				log( OutputType.Warning, "Attemtping to add multiple ambient lights to the scene.  Ignoring additional ambient lights." );
+				log( OutputType.Warning, "Attemtping to add multiple ambient lights to the scene.  ",
+											"Ignoring additional ambient lights." );
 		}
 		else if( lightType == typeid( DirectionalLight ) )
 		{
@@ -354,11 +366,13 @@ public:
 
 	/*
 	 * Set the camera to draw the scene from.
+	 * Should be called before beginDraw.
 	 * Do not change between calls of beginDraw and endDraw.
 	 */
 	final void setCamera( shared Camera camera )
 	{
 		activeCamera = camera;
+		updateProjection();
 	}
 
 protected:
@@ -378,23 +392,16 @@ protected:
 
 		backfaceCulling = Config.get!bool( "Graphics.BackfaceCulling" );
 		vsync = Config.get!bool( "Graphics.VSync" );
-		fov = Config.get!float( "Display.FieldOfView" );
-		near = Config.get!float( "Display.NearPlane" );
-		far = Config.get!float( "Display.FarPlane" );
 	}
 
 	final void updateProjection()
 	{
-		projection = mat4.perspective( cast(float)width, cast(float)height, fov, near, far );
-	/*projection = mat4.identity;
-		float aspect = width/height;
-		float f = 1/tan((fov*3.14159/360)/2);
-		projection[0][0] = f/aspect;
-		projection[1][1] = f;
-		projection[2][2] = (far + near) / (near - far);
-		projection[3][3] = 0;
-		projection[2][3] = (2*far*near)/(near-far);
-		projection[3][2] = -1; */
+		if( activeCamera )
+			projection = mat4.perspective( cast(float)width, cast(float)height,
+										 activeCamera.fov, activeCamera.near, 
+										 activeCamera.far );
+		else
+			projection = mat4.identity;
 	}
 
 private:

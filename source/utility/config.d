@@ -297,7 +297,6 @@ Light constructPointLight( ref Node node )
 }
 
 
-
 T constructConv( T )( ref Node node ) if( is( T == enum ) )
 {
 	if( node.isScalar )

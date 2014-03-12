@@ -4,7 +4,7 @@
 
 module components.userinterface;
 import core;
-import utility.awesomium, components;
+import utility.awesomium, components, gl3n.linalg;
 import std.string;
 
 class UserInterface : GameObject
@@ -17,13 +17,19 @@ private:
 	// TODO: Handle JS
 
 public:
-	this() 
+	this(uint w, uint h, string filePath) 
 	{
 		// Create object with uiMesh and default material
 		super();
 
-		view = new AwesomiumView(800,800,"http://google.com",this);
+
+		_height = h;
+		_width = w;
+		view = new AwesomiumView( w, h, filePath, this );
 		addComponent( view );
+		this.mesh = Assets.get!Mesh( "unitsquare" );
+		this.transform.scale = vec3(60,30,30);
+		this.transform.updateMatrix();
 		this.material.diffuse = view;
 
 	}

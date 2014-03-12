@@ -146,7 +146,11 @@ private:
 		awe_webcore_initialize_default();
 		//Physics.initialize();
 
-        mainUI = new UserInterface();
+		uint w, h;
+		w = Config.get!uint( "Display.Width" );
+		h = Config.get!uint( "Display.Height" );
+
+        mainUI = new UserInterface(w, h, "http://www.google.com");
 
         onInitialize();
 	}

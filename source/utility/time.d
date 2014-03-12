@@ -6,37 +6,34 @@ import utility.output;
 
 import std.datetime;
 
+shared TimeManager Time;
+
+shared static this()
+{
+	Time = new shared TimeManager;
+}
+
 /**
  * Manages time and delta time.
  */
-final abstract class Time
+shared final class TimeManager
 {
-public static:
+public:
 	/**
 	 * Time since last frame, in seconds.
 	 */
-	final @property float deltaTime() { return delta; }
+	final @property const float deltaTime() { return delta; }
 	/**
 	 * Total time spent running, in seconds.
 	 */
-	final @property float totalTime() { return totalTime; }
-
-	/**
-	 * Initialize the time controller with initial values.
-	 */
-	static this()
-	{
-		cur = prev = Clock.currTime;
-		second = total = delta = 0.0f;
-		frameCount = 0;
-	}
+	final @property const float totalTime() { return totalTime; }
 
 	/**
 	 * Update the times. Only call once per frame!
 	 */
-	final void update()
+	synchronized final void update()
 	{
-		delta = ( cur - prev ).fracSec.nsecs / 1_000_000_000.0f;
+		delta = ( cast()cur - cast()prev ).fracSec.nsecs / 1_000_000_000.0f;
 		total += delta;
 
 		debug
@@ -50,8 +47,8 @@ public static:
 			}
 		}
 
-		prev = cur;
-		cur = Clock.currTime;
+		(cast()prev) = cur;
+		(cast()cur) = Clock.currTime;
 	}
 
 private:
@@ -61,4 +58,14 @@ private:
 	float total;
 	float second;
 	int frameCount;
+	
+	/**
+	 * Initialize the time controller with initial values.
+	 */
+	shared this()
+	{
+		cur = prev = Clock.currTime;
+		second = total = delta = 0.0f;
+		frameCount = 0;
+	}
 }

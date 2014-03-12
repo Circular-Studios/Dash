@@ -15,7 +15,9 @@ import utility;
 import gl3n.linalg;
 import yaml;
 
-import std.array, std.conv, std.string, std.path, std.typecons, std.variant;
+import std.array, std.conv, std.string, std.path,
+	std.typecons, std.variant, std.parallelism,
+	std.traits;
 
 /**
  * Static class which handles the configuration options and YAML interactions.
@@ -59,19 +61,32 @@ public static:
 
 	/**
 	 * Process all yaml files in a directory, and call the callback with all the root level nodes.
+	 * 
+	 * Params:
+	 * 	folder =				The folder to iterate over.
+	 * 	callback =				The function to call on each root level object.
+	 * 	concurrent =			Whether or not to run operation in parallel.
 	 */
-	final void processYamlDirectory( string folder, void delegate( Node ) callback )
+	final void processYamlDirectory( string folder, void delegate( Node ) callback, bool concurrent = false )
 	{
-		foreach( file; FilePath.scanDirectory( folder, "*.yml" ) )
+		auto files = FilePath.scanDirectory( folder, "*.yml" );
+		auto fileFunc = ( FilePath file )
 		{
 			auto object = Config.loadYaml( file.fullPath );
-
+			
 			if( object.isSequence() )
 				foreach( Node innerObj; object )
 					callback( innerObj );
 			else
 				callback( object );
-		}
+		};
+
+		if( concurrent )
+			foreach( file; parallel( files ) )
+				fileFunc( file );
+		else
+			foreach( file; files )
+				fileFunc( file );
 	}
 
 	/**
@@ -97,6 +112,22 @@ public static:
 				current = current[ left ];
 			}
 		}
+	}
+	unittest
+	{
+		import std.stdio;
+		writeln( "Dash Config get unittest" );
+
+		auto n1 = Node( [ "test1": 10 ] );
+
+		assert( Config.get!int( "test1", n1 ) == 10, "Config.get error." );
+
+		try
+		{
+			Config.get!int( "dontexist", n1 );
+			assert( false, "Config.get didn't throw." );
+		}
+		catch { }
 	}
 
 	/**
@@ -159,12 +190,82 @@ public static:
 
 	@disable bool tryGet( T: Variant )( string path, ref T result, Node node = config );
 
+	unittest
+	{
+		import std.stdio;
+		writeln( "Dash Config tryGet unittest" );
+
+		auto n1 = Node( [ "test1": 10 ] );
+
+		int val;
+		assert( Config.tryGet( "test1", val, n1 ), "Config.tryGet failed." );
+		assert( !Config.tryGet( "dontexist", val, n1 ), "Config.tryGet returned true." );
+	}
+
 	/**
 	 * Get element as a file path.
 	 */
 	final string getPath( string path )
 	{
 		return FilePath.ResourceHome ~ get!string( path );//buildNormalizedPath( FilePath.ResourceHome, get!string( path ) );;
+	}
+
+	final T getObject( T )( Node node )
+	{
+		T toReturn;
+
+		static if( is( T == class ) )
+			toReturn = new T;
+
+		// Get each member of the type
+		foreach( memberName; __traits(derivedMembers, T) )
+		{
+			// If it is a field and not a function, tryGet it's value
+			static if( !__traits(compiles, ParameterTypeTuple!(__traits(getMember, toReturn, memberName))) )
+			{
+				tryGet( memberName, __traits(getMember, toReturn, memberName), node );
+			}
+			else
+			{
+				// Iterate over each overload of the function (common to have getter and setter)
+				foreach( func; __traits(getOverloads, T, memberName) )
+				{
+					// Get the param types of the function
+					alias params = ParameterTypeTuple!func;
+
+					// If it can be a setter and is a property
+					static if( params.length == 1 && ( functionAttributes!func & FunctionAttribute.property ) )
+					{
+						// Else, set as temp
+						params[ 0 ] tempValue;
+						if( tryGet( memberName, tempValue, node ) )
+							mixin( "toReturn." ~ memberName ~ " = tempValue;" );
+					}
+				}
+			}
+		}
+
+		return toReturn;
+	}
+	unittest
+	{
+		import std.stdio;
+		writeln( "Dash Config getObject unittest" );
+
+		auto t = getObject!Test( Node( ["x": 5, "y": 7, "z": 9] ) );
+
+		assert( t.x == 5 );
+		assert( t.y == 7 );
+		assert( t.z == 9 );
+	}
+	version(unittest) class Test
+	{
+		int x;
+		int y;
+		private int _z;
+
+		@property int z() { return _z; }
+		@property void z( int newZ ) { _z = newZ; }
 	}
 
 private:
@@ -258,7 +359,7 @@ Light constructAmbientLight( ref Node node )
 	vec3 color;
 	Config.tryGet( "Color", color, node );
 	
-	return new AmbientLight( color );
+	return cast()new shared AmbientLight( color );
 }
 
 Light constructDirectionalLight( ref Node node )
@@ -269,7 +370,7 @@ Light constructDirectionalLight( ref Node node )
 	Config.tryGet( "Color", color, node );
 	Config.tryGet( "Direction", dir, node );
 
-	return new DirectionalLight( color, dir );
+	return cast()new shared DirectionalLight( color, dir );
 }
 
 Light constructPointLight( ref Node node )
@@ -280,7 +381,7 @@ Light constructPointLight( ref Node node )
 	Config.tryGet( "Color", color, node );
 	Config.tryGet( "Radius", radius, node );
 
-	return new PointLight( color, radius );
+	return cast()new shared PointLight( color, radius );
 }
 
 
@@ -295,32 +396,3 @@ T constructConv( T )( ref Node node ) if( is( T == enum ) )
 		throw new Exception( "Enum must be represented as a scalar." );
 	}
 }
-
-unittest
-{
-	import std.stdio;
-	writeln( "Dash Config get unittest" );
-
-	auto n1 = Node( [ "test1": 10 ] );
-
-	assert( Config.get!int( "test1", n1 ) == 10, "Config.get error." );
-
-	try
-	{
-		Config.get!int( "dontexist", n1 );
-		assert( false, "Config.get didn't throw." );
-	}
-	catch { }
-}
-unittest
-{
-	import std.stdio;
-	writeln( "Dash Config tryGet unittest" );
-
-	auto n1 = Node( [ "test1": 10 ] );
-
-	int val;
-	assert( Config.tryGet( "test1", val, n1 ), "Config.tryGet failed." );
-	assert( !Config.tryGet( "dontexist", val, n1 ), "Config.tryGet returned true." );
-}
-

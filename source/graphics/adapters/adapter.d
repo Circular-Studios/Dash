@@ -43,12 +43,12 @@ private:
 	uint depthRenderTexture;
 	// Do not add properties for:
 	mat4 projection;
-	Camera activeCamera;
-	AmbientLight ambientLight;
-	DirectionalLight[] directionalLights;
-	PointLight[] pointLights;
-	SpotLight[] spotLights;
-	GameObject[] objectsInScene;
+	shared Camera activeCamera;
+	shared AmbientLight ambientLight;
+	shared DirectionalLight[] directionalLights;
+	shared PointLight[] pointLights;
+	shared SpotLight[] spotLights;
+	shared GameObject[] objectsInScene;
 
 public:
 	mixin( Property!_deviceContext );
@@ -160,14 +160,14 @@ public:
 		updateProjection();
 		
 	}
-	
+
 	/**
 	 * draws an object for the geometry pass
 	 * beginDraw must be called before any calls of this function
 	 * Params:
 	 *	object = the object to be drawn
 	 */
-	final void drawObject( GameObject object )
+	final void drawObject( shared GameObject object )
 	{
 		objectsInScene ~= object;
 	}
@@ -179,7 +179,7 @@ public:
 	final void endDraw()
 	{
 
-		void drawObject( GameObject object )
+		void drawObject( shared GameObject object )
 		{
 			// set the shader
 			Shader shader;
@@ -199,7 +199,7 @@ public:
 
 			shader.bindUniformMatrix4fv( ShaderUniform.World , object.transform.matrix );
 			shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , projection * 
-											( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) *
+											( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) *
 											object.transform.matrix );
 
 			shader.bindMaterial( object.material );
@@ -251,7 +251,7 @@ public:
 				shader.bindAmbientLight( ambientLight );
 				// bind inverseViewProj for rebuilding world positions from pixel locations
 				shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-				                            ( projection * ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) ).inverse() );
+				                            ( projection * ( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) ).inverse() );
 
 				// bind the window mesh for ambient lights
 				glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
@@ -268,7 +268,7 @@ public:
 
 				// bind inverseViewProj for rebuilding world positions from pixel locations
 				shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-				                            ( projection * ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) ).inverse() );
+				                            ( projection * ( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) ).inverse() );
 				shader.setEyePosition( activeCamera !is null ? activeCamera.owner.transform.worldPosition : vec3( 0, 0, 0 ) );
 
 				// bind the window mesh for directional lights
@@ -292,7 +292,7 @@ public:
 
 				// bind inverseViewProj for rebuilding world positions from pixel locations
 				shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-				                            ( projection * ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) ).inverse() );
+				                            ( projection * ( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) ).inverse() );
 				shader.setEyePosition( activeCamera !is null ? activeCamera.owner.transform.worldPosition : vec3( 0, 0, 0 ) );
 
 				// bind the sphere mesh for point lights
@@ -303,7 +303,7 @@ public:
 				{
 				//	logInfo(light.owner.name);
 					shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , projection * 
-					                            ( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) *
+					                            ( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) *
 					                            light.getTransform() );
 					shader.bindPointLight( light );
 					glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSphere ).numVertices, GL_UNSIGNED_INT, null );
@@ -332,7 +332,7 @@ public:
 	/*
 	 * Build arrays of lights in the scene to be drawn in endDraw
 	 */
-	final void addLight( Light light )
+	final void addLight( shared Light light )
 	{
 		auto lightType = typeid( light );
 
@@ -340,7 +340,7 @@ public:
 		{
 			if( ambientLight is null )
 			{
-				ambientLight = cast(AmbientLight)light;
+				ambientLight = cast(shared AmbientLight)light;
 			}
 			else
 				log( OutputType.Warning, "Attemtping to add multiple ambient lights to the scene.  ",
@@ -348,19 +348,19 @@ public:
 		}
 		else if( lightType == typeid( DirectionalLight ) )
 		{
-			directionalLights ~= cast(DirectionalLight)light;
+			directionalLights ~= cast(shared DirectionalLight)light;
 		}
 		else if( lightType == typeid( PointLight ) )
 		{
-			pointLights ~= cast(PointLight)light;
+			pointLights ~= cast(shared PointLight)light;
 		}
 		else if( lightType == typeid( SpotLight ) )
 		{
-			spotLights ~= cast(SpotLight)light;
+			spotLights ~= cast(shared SpotLight)light;
 		}
 		else
 		{
-			log( OutputType.Warning, "Attempting to add unknown light type, light ignored." );
+			logWarning( "Attempting to add unknown light type, light ignored." );
 		}
 	}
 
@@ -369,7 +369,7 @@ public:
 	 * Should be called before beginDraw.
 	 * Do not change between calls of beginDraw and endDraw.
 	 */
-	final void setCamera( Camera camera )
+	final void setCamera( shared Camera camera )
 	{
 		activeCamera = camera;
 		updateProjection();

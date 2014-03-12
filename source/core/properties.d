@@ -40,7 +40,7 @@ template DirtyGetter( alias field, string update, AccessModifier access = Access
 		"final " ~ access ~ " @property auto " ~ name ~ "(){" ~
 			"if(" ~ field.stringof ~ "IsDirty)" ~
 				update ~ "();"
-			"return " ~ field.stringof ~ ";}";
+			"return " ~ field.stringof ~ ";}\n";
 }
 
 void setDirty( alias field )()
@@ -50,10 +50,10 @@ void setDirty( alias field )()
 
 template Setter( alias field, AccessModifier access = AccessModifier.Protected, string name = field.stringof[ 1..$ ] )
 {
-	enum Setter = "final " ~ access ~ " @property void " ~ name ~ "(" ~ typeof(field).stringof ~ " newVal){ if( newVal !=" ~ field.stringof ~ ")" ~ field.stringof ~ " = newVal;}\n";
+	enum Setter = "final " ~ access ~ " @property void " ~ name ~ "(" ~ typeof(field).stringof ~ " newVal){ " ~ field.stringof ~ " = newVal;}\n";
 }
 
 template DirtySetter( alias field, AccessModifier access = AccessModifier.Protected, string name = field.stringof[ 1..$ ] )
 {
-	enum Setter = "final " ~ access ~ " @property void " ~ name ~ "(" ~ typeof(field).stringof ~ " newVal){ if( newVal !=" ~ field.stringof ~ "){" ~ field.stringof ~ " = newVal; changed();}\n";
+	enum Setter = "final " ~ access ~ " @property void " ~ name ~ "(" ~ typeof(field).stringof ~ " newVal){ " ~ field.stringof ~ " = newVal; changed();}\n";
 }

@@ -138,7 +138,7 @@ public:
 		// Init components
 		foreach( string key, Node value; yamlObj )
 		{
-			if( key == "Name" || key == "Script" || key == "Parent" || key == "InstanceOf" || key == "Transform" )
+			if( key == "Name" || key == "Script" || key == "Parent" || key == "InstanceOf" || key == "Transform" || key == "Children" )
 				continue;
 
 			if( auto init = key in IComponent.initializers )

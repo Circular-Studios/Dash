@@ -34,18 +34,19 @@ public:
 			buildNormalizedPath( FilePath.Resources.Objects, objectPath ),
 			( Node yml )
 			{
-				auto name = yml[ "Name" ].as!string;
+				//auto name = yml[ "Name" ].as!string;
 
 				// Create the object
 				auto object = GameObject.createFromYaml( yml );
 				// Add to collection
-				objects[ name ] = object;
+				objects[ object.name ] = object;
 
 				// If parent is specified, add it to the map
 				string parentName;
 				if( Config.tryGet( "Parent", parentName, yml ) )
 				{
 					parents[ object ] = parentName;
+					//logInfo("Parent:", parentName, " for ", object.name );
 				}
 			} );
 
@@ -95,13 +96,5 @@ public:
 	final void draw()
 	{
 		apply( go => go.draw() );
-	}
-
-	/**
-	 * Get the object with the given key.
-	 */
-	final GameObject opIndex( string key )
-	{
-		return objects[ key ];
 	}
 }

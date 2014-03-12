@@ -153,22 +153,8 @@ public:
 		// Set current context
 		wglMakeCurrent( deviceContext, renderContext );
 		
-		// Set depth buffer
-		glClearDepth( 1.0f );
-		
-		// Enable depth testing
-		glEnable( GL_DEPTH_TEST );
-		
-		// Enable transparency
-		glEnable( GL_BLEND );
-		glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-		
-		// Set front face
-		//glFrontFace( GL_CW );
-		
 		reload();
 		
-		glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
 	}
 
 	override void shutdown()
@@ -205,7 +191,6 @@ public:
 					  SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED );
 
 		glViewport( 0, 0, width, height );
-		// update matricies
 	}
 
 	override void reload()

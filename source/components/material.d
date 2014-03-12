@@ -98,6 +98,7 @@ public:
 	}
 }
 
+
 @property Texture defaultTex()
 {
 	static Texture def;
@@ -106,4 +107,13 @@ public:
 		def = new Texture( [0, 0, 0, 255] );
 
 	return def;
+}
+
+static this()
+{
+	IComponent.initializers[ "Material" ] = ( Node yml, GameObject obj )
+	{
+		obj.material = Assets.get!Material( yml.get!string );
+		return obj.material;
+	};
 }

@@ -45,6 +45,7 @@ build/
 *.pidb
 *.log
 *.scc
+*.lib
 
 # Visual C++ cache files
 ipch/
@@ -164,6 +165,14 @@ $RECYCLE.BIN/
 *.pidb
 *.resources
 test-results/
+
+### SublimeText ###
+# workspace files are user-specific
+*.sublime-workspace
+*.sublime-project
+
+# Merge leftovers
+*.orig
 
 # ========================
 # Dash stuffs

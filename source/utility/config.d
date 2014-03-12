@@ -10,6 +10,7 @@ import components.assets, components.lights;
 import graphics.shaders;
 import utility.output : Verbosity;
 import utility.input : Keyboard;
+import utility;
 
 import gl3n.linalg;
 import yaml;
@@ -38,6 +39,7 @@ public static:
 		constructor.addConstructorScalar( "!Shader", ( ref Node node ) => Shaders.get( node.get!string ) );
 		constructor.addConstructorMapping( "!Light-Directional", &constructDirectionalLight );
 		constructor.addConstructorMapping( "!Light-Ambient", &constructAmbientLight );
+		constructor.addConstructorMapping( "!Light-Point", &constructPointLight );
 		//constructor.addConstructorScalar( "!Texture", ( ref Node node ) => Assets.get!Texture( node.get!string ) );
 		//constructor.addConstructorScalar( "!Mesh", ( ref Node node ) => Assets.get!Mesh( node.get!string ) );
 		//constructor.addConstructorScalar( "!Material", ( ref Node node ) => Assets.get!Material( node.get!string ) );
@@ -251,6 +253,14 @@ quat constructQuaternion( ref Node node )
 	return result;
 }
 
+Light constructAmbientLight( ref Node node )
+{
+	vec3 color;
+	Config.tryGet( "Color", color, node );
+	
+	return new AmbientLight( color );
+}
+
 Light constructDirectionalLight( ref Node node )
 {
 	vec3 color;
@@ -262,13 +272,17 @@ Light constructDirectionalLight( ref Node node )
 	return new DirectionalLight( color, dir );
 }
 
-Light constructAmbientLight( ref Node node )
+Light constructPointLight( ref Node node )
 {
 	vec3 color;
-	Config.tryGet( "Color", color, node );
+	float radius;
 
-	return new AmbientLight( color );
+	Config.tryGet( "Color", color, node );
+	Config.tryGet( "Radius", radius, node );
+
+	return new PointLight( color, radius );
 }
+
 
 T constructConv( T )( ref Node node ) if( is( T == enum ) )
 {

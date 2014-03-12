@@ -7,14 +7,47 @@ import core;
 import utility.awesomium, components;
 import std.string;
 
-class UserInterface
+class UserInterface : GameObject
 {
 private:
 	uint _height;
 	uint _width;
-	Mesh uiMesh;
+	AwesomiumView view;
+
+	// TODO: Handle JS
+
 public:
 	this() 
+	{
+		// Create object with uiMesh and default material
+		super();
+
+		view = new AwesomiumView(800,800,"http://google.com",this);
+		addComponent( view );
+		this.material.diffuse = view;
+
+	}
+
+	override void onUpdate()
+	{
+		// Check for mouse & keyboard input
+
+		view.update();
+
+		return;
+	}
+
+	override void onDraw()
+	{
+
+	}
+
+	override void onShutdown()
+	{
+		// Clean up mesh, material, and view
+	}
+
+	void keyPress(int key)
 	{
 
 	}
@@ -62,7 +95,7 @@ public:
 			const(awe_renderbuffer)* buffer = webView.awe_webview_render();
 
 			// Ensure the buffer exists
-			if ( buffer != null ) {
+			if ( buffer !is null ) {
 
 				buffer.awe_renderbuffer_copy_to( glBuffer.ptr, awe_renderbuffer_get_rowspan( buffer ), 4, false, true );
 
@@ -74,7 +107,7 @@ public:
 
 	override void shutdown()
 	{
-		awe_webview_destroy(webView);
+		webView.awe_webview_destroy();
 	}
 }
 

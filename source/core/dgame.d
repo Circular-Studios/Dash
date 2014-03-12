@@ -29,6 +29,9 @@ public:
 	/// The instance to be running from
 	static DGame instance;
 
+	/// The main UI object
+	static UserInterface mainUI;
+
 	/// Current state of the game
 	GameState currentState;
 
@@ -79,6 +82,8 @@ public:
 			// Do the updating of the child class.
 			onUpdate();
 
+			mainUI.update();
+
 			//////////////////////////////////////////////////////////////////////////
 			// Draw
 			//////////////////////////////////////////////////////////////////////////
@@ -88,6 +93,9 @@ public:
 
 			// Draw in child class
 			onDraw();
+
+			//if( currentState == GameState.Menu )
+				mainUI.draw();
 
 			// End drawing
 			Graphics.endDraw();
@@ -138,7 +146,7 @@ private:
 		awe_webcore_initialize_default();
 		//Physics.initialize();
 
-        //ui = new UserInterface( this );
+        mainUI = new UserInterface();
 
         onInitialize();
 	}
@@ -152,6 +160,8 @@ private:
 		awe_webcore_shutdown();
 		Assets.shutdown();
 		Graphics.shutdown();
+
+		mainUI.shutdown();
 	}
 
 	/**

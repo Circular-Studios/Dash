@@ -12,40 +12,40 @@ import std.stdio, std.stream, std.format, std.math;
  * Loads and manages meshes into OpenGL.
  * 
  * Supported formats:
-	3DS
-	BLEND (Blender 3D)
-	DAE/Collada
-	FBX
-	IFC-STEP
-	ASE
-	DXF
-	HMP
-	MD2
-	MD3
-	MD5
-	MDC
-	MDL
-	NFF
-	PLY
-	STL
-	X
-	OBJ
-	SMD
-	LWO
-	LXO
-	LWS
-	TER
-	AC3D
-	MS3D
-	COB
-	Q3BSP
-	XGL
-	CSM
-	BVH
-	B3D
-	NDO
-	Ogre XML
-	Q3D
+ *	3DS
+ *	BLEND (Blender 3D)
+ *	DAE/Collada
+ *	FBX
+ *	IFC-STEP
+ *	ASE
+ *	DXF
+ *	HMP
+ *	MD2
+ *	MD3
+ *	MD5
+ *	MDC
+ *	MDL
+ *	NFF
+ *	PLY
+ *	STL
+ *	X
+ *	OBJ
+ *	SMD
+ *	LWO
+ *	LXO
+ *	LWS
+ *	TER
+ *	AC3D
+ *	MS3D
+ *	COB
+ *	Q3BSP
+ *	XGL
+ *	CSM
+ *	BVH
+ *	B3D
+ *	NDO
+ *	Ogre XML
+ *	Q3D
  */
 shared class Mesh : IComponent
 {

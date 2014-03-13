@@ -49,6 +49,7 @@ private:
 	shared PointLight[] pointLights;
 	shared SpotLight[] spotLights;
 	shared GameObject[] objectsInScene;
+	shared UserInterface[] uis;
 
 public:
 	mixin( Property!_deviceContext );
@@ -156,21 +157,10 @@ public:
 		
 		glEnable( GL_DEPTH_TEST );
 		glDisable( GL_BLEND );
-
-		updateProjection();
 		
 	}
 
-	/**
-	 * draws an object for the geometry pass
-	 * beginDraw must be called before any calls of this function
-	 * Params:
-	 *	object = the object to be drawn
-	 */
-	final void drawObject( shared GameObject object )
-	{
-		objectsInScene ~= object;
-	}
+	
 	
 	/**
 	 * called after all desired objects are drawn
@@ -178,38 +168,45 @@ public:
 	 */
 	final void endDraw()
 	{
+		if( activeCamera ) activeCamera.updateViewMatrix(); 
+		mat4 view = activeCamera ? cast()activeCamera.viewMatrix : mat4.identity;
+		mat4 perspProj = activeCamera ? 
+						  	activeCamera.buildPerspective( cast(float)width, cast(float)height ) : 
+			 				mat4.identity;
 
-		void drawObject( shared GameObject object )
+		void geometryPass( )
 		{
-			// set the shader
-			Shader shader;
-			if( object.mesh.animated )
+			foreach( object; objectsInScene )
 			{
-				glUseProgram( Shaders[AnimatedGeometryShader].programID );
-				shader = Shaders[AnimatedGeometryShader];
-				
+				// set the shader
+				Shader shader;
+				if( object.mesh.animated )
+				{
+					glUseProgram( Shaders[AnimatedGeometryShader].programID );
+					shader = Shaders[AnimatedGeometryShader];
+					
+				}
+				else // not animated mesh
+				{
+					glUseProgram( Shaders[GeometryShader].programID );
+					shader = Shaders[GeometryShader];
+				}
+
+				glBindVertexArray( object.mesh.glVertexArray );
+
+				shader.bindUniformMatrix4fv( ShaderUniform.World, object.transform.matrix );
+				shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection,
+											 perspProj * view * object.transform.matrix );
+
+				shader.bindMaterial( object.material );
+
+				glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
+
+				glBindVertexArray(0);
 			}
-			else // not animated mesh
-			{
-				glUseProgram( Shaders[GeometryShader].programID );
-				shader = Shaders[GeometryShader];
-			}
-
-			glBindVertexArray( object.mesh.glVertexArray );
-
-			shader.bindUniformMatrix4fv( ShaderUniform.World , object.transform.matrix );
-			shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , projection * 
-											( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) *
-											object.transform.matrix );
-
-			shader.bindMaterial( object.material );
-
-			glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
-
-			glBindVertexArray(0);
 		}
 
-		void lightPass( )
+		void lightPass()
 		{
 			void bindGeometryOutputs( Shader shader )
 			{
@@ -251,7 +248,7 @@ public:
 				shader.bindAmbientLight( ambientLight );
 				// bind inverseViewProj for rebuilding world positions from pixel locations
 				shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-				                            ( projection * ( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) ).inverse() );
+				                            ( perspProj * view ).inverse() );
 
 				// bind the window mesh for ambient lights
 				glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
@@ -268,8 +265,8 @@ public:
 
 				// bind inverseViewProj for rebuilding world positions from pixel locations
 				shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-				                            ( projection * ( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) ).inverse() );
-				shader.setEyePosition( activeCamera !is null ? activeCamera.owner.transform.worldPosition : vec3( 0, 0, 0 ) );
+				                            ( perspProj * view ).inverse() );
+				shader.setEyePosition( activeCamera ? activeCamera.owner.transform.worldPosition : vec3( 0, 0, 0 ) );
 
 				// bind the window mesh for directional lights
 				glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
@@ -292,8 +289,8 @@ public:
 
 				// bind inverseViewProj for rebuilding world positions from pixel locations
 				shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-				                            ( projection * ( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) ).inverse() );
-				shader.setEyePosition( activeCamera !is null ? activeCamera.owner.transform.worldPosition : vec3( 0, 0, 0 ) );
+				                            ( perspProj * view ).inverse() );
+				shader.setEyePosition( activeCamera ? activeCamera.owner.transform.worldPosition : vec3( 0, 0, 0 ) );
 
 				// bind the sphere mesh for point lights
 				glBindVertexArray( Assets.get!Mesh( UnitSphere ).glVertexArray );
@@ -302,19 +299,41 @@ public:
 				foreach( light; pointLights )
 				{
 				//	logInfo(light.owner.name);
-					shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , projection * 
-					                            ( ( activeCamera !is null ) ? cast()activeCamera.viewMatrix : mat4.identity ) *
-					                            light.getTransform() );
+					shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection, 
+												 perspProj * view * light.getTransform() );
 					shader.bindPointLight( light );
 					glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSphere ).numVertices, GL_UNSIGNED_INT, null );
 				}
 			}
 		}
 
-		foreach( obj; objectsInScene )
-			drawObject( obj );
+		void uiPass()
+		{
+			Shader shader = Shaders[UserInterfaceShader];
+			glUseProgram( shader.programID );
+			glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
+			shader.bindUniformMatrix4fv( ShaderUniform.Projection, activeCamera ? activeCamera.buildOrthogonal( cast(float)width, cast(float)height ) : mat4.identity );
+
+
+			foreach( ui; uis )
+			{
+				shader.bindUI( ui );
+				glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSquare ).numVertices, GL_UNSIGNED_INT, null );
+
+			}
+
+			glBindVertexArray(0);
+		}
+
+		
+		geometryPass();
 
 		lightPass();
+
+		uiPass();
+
+		
+
 		
 		// put it on the screen
 		swapBuffers();
@@ -327,6 +346,18 @@ public:
 		pointLights = [];
 		spotLights = [];
 		objectsInScene = [];
+		uis = [];
+	}
+
+	/**
+	 * Adds an object to the scene 
+	 * beginDraw must be called before any calls of this function
+	 * Params:
+	 *	object = the object to be drawn
+	 */
+	final void addObject( shared GameObject object )
+	{
+		objectsInScene ~= object;
 	}
 
 	/*
@@ -365,14 +396,21 @@ public:
 	}
 
 	/*
+	 * Adds a UI to be drawn over the objects in the scene
+	 * UIs will be drawn ( and overlap ) in the order they are added
+	 */
+	final void addUI( shared UserInterface ui )
+	{
+		uis ~= ui;
+	}
+
+	/*
 	 * Set the camera to draw the scene from.
-	 * Should be called before beginDraw.
-	 * Do not change between calls of beginDraw and endDraw.
+	 * Should be set before endDraw.
 	 */
 	final void setCamera( shared Camera camera )
 	{
 		activeCamera = camera;
-		updateProjection();
 	}
 
 protected:
@@ -392,16 +430,6 @@ protected:
 
 		backfaceCulling = Config.get!bool( "Graphics.BackfaceCulling" );
 		vsync = Config.get!bool( "Graphics.VSync" );
-	}
-
-	final void updateProjection()
-	{
-		if( activeCamera )
-			projection = mat4.perspective( cast(float)width, cast(float)height,
-										 activeCamera.fov, activeCamera.near, 
-										 activeCamera.far );
-		else
-			projection = mat4.identity;
 	}
 
 private:

@@ -186,7 +186,7 @@ public:
 
 		if( mesh !is null )
 		{
-			Graphics.drawObject( this );
+			Graphics.addObject( this );
 		}
 		if( light !is null )
 		{

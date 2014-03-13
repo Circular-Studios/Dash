@@ -7,7 +7,7 @@ import core;
 import utility.awesomium, components, utility;
 import std.string, gl3n.linalg;
 
-shared class UserInterface : GameObject
+shared class UserInterface
 {
 private:
     uint _height;
@@ -19,23 +19,14 @@ private:
 public:
     this(uint w, uint h, string filePath) 
     {
-        // Create object with uiMesh and default material
-        super();
-
-
         _height = h;
         _width = w;
-        view = new shared AwesomiumView( w, h, filePath, this );
-        addComponent( view );
-        this.mesh = Assets.get!Mesh( "unitsquare" );
-        this.transform.scale = vec3(58,30,1);
-        this.transform.updateMatrix();
-        this.material.diffuse = view;
+        view = new shared AwesomiumView( w, h, filePath, null );
         logInfo("UI File: ", filePath);
 
     }
 
-    override void onUpdate()
+    void update()
     {
         // Check for mouse & keyboard input
 
@@ -44,12 +35,12 @@ public:
         return;
     }
 
-    override void onDraw()
+    void draw()
     {
 
     }
 
-    override void onShutdown()
+    void shutdown()
     {
         // Clean up mesh, material, and view
     }

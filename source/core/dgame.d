@@ -185,11 +185,10 @@ private:
 	final void stop()
 	{
 		onShutdown();
+		mainUI.shutdown();
 		awe_webcore_shutdown();
 		Assets.shutdown();
 		Graphics.shutdown();
-
-		mainUI.shutdown();
 	}
 
 	/**

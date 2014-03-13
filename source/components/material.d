@@ -99,12 +99,12 @@ public:
 }
 
 
-@property Texture defaultTex()
+@property shared(Texture) defaultTex()
 {
-	static Texture def;
+	static shared Texture def;
 
 	if( !def )
-		def = new Texture( [0, 0, 0, 255] );
+		def = new shared Texture( [0, 0, 0, 255] );
 
 	return def;
 }

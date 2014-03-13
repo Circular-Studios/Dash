@@ -7,7 +7,7 @@ import core;
 import utility.awesomium, components, gl3n.linalg;
 import std.string;
 
-class UserInterface : GameObject
+shared class UserInterface : GameObject
 {
 private:
 	uint _height;
@@ -25,10 +25,10 @@ public:
 
 		_height = h;
 		_width = w;
-		view = new AwesomiumView( w, h, filePath, this );
+		view = new shared AwesomiumView( w, h, filePath, this );
 		addComponent( view );
 		this.mesh = Assets.get!Mesh( "unitsquare" );
-		this.transform.scale = vec3(60,30,30);
+		this.transform.scale = vec3(60,30,1);
 		this.transform.updateMatrix();
 		this.material.diffuse = view;
 
@@ -59,15 +59,14 @@ public:
 	}
 }
 
-class AwesomiumView : Texture, IComponent
+shared class AwesomiumView : Texture, IComponent
 {
 private:
 	awe_webview* webView;
-	awe_string* urlString;
 	ubyte[] glBuffer;
 
 public:
-	this( uint w, uint h, string filePath, GameObject owner )
+	this( uint w, uint h, string filePath, shared GameObject owner )
 	{
 		_width = w;
 		_height = h;
@@ -76,17 +75,17 @@ public:
 
 		super( cast(ubyte*)null );
 
-		webView = awe_webcore_create_webview( _width, _height, false );
-		urlString = awe_string_create_from_ascii( filePath.toStringz(), filePath.length );
+		webView = cast(shared)awe_webcore_create_webview( _width, _height, false );
+		awe_string* urlString = awe_string_create_from_ascii( filePath.toStringz(), filePath.length );
 
-		awe_webview_load_url(webView,
+		awe_webview_load_url(cast(awe_webview*)webView,
 		                     urlString,
 		                     awe_string_empty(),
 		                     awe_string_empty(),
 		                     awe_string_empty());
 
 		// Wait for WebView to finish loading the page
-		while(awe_webview_is_loading_page(webView))
+		while(awe_webview_is_loading_page(cast(awe_webview*)webView))
 			awe_webcore_update();
 		
 		// Destroy our URL string
@@ -96,16 +95,16 @@ public:
 	override void update()
 	{
 		// No webview? No update.
-		if ( webView && awe_webview_is_dirty( webView ) )
+		if ( webView && awe_webview_is_dirty( cast(awe_webview*)webView ) )
 		{
-			const(awe_renderbuffer)* buffer = webView.awe_webview_render();
+			const(awe_renderbuffer)* buffer = awe_webview_render( cast(awe_webview*)webView );
 
 			// Ensure the buffer exists
 			if ( buffer !is null ) {
 
-				buffer.awe_renderbuffer_copy_to( glBuffer.ptr, awe_renderbuffer_get_rowspan( buffer ), 4, false, true );
+				buffer.awe_renderbuffer_copy_to( cast(ubyte*)glBuffer.ptr, awe_renderbuffer_get_rowspan( buffer ), 4, false, true );
 
-				updateBuffer( glBuffer.ptr );
+				updateBuffer( cast(ubyte*)glBuffer.ptr );
 			}
 
 		}
@@ -113,7 +112,7 @@ public:
 
 	override void shutdown()
 	{
-		webView.awe_webview_destroy();
+		awe_webview_destroy( cast(awe_webview*)webView );
 	}
 }
 

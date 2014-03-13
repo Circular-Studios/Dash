@@ -32,7 +32,7 @@ public:
 	shared static DGame instance;
 
 	/// The main UI object
-	static UserInterface mainUI;
+	shared static UserInterface mainUI;
 
 	/// Current state of the game
 	GameState currentState;
@@ -165,7 +165,7 @@ private:
 		w = Config.get!uint( "Display.Width" );
 		h = Config.get!uint( "Display.Height" );
 
-        mainUI = new UserInterface(w, h, "http://www.google.com");
+        mainUI = new shared UserInterface(w, h, "http://www.google.com");
 
         onInitialize();
 

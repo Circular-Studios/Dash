@@ -12,16 +12,19 @@ shared class UserInterface
 private:
     uint _height;
     uint _width;
-    AwesomiumView view;
+    AwesomiumView _view;
 
     // TODO: Handle JS
 
 public:
+
+	mixin( Property!(_view, AccessModifier.Public) );
+
     this(uint w, uint h, string filePath) 
     {
         _height = h;
         _width = w;
-        view = new shared AwesomiumView( w, h, filePath, null );
+        _view = new shared AwesomiumView( w, h, filePath, null );
         logInfo("UI File: ", filePath);
 
     }
@@ -30,7 +33,7 @@ public:
     {
         // Check for mouse & keyboard input
 
-        view.update();
+        _view.update();
 
         return;
     }

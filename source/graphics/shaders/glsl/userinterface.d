@@ -14,11 +14,11 @@ immutable string userinterfaceVS = q{
 
 	out vec2 fUV;
 
-	uniform mat4 Projection;
+	uniform mat4 projection;
 
 	void main( void )
 	{
-		gl_Position = Projection* vec4( vPosition, 1.0f );
+		gl_Position = projection* vec4( vPosition, 1.0f );
 
 		fUV = vUV;
 	}
@@ -32,7 +32,7 @@ immutable string userinterfaceFS = q{
 
 	out vec4 color;
 
-	uniform samler2D uiTexture;
+	uniform sampler2D uiTexture;
 
 	void main( void )
 	{

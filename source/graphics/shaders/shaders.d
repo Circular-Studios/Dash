@@ -223,7 +223,7 @@ public:
 	 * Pass through for glUniform 3f
 	 * Passes to the shader in XYZ order
 	 */
-	final void bindUniform3f( ShaderUniform uniform, const vec3 value )
+	final void bindUniform3f( ShaderUniform uniform, const shared vec3 value )
 	{
 		glUniform3f( getUniformLocation( uniform ), value.x, value.y, value.z );
 	}
@@ -231,7 +231,7 @@ public:
 	/*
 	 *  pass through for glUniformMatrix4fv
 	 */
-	final void bindUniformMatrix4fv( ShaderUniform uniform, mat4 matrix )
+	final void bindUniformMatrix4fv( ShaderUniform uniform, shared mat4 matrix )
 	{
 		glUniformMatrix4fv( getUniformLocation( uniform ), 1, true, matrix.value_ptr );
 	}
@@ -287,7 +287,7 @@ public:
 	/*
 	 * Sets the eye position for lighting calculations
 	 */
-	final void setEyePosition( vec3 pos )
+	final void setEyePosition( shared vec3 pos )
 	{
 		glUniform3f( getUniformLocation( ShaderUniform.EyePosition ), pos.x, pos.y, pos.z );
 	}

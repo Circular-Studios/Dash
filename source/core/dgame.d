@@ -158,14 +158,21 @@ private:
 		logInfo( "Assets init time: ", Clock.currTime - subStart );
 
 		Prefabs.initialize();
+
+		// Webcore setup
 		awe_webcore_initialize_default();
+		string baseDir = FilePath.Resources.UI;
+		awe_string* aweBaseDir = awe_string_create_from_ascii( baseDir.toStringz(), baseDir.length );
+		awe_webcore_set_base_directory( aweBaseDir );
+		awe_string_destroy( aweBaseDir );
+
 		//Physics.initialize();
 
 		uint w, h;
 		w = Config.get!uint( "Display.Width" );
 		h = Config.get!uint( "Display.Height" );
 
-        mainUI = new shared UserInterface(w, h, "http://www.google.com");
+        mainUI = new shared UserInterface(w, h, Config.get!string( "UserInterface.FilePath" ) );
 
         onInitialize();
 

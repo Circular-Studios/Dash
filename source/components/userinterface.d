@@ -4,7 +4,7 @@
 
 module components.userinterface;
 import core;
-import utility.awesomium, components, utility;
+import utility.awesomium, components, utility, graphics.graphics;
 import std.string, gl3n.linalg;
 
 shared class UserInterface
@@ -13,15 +13,19 @@ private:
     uint _height;
     uint _width;
     AwesomiumView _view;
-
+    mat4 _scaleMat;
     // TODO: Handle JS
 
 public:
 
 	mixin( Property!(_view, AccessModifier.Public) );
+	mixin( Property!(_scaleMat, AccessModifier.Public) );
 
     this(uint w, uint h, string filePath) 
     {
+    	_scaleMat = mat4.identity;
+    	_scaleMat[0][0] = cast(float)w/2.0f;
+    	_scaleMat[1][1] = cast(float)h/2.0f;
         _height = h;
         _width = w;
         _view = new shared AwesomiumView( w, h, filePath, null );
@@ -40,7 +44,7 @@ public:
 
     void draw()
     {
-
+    	Graphics.addUI( this );
     }
 
     void shutdown()

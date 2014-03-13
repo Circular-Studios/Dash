@@ -31,9 +31,6 @@ public:
 	/// The instance to be running from
 	shared static DGame instance;
 
-	/// The main UI object
-	shared static UserInterface mainUI;
-
 	/// Current state of the game
 	GameState currentState;
 
@@ -84,8 +81,6 @@ public:
 			// Do the updating of the child class.
 			onUpdate();
 
-			mainUI.update();
-
 			//////////////////////////////////////////////////////////////////////////
 			// Draw
 			//////////////////////////////////////////////////////////////////////////
@@ -95,9 +90,6 @@ public:
 
 			// Draw in child class
 			onDraw();
-
-			//if( currentState == GameState.Menu )
-				mainUI.draw();
 
 			// End drawing
 			Graphics.endDraw();
@@ -168,12 +160,6 @@ private:
 
 		//Physics.initialize();
 
-		uint w, h;
-		w = Config.get!uint( "Display.Width" );
-		h = Config.get!uint( "Display.Height" );
-
-        mainUI = new shared UserInterface(w, h, Config.get!string( "UserInterface.FilePath" ) );
-
         onInitialize();
 
 		logInfo( "Total init time: ", Clock.currTime - start );
@@ -185,7 +171,6 @@ private:
 	final void stop()
 	{
 		onShutdown();
-		mainUI.shutdown();
 		awe_webcore_shutdown();
 		Assets.shutdown();
 		Graphics.shutdown();

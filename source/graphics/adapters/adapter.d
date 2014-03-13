@@ -312,11 +312,12 @@ public:
 			Shader shader = Shaders[UserInterfaceShader];
 			glUseProgram( shader.programID );
 			glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
-			shader.bindUniformMatrix4fv( ShaderUniform.Projection, activeCamera ? activeCamera.buildOrthogonal( cast(float)width, cast(float)height ) : mat4.identity );
-
+			
 
 			foreach( ui; uis )
 			{
+				shader.bindUniformMatrix4fv( ShaderUniform.Projection, 
+					(activeCamera ? activeCamera.buildOrthogonal( cast(float)width, cast(float)height ) : mat4.identity) * ui.scaleMat );
 				shader.bindUI( ui );
 				glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSquare ).numVertices, GL_UNSIGNED_INT, null );
 
@@ -325,16 +326,12 @@ public:
 			glBindVertexArray(0);
 		}
 
-		
 		geometryPass();
 
 		lightPass();
 
 		uiPass();
 
-		
-
-		
 		// put it on the screen
 		swapBuffers();
 

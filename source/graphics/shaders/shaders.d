@@ -27,7 +27,7 @@ public enum ShaderUniform
 {
 	/// Matrices
 	World = "world",
-	Projection = "projection",
+	WorldProj = "worldProj", // used this for scaling & orthogonal UI drawing
 	WorldView = "worldView",
 	WorldViewProjection = "worldViewProj",
 	InverseViewProjection = "invViewProj",

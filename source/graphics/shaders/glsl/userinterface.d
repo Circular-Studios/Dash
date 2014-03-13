@@ -14,11 +14,11 @@ immutable string userinterfaceVS = q{
 
 	out vec2 fUV;
 
-	uniform mat4 projection;
+	uniform mat4 worldProj;
 
 	void main( void )
 	{
-		gl_Position = projection* vec4( vPosition, 1.0f );
+		gl_Position = worldProj * vec4( vPosition, 1.0f );
 
 		fUV = vUV;
 	}

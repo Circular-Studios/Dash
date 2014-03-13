@@ -316,7 +316,7 @@ public:
 
 			foreach( ui; uis )
 			{
-				shader.bindUniformMatrix4fv( ShaderUniform.Projection, 
+				shader.bindUniformMatrix4fv( ShaderUniform.WorldProj, 
 					(activeCamera ? activeCamera.buildOrthogonal( cast(float)width, cast(float)height ) : mat4.identity) * ui.scaleMat );
 				shader.bindUI( ui );
 				glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSquare ).numVertices, GL_UNSIGNED_INT, null );

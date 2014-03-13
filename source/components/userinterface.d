@@ -91,8 +91,9 @@ public:
                                     awe_string_empty());
 
         // Wait for WebView to finish loading the page
-        while(awe_webview_is_loading_page(cast(awe_webview*)webView))
-            awe_webcore_update();
+        // JK DON'T
+        //while(awe_webview_is_loading_page(cast(awe_webview*)webView))
+            //awe_webcore_update();
         
         // Destroy our URL string
         awe_string_destroy( urlString );

@@ -147,16 +147,7 @@ public:
 	 */
 	final void beginDraw()
 	{
-		glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
-	
-		// must be called before glClear to clear the depth buffer, otherwise
-		// depth buffer won't be cleared
-		glDepthMask( GL_TRUE );
-
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		
-		glEnable( GL_DEPTH_TEST );
-		glDisable( GL_BLEND );
 		
 	}
 
@@ -225,17 +216,6 @@ public:
 				glActiveTexture( GL_TEXTURE2 );
 				glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
 			}
-
-			// settings for light pass
-			glDepthMask( GL_FALSE );
-			glDisable( GL_DEPTH_TEST );
-			glEnable( GL_BLEND );
-			glBlendEquation( GL_FUNC_ADD );
-			glBlendFunc(GL_ONE, GL_ONE );
-			
-			//This line switches back to the default framebuffer
-			glBindFramebuffer( GL_FRAMEBUFFER, 0 );
-			glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 			// Ambient Light
 			if( ambientLight !is null )
@@ -313,7 +293,6 @@ public:
 			glUseProgram( shader.programID );
 			glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
 			
-
 			foreach( ui; uis )
 			{
 				shader.bindUniformMatrix4fv( ShaderUniform.WorldProj, 
@@ -326,9 +305,30 @@ public:
 			glBindVertexArray(0);
 		}
 
+		glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
+		// must be called before glClear to clear the depth buffer, otherwise depth buffer won't be cleared
+		glDepthMask( GL_TRUE );
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+		glEnable( GL_DEPTH_TEST );
+		glDisable( GL_BLEND );
+
 		geometryPass();
 
+		// settings for light pass
+		glDepthMask( GL_FALSE );
+		glDisable( GL_DEPTH_TEST );
+		glEnable( GL_BLEND );
+		glBlendFunc( GL_ONE, GL_ONE );
+		glBlendEquation( GL_FUNC_ADD );
+		
+		//This line switches back to the default framebuffer
+		glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
 		lightPass();
+
+		glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+		//glBlendEquation( GL_FUNC_ADD );
 
 		uiPass();
 

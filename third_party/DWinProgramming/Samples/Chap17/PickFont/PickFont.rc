@@ -1,0 +1,245 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+PICKFONT DIALOG DISCARDABLE  0, 0, 348, 308
+STYLE WS_CHILD | WS_VISIBLE | WS_BORDER
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "&Height:",IDC_STATIC,8,10,44,8
+    EDITTEXT        IDC_LF_HEIGHT,64,8,24,12,ES_AUTOHSCROLL
+    LTEXT           "&Width",IDC_STATIC,8,26,44,8
+    EDITTEXT        IDC_LF_WIDTH,64,24,24,12,ES_AUTOHSCROLL
+    LTEXT           "Escapement:",IDC_STATIC,8,42,44,8
+    EDITTEXT        IDC_LF_ESCAPE,64,40,24,12,ES_AUTOHSCROLL
+    LTEXT           "Orientation:",IDC_STATIC,8,58,44,8
+    EDITTEXT        IDC_LF_ORIENT,64,56,24,12,ES_AUTOHSCROLL
+    LTEXT           "Weight:",IDC_STATIC,8,74,44,8
+    EDITTEXT        IDC_LF_WEIGHT,64,74,24,12,ES_AUTOHSCROLL
+    GROUPBOX        "Mapping Mode",IDC_STATIC,97,3,96,90,WS_GROUP
+    CONTROL         "Text",IDC_MM_TEXT,"Button",BS_AUTORADIOBUTTON,104,13,56,
+                    8
+    CONTROL         "Low Metric",IDC_MM_LOMETRIC,"Button",BS_AUTORADIOBUTTON,
+                    104,24,56,8
+    CONTROL         "High Metric",IDC_MM_HIMETRIC,"Button",
+                    BS_AUTORADIOBUTTON,104,35,56,8
+    CONTROL         "Low English",IDC_MM_LOENGLISH,"Button",
+                    BS_AUTORADIOBUTTON,104,46,56,8
+    CONTROL         "High English",IDC_MM_HIENGLISH,"Button",
+                    BS_AUTORADIOBUTTON,104,57,56,8
+    CONTROL         "Twips",IDC_MM_TWIPS,"Button",BS_AUTORADIOBUTTON,104,68,
+                    56,8
+    CONTROL         "Logical Twips",IDC_MM_LOGTWIPS,"Button",
+                    BS_AUTORADIOBUTTON,104,79,64,8
+    CONTROL         "Italic",IDC_LF_ITALIC,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,8,90,48,12
+    CONTROL         "Underline",IDC_LF_UNDER,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,8,104,48,12
+    CONTROL         "Strike Out",IDC_LF_STRIKE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,8,118,48,12
+    CONTROL         "Match Aspect",IDC_MATCH_ASPECT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,60,104,62,8
+    CONTROL         "Adv Grfx Mode",IDC_ADV_GRAPHICS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,60,118,62,8
+    LTEXT           "Character Set:",IDC_STATIC,8,137,46,8
+    EDITTEXT        IDC_LF_CHARSET,58,135,24,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "?",IDC_CHARSET_HELP,90,135,14,14
+    GROUPBOX        "Quality",IDC_STATIC,132,98,62,48,WS_GROUP
+    CONTROL         "Default",IDC_DEFAULT_QUALITY,"Button",
+                    BS_AUTORADIOBUTTON,136,110,40,8
+    CONTROL         "Draft",IDC_DRAFT_QUALITY,"Button",BS_AUTORADIOBUTTON,
+                    136,122,40,8
+    CONTROL         "Proof",IDC_PROOF_QUALITY,"Button",BS_AUTORADIOBUTTON,
+                    136,134,40,8
+    LTEXT           "Face Name:",IDC_STATIC,8,154,44,8
+    EDITTEXT        IDC_LF_FACENAME,58,152,136,12,ES_AUTOHSCROLL
+    GROUPBOX        "Output Precision",IDC_STATIC,8,166,118,133,WS_GROUP
+    CONTROL         "OUT_DEFAULT_PRECIS",IDC_OUT_DEFAULT,"Button",
+                    BS_AUTORADIOBUTTON,12,178,112,8
+    CONTROL         "OUT_STRING_PRECIS",IDC_OUT_STRING,"Button",
+                    BS_AUTORADIOBUTTON,12,191,112,8
+    CONTROL         "OUT_CHARACTER_PRECIS",IDC_OUT_CHARACTER,"Button",
+                    BS_AUTORADIOBUTTON,12,204,112,8
+    CONTROL         "OUT_STROKE_PRECIS",IDC_OUT_STROKE,"Button",
+                    BS_AUTORADIOBUTTON,12,217,112,8
+    CONTROL         "OUT_TT_PRECIS",IDC_OUT_TT,"Button",BS_AUTORADIOBUTTON,
+                    12,230,112,8
+    CONTROL         "OUT_DEVICE_PRECIS",IDC_OUT_DEVICE,"Button",
+                    BS_AUTORADIOBUTTON,12,243,112,8
+    CONTROL         "OUT_RASTER_PRECIS",IDC_OUT_RASTER,"Button",
+                    BS_AUTORADIOBUTTON,12,256,112,8
+    CONTROL         "OUT_TT_ONLY_PRECIS",IDC_OUT_TT_ONLY,"Button",
+                    BS_AUTORADIOBUTTON,12,269,112,8
+    CONTROL         "OUT_OUTLINE_PRECIS",IDC_OUT_OUTLINE,"Button",
+                    BS_AUTORADIOBUTTON,12,282,112,8
+    GROUPBOX        "Pitch",IDC_STATIC,132,166,62,50,WS_GROUP
+    CONTROL         "Default",IDC_DEFAULT_PITCH,"Button",BS_AUTORADIOBUTTON,
+                    137,176,52,8
+    CONTROL         "Fixed",IDC_FIXED_PITCH,"Button",BS_AUTORADIOBUTTON,137,
+                    189,52,8
+    CONTROL         "Variable",IDC_VARIABLE_PITCH,"Button",
+                    BS_AUTORADIOBUTTON,137,203,52,8
+    GROUPBOX        "Family",IDC_STATIC,132,218,62,82,WS_GROUP
+    CONTROL         "Don't Care",IDC_FF_DONTCARE,"Button",BS_AUTORADIOBUTTON,
+                    137,229,52,8
+    CONTROL         "Roman",IDC_FF_ROMAN,"Button",BS_AUTORADIOBUTTON,137,241,
+                    52,8
+    CONTROL         "Swiss",IDC_FF_SWISS,"Button",BS_AUTORADIOBUTTON,137,253,
+                    52,8
+    CONTROL         "Modern",IDC_FF_MODERN,"Button",BS_AUTORADIOBUTTON,137,
+                    265,52,8
+    CONTROL         "Script",IDC_FF_SCRIPT,"Button",BS_AUTORADIOBUTTON,137,
+                    277,52,8
+    CONTROL         "Decorative",IDC_FF_DECORATIVE,"Button",
+                    BS_AUTORADIOBUTTON,137,289,52,8
+    DEFPUSHBUTTON   "OK",IDOK,247,286,50,14
+    GROUPBOX        "Text Metrics",IDC_STATIC,201,2,140,272,WS_GROUP
+    LTEXT           "Height:",IDC_STATIC,207,12,64,8
+    LTEXT           "0",IDC_TM_HEIGHT,281,12,44,8
+    LTEXT           "Ascent:",IDC_STATIC,207,22,64,8
+    LTEXT           "0",IDC_TM_ASCENT,281,22,44,8
+    LTEXT           "Descent:",IDC_STATIC,207,32,64,8
+    LTEXT           "0",IDC_TM_DESCENT,281,32,44,8
+    LTEXT           "Internal Leading:",IDC_STATIC,207,42,64,8
+    LTEXT           "0",IDC_TM_INTLEAD,281,42,44,8
+    LTEXT           "External Leading:",IDC_STATIC,207,52,64,8
+    LTEXT           "0",IDC_TM_EXTLEAD,281,52,44,8
+    LTEXT           "Ave Char Width:",IDC_STATIC,207,62,64,8
+    LTEXT           "0",IDC_TM_AVECHAR,281,62,44,8
+    LTEXT           "Max Char Width:",IDC_STATIC,207,72,64,8
+    LTEXT           "0",IDC_TM_MAXCHAR,281,72,44,8
+    LTEXT           "Weight:",IDC_STATIC,207,82,64,8
+    LTEXT           "0",IDC_TM_WEIGHT,281,82,44,8
+    LTEXT           "Overhang:",IDC_STATIC,207,92,64,8
+    LTEXT           "0",IDC_TM_OVERHANG,281,92,44,8
+    LTEXT           "Digitized Aspect X:",IDC_STATIC,207,102,64,8
+    LTEXT           "0",IDC_TM_DIGASPX,281,102,44,8
+    LTEXT           "Digitized Aspect Y:",IDC_STATIC,207,112,64,8
+    LTEXT           "0",IDC_TM_DIGASPY,281,112,44,8
+    LTEXT           "First Char:",IDC_STATIC,207,122,64,8
+    LTEXT           "0",IDC_TM_FIRSTCHAR,281,122,44,8
+    LTEXT           "Last Char:",IDC_STATIC,207,132,64,8
+    LTEXT           "0",IDC_TM_LASTCHAR,281,132,44,8
+    LTEXT           "Default Char:",IDC_STATIC,207,142,64,8
+    LTEXT           "0",IDC_TM_DEFCHAR,281,142,44,8
+    LTEXT           "Break Char:",IDC_STATIC,207,152,64,8
+    LTEXT           "0",IDC_TM_BREAKCHAR,281,152,44,8
+    LTEXT           "Italic?",IDC_STATIC,207,162,64,8
+    LTEXT           "0",IDC_TM_ITALIC,281,162,44,8
+    LTEXT           "Underlined?",IDC_STATIC,207,172,64,8
+    LTEXT           "0",IDC_TM_UNDER,281,172,44,8
+    LTEXT           "Struck Out?",IDC_STATIC,207,182,64,8
+    LTEXT           "0",IDC_TM_STRUCK,281,182,44,8
+    LTEXT           "Variable Pitch?",IDC_STATIC,207,192,64,8
+    LTEXT           "0",IDC_TM_VARIABLE,281,192,44,8
+    LTEXT           "Vector Font?",IDC_STATIC,207,202,64,8
+    LTEXT           "0",IDC_TM_VECTOR,281,202,44,8
+    LTEXT           "TrueType Font?",IDC_STATIC,207,212,64,8
+    LTEXT           "0",IDC_TM_TRUETYPE,281,212,44,8
+    LTEXT           "Device Font?",IDC_STATIC,207,222,64,8
+    LTEXT           "0",IDC_TM_DEVICE,281,222,44,8
+    LTEXT           "Family:",IDC_STATIC,207,232,64,8
+    LTEXT           "0",IDC_TM_FAMILY,281,232,44,8
+    LTEXT           "Character Set:",IDC_STATIC,207,242,64,8
+    LTEXT           "0",IDC_TM_CHARSET,281,242,44,8
+    LTEXT           "0",IDC_TM_FACENAME,207,262,128,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    "PICKFONT", DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 341
+        BOTTOMMARGIN, 300
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+PICKFONT MENU DISCARDABLE 
+BEGIN
+    POPUP "&Device"
+    BEGIN
+        MENUITEM "&Screen",                     IDM_DEVICE_SCREEN, CHECKED
+        MENUITEM "&Printer",                    IDM_DEVICE_PRINTER
+    END
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

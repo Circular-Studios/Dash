@@ -1,0 +1,115 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+TESTMCI DIALOG DISCARDABLE  0, 0, 270, 276
+STYLE WS_MINIMIZEBOX | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "MCI Tester"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_MAIN_EDIT,8,8,254,100,ES_MULTILINE | ES_AUTOHSCROLL | 
+                    WS_VSCROLL
+    LTEXT           "Return String:",IDC_STATIC,8,114,60,8
+    EDITTEXT        IDC_RETURN_STRING,8,126,120,50,ES_MULTILINE | 
+                    ES_AUTOVSCROLL | ES_READONLY | WS_GROUP | NOT WS_TABSTOP
+    LTEXT           "Error String:",IDC_STATIC,142,114,60,8
+    EDITTEXT        IDC_ERROR_STRING,142,126,120,50,ES_MULTILINE | 
+                    ES_AUTOVSCROLL | ES_READONLY | NOT WS_TABSTOP
+    GROUPBOX        "MM_MCINOTIFY Message",IDC_STATIC,9,186,254,58
+    LTEXT           "",IDC_NOTIFY_ID,26,198,100,8
+    LTEXT           "MCI_NOTIFY_SUCCESSFUL",IDC_NOTIFY_SUCCESSFUL,26,212,100,
+                    8,WS_DISABLED
+    LTEXT           "MCI_NOTIFY_SUPERSEDED",IDC_NOTIFY_SUPERSEDED,26,226,100,
+                    8,WS_DISABLED
+    LTEXT           "MCI_NOTIFY_ABORTED",IDC_NOTIFY_ABORTED,144,212,100,8,
+                    WS_DISABLED
+    LTEXT           "MCI_NOTIFY_FAILURE",IDC_NOTIFY_FAILURE,144,226,100,8,
+                    WS_DISABLED
+    DEFPUSHBUTTON   "OK",IDOK,57,255,50,14
+    PUSHBUTTON      "Close",IDCANCEL,162,255,50,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    "TESTMCI", DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 263
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 269
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

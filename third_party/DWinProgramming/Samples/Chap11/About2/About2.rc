@@ -1,0 +1,135 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+ABOUTBOX DIALOG DISCARDABLE  32, 32, 200, 234
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            "ABOUT2",IDC_STATIC,7,7,20,20
+    CTEXT           "About2",IDC_STATIC,57,12,86,8
+    CTEXT           "About Box Demo Program",IDC_STATIC,7,40,186,8
+    LTEXT           "",IDC_PAINT,114,67,72,72
+    GROUPBOX        "&Color",IDC_STATIC,7,60,84,143
+    RADIOBUTTON     "&Black",IDC_BLACK,16,76,64,8,WS_GROUP | WS_TABSTOP
+    RADIOBUTTON     "B&lue",IDC_BLUE,16,92,64,8
+    RADIOBUTTON     "&Green",IDC_GREEN,16,108,64,8
+    RADIOBUTTON     "Cya&n",IDC_CYAN,16,124,64,8
+    RADIOBUTTON     "&Red",IDC_RED,16,140,64,8
+    RADIOBUTTON     "&Magenta",IDC_MAGENTA,16,156,64,8
+    RADIOBUTTON     "&Yellow",IDC_YELLOW,16,172,64,8
+    RADIOBUTTON     "&White",IDC_WHITE,16,188,64,8
+    GROUPBOX        "&Figure",IDC_STATIC,109,156,84,46,WS_GROUP
+    RADIOBUTTON     "Rec&tangle",IDC_RECT,116,172,65,8,WS_GROUP | WS_TABSTOP
+    RADIOBUTTON     "&Ellipse",IDC_ELLIPSE,116,188,64,8
+    DEFPUSHBUTTON   "OK",IDOK,35,212,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,113,212,50,14,WS_GROUP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+ABOUT2                  ICON    DISCARDABLE     "About2.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+ABOUT2 MENU DISCARDABLE 
+BEGIN
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About",                      IDM_APP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    "ABOUTBOX", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 193
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 227
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

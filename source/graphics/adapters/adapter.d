@@ -201,7 +201,7 @@ public:
 
 			shader.bindUniformMatrix4fv( ShaderUniform.World , object.transform.matrix );
 			shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection , projection * 
-											/*( ( activeCamera !is null ) ? activeCamera.viewMatrix :*/ mat4.identity /* )*/ *
+											( ( activeCamera !is null ) ? activeCamera.viewMatrix : mat4.identity ) *
 											object.transform.matrix );
 
 			shader.bindMaterial( object.material );

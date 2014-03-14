@@ -92,16 +92,19 @@ public:
 	 */
 	final void update()
 	{
-		auto diff = staging - current;
+		synchronized( this )
+		{
+			auto diff = staging - current;
 
-		previous = current;
-		current = staging;
-		staging.reset();
+			previous = current;
+			current = staging;
+			//staging.reset();
 
-		foreach( state; diff )
-			if( auto keyEvent = state[ 0 ] in keyEvents )
-				foreach( event; *keyEvent )
-					event( state[ 0 ], state[ 1 ] );
+			foreach( state; diff )
+				if( auto keyEvent = state[ 0 ] in keyEvents )
+					foreach( event; *keyEvent )
+						event( state[ 0 ], state[ 1 ] );
+		}
 	}
 
 	/**
@@ -143,6 +146,23 @@ public:
 	{
 		return current[ keyCode ] && ( !checkPrevious || !previous[ keyCode ] );
 	}
+	unittest
+	{
+		import std.stdio;
+		writeln( "Dash Input isKeyDown unittest" );
+
+		Config.initialize();
+		Input.initialize();
+		Input.setKeyState( Keyboard.Space, true );
+
+		Input.update();
+		assert( Input.isKeyDown( Keyboard.Space, true ) );
+		assert( Input.isKeyDown( Keyboard.Space, false ) );
+
+		Input.update();
+		assert( !Input.isKeyDown( Keyboard.Space, true ) );
+		assert( Input.isKeyDown( Keyboard.Space, false ) );
+	}
 
 	/**
 	 * Check if a given key is up.
@@ -155,6 +175,26 @@ public:
 	{
 		return !current[ keyCode ] && ( !checkPrevious || previous[ keyCode ] );
 	}
+	unittest
+	{
+		import std.stdio;
+		writeln( "Dash Input isKeyUp unittest" );
+
+		Config.initialize();
+		Input.initialize();
+		Input.setKeyState( Keyboard.Space, true );
+
+		Input.update();
+		Input.setKeyState( Keyboard.Space, false );
+
+		Input.update();
+		assert( Input.isKeyUp( Keyboard.Space, true ) );
+		assert( Input.isKeyUp( Keyboard.Space, false ) );
+
+		Input.update();
+		assert( !Input.isKeyUp( Keyboard.Space, true ) );
+		assert( Input.isKeyUp( Keyboard.Space, false ) );
+	}
 
 	/**
 	 * Sets the state of the key to be assigned at the beginning of next frame.
@@ -162,7 +202,10 @@ public:
 	 */
 	final void setKeyState( uint keyCode, bool newState )
 	{
-		staging[ keyCode ] = newState;
+		synchronized( this )
+		{
+			staging[ keyCode ] = newState;
+		}
 	}
 
 	/**
@@ -226,7 +269,7 @@ private:
 
 		bool opIndexAssign( bool newValue, size_t keyCode )
 		{
-			keys[ keyCode / ElementSize ] = getBitAtIndex( keyCode ) & uint.max;
+			keys[ keyCode / ElementSize ] = getBitAtIndex( keyCode ) & ( newValue ? uint.max : 0 );
 			return newValue;
 		}
 

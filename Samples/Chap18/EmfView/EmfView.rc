@@ -1,0 +1,111 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+EMFVIEW MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Open\tCtrl+O",               IDM_FILE_OPEN
+        MENUITEM "Save &As...",                 IDM_FILE_SAVE_AS
+        MENUITEM SEPARATOR
+        MENUITEM "&Print...\tCtrl+P",           IDM_FILE_PRINT
+        MENUITEM SEPARATOR
+        MENUITEM "&Properties",                 IDM_FILE_PROPERTIES
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       IDM_APP_EXIT
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "Cu&t\tCtrl+X",                IDM_EDIT_CUT
+        MENUITEM "&Copy\tCtrl+C",               IDM_EDIT_COPY
+        MENUITEM "&Paste\tCtrl+V",              IDM_EDIT_PASTE
+        MENUITEM "&Delete\tDel",                IDM_EDIT_DELETE
+    END
+    POPUP "Help"
+    BEGIN
+        MENUITEM "&About EmfView...",           IDM_APP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+EMFVIEW ACCELERATORS DISCARDABLE 
+BEGIN
+    "C",            IDM_EDIT_COPY,          VIRTKEY, CONTROL, NOINVERT
+    "O",            IDM_FILE_OPEN,          VIRTKEY, CONTROL, NOINVERT
+    "P",            IDM_FILE_PRINT,         VIRTKEY, CONTROL, NOINVERT
+    "V",            IDM_EDIT_PASTE,         VIRTKEY, CONTROL, NOINVERT
+    VK_DELETE,      IDM_EDIT_DELETE,        VIRTKEY, NOINVERT
+    "X",            IDM_EDIT_CUT,           VIRTKEY, CONTROL, NOINVERT
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

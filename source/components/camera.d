@@ -14,6 +14,7 @@ shared final class Camera : IComponent
 {
 private:
 	float _fov, _near, _far;
+	mat4 _viewMatrix;
 public:
 	override void update() { }
 	override void shutdown() { }
@@ -23,6 +24,23 @@ public:
 	mixin( Property!( _fov, AccessModifier.Public ) );
 	mixin( Property!( _near, AccessModifier.Public )  );
 	mixin( Property!( _far, AccessModifier.Public )  );
+
+	final shared(mat4) buildPerspective( float width, float height )
+	{
+		return mat4.perspective( width, height, _fov, _near, _far );
+	}
+
+	final shared(mat4) buildOrthogonal( float width, float height )
+	{
+		mat4 toReturn = mat4.identity;
+
+		toReturn[0][0] = 2.0f / width; 
+		toReturn[1][1] = 2.0f / height;
+		toReturn[2][2] = -2.0f / (far - near);
+		toReturn[3][3] = 1.0f;
+
+		return toReturn;
+	}
 
 	final void updateViewMatrix()
 	{
@@ -44,9 +62,6 @@ public:
 
 		//_viewMatrixIsDirty = false;
 	}
-
-private:
-	mat4 _viewMatrix;
 }
 
 static this()

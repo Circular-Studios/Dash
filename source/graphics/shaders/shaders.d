@@ -17,6 +17,7 @@ public enum : string
 	AmbientLightShader = "ambientlight",
 	DirectionalLightShader = "direcionallight",
 	PointLightShader = "pointlight",
+	UserInterfaceShader = "userinterface",
 }
 
 /*
@@ -26,10 +27,12 @@ public enum ShaderUniform
 {
 	/// Matrices
 	World = "world",
+	WorldProj = "worldProj", // used this for scaling & orthogonal UI drawing
 	WorldView = "worldView",
 	WorldViewProjection = "worldViewProj",
 	InverseViewProjection = "invViewProj",
 	/// Textures
+	UITexture = "uiTexture",
 	DiffuseTexture = "diffuseTexture",
 	NormalTexture = "normalTexture",
 	SpecularTexture = "specularTexture",
@@ -52,6 +55,7 @@ public static:
 		shaders[ AmbientLightShader ] = new Shader( AmbientLightShader, ambientlightVS, ambientlightFS, true );
 		shaders[ DirectionalLightShader ] = new Shader( DirectionalLightShader, directionallightVS, directionallightFS, true );
 		shaders[ PointLightShader ] = new Shader( PointLightShader, pointlightVS, pointlightFS, true );
+		shaders[ UserInterfaceShader ] = new Shader( UserInterfaceShader, userinterfaceVS, userinterfaceFS, true );
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders, "*.fs.glsl" ) )
 		{
 			// Strip .fs from file name
@@ -255,6 +259,16 @@ public:
 		glActiveTexture( GL_TEXTURE2 );
 		glBindTexture( GL_TEXTURE_2D, material.specular.glID );
 	}
+
+	/*
+	 * Binds a UI's texture
+	 */
+	 final void bindUI( shared UserInterface ui )
+	 {
+	 	glUniform1i( getUniformLocation( ShaderUniform.UITexture ), 0 );
+	 	glActiveTexture( GL_TEXTURE0 );
+	 	glBindTexture( GL_TEXTURE_2D, ui.view.glID );
+	 }
 
 	/*
 	 * Bind an ambient light

@@ -158,6 +158,7 @@ public:
 	{
 		transform = new shared Transform( this );
 		//transform.connect( &emit );
+		material = new shared Material();
 	}
 
 	~this()
@@ -185,7 +186,7 @@ public:
 
 		if( mesh !is null )
 		{
-			Graphics.drawObject( this );
+			Graphics.addObject( this );
 		}
 		if( light !is null )
 		{

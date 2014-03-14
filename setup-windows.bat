@@ -3,4 +3,4 @@ dub fetch --local derelict-gl3 --version=~master
 dub fetch --local derelict-fi --version=~master
 dub fetch --local derelict-assimp3 --version=~master
 dub fetch --local dyaml --version=~master
-dub fetch --local gl3n --version=~master
+dub fetch --local gl3n-shared --version=~master

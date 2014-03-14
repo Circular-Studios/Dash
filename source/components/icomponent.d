@@ -9,22 +9,22 @@ import yaml;
 /**
  * Interface for components to implement.
  */
-interface IComponent
+shared interface IComponent
 {
 private:
-	static GameObject[ IComponent ] owners;
+	shared static GameObject[ shared IComponent ] owners;
 public:
 	/**
 	 * Functions to call when creating components.
 	 */
-	static IComponent function( Node, GameObject )[string] initializers;
+	static shared(IComponent) function( Node, shared GameObject )[string] initializers;
 
 	/**
 	 * The GameObject that owns this component.
 	 */
-	final @property GameObject owner()
+	final @property shared(GameObject) owner()
 	{
-		GameObject* owner = this in owners;
+		auto owner = this in owners;
 		if( owner )
 			return *owner;
 		else
@@ -32,7 +32,7 @@ public:
 	}
 
 	/// ditto
-	final @property void owner( GameObject newOwner )
+	final @property void owner( shared GameObject newOwner )
 	{
 		owners[ this ] = newOwner;
 	}

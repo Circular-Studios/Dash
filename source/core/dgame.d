@@ -2,7 +2,8 @@
  * Defines the DGame class, the base class for all game logic.
  */
 module core.dgame;
-import core, components, graphics, utility;
+import core, components, graphics, utility, utility.awesomium;
+import std.string;
 
 import std.datetime;
 
@@ -24,11 +25,11 @@ enum GameState
 /**
  * The main game loop manager. Meant to be overridden.
  */
-class DGame
+shared class DGame
 {
 public:
 	/// The instance to be running from
-	static DGame instance;
+	shared static DGame instance;
 
 	/// Current state of the game
 	GameState currentState;
@@ -46,9 +47,9 @@ public:
 	 */
 	final void run()
 	{
+
 		// Init tasks
 		//TaskManager.initialize();
-
         start();
 
         // Loop until there is a quit message from the window or the user.
@@ -69,6 +70,9 @@ public:
 
 			// Update input
 			Input.update();
+
+			// Update webcore
+			awe_webcore_update();
 
 			// Update physics
 			//if( currentState == GameState.Game )
@@ -146,9 +150,15 @@ private:
 		logInfo( "Assets init time: ", Clock.currTime - subStart );
 
 		Prefabs.initialize();
-		//Physics.initialize();
 
-        //ui = new UserInterface( this );
+		// Webcore setup
+		awe_webcore_initialize_default();
+		string baseDir = FilePath.Resources.UI;
+		awe_string* aweBaseDir = awe_string_create_from_ascii( baseDir.toStringz(), baseDir.length );
+		awe_webcore_set_base_directory( aweBaseDir );
+		awe_string_destroy( aweBaseDir );
+
+		//Physics.initialize();
 
         onInitialize();
 
@@ -161,6 +171,7 @@ private:
 	final void stop()
 	{
 		onShutdown();
+		awe_webcore_shutdown();
 		Assets.shutdown();
 		Graphics.shutdown();
 	}
@@ -187,7 +198,7 @@ private:
 /**
  * Initializes reflection things.
  */
-static this()
+shared static this()
 {
 	foreach( mod; ModuleInfo )
 	{
@@ -195,7 +206,7 @@ static this()
 		{
 			// Find the appropriate game loop.
 			if( klass.base == typeid(DGame) )
-				DGame.instance = cast(DGame)klass.create();
+				DGame.instance = cast(shared DGame)klass.create();
 		}
 	}
 }

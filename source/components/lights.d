@@ -4,7 +4,7 @@ import utility;
 
 import gl3n.linalg;
 
-class Light : IComponent
+shared class Light : IComponent
 {
 private:
 	vec3 _color;
@@ -14,14 +14,14 @@ public:
 
 	this( vec3 color )
 	{
-		this.color = color;
+		this.color = cast(shared)vec3( color );
 	}
 	
 	override void update() { }
 	override void shutdown() { }
 }
 
-class AmbientLight : Light 
+shared class AmbientLight : Light 
 { 
 	this( vec3 color )
 	{
@@ -32,7 +32,7 @@ class AmbientLight : Light
 /* 
  * Directional Light data
  */
-class DirectionalLight : Light
+shared class DirectionalLight : Light
 {
 private:
 	vec3 _direction;
@@ -42,7 +42,7 @@ public:
 
 	this( vec3 color, vec3 direction )
 	{
-		this.direction = direction;
+		this.direction = cast(shared)vec3( direction );
 		super( color );
 	}
 }
@@ -50,7 +50,7 @@ public:
 /*
  * Point Light data
  */
-class PointLight : Light
+shared class PointLight : Light
 {
 private:
 	float _radius;
@@ -68,14 +68,18 @@ public:
 		super( color );
 	}
 
-	public mat4 getTransform()
+	public shared(mat4) getTransform()
 	{
 		_matrix = mat4.identity;
 		// Scale
-		_matrix.scale( radius, radius, radius );
+		_matrix[ 0 ][ 0 ] = radius;
+		_matrix[ 1 ][ 1 ] = radius;
+		_matrix[ 2 ][ 2 ] = radius;
 		// Translate
-		vec3 position = owner.transform.worldPosition;
-		_matrix.translate( position.x, position.y, position.z );
+		shared vec3 position = owner.transform.worldPosition;
+		_matrix[ 0 ][ 3 ] = position.x;
+		_matrix[ 1 ][ 3 ] = position.y;
+		_matrix[ 2 ][ 3 ] = position.z;
 		return _matrix;
 	}
 
@@ -84,7 +88,7 @@ public:
 /*
  * SpotLight Stub
  */
-class SpotLight : Light
+shared class SpotLight : Light
 {
 public:
 	this( vec3 color )
@@ -96,10 +100,9 @@ public:
 static this()
 {
 	import yaml;
-	IComponent.initializers[ "Light" ] = ( Node yml, GameObject obj )
+	IComponent.initializers[ "Light" ] = ( Node yml, shared GameObject obj )
 	{
-
-		obj.light = yml.get!Light;
+		obj.light = cast(shared)yml.get!Light;
 		obj.light.owner = obj;
 
 		return obj.light;

@@ -4,7 +4,7 @@ import components.icomponent, components.assetanimation;
 
 import gl3n.linalg;
 
-class Animation : IComponent
+shared class Animation : IComponent
 {
 private:
 	AssetAnimation _animationData;
@@ -18,7 +18,7 @@ public:
 	mixin( Property!_currentPosition );
 	mixin( Property!_currentPose );
 
-	this( AssetAnimation assetAnimation)
+	this( shared AssetAnimation assetAnimation)
 	{
 		currentAnimation = 0;
 		currentPosition = 0.0f;

@@ -5,15 +5,24 @@ module utility.input;
 import utility;
 
 import yaml;
+import core.sync.mutex;
 import std.typecons, std.conv;
 
-final abstract class Input
+shared InputManager Input;
+
+shared static this()
 {
-public static:
+	Input = new shared InputManager;
+}
+
+shared final class InputManager
+{
+public:
 	/**
 	 * Function called when key event triggers.
 	 */
 	alias void delegate( uint, bool ) KeyEvent;
+	/// ditto
 	alias void delegate( uint ) KeyStateEvent;
 
 	/**
@@ -102,7 +111,7 @@ public static:
 	 * 		keyCode =	The code of the key to add the event to.
 	 * 		func =		The function to call when the key state changes.
 	 */
-	final void addKeyEvent( uint keyCode, KeyEvent func )
+	synchronized final void addKeyEvent( uint keyCode, KeyEvent func )
 	{
 		keyEvents[ keyCode ] ~= func;
 	}
@@ -191,7 +200,9 @@ private:
 	KeyState previous;
 	KeyState staging;
 
-	struct KeyState
+	this() { }
+
+	shared struct KeyState
 	{
 	public:
 		enum TotalSize = 256u;
@@ -200,7 +211,7 @@ private:
 
 		uint[ Split ] keys;
 
-		ref KeyState opAssign( const ref KeyState other )
+		ref shared(KeyState) opAssign( const ref KeyState other )
 		{
 			for( uint ii = 0; ii < Split; ++ii )
 				keys[ ii ] = other.keys[ ii ];
@@ -219,7 +230,7 @@ private:
 			return newValue;
 		}
 
-		Tuple!( uint, bool )[] opBinary( string Op : "-" )( const ref KeyState other )
+		Tuple!( uint, bool )[] opBinary( string Op : "-" )( const ref shared KeyState other )
 		{
 			Tuple!( uint, bool )[] differences;
 

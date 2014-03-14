@@ -12,42 +12,42 @@ import std.stdio, std.stream, std.format, std.math;
  * Loads and manages meshes into OpenGL.
  * 
  * Supported formats:
-	3DS
-	BLEND (Blender 3D)
-	DAE/Collada
-	FBX
-	IFC-STEP
-	ASE
-	DXF
-	HMP
-	MD2
-	MD3
-	MD5
-	MDC
-	MDL
-	NFF
-	PLY
-	STL
-	X
-	OBJ
-	SMD
-	LWO
-	LXO
-	LWS
-	TER
-	AC3D
-	MS3D
-	COB
-	Q3BSP
-	XGL
-	CSM
-	BVH
-	B3D
-	NDO
-	Ogre XML
-	Q3D
+ *	3DS
+ *	BLEND (Blender 3D)
+ *	DAE/Collada
+ *	FBX
+ *	IFC-STEP
+ *	ASE
+ *	DXF
+ *	HMP
+ *	MD2
+ *	MD3
+ *	MD5
+ *	MDC
+ *	MDL
+ *	NFF
+ *	PLY
+ *	STL
+ *	X
+ *	OBJ
+ *	SMD
+ *	LWO
+ *	LXO
+ *	LWS
+ *	TER
+ *	AC3D
+ *	MS3D
+ *	COB
+ *	Q3BSP
+ *	XGL
+ *	CSM
+ *	BVH
+ *	B3D
+ *	NDO
+ *	Ogre XML
+ *	Q3D
  */
-class Mesh : IComponent
+shared class Mesh : IComponent
 {
 private:
 	uint _glVertexArray, _numVertices, _numIndices, _glIndexBuffer, _glVertexBuffer;
@@ -207,11 +207,11 @@ public:
 		}
 		
 		// make and bind the VAO
-		glGenVertexArrays( 1, &_glVertexArray );
+		glGenVertexArrays( 1, cast(uint*)&_glVertexArray );
 		glBindVertexArray( glVertexArray );
 
 		// make and bind the VBO
-		glGenBuffers( 1, &_glVertexBuffer );
+		glGenBuffers( 1, cast(uint*)&_glVertexBuffer );
 		glBindBuffer( GL_ARRAY_BUFFER, glVertexBuffer );
 
 		// Buffer the data
@@ -251,7 +251,7 @@ public:
 		}
 
 		// Generate index buffer
-		glGenBuffers( 1, &_glIndexBuffer );
+		glGenBuffers( 1, cast(uint*)&_glIndexBuffer );
 		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, glIndexBuffer );
 
 		// Buffer index data
@@ -269,22 +269,22 @@ public:
 	 */
 	override void shutdown()
 	{
-		glDeleteBuffers( 1, &_glVertexBuffer );
-		glDeleteBuffers( 1, &_glVertexArray );
+		glDeleteBuffers( 1, cast(uint*)&_glVertexBuffer );
+		glDeleteBuffers( 1, cast(uint*)&_glVertexArray );
 	}
 }
 
 static this()
 {
 	import yaml;
-	IComponent.initializers[ "Mesh" ] = ( Node yml, GameObject obj )
+	IComponent.initializers[ "Mesh" ] = ( Node yml, shared GameObject obj )
 	{
 		obj.mesh = Assets.get!Mesh( yml.get!string );
 		
 		// If the mesh has animation also add animation component
 		if( obj.mesh.animated )
 		{
-			obj.addComponent( new Animation( Assets.get!AssetAnimation( yml.get!string ) ) );
+			obj.addComponent( new shared Animation( Assets.get!AssetAnimation( yml.get!string ) ) );
 		}
 
 		return obj.mesh;

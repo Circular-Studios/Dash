@@ -17,6 +17,7 @@ public enum : string
 	AmbientLightShader = "ambientlight",
 	DirectionalLightShader = "direcionallight",
 	PointLightShader = "pointlight",
+	UserInterfaceShader = "userinterface",
 }
 
 /*
@@ -26,10 +27,12 @@ public enum ShaderUniform
 {
 	/// Matrices
 	World = "world",
+	WorldProj = "worldProj", // used this for scaling & orthogonal UI drawing
 	WorldView = "worldView",
 	WorldViewProjection = "worldViewProj",
 	InverseViewProjection = "invViewProj",
 	/// Textures
+	UITexture = "uiTexture",
 	DiffuseTexture = "diffuseTexture",
 	NormalTexture = "normalTexture",
 	SpecularTexture = "specularTexture",
@@ -52,6 +55,7 @@ public static:
 		shaders[ AmbientLightShader ] = new Shader( AmbientLightShader, ambientlightVS, ambientlightFS, true );
 		shaders[ DirectionalLightShader ] = new Shader( DirectionalLightShader, directionallightVS, directionallightFS, true );
 		shaders[ PointLightShader ] = new Shader( PointLightShader, pointlightVS, pointlightFS, true );
+		shaders[ UserInterfaceShader ] = new Shader( UserInterfaceShader, userinterfaceVS, userinterfaceFS, true );
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders, "*.fs.glsl" ) )
 		{
 			// Strip .fs from file name
@@ -223,7 +227,7 @@ public:
 	 * Pass through for glUniform 3f
 	 * Passes to the shader in XYZ order
 	 */
-	final void bindUniform3f( ShaderUniform uniform, const vec3 value )
+	final void bindUniform3f( ShaderUniform uniform, const shared vec3 value )
 	{
 		glUniform3f( getUniformLocation( uniform ), value.x, value.y, value.z );
 	}
@@ -231,7 +235,7 @@ public:
 	/*
 	 *  pass through for glUniformMatrix4fv
 	 */
-	final void bindUniformMatrix4fv( ShaderUniform uniform, mat4 matrix )
+	final void bindUniformMatrix4fv( ShaderUniform uniform, shared mat4 matrix )
 	{
 		glUniformMatrix4fv( getUniformLocation( uniform ), 1, true, matrix.value_ptr );
 	}
@@ -240,7 +244,7 @@ public:
 	/*
 	 * Binds diffuse, normal, and specular textures to the shader
 	 */
-	final void bindMaterial( Material material )
+	final void bindMaterial( shared Material material )
 	{
 		//This is finding the uniform for the given texture, and setting that texture to the appropriate one for the object
 		glUniform1i( getUniformLocation( ShaderUniform.DiffuseTexture ), 0 );
@@ -257,9 +261,19 @@ public:
 	}
 
 	/*
+	 * Binds a UI's texture
+	 */
+	 final void bindUI( shared UserInterface ui )
+	 {
+	 	glUniform1i( getUniformLocation( ShaderUniform.UITexture ), 0 );
+	 	glActiveTexture( GL_TEXTURE0 );
+	 	glBindTexture( GL_TEXTURE_2D, ui.view.glID );
+	 }
+
+	/*
 	 * Bind an ambient light
 	 */
-	final void bindAmbientLight( AmbientLight light )
+	final void bindAmbientLight( shared AmbientLight light )
 	{
 		bindUniform3f( ShaderUniform.LightColor, light.color );
 	}
@@ -267,7 +281,7 @@ public:
 	/*
 	 * Bind a directional light
 	 */
-	final void bindDirectionalLight( DirectionalLight light )
+	final void bindDirectionalLight( shared DirectionalLight light )
 	{
 		bindUniform3f( ShaderUniform.LightDirection, light.direction );
 		bindUniform3f( ShaderUniform.LightColor, light.color );
@@ -276,7 +290,7 @@ public:
 	/*
 	 * Bind a point light
 	 */
-	final void bindPointLight( PointLight light )
+	final void bindPointLight( shared PointLight light )
 	{
 		bindUniform3f( ShaderUniform.LightColor, light.color );
 		bindUniform3f( ShaderUniform.LightPosition, light.owner.transform.worldPosition );
@@ -287,7 +301,7 @@ public:
 	/*
 	 * Sets the eye position for lighting calculations
 	 */
-	final void setEyePosition( vec3 pos )
+	final void setEyePosition( shared vec3 pos )
 	{
 		glUniform3f( getUniformLocation( ShaderUniform.EyePosition ), pos.x, pos.y, pos.z );
 	}

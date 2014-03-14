@@ -6,12 +6,12 @@ import core, graphics, utility;
 
 import yaml;
 
-import std.path;
+import std.path, std.parallelism;
 
 /**
  * Manages a collection of GameObjects.
  */
-final class GameObjectCollection
+shared final class GameObjectCollection
 {
 public:
 	/// The AA of game objects managed.
@@ -28,32 +28,40 @@ public:
 	 */
 	final void loadObjects( string objectPath = "" )
 	{
-		string[GameObject] parents;
+		string[shared GameObject] parents;
+		string[][shared GameObject] children;
 
 		Config.processYamlDirectory(
 			buildNormalizedPath( FilePath.Resources.Objects, objectPath ),
 			( Node yml )
 			{
-				//auto name = yml[ "Name" ].as!string;
-
 				// Create the object
-				auto object = GameObject.createFromYaml( yml );
-				// Add to collection
-				objects[ object.name ] = object;
+				auto object = GameObject.createFromYaml( yml, parents, children );
 
-				// If parent is specified, add it to the map
-				string parentName;
-				if( Config.tryGet( "Parent", parentName, yml ) )
+				if( object.name != AnonymousName )
 				{
-					parents[ object ] = parentName;
-					//logInfo("Parent:", parentName, " for ", object.name );
+					// Add to collection
+					objects[ object.name ] = object;
 				}
-			} );
+				else
+				{
+					logError( "Anonymous objects at the top level are not supported." );
+					assert( false );
+				}
+
+				foreach( child; object.children )
+				{
+					objects[ child.name ] = child;
+					logInfo( "Adding child ", child.name, " of ", object.name, " to collection." );
+				}
+			}
+		);
 
 		foreach( object, parentName; parents )
-		{
 			objects[ parentName ].addChild( object );
-		}
+		foreach( object, childNames; children )
+			foreach( child; childNames )
+				object.addChild( objects[ child ] );
 	}
 
 	/**
@@ -70,31 +78,36 @@ public:
 	 * 
 	 * Params:
 	 * 	func =				The function to call on each object.
+	 * 	concurrent =			Whether or not to execute function in parallel
 	 * 
 	 * Examples:
 	 * ---
 	 * goc.apply( go => go.update() );
 	 * ---
 	 */
-	final void apply( void function( GameObject ) func )
+	final void apply( void function( shared GameObject ) func, bool concurrent = false )
 	{
-		foreach( value; objects.values )
-			func( value );
+		if( concurrent )
+			foreach( value; parallel( objects.values ) )
+				func( value );
+		else
+			foreach( value; objects.values )
+				func( value );
 	}
 
 	/**
 	 * Update all game objects.
 	 */
-	final void update()
+	final void update( bool concurrent = false )
 	{
-		apply( go => go.update() );
+		apply( go => go.update(), concurrent );
 	}
 
 	/**
 	 * Draw all game objects.
 	 */
-	final void draw()
+	final void draw( bool concurrent = false )
 	{
-		apply( go => go.draw() );
+		apply( go => go.draw(), concurrent );
 	}
 }

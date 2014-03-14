@@ -76,10 +76,10 @@ public:
 		_matrix[ 1 ][ 1 ] = radius;
 		_matrix[ 2 ][ 2 ] = radius;
 		// Translate
-		vec3 position = owner.transform.worldPosition;
-		_matrix[ 0 ][ 3 ] = (cast()position).x;
-		_matrix[ 1 ][ 3 ] = (cast()position).y;
-		_matrix[ 2 ][ 3 ] = (cast()position).z;
+		shared vec3 position = owner.transform.worldPosition;
+		_matrix[ 0 ][ 3 ] = position.x;
+		_matrix[ 1 ][ 3 ] = position.y;
+		_matrix[ 2 ][ 3 ] = position.z;
 		return _matrix;
 	}
 

@@ -10,13 +10,13 @@
 		"Tyler Wozniak",
 		"Sean Brennan",
 		"Timothy Reynolds"
-		],
+	],
 	"dependencies": {
 		"derelict-gl3": "~master",
 		"derelict-fi": "~master",
 		"derelict-assimp3": "~master",
 		"dyaml": "~master",
-		"gl3n" : "~master"
+		"gl3n-shared" : "~master"
 	},
 	"targetName": "dash",
 	"targetType": "library",
@@ -36,10 +36,9 @@
 	],
 
 	"dependencies-linux": {
-		"x11": 
-			{
-				"version": "~master",
-				"optional": true
-			}
+		"x11": {
+			"version": "~master",
+			"optional": true
+		}
 	}
 }

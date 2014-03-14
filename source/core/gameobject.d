@@ -98,13 +98,13 @@ public:
 		// Init transform
 		if( Config.tryGet( "Transform", innerNode, yamlObj ) )
 		{
-			vec3 transVec;
+			shared vec3 transVec;
 			if( Config.tryGet( "Scale", transVec, innerNode ) )
-				obj.transform.scale = cast(shared)vec3( transVec );
+				obj.transform.scale = shared vec3( transVec );
 			if( Config.tryGet( "Position", transVec, innerNode ) )
-				obj.transform.position = cast(shared)vec3( transVec );
+				obj.transform.position = shared vec3( transVec );
 			if( Config.tryGet( "Rotation", transVec, innerNode ) )
-				obj.transform.rotation = cast(shared)quat.euler_rotation( radians(transVec.y), radians(transVec.z), radians(transVec.x) );
+				obj.transform.rotation = quat.euler_rotation( radians(transVec.y), radians(transVec.z), radians(transVec.x) );
 		}
 
 		// If parent is specified, add it to the map
@@ -275,32 +275,32 @@ public:
 	/**
 	* This returns the object's position relative to the world origin, not the parent
 	*/
-	final @property vec3 worldPosition()
+	final @property shared(vec3) worldPosition()
 	{
 		if( owner.parent is null )
-			return cast()position;
+			return position;
 		else
-			return owner.parent.transform.worldPosition + cast()position;
+			return owner.parent.transform.worldPosition + position;
 	}
 
 	/**
 	* This returns the object's rotation relative to the world origin, not the parent
 	*/
-	final @property quat worldRotation()
+	final @property shared(quat) worldRotation()
 	{
 		if( owner.parent is null )
-			return cast()rotation;
+			return rotation;
 		else
-			return owner.parent.transform.worldRotation * cast()rotation;
+			return owner.parent.transform.worldRotation * rotation;
 	}
 
-	final @property mat4 matrix()
+	final @property shared(mat4) matrix()
 	{
 		if( _matrixIsDirty )
 			updateMatrix();
 
 		if( owner.parent is null )
-			return cast()_matrix;
+			return _matrix;
 		else
 			return owner.parent.transform.matrix * _matrix;
 	}
@@ -312,17 +312,17 @@ public:
 	{
 		_matrix = mat4.identity;
 		// Scale
-		_matrix[ 0 ][ 0 ] = (cast()scale).x;
-		_matrix[ 1 ][ 1 ] = (cast()scale).y;
-		_matrix[ 2 ][ 2 ] = (cast()scale).z;
+		_matrix[ 0 ][ 0 ] = scale.x;
+		_matrix[ 1 ][ 1 ] = scale.y;
+		_matrix[ 2 ][ 2 ] = scale.z;
 		// Rotate
-		_matrix = (cast()_matrix) * (cast()rotation).to_matrix!( 4, 4 );
+		_matrix = _matrix * rotation.to_matrix!( 4, 4 );
 
 		//logInfo( "Pre translate: ", cast()_matrix );
 		// Translate
-		_matrix[ 0 ][ 3 ] = (cast()position).x;
-		_matrix[ 1 ][ 3 ] = (cast()position).y;
-		_matrix[ 2 ][ 3 ] = (cast()position).z;
+		_matrix[ 0 ][ 3 ] = position.x;
+		_matrix[ 1 ][ 3 ] = position.y;
+		_matrix[ 2 ][ 3 ] = position.z;
 		//logInfo( "Post: ", cast()_matrix );
 
 		_matrixIsDirty = false;

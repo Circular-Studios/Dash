@@ -1,0 +1,138 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+MDIMENUINIT MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "New &Hello",                  IDM_FILE_NEWHELLO
+        MENUITEM "New &Rectangle",              IDM_FILE_NEWRECT
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       IDM_APP_EXIT
+    END
+END
+
+MDIMENUHELLO MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "New &Hello",                  IDM_FILE_NEWHELLO
+        MENUITEM "New &Rectangle",              IDM_FILE_NEWRECT
+        MENUITEM "&Close",                      IDM_FILE_CLOSE
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       IDM_APP_EXIT
+    END
+    POPUP "&Color"
+    BEGIN
+        MENUITEM "&Black",                      IDM_COLOR_BLACK
+        MENUITEM "&Red",                        IDM_COLOR_RED
+        MENUITEM "&Green",                      IDM_COLOR_GREEN
+        MENUITEM "B&lue",                       IDM_COLOR_BLUE
+        MENUITEM "&White",                      IDM_COLOR_WHITE
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "&Cascade\tShift+F5",          IDM_WINDOW_CASCADE
+        MENUITEM "&Tile\tShift+F4",             IDM_WINDOW_TILE
+        MENUITEM "Arrange &Icons",              IDM_WINDOW_ARRANGE
+        MENUITEM "Close &All",                  IDM_WINDOW_CLOSEALL
+    END
+END
+
+MDIMENURECT MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "New &Hello",                  IDM_FILE_NEWHELLO
+        MENUITEM "New &Rectangle",              IDM_FILE_NEWRECT
+        MENUITEM "&Close",                      IDM_FILE_CLOSE
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       IDM_APP_EXIT
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "&Cascade\tShift+F5",          IDM_WINDOW_CASCADE
+        MENUITEM "&Tile\tShift+F4",             IDM_WINDOW_TILE
+        MENUITEM "Arrange &Icons",              IDM_WINDOW_ARRANGE
+        MENUITEM "Close &All",                  IDM_WINDOW_CLOSEALL
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+MDIDEMO ACCELERATORS DISCARDABLE 
+BEGIN
+    VK_F4,          IDM_WINDOW_TILE,        VIRTKEY, SHIFT, NOINVERT
+    VK_F5,          IDM_WINDOW_CASCADE,     VIRTKEY, SHIFT, NOINVERT
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

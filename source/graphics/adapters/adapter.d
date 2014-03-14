@@ -42,7 +42,7 @@ private:
 	uint normalRenderTexture; //Alpha channel stores nothing important
 	uint depthRenderTexture;
 	// Do not add properties for:
-	mat4 projection;
+	shared mat4 projection;
 	shared Camera activeCamera;
 	shared AmbientLight ambientLight;
 	shared DirectionalLight[] directionalLights;
@@ -160,8 +160,8 @@ public:
 	final void endDraw()
 	{
 		if( activeCamera ) activeCamera.updateViewMatrix(); 
-		mat4 view = activeCamera ? cast()activeCamera.viewMatrix : mat4.identity;
-		mat4 perspProj = activeCamera ? 
+		shared mat4 view = activeCamera ? activeCamera.viewMatrix : mat4.identity;
+		shared mat4 perspProj = activeCamera ? 
 						  	activeCamera.buildPerspective( cast(float)width, cast(float)height ) : 
 			 				mat4.identity;
 
@@ -246,7 +246,7 @@ public:
 				// bind inverseViewProj for rebuilding world positions from pixel locations
 				shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
 				                            ( perspProj * view ).inverse() );
-				shader.setEyePosition( activeCamera ? activeCamera.owner.transform.worldPosition : vec3( 0, 0, 0 ) );
+				shader.setEyePosition( activeCamera ? activeCamera.owner.transform.worldPosition : shared vec3( 0, 0, 0 ) );
 
 				// bind the window mesh for directional lights
 				glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
@@ -270,7 +270,7 @@ public:
 				// bind inverseViewProj for rebuilding world positions from pixel locations
 				shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
 				                            ( perspProj * view ).inverse() );
-				shader.setEyePosition( activeCamera ? activeCamera.owner.transform.worldPosition : vec3( 0, 0, 0 ) );
+				shader.setEyePosition( activeCamera ? activeCamera.owner.transform.worldPosition : shared vec3( 0, 0, 0 ) );
 
 				// bind the sphere mesh for point lights
 				glBindVertexArray( Assets.get!Mesh( UnitSphere ).glVertexArray );

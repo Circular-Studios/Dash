@@ -32,7 +32,7 @@ public static:
 		constructor.addConstructorScalar( "!Vector2", &constructVector2 );
 		constructor.addConstructorMapping( "!Vector2-Map", &constructVector2 );
 		constructor.addConstructorScalar( "!Vector3", &constructVector3 );
-		constructor.addConstructorMapping( "!Vector3-Map", &constructVector2 );
+		constructor.addConstructorMapping( "!Vector3-Map", &constructVector3 );
 		constructor.addConstructorScalar( "!Quaternion", &constructQuaternion );
 		constructor.addConstructorMapping( "!Quaternion-Map", &constructQuaternion );
 		constructor.addConstructorScalar( "!GameState", &constructConv!GameState );
@@ -273,9 +273,9 @@ private:
 	Constructor constructor;
 }
 
-vec2 constructVector2( ref Node node )
+shared(vec2) constructVector2( ref Node node )
 {
-	vec2 result;
+	shared vec2 result;
 
 	if( node.isMapping )
 	{
@@ -298,9 +298,9 @@ vec2 constructVector2( ref Node node )
 	return result;
 }
 
-vec3 constructVector3( ref Node node )
+shared(vec3) constructVector3( ref Node node )
 {
-	vec3 result;
+	shared vec3 result;
 
 	if( node.isMapping )
 	{
@@ -325,9 +325,9 @@ vec3 constructVector3( ref Node node )
 	return result;
 }
 
-quat constructQuaternion( ref Node node )
+shared(quat) constructQuaternion( ref Node node )
 {
-	quat result;
+	shared quat result;
 
 	if( node.isMapping )
 	{
@@ -356,7 +356,7 @@ quat constructQuaternion( ref Node node )
 
 Light constructAmbientLight( ref Node node )
 {
-	vec3 color;
+	shared vec3 color;
 	Config.tryGet( "Color", color, node );
 	
 	return cast()new shared AmbientLight( color );
@@ -364,8 +364,8 @@ Light constructAmbientLight( ref Node node )
 
 Light constructDirectionalLight( ref Node node )
 {
-	vec3 color;
-	vec3 dir;
+	shared vec3 color;
+	shared vec3 dir;
 
 	Config.tryGet( "Color", color, node );
 	Config.tryGet( "Direction", dir, node );
@@ -375,7 +375,7 @@ Light constructDirectionalLight( ref Node node )
 
 Light constructPointLight( ref Node node )
 {
-	vec3 color;
+	shared vec3 color;
 	float radius;
 
 	Config.tryGet( "Color", color, node );

@@ -110,12 +110,4 @@ public:
 	{
 		apply( go => go.draw(), concurrent );
 	}
-
-	/**
-	 * Get the object with the given key.
-	 */
-	final shared(GameObject) opIndex( string key )
-	{
-		return objects[ key ];
-	}
 }

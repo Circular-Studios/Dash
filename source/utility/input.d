@@ -37,8 +37,6 @@ public:
 
 		foreach( string name, Node bind; bindings )
 		{
-			log( OutputType.Info, "Binding ", name );
-
 			if( bind.isScalar )
 			{
 				keyBindings[ name ] = bind.get!Keyboard;

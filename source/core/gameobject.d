@@ -253,6 +253,12 @@ public:
 
 private shared Object function( Node )[string] getInitParams;
 
+/**
+ * Class to extend when looking to use the onInitialize function.
+ * 
+ * Type Params:
+ * 	T =				The type onInitialize will recieve.
+ */
 class GameObjectInit(T) : GameObject
 {
 	/// Function to override to get args from Fields field in YAML.
@@ -264,6 +270,9 @@ class GameObjectInit(T) : GameObject
 		onInitialize( cast(T)o );
 	}
 
+	/**
+	 * Registers subclasses with onInit function pointers/
+	 */
 	shared static this()
 	{
 		foreach( mod; ModuleInfo )

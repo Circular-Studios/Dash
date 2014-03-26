@@ -20,43 +20,48 @@ shared final class TimeManager
 {
 public:
 	/**
-	 * Time since last frame, in seconds.
+	 * Time since last frame.
 	 */
-	final @property const float deltaTime() { return delta; }
+	final @property const Duration deltaTime() { return delta; }
 	/**
-	 * Total time spent running, in seconds.
+	 * Total time spent running.
 	 */
-	final @property const float totalTime() { return totalTime; }
+	final @property const Duration totalTime() { return total; }
 
 	/**
 	 * Update the times. Only call once per frame!
 	 */
 	synchronized final void update()
 	{
-		delta = ( cast()cur - cast()prev ).fracSec.nsecs / 1_000_000_000.0f;
-		total += delta;
+		// For first run
+		if( cast()cur == SysTime.min )
+			cast()cur = (cast()prev) = Clock.currTime;
+
+		delta = cast()cur - cast()prev;
+		cast()total += cast()delta;
 
 		debug
 		{
 			++frameCount;
-			second += delta;
-			if( second >= 1.0f )
+			cast()second += cast()delta;
+			if( cast()second >= 1.seconds )
 			{
 				log( OutputType.Info, "Framerate: ", frameCount );
-				second = frameCount = 0;
+				cast()second = Duration.zero;
+				frameCount = 0;
 			}
 		}
 
-		(cast()prev) = cur;
-		(cast()cur) = Clock.currTime;
+		cast()prev = cur;
+		cast()cur = Clock.currTime;
 	}
 
 private:
 	SysTime cur;
 	SysTime prev;
-	float delta;
-	float total;
-	float second;
+	Duration delta;
+	Duration total;
+	Duration second;
 	int frameCount;
 	
 	/**
@@ -64,8 +69,8 @@ private:
 	 */
 	shared this()
 	{
-		cur = prev = Clock.currTime;
-		second = total = delta = 0.0f;
+		cur = prev = SysTime.min;
+		cast()second = cast()total = cast()delta = Duration.zero;
 		frameCount = 0;
 	}
 }

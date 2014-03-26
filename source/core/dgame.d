@@ -3,9 +3,9 @@
  */
 module core.dgame;
 import core, components, graphics, utility, utility.awesomium;
-import std.string;
 
-import std.datetime;
+import std.string, std.datetime, std.parallelism, std.algorithm;
+public import core.time;
 
 /**
  * The states the game can be in.
@@ -78,6 +78,25 @@ public:
 			//if( currentState == GameState.Game )
 			//	PhysicsController.stepPhysics( Time.deltaTime );
 
+			uint[] toRemove;	// Indicies of tasks which are done
+			foreach( i, task; scheduledTasks )
+			{
+				if( task() )
+					toRemove ~= i;
+			}
+			foreach( i; toRemove )
+			{
+				// Get tasks after one being removed
+				auto end = scheduledTasks[ i+1..$ ];
+				// Get tasks before one being removed
+				scheduledTasks = scheduledTasks[ 0..i ];
+
+				// Allow data stomping
+				(cast(bool function()[])scheduledTasks).assumeSafeAppend();
+				// Add end back
+				scheduledTasks ~= end;
+			}
+
 			// Do the updating of the child class.
 			onUpdate();
 
@@ -96,6 +115,34 @@ public:
         }
 
         stop();
+	}
+
+	/**
+	 * Schedule a task to be executed until it returns true.
+	 * 
+	 * Params:
+	 * 	dg = 				The task to execute
+	 */
+	void scheduleTask( bool delegate() dg )
+	{
+		scheduledTasks ~= dg;
+	}
+
+	/**
+	 * Schedule a task to be executed until the duration expires.
+	 * 
+	 * Params:
+	 * 	dg = 				The task to execute
+	 * 	duration = 			The duration to execute the task for
+	 */
+	void scheduleTimedTask( void delegate() dg, Duration duration )
+	{
+		auto startTime = Time.totalTime;
+		scheduleTask( {
+			dg();
+			logInfo( Time.totalTime.seconds, ":", startTime, " + ", duration );
+			return Time.totalTime >= startTime + duration;
+		} );
 	}
 
 	//static Camera camera;
@@ -123,6 +170,9 @@ protected:
 	void onSaveState() { }
 
 private:
+	/// The tasks that have been scheduled
+	bool delegate()[] scheduledTasks;
+
 	/**
 	 * Function called to initialize controllers.
 	 */

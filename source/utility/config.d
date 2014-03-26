@@ -221,7 +221,8 @@ public static:
 		foreach( memberName; __traits(derivedMembers, T) )
 		{
 			// If it is a field and not a function, tryGet it's value
-			static if( !__traits(compiles, ParameterTypeTuple!(__traits(getMember, toReturn, memberName))) )
+			static if( !__traits( compiles, ParameterTypeTuple!( __traits( getMember, toReturn, memberName ) ) ) &&
+			           !__traits( compiles, isBasicType!( __traits( getMember, toReturn, memberName ) ) ) )
 			{
 				tryGet( memberName, __traits(getMember, toReturn, memberName), node );
 			}

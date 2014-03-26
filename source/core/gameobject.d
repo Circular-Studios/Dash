@@ -57,7 +57,8 @@ public:
 	static shared(GameObject) createFromYaml( Node yamlObj, ref string[shared GameObject] parents, ref string[][shared GameObject] children, const ClassInfo scriptOverride = null )
 	{
 		shared GameObject obj;
-		string prop;
+		bool foundClassName;
+		string prop, className;
 		Node innerNode;
 
 		string objName = yamlObj[ "Name" ].as!string;
@@ -69,15 +70,16 @@ public:
 		}
 		else
 		{
+			foundClassName = Config.tryGet( "Script.ClassName", className, yamlObj );
 			// Get class to create script from
-			const ClassInfo scriptClass = Config.tryGet( "Script.ClassName", prop, yamlObj )
-					? ClassInfo.find( prop )
+			const ClassInfo scriptClass = foundClassName
+					? ClassInfo.find( className )
 					: null;
 
 			// Check that if a Script.ClassName was provided that it was valid
-			if( Config.tryGet("Script.ClassName", prop, yamlObj ) && scriptClass is null )
+			if( foundClassName && scriptClass is null )
 			{
-				logWarning( objName, ": Unable to find Script ClassName: ", prop );
+				logWarning( objName, ": Unable to find Script ClassName: ", className );
 			}
 			
 			if( Config.tryGet( "InstanceOf", prop, yamlObj ) )
@@ -105,6 +107,12 @@ public:
 				obj.transform.position = shared vec3( transVec );
 			if( Config.tryGet( "Rotation", transVec, innerNode ) )
 				obj.transform.rotation = quat.euler_rotation( radians(transVec.y), radians(transVec.z), radians(transVec.x) );
+		}
+
+		if( foundClassName && Config.tryGet( "Script.Fields", innerNode, yamlObj ) )
+		{
+			if( auto initParams = className in getInitParams )
+				obj.initialize( (*initParams)( innerNode ) );
 		}
 
 		// If parent is specified, add it to the map
@@ -238,6 +246,37 @@ public:
 	void onShutdown() { }
 	/// Called when the object collides with another object.
 	void onCollision( GameObject other ) { }
+	
+	/// Allows for GameObjectInit to pass o to typed func.
+	void initialize( Object o ) { }
+}
+
+private shared Object function( Node )[string] getInitParams;
+
+class GameObjectInit(T) : GameObject
+{
+	/// Function to override to get args from Fields field in YAML.
+	abstract void onInitialize( T args );
+
+	/// Overridden to give params to child class.
+	final override void initialize( Object o )
+	{
+		onInitialize( cast(T)o );
+	}
+
+	shared static this()
+	{
+		foreach( mod; ModuleInfo )
+		{
+			foreach( klass; mod.localClasses )
+			{
+				if( klass.base == typeid(GameObjectInit!T) )
+				{
+					getInitParams[ klass.name ] = &Config.getObject!T;
+				}
+			}
+		}
+	}
 }
 
 shared class Transform

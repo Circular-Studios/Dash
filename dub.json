@@ -29,7 +29,7 @@
 
 	"-ddoxFilterArgs": [ "--min-protection=Protected" ],
 
-	"importPaths-windows": [ "third_party/DWinProgramming/WindowsAPI" ],
+	"importPaths-windows": [ "third_party/DWinProgramming" ],
 	"libs-windows": [
 		"gdi32", "ole32", "kernel32",
 		"user32", "comctl32", "comdlg32"

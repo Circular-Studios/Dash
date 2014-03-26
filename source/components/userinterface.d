@@ -100,6 +100,7 @@ public:
 		version( Windows )
 		{
 			webView = cast(shared)awe_webcore_create_webview( _width, _height, false );
+            awe_webview_set_transparent( cast(awe_webview*)webView, true );
 			awe_string* urlString = awe_string_create_from_ascii( filePath.toStringz(), filePath.length );
 
 			if ( localFilePath )

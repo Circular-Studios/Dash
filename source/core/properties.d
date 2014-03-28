@@ -105,6 +105,15 @@ template DirtyGetter( alias field, alias updateFunc, AccessModifier access = Acc
 		.replace( "$type", typeof(field).stringof ).replace( "$dirtyFieldName", "_" ~ field.stringof ~ "Prev" ).replace( "$attributes", functionTraitsString!updateFunc );
 }
 
+/**
+ * Like DirtyGetter, but instead of tracking if the field is dirty, it tracks if the this scope is dirty
+ * 
+ * Params:
+ * 	field = 				The field to generate the property for.
+ * 	updateFunc = 			The function to call when the function is dirty.
+ * 	access = 				The access modifier for the getter function.
+ * 	name = 					The name of the property functions. Defaults to the field name minus the first character. Meant for fields that start with underscores.
+ */
 template ThisDirtyGetter( alias field, alias updateFunc, AccessModifier access = AccessModifier.Protected, string name = field.stringof[ 1..$ ] )
 {
 	enum ThisDirtyGetter = q{

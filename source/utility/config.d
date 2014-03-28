@@ -45,6 +45,12 @@ Node[] loadYamlDocuments( string folder )
 	return nodes;
 }
 
+/**
+ * Load a yaml file with the engine-specific mappings.
+ * 
+ * Params:
+ * 	filePath = 				The path to file to load.
+ */
 Node loadYamlFile( string filePath )
 {
 	auto loader = Loader( filePath );
@@ -80,51 +86,6 @@ public static:
 		//constructor.addConstructorScalar( "!Material", ( ref Node node ) => Assets.get!Material( node.get!string ) );
 
 		config = loadYamlFile( FilePath.Resources.ConfigFile );
-	}
-
-	/**
-	 * Load a yaml file with the engine-specific mappings.
-	 */
-	deprecated( "Use loadYamlFile instead." )
-	final Node loadYaml( string path )
-	{
-		auto loader = Loader( path );
-		loader.constructor = constructor;
-		return loader.load();
-	}
-
-	/**
-	 * Process all yaml files in a directory, and call the callback with all the root level nodes.
-	 * 
-	 * Params:
-	 * 	folder =				The folder to iterate over.
-	 * 	callback =				The function to call on each root level object.
-	 * 	concurrent =			Whether or not to run operation in parallel.
-	 */
-	deprecated( "Use loadYamlDocuments instead." )
-	final void processYamlDirectory( string folder, void delegate( Node ) callback, bool concurrent = false )
-	{
-		auto files = FilePath.scanDirectory( folder, "*.yml" );
-		auto fileFunc = ( FilePath file )
-		{
-			auto object = Config.loadYaml( file.fullPath );
-			
-			if( object.isSequence() )
-			{
-				logWarning( "Using sequences as top level objects is deprecated. Use documents instaed." );
-				foreach( Node innerObj; object )
-					callback( innerObj );
-			}
-			else
-				callback( object );
-		};
-
-		if( concurrent )
-			foreach( file; parallel( files ) )
-				fileFunc( file );
-		else
-			foreach( file; files )
-				fileFunc( file );
 	}
 
 	/**

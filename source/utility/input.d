@@ -30,7 +30,7 @@ public:
 	 */
 	final void initialize()
 	{
-		auto bindings = Config.loadYaml( FilePath.Resources.InputBindings );
+		auto bindings = FilePath.Resources.InputBindings.loadYamlFile();
 
 		foreach( key; keyBindings.keys )
 			keyBindings.remove( key );

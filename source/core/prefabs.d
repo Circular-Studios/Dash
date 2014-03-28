@@ -35,22 +35,11 @@ public:
 		foreach( key; prefabs.keys )
 			prefabs.remove( key );
 
-		void addObject( Node object )
+		foreach( object; loadYamlDocuments( FilePath.Resources.Prefabs ) )
 		{
 			auto name = object[ "Name" ].as!string;
-
+			
 			prefabs[ name ] = new shared Prefab( object );
-		}
-
-		foreach( file; FilePath.scanDirectory( FilePath.Resources.Prefabs, "*.yml" ) )
-		{
-			auto object = Config.loadYaml( file.fullPath );
-
-			if( object.isSequence() )
-				foreach( Node innerObj; object )
-					addObject( innerObj );
-			else
-				addObject( object );
 		}
 	}
 }

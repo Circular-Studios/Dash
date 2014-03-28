@@ -15,6 +15,25 @@ enum AccessModifier : string
 	Private = "private",
 }
 
+string functionTraitsString( alias func )()
+{
+	string result = "";
+	enum funcAttr = functionAttributes!func;
+
+	if( funcAttr & FunctionAttribute.trusted )
+		result ~= " @trusted";
+	if( funcAttr & FunctionAttribute.safe )
+		result ~= " @safe";
+	if( funcAttr & FunctionAttribute.pure_ )
+		result ~= " pure";
+	if( funcAttr & FunctionAttribute.nothrow_ )
+		result ~= " nothrow";
+	if( funcAttr & FunctionAttribute.ref_ )
+		result ~= " ref";
+
+	return result;
+}
+
 /**
  * Generates a getter and setter for a field.
  * 
@@ -60,13 +79,14 @@ template DirtyGetter( alias field, alias updateFunc, AccessModifier access = Acc
 	if( is( typeof(T) : IDirtyable ) )
 {
 	enum DirtyGetter = q{
-		final $access @property auto $name() @safe pure nothrow
+		final $access @property auto $name() $attributes
 		{
 			if( $field.isDirty() )
 				$updateFunc();
 			return $field;
 		}}
-		.replace( "$field", field.stringof ).replace( "$updateFunc", updateFunc.stringof ).replace( "$access", cast(string)access ).replace( "$name", name );
+		.replace( "$field", field.stringof ).replace( "$updateFunc", updateFunc.stringof ).replace( "$access", cast(string)access ).replace( "$name", name )
+		.replace( "$attributes", functionTraitsString!updateFunc );
 }
 
 /// ditto
@@ -75,26 +95,27 @@ template DirtyGetter( alias field, alias updateFunc, AccessModifier access = Acc
 {
 	enum DirtyGetter = q{
 		$type $dirtyFieldName;
-		final $access @property auto $name() @safe pure nothrow
+		final $access @property auto $name() $attributes
 		{
 			if( $field != $dirtyFieldName )
 				$updateFunc;
 			return $field;
 		}}
 		.replace( "$field", field.stringof ).replace( "$updateFunc", updateFunc.stringof ).replace( "$access", cast(string)access ).replace( "$name", name )
-		.replace( "$type", typeof(field).stringof ).replace( "$dirtyFieldName", "_" ~ field.stringof ~ "Prev" );
+		.replace( "$type", typeof(field).stringof ).replace( "$dirtyFieldName", "_" ~ field.stringof ~ "Prev" ).replace( "$attributes", functionTraitsString!updateFunc );
 }
 
 template ThisDirtyGetter( alias field, alias updateFunc, AccessModifier access = AccessModifier.Protected, string name = field.stringof[ 1..$ ] )
 {
 	enum ThisDirtyGetter = q{
-		final $access @property auto $name() @safe pure nothrow
+		final $access @property auto $name() $attributes
 		{
 			if( isDirty() )
 				$updateFunc;
 			return $field;
 		}}
-		.replace( "$field", field.stringof ).replace( "$updateFunc", updateFunc.stringof ).replace( "$access", cast(string)access ).replace( "$name", name );
+		.replace( "$field", field.stringof ).replace( "$updateFunc", updateFunc.stringof ).replace( "$access", cast(string)access ).replace( "$name", name )
+		.replace( "$attributes", functionTraitsString!updateFunc );
 }
 
 /**

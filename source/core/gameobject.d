@@ -294,8 +294,6 @@ private:
 	GameObject _owner;
 
 public:
-	mixin Properties;
-
 	// these should remain public fields, properties return copies not references
 	vec3 position;
 	quat rotation;

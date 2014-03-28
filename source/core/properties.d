@@ -7,15 +7,6 @@ module core.properties;
 
 public import std.traits;
 
-template Properties()
-{
-	enum Properties = q{
-		public void delegate()[] onChanged;
-
-		void changed() { foreach( ev; onChanged ) ev(); }
-	};
-}
-
 enum AccessModifier : string
 {
 	Public = "public",
@@ -30,14 +21,14 @@ template Property( alias field, AccessModifier setterAccess = AccessModifier.Pro
 
 template Getter( alias field, AccessModifier access = AccessModifier.Protected, string name = field.stringof[ 1..$ ] )
 {
-	enum Getter = "final " ~ access ~ " @property auto " ~ name ~ "(){ return " ~ field.stringof ~ ";}\n";
+	enum Getter = "final " ~ access ~ " @property auto " ~ name ~ "() @safe pure nothrow { return " ~ field.stringof ~ ";}\n";
 }
 
 template DirtyGetter( alias field, string update, AccessModifier access = AccessModifier.Public, string name = field.stringof[ 1..$ ] )
 {
 	enum DirtyGetter =
 		"public bool " ~ field.stringof ~ "IsDirty = true;\n" ~
-		"final " ~ access ~ " @property auto " ~ name ~ "(){" ~
+		"final " ~ access ~ " @property auto " ~ name ~ "() @safe pure nothrow {" ~
 			"if(" ~ field.stringof ~ "IsDirty)" ~
 				update ~ "();"
 			"return " ~ field.stringof ~ ";}\n";
@@ -50,10 +41,10 @@ void setDirty( alias field )()
 
 template Setter( alias field, AccessModifier access = AccessModifier.Protected, string name = field.stringof[ 1..$ ] )
 {
-	enum Setter = "final " ~ access ~ " @property void " ~ name ~ "(" ~ typeof(field).stringof ~ " newVal){ " ~ field.stringof ~ " = newVal;}\n";
+	enum Setter = "final " ~ access ~ " @property void " ~ name ~ "(" ~ typeof(field).stringof ~ " newVal) @safe pure nothrow { " ~ field.stringof ~ " = newVal;}\n";
 }
 
 template DirtySetter( alias field, AccessModifier access = AccessModifier.Protected, string name = field.stringof[ 1..$ ] )
 {
-	enum Setter = "final " ~ access ~ " @property void " ~ name ~ "(" ~ typeof(field).stringof ~ " newVal){ " ~ field.stringof ~ " = newVal; changed();}\n";
+	enum Setter = "final " ~ access ~ " @property void " ~ name ~ "(" ~ typeof(field).stringof ~ " newVal) @safe pure nothrow { " ~ field.stringof ~ " = newVal; changed();}\n";
 }

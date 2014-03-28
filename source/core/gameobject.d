@@ -259,7 +259,7 @@ private shared Object function( Node )[string] getInitParams;
  * Type Params:
  * 	T =				The type onInitialize will recieve.
  */
-class GameObjectInit(T) : GameObject
+class GameObjectInit(T) : GameObject if( is( T == class ) )
 {
 	/// Function to override to get args from Fields field in YAML.
 	abstract void onInitialize( T args );

@@ -82,7 +82,7 @@ public:
 			foreach( i, task; scheduledTasks )
 			{
 				if( task() )
-					toRemove ~= i;
+					toRemove ~= cast(uint)i;
 			}
 			foreach( i; toRemove )
 			{

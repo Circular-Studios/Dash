@@ -78,11 +78,23 @@ template DirtyGetter( alias field, alias updateFunc, AccessModifier access = Acc
 		final $access @property auto $name() @safe pure nothrow
 		{
 			if( $field != $dirtyFieldName )
-				$updateFunc();
+				$updateFunc;
 			return $field;
 		}}
 		.replace( "$field", field.stringof ).replace( "$updateFunc", updateFunc.stringof ).replace( "$access", cast(string)access ).replace( "$name", name )
 		.replace( "$type", typeof(field).stringof ).replace( "$dirtyFieldName", "_" ~ field.stringof ~ "Prev" );
+}
+
+template ThisDirtyGetter( alias field, alias updateFunc, AccessModifier access = AccessModifier.Protected, string name = field.stringof[ 1..$ ] )
+{
+	enum ThisDirtyGetter = q{
+		final $access @property auto $name() @safe pure nothrow
+		{
+			if( isDirty() )
+				$updateFunc;
+			return $field;
+		}}
+		.replace( "$field", field.stringof ).replace( "$updateFunc", updateFunc.stringof ).replace( "$access", cast(string)access ).replace( "$name", name );
 }
 
 /**
@@ -107,7 +119,7 @@ template Setter( alias field, AccessModifier access = AccessModifier.Protected, 
 /**
  * Requires implementation of the isDirty property.
  */
-interface IDirtyable
+shared interface IDirtyable
 {
 	@property bool isDirty();
 }

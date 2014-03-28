@@ -10,7 +10,7 @@ import std.conv;
 /**
  * Camera manages the viewmatrix and audio listeners for the world.
  */
-shared final class Camera : IComponent
+shared final class Camera : IComponent, IDirtyable
 {
 private:
 	float _fov, _near, _far;
@@ -19,7 +19,7 @@ public:
 	override void update() { }
 	override void shutdown() { }
 
-	mixin( Property!( _viewMatrix, AccessModifier.Public ) );
+	mixin( DirtyGetter!( _viewMatrix, updateViewMatrix, AccessModifier.Public ) );
 
 	mixin( Property!( _fov, AccessModifier.Public ) );
 	mixin( Property!( _near, AccessModifier.Public )  );
@@ -61,6 +61,11 @@ public:
 		_viewMatrix[ 3 ] = [ 0, 0, 0, 1 ];
 
 		//_viewMatrixIsDirty = false;
+	}
+
+	final override @property bool isDirty()
+	{
+		return owner.transform.isDirty;
 	}
 }
 

@@ -258,7 +258,6 @@ public:
 		glBufferData( GL_ELEMENT_ARRAY_BUFFER, uint.sizeof * numVertices, indices.ptr, GL_STATIC_DRAW );
 
 		// unbind the VBO and VAO
-		glBindBuffer( GL_ARRAY_BUFFER, 0 );
 		glBindVertexArray( 0 );
 	}
 

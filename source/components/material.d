@@ -54,8 +54,6 @@ protected:
 		glGenTextures( 1, cast(uint*)&_glID );
 		glBindTexture( GL_TEXTURE_2D, glID );
 		updateBuffer( buffer );
-
-		glBindTexture( GL_TEXTURE_2D, 0 );
 	}
 
 	void updateBuffer( const ubyte* buffer )
@@ -68,9 +66,6 @@ protected:
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_BGRA, GL_UNSIGNED_BYTE, cast(GLvoid*)buffer );
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-
-		// Cleanup, unbind
-		glBindTexture( GL_TEXTURE_2D, 0 );
 	}
 
 public:

@@ -72,7 +72,7 @@ public:
 			Input.update();
 
 			// Update webcore
-			awe_webcore_update();
+			UserInterface.updateAwesomium();
 
 			// Update physics
 			//if( currentState == GameState.Game )
@@ -151,12 +151,7 @@ private:
 
 		Prefabs.initialize();
 
-		// Webcore setup
-		awe_webcore_initialize_default();
-		string baseDir = FilePath.Resources.UI;
-		awe_string* aweBaseDir = awe_string_create_from_ascii( baseDir.toStringz(), baseDir.length );
-		awe_webcore_set_base_directory( aweBaseDir );
-		awe_string_destroy( aweBaseDir );
+		UserInterface.initializeAwesomium();
 
 		//Physics.initialize();
 
@@ -171,7 +166,7 @@ private:
 	final void stop()
 	{
 		onShutdown();
-		awe_webcore_shutdown();
+		UserInterface.shutdownAwesomium();
 		Assets.shutdown();
 		Graphics.shutdown();
 	}

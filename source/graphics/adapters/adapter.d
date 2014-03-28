@@ -87,11 +87,6 @@ public:
 
 	final void initializeDeferredRendering()
 	{
-		// Set depth buffer
-		glClearDepth( 1.0f );
-		// set values for clear
-		glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
-
 		//http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
 
 		//Create the frame buffer, which will contain the textures to render to
@@ -133,7 +128,6 @@ public:
 
 		GLenum[ 2 ] DrawBuffers = [ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 ];
 		glDrawBuffers( 2, DrawBuffers.ptr );
-		glViewport(0, 0, width, height);
 
 		if( glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE )
 		{
@@ -319,7 +313,6 @@ public:
 		glDisable( GL_DEPTH_TEST );
 		glEnable( GL_BLEND );
 		glBlendFunc( GL_ONE, GL_ONE );
-		glBlendEquation( GL_FUNC_ADD );
 		
 		//This line switches back to the default framebuffer
 		glBindFramebuffer( GL_FRAMEBUFFER, 0 );

@@ -44,7 +44,7 @@ public:
 
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Prefabs, "*.yml" ) )
 		{
-			auto object = Config.loadYaml( file.fullPath );
+			auto object = loadYamlFile( file.fullPath );
 
 			if( object.isSequence() )
 				foreach( Node innerObj; object )

@@ -78,14 +78,12 @@ public:
 			textures[ file.baseFileName ] = new shared Texture( file.fullPath );
 		}
 
-		Config.processYamlDirectory(
-			FilePath.Resources.Materials,
-			( Node object )
-			{
-				auto name = object[ "Name" ].as!string;
-
-				materials[ name ] = Material.createFromYaml( object );
-			} );
+		foreach( object; loadYamlDocuments( FilePath.Resources.Materials ) )
+		{
+			auto name = object[ "Name" ].as!string;
+			
+			materials[ name ] = Material.createFromYaml( object );
+		}
 
 		meshes.rehash();
 		textures.rehash();

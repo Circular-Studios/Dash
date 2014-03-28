@@ -15,25 +15,6 @@ enum AccessModifier : string
 	Private = "private",
 }
 
-string functionTraitsString( alias func )()
-{
-	string result = "";
-	enum funcAttr = functionAttributes!func;
-
-	if( funcAttr & FunctionAttribute.trusted )
-		result ~= " @trusted";
-	if( funcAttr & FunctionAttribute.safe )
-		result ~= " @safe";
-	if( funcAttr & FunctionAttribute.pure_ )
-		result ~= " pure";
-	if( funcAttr & FunctionAttribute.nothrow_ )
-		result ~= " nothrow";
-	if( funcAttr & FunctionAttribute.ref_ )
-		result ~= " ref";
-
-	return result;
-}
-
 /**
  * Generates a getter and setter for a field.
  * 
@@ -63,7 +44,9 @@ template Getter( alias field, AccessModifier access = AccessModifier.Protected, 
 		{
 			return $field;
 		}}
-		.replace( "$field", field.stringof ).replace( "$access", cast(string)access ).replace( "$name", name );
+		.replaceMap( [
+			"$field": field.stringof, "$name": name,
+			"$access": cast(string)access ] );
 }
 
 /**
@@ -85,8 +68,10 @@ template DirtyGetter( alias field, alias updateFunc, AccessModifier access = Acc
 				$updateFunc();
 			return $field;
 		}}
-		.replace( "$field", field.stringof ).replace( "$updateFunc", updateFunc.stringof ).replace( "$access", cast(string)access ).replace( "$name", name )
-		.replace( "$attributes", functionTraitsString!updateFunc );
+		.replaceMap( [
+			"$field": field.stringof, "$updateFunc": updateFunc.stringof,
+			"$name": name, "$access": cast(string)access,
+			"$attributes": functionTraitsString!updateFunc ] );
 }
 
 /// ditto
@@ -94,15 +79,19 @@ template DirtyGetter( alias field, alias updateFunc, AccessModifier access = Acc
 	if( !is( typeof(T) : IDirtyable ) )
 {
 	enum DirtyGetter = q{
-		$type $dirtyFieldName;
+		private $type $dirtyFieldName;
 		final $access @property auto $name() $attributes
 		{
 			if( $field != $dirtyFieldName )
 				$updateFunc;
 			return $field;
 		}}
-		.replace( "$field", field.stringof ).replace( "$updateFunc", updateFunc.stringof ).replace( "$access", cast(string)access ).replace( "$name", name )
-		.replace( "$type", typeof(field).stringof ).replace( "$dirtyFieldName", "_" ~ field.stringof ~ "Prev" ).replace( "$attributes", functionTraitsString!updateFunc );
+		.replaceMap( [
+			"$field": field.stringof, "$updateFunc": updateFunc.stringof,
+			"$name": name, "$access": cast(string)access,
+		 	"$type": typeof(field).stringof,
+		 	"$dirtyFieldName": "_" ~ field.stringof ~ "Prev",
+		 	"$attributes": functionTraitsString!updateFunc ] );
 }
 
 /**
@@ -123,8 +112,10 @@ template ThisDirtyGetter( alias field, alias updateFunc, AccessModifier access =
 				$updateFunc;
 			return $field;
 		}}
-		.replace( "$field", field.stringof ).replace( "$updateFunc", updateFunc.stringof ).replace( "$access", cast(string)access ).replace( "$name", name )
-		.replace( "$attributes", functionTraitsString!updateFunc );
+		.replaceMap( [
+			"$field": field.stringof, "$updateFunc": updateFunc.stringof,
+			"$name": name,"$access": cast(string)access,
+			"$attributes": functionTraitsString!updateFunc ] );
 }
 
 /**
@@ -142,8 +133,9 @@ template Setter( alias field, AccessModifier access = AccessModifier.Protected, 
 		{
 			$field = newVal;
 		}}
-		.replace( "$field", field.stringof ).replace( "$access", cast(string)access ).replace( "$name", name )
-		.replace( "$type", typeof(field).stringof );
+		.replaceMap( [
+			"$field": field.stringof, "$access": cast(string)access,
+			"$name": name, "$type": typeof(field).stringof ] );
 }
 
 /**
@@ -152,4 +144,36 @@ template Setter( alias field, AccessModifier access = AccessModifier.Protected, 
 shared interface IDirtyable
 {
 	@property bool isDirty();
+}
+
+private:
+T replaceMap( T, TKey, TValue )( T base, TKey[TValue] replaceMap ) if( isSomeString!T && isSomeString!TKey && isSomeString!TValue )
+{
+	auto result = base;
+
+	foreach( key, value; replaceMap )
+	{
+		result = result.replace( key, value );
+	}
+
+	return result;
+}
+
+string functionTraitsString( alias func )()
+{
+	string result = "";
+	enum funcAttr = functionAttributes!func;
+	
+	if( funcAttr & FunctionAttribute.trusted )
+		result ~= " @trusted";
+	if( funcAttr & FunctionAttribute.safe )
+		result ~= " @safe";
+	if( funcAttr & FunctionAttribute.pure_ )
+		result ~= " pure";
+	if( funcAttr & FunctionAttribute.nothrow_ )
+		result ~= " nothrow";
+	if( funcAttr & FunctionAttribute.ref_ )
+		result ~= " ref";
+	
+	return result;
 }

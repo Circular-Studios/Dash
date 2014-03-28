@@ -17,7 +17,40 @@ import yaml;
 
 import std.array, std.conv, std.string, std.path,
 	std.typecons, std.variant, std.parallelism,
-	std.traits;
+	std.traits, std.algorithm;
+
+/**
+ * Process all yaml files in a directory.
+ * 
+ * Params:
+ * 	folder =				The folder to iterate over.
+ */
+Node[] loadYamlDocuments( string folder )
+{
+	Node[] nodes;
+
+	// Actually scan directories
+	foreach( file; FilePath.scanDirectory( folder, "*.yml" ) )
+	{
+		auto loader = Loader( file.fullPath );
+		loader.constructor = Config.constructor;
+
+		// Iterate over all documents in a file
+		foreach( doc; loader )
+		{
+			nodes ~= doc;
+		}
+	}
+
+	return nodes;
+}
+
+Node loadYamlFile( string filePath )
+{
+	auto loader = Loader( filePath );
+	loader.constructor = Config.constructor;
+	return loader.load();
+}
 
 /**
  * Static class which handles the configuration options and YAML interactions.
@@ -52,6 +85,7 @@ public static:
 	/**
 	 * Load a yaml file with the engine-specific mappings.
 	 */
+	deprecated( "Use loadYamlFile instead." )
 	final Node loadYaml( string path )
 	{
 		auto loader = Loader( path );
@@ -67,6 +101,7 @@ public static:
 	 * 	callback =				The function to call on each root level object.
 	 * 	concurrent =			Whether or not to run operation in parallel.
 	 */
+	deprecated( "Use loadYamlDocuments instead." )
 	final void processYamlDirectory( string folder, void delegate( Node ) callback, bool concurrent = false )
 	{
 		auto files = FilePath.scanDirectory( folder, "*.yml" );
@@ -75,8 +110,11 @@ public static:
 			auto object = Config.loadYaml( file.fullPath );
 			
 			if( object.isSequence() )
+			{
+				logWarning( "Using sequences as top level objects is deprecated. Use documents instaed." );
 				foreach( Node innerObj; object )
 					callback( innerObj );
+			}
 			else
 				callback( object );
 		};

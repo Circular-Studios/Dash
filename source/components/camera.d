@@ -59,8 +59,6 @@ public:
 		_viewMatrix[ 1 ] = yaxis.vector ~ -( yaxis * owner.transform.position );
 		_viewMatrix[ 2 ] = zaxis.vector ~ -( zaxis * owner.transform.position );
 		_viewMatrix[ 3 ] = [ 0, 0, 0, 1 ];
-
-		//_viewMatrixIsDirty = false;
 	}
 
 	final override @property bool isDirty()

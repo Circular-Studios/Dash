@@ -48,7 +48,6 @@ private:
 	shared DirectionalLight[] directionalLights;
 	shared PointLight[] pointLights;
 	shared SpotLight[] spotLights;
-	shared GameObject[] objectsInScene;
 	shared UserInterface[] uis;
 
 public:
@@ -160,33 +159,36 @@ public:
 
 		void geometryPass( )
 		{
-			foreach( object; objectsInScene )
+			foreach( object; DGame.instance.activeScene )
 			{
-				// set the shader
-				Shader shader;
-				if( object.mesh.animated )
+				if( object.mesh )
 				{
-					glUseProgram( Shaders[AnimatedGeometryShader].programID );
-					shader = Shaders[AnimatedGeometryShader];
-					
+					// set the shader
+					Shader shader;
+					if( object.mesh.animated )
+					{
+						glUseProgram( Shaders[AnimatedGeometryShader].programID );
+						shader = Shaders[AnimatedGeometryShader];
+						
+					}
+					else // not animated mesh
+					{
+						glUseProgram( Shaders[GeometryShader].programID );
+						shader = Shaders[GeometryShader];
+					}
+
+					glBindVertexArray( object.mesh.glVertexArray );
+
+					shader.bindUniformMatrix4fv( ShaderUniform.World, object.transform.matrix );
+					shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection,
+												 perspProj * view * object.transform.matrix );
+
+					shader.bindMaterial( object.material );
+
+					glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
+
+					glBindVertexArray(0);
 				}
-				else // not animated mesh
-				{
-					glUseProgram( Shaders[GeometryShader].programID );
-					shader = Shaders[GeometryShader];
-				}
-
-				glBindVertexArray( object.mesh.glVertexArray );
-
-				shader.bindUniformMatrix4fv( ShaderUniform.World, object.transform.matrix );
-				shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection,
-											 perspProj * view * object.transform.matrix );
-
-				shader.bindMaterial( object.material );
-
-				glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
-
-				glBindVertexArray(0);
 			}
 		}
 
@@ -334,19 +336,7 @@ public:
 		directionalLights = [];
 		pointLights = [];
 		spotLights = [];
-		objectsInScene = [];
 		uis = [];
-	}
-
-	/**
-	 * Adds an object to the scene 
-	 * beginDraw must be called before any calls of this function
-	 * Params:
-	 *	object = the object to be drawn
-	 */
-	final void addObject( shared GameObject object )
-	{
-		objectsInScene ~= object;
 	}
 
 	/*
@@ -363,7 +353,7 @@ public:
 				ambientLight = cast(shared AmbientLight)light;
 			}
 			else
-				log( OutputType.Warning, "Attemtping to add multiple ambient lights to the scene.  ",
+				logWarning( "Attemtping to add multiple ambient lights to the scene.  ",
 											"Ignoring additional ambient lights." );
 		}
 		else if( lightType == typeid( DirectionalLight ) )

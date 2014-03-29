@@ -191,11 +191,7 @@ public:
 	final void draw()
 	{
 		onDraw();
-
-		if( mesh !is null )
-		{
-			Graphics.addObject( this );
-		}
+		
 		if( light !is null )
 		{
 			Graphics.addLight( light );

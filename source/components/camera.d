@@ -14,12 +14,14 @@ shared final class Camera : IComponent, IDirtyable
 {
 private:
 	float _fov, _near, _far;
+	mat4 _prevLocalMatrix;
 	mat4 _viewMatrix;
+
 public:
 	override void update() { }
 	override void shutdown() { }
 
-	mixin( DirtyGetter!( _viewMatrix, updateViewMatrix, AccessModifier.Public ) );
+	mixin( ThisDirtyGetter!( _viewMatrix, updateViewMatrix ) );
 
 	mixin( Property!( _fov, AccessModifier.Public ) );
 	mixin( Property!( _near, AccessModifier.Public )  );
@@ -63,7 +65,11 @@ public:
 
 	final override @property bool isDirty()
 	{
-		return owner.transform.isDirty;
+		auto result = owner.transform.localMatrix != _prevLocalMatrix;
+
+		_prevLocalMatrix = owner.transform.localMatrix;
+
+		return result;
 	}
 }
 

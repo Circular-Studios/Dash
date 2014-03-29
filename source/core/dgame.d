@@ -34,6 +34,9 @@ public:
 	/// Current state of the game
 	GameState currentState;
 
+	/// The currently active scene
+	Scene activeScene;
+
 	/**
 	 * Overrideable. Returns the name of the window.
 	 */

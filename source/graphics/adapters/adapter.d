@@ -153,7 +153,6 @@ public:
 	 */
 	final void endDraw()
 	{
-		if( activeCamera ) activeCamera.updateViewMatrix(); 
 		shared mat4 view = activeCamera ? activeCamera.viewMatrix : mat4.identity;
 		shared mat4 perspProj = activeCamera ? 
 						  	activeCamera.buildPerspective( cast(float)width, cast(float)height ) : 

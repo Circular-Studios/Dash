@@ -155,7 +155,7 @@ public:
 				logWarning( "Unknown key: ", key );
 		}
 
-		obj.transform.updateMatrix();
+		//obj.transform.updateMatrix();
 		return obj;
 	}
 
@@ -288,21 +288,22 @@ class GameObjectInit(T) : GameObject if( is( T == class ) )
 	}
 }
 
-shared class Transform
+final shared class Transform : IDirtyable
 {
 private:
 	GameObject _owner;
+	vec3 _prevPos;
+	quat _prevRot;
+	vec3 _prevScale;
 
 public:
-	mixin Properties;
-
 	// these should remain public fields, properties return copies not references
 	vec3 position;
 	quat rotation;
 	vec3 scale;
 
 	mixin( Property!( _owner, AccessModifier.Public ) );
-
+	mixin( ThisDirtyGetter!( _localMatrix, updateMatrix ) );
 
 	this( shared GameObject obj = null )
 	{
@@ -310,7 +311,7 @@ public:
 		position = vec3(0,0,0);
 		scale = vec3(1,1,1);
 		rotation = quat.identity;
-		updateMatrix();
+		//updateMatrix();
 	}
 
 	~this()
@@ -344,45 +345,46 @@ public:
 
 	final @property shared(mat4) matrix()
 	{
-		if( _matrixIsDirty )
-			updateMatrix();
-
 		if( owner.parent is null )
-			return _matrix;
+			return localMatrix;
 		else
-			return owner.parent.transform.matrix * _matrix;
+			return owner.parent.transform.matrix * localMatrix;
 	}
 
+	final override @property bool isDirty() @safe pure nothrow
+	{
+		auto result = position != _prevPos ||
+				rotation != _prevRot ||
+				scale != _prevScale;
+
+		_prevPos = position;
+		_prevRot = rotation;
+		_prevScale = scale;
+
+		return result;
+	}
+	
 	/**
 	 * Rebuilds the object's matrix
 	 */
-	final void updateMatrix()
+	final void updateMatrix() @safe pure nothrow
 	{
-		_matrix = mat4.identity;
+		_localMatrix = mat4.identity;
 		// Scale
-		_matrix[ 0 ][ 0 ] = scale.x;
-		_matrix[ 1 ][ 1 ] = scale.y;
-		_matrix[ 2 ][ 2 ] = scale.z;
+		_localMatrix[ 0 ][ 0 ] = scale.x;
+		_localMatrix[ 1 ][ 1 ] = scale.y;
+		_localMatrix[ 2 ][ 2 ] = scale.z;
 		// Rotate
-		_matrix = _matrix * rotation.to_matrix!( 4, 4 );
-
+		_localMatrix = _localMatrix * rotation.to_matrix!( 4, 4 );
+		
 		//logInfo( "Pre translate: ", cast()_matrix );
 		// Translate
-		_matrix[ 0 ][ 3 ] = position.x;
-		_matrix[ 1 ][ 3 ] = position.y;
-		_matrix[ 2 ][ 3 ] = position.z;
+		_localMatrix[ 0 ][ 3 ] = position.x;
+		_localMatrix[ 1 ][ 3 ] = position.y;
+		_localMatrix[ 2 ][ 3 ] = position.z;
 		//logInfo( "Post: ", cast()_matrix );
-
-		_matrixIsDirty = false;
 	}
 
 private:
-	mat4 _matrix;
-	// Update flag
-	bool _matrixIsDirty;
-
-	final void setMatrixDirty( string prop, string newVal )
-	{
-		_matrixIsDirty = true;
-	}
+	mat4 _localMatrix;
 }

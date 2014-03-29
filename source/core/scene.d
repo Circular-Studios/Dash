@@ -34,6 +34,9 @@ public:
             
             if( object.name != AnonymousName )
             {
+                if( object.name in objects )
+                    logWarning( "Duplicate object of name ", object.name, " detected." );
+
                 // Add to collection
                 objects[ object.name ] = object;
             }

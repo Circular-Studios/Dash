@@ -37,7 +37,7 @@ template Property( alias field, AccessModifier setterAccess = AccessModifier.Pro
  * 	access = 				The access modifier for the getter function.
  * 	name = 					The name of the property functions. Defaults to the field name minus the first character. Meant for fields that start with underscores.
  */
-template Getter( alias field, AccessModifier access = AccessModifier.Protected, string name = field.stringof[ 1..$ ] )
+template Getter( alias field, AccessModifier access = AccessModifier.Public, string name = field.stringof[ 1..$ ] )
 {
 	enum Getter = q{
 		final $access @property auto $name() @safe pure nothrow
@@ -58,14 +58,14 @@ template Getter( alias field, AccessModifier access = AccessModifier.Protected, 
  * 	access = 				The access modifier for the getter function.
  * 	name = 					The name of the property functions. Defaults to the field name minus the first character. Meant for fields that start with underscores.
  */
-template DirtyGetter( alias field, alias updateFunc, AccessModifier access = AccessModifier.Protected, string name = field.stringof[ 1..$ ] )
-	if( is( typeof(T) : IDirtyable ) )
+template DirtyGetter( alias field, alias updateFunc, AccessModifier access = AccessModifier.Public, string name = field.stringof[ 1..$ ] )
+	if( is( typeof(field) : IDirtyable ) )
 {
 	enum DirtyGetter = q{
 		final $access @property auto $name() $attributes
 		{
 			if( $field.isDirty() )
-				$updateFunc();
+				$updateFunc;
 			return $field;
 		}}
 		.replaceMap( [
@@ -75,8 +75,8 @@ template DirtyGetter( alias field, alias updateFunc, AccessModifier access = Acc
 }
 
 /// ditto
-template DirtyGetter( alias field, alias updateFunc, AccessModifier access = AccessModifier.Protected, string name = field.stringof[ 1..$ ] )
-	if( !is( typeof(T) : IDirtyable ) )
+template DirtyGetter( alias field, alias updateFunc, AccessModifier access = AccessModifier.Public, string name = field.stringof[ 1..$ ] )
+	if( !is( typeof(field) : IDirtyable ) )
 {
 	enum DirtyGetter = q{
 		private $type $dirtyFieldName;
@@ -103,12 +103,12 @@ template DirtyGetter( alias field, alias updateFunc, AccessModifier access = Acc
  * 	access = 				The access modifier for the getter function.
  * 	name = 					The name of the property functions. Defaults to the field name minus the first character. Meant for fields that start with underscores.
  */
-template ThisDirtyGetter( alias field, alias updateFunc, AccessModifier access = AccessModifier.Protected, string name = field.stringof[ 1..$ ] )
+template ThisDirtyGetter( alias field, alias updateFunc, AccessModifier access = AccessModifier.Public, string name = field.stringof[ 1..$ ] )
 {
 	enum ThisDirtyGetter = q{
 		final $access @property auto $name() $attributes
 		{
-			if( isDirty() )
+			if( this.isDirty() )
 				$updateFunc;
 			return $field;
 		}}

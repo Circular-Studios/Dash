@@ -11,7 +11,7 @@ install:
  - cd ../
  - sudo git clone https://github.com/Circular-Studios/Sample-Dash-Game.git
  - cd Sample-Dash-Game/
- - git branch -r | grep -q $TRAVIS_BRANCH && git checkout $TRAVIS_BRANCH || (exit 0)
+ - git branch -r | grep -q $TRAVIS_BRANCH && sudo git checkout $TRAVIS_BRANCH || (exit 0)
 script: sudo dub test --force
 
 # For pushing results to gitter.im

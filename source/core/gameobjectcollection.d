@@ -33,25 +33,40 @@ public:
 
 		foreach( yml; loadYamlDocuments( buildNormalizedPath( FilePath.Resources.Objects, objectPath ) ) )
 		{
-			// Create the object
-			auto object = GameObject.createFromYaml( yml, parents, children );
-			
-			if( object.name != AnonymousName )
-			{
-				// Add to collection
-				objects[ object.name ] = object;
+		    void initGameObject(Node node)
+		    {
+    			// Create the object
+    			auto object = GameObject.createFromYaml( node, parents, children );
+    			
+    			if( object.name != AnonymousName )
+    			{
+    				// Add to collection
+    				objects[ object.name ] = object;
+    			}
+    			else
+    			{
+    				logError( "Anonymous objects at the top level are not supported." );
+    				assert( false );
+    			}
+    			
+    			foreach( child; object.children )
+    			{
+    				objects[ child.name ] = child;
+    				logInfo( "Adding child ", child.name, " of ", object.name, " to collection." );
+    			}
 			}
-			else
-			{
-				logError( "Anonymous objects at the top level are not supported." );
-				assert( false );
-			}
-			
-			foreach( child; object.children )
-			{
-				objects[ child.name ] = child;
-				logInfo( "Adding child ", child.name, " of ", object.name, " to collection." );
-			}
+		    
+		    if(yml.isSequence)
+		    {
+		        foreach(Node node; yml)
+		        {
+		            initGameObject(node);
+		        }
+		    }
+		    else
+		    {
+		        initGameObject(yml);
+		    }
 		}
 		
 		foreach( object, parentName; parents )

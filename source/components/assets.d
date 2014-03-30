@@ -85,9 +85,24 @@ public:
 
 		foreach( object; loadYamlDocuments( FilePath.Resources.Materials ) )
 		{
-			auto name = object[ "Name" ].as!string;
+		    void initMaterial(Node node)
+		    {
+		        auto name = object[ "Name" ].as!string;
 			
-			materials[ name ] = Material.createFromYaml( object );
+		        materials[ name ] = Material.createFromYaml( object );
+	        }
+		    
+		    if(object.isSequence)
+		    {
+		        foreach(Node node; object)
+		        {
+		            initMaterial(node);
+		        }
+		    } 
+		    else
+		    {
+		        initMaterial(object);
+		    }
 		}
 
 		meshes.rehash();

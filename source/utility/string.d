@@ -32,5 +32,5 @@ unittest
     char[] cstring = "some string".dup ~ cast(char)0;
 
     assert(cstring.ptr.fromStringz == "some string");
-    assert(null.fromStingz == "");
+    assert(null.fromStringz == "");
 }

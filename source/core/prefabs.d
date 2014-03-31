@@ -37,24 +37,9 @@ public:
 
 		foreach( object; loadYamlDocuments( FilePath.Resources.Prefabs ) )
 		{
-		    void initPrefab(Node node)
-		    {
-		        auto name = node[ "Name" ].as!string;
+			auto name = object[ "Name" ].as!string;
 			
-		        prefabs[ name ] = new shared Prefab( node );
-			}
-		    
-			if(object.isSequence)
-			{
-			    foreach(Node subnode; object)
-			    {
-			        initPrefab(subnode);
-			    }
-			} 
-			else
-			{
-			    initPrefab(object);
-			}
+			prefabs[ name ] = new shared Prefab( object );
 		}
 	}
 }

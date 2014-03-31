@@ -20,6 +20,7 @@ private:
 	Transform _transform;
 	Material _material;
 	Mesh _mesh;
+	Animation _animation;
 	Light _light;
 	Camera _camera;
 	GameObject _parent;
@@ -33,6 +34,8 @@ public:
 	mixin( Property!( _material, AccessModifier.Public ) );
 	/// The Mesh belonging to the object.
 	mixin( Property!( _mesh, AccessModifier.Public ) );
+	/// The animation on the object.
+	mixin( Property!( _animation, AccessModifier.Public ) );
 	/// The light attached to this object.
 	mixin( Property!( _light, AccessModifier.Public ) );
 	/// The camera attached to this object.

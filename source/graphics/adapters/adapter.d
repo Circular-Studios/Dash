@@ -163,24 +163,18 @@ public:
 			foreach( object; objectsInScene )
 			{
 				// set the shader
-				Shader shader;
-				if( object.mesh.animated )
-				{
-					glUseProgram( Shaders[AnimatedGeometryShader].programID );
-					shader = Shaders[AnimatedGeometryShader];
-					
-				}
-				else // not animated mesh
-				{
-					glUseProgram( Shaders[GeometryShader].programID );
-					shader = Shaders[GeometryShader];
-				}
+				auto shader = object.mesh.animated
+						 ? Shaders[AnimatedGeometryShader]
+						 : Shaders[GeometryShader];
 
+				glUseProgram( shader.programID );
 				glBindVertexArray( object.mesh.glVertexArray );
 
 				shader.bindUniformMatrix4fv( ShaderUniform.World, object.transform.matrix );
 				shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection,
 											 perspProj * view * object.transform.matrix );
+				if( object.mesh.animated )
+					shader.bindUniformMatrix4fvArray( ShaderUniform.Bones, object.animation.currBoneTransforms );
 
 				shader.bindMaterial( object.material );
 

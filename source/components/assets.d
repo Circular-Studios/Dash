@@ -70,7 +70,7 @@ public:
 			
 			// If animation data, add animation
 			if(scene.mNumAnimations > 0)
-				animations[ file.baseFileName ] = new shared AssetAnimation( file.baseFileName, scene.mAnimations[0], scene.mRootNode.mChildren[1]);
+				animations[ file.baseFileName ] = new shared AssetAnimation( scene.mAnimations[0], scene.mMeshes[0], scene.mRootNode );
 
 			// Add mesh
 			meshes[ file.baseFileName ] = new shared Mesh( file.fullPath, scene.mMeshes[0] );

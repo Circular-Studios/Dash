@@ -3,7 +3,6 @@
  */
 module components.assets;
 import components, utility;
-import utility.string;
 
 import std.string;
 import std.exception;
@@ -57,10 +56,12 @@ public:
 		// Initial assimp start
 		DerelictASSIMP3.load();
 
+		// Make sure fbxs are supported.
+		assert(aiIsExtensionSupported(".fbx".toStringz), "fbx format isn't supported by assimp instance!");
+
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Meshes ) )
 		{
 			// Load mesh
-			assert(aiIsExtensionSupported(".fbx".toStringz), "fbx format isn't supported by assimp instance!");
 			const aiScene* scene = aiImportFile( file.fullPath.toStringz,
 			                                    aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
 			                                    aiProcess_JoinIdenticalVertices | aiProcess_SortByPType );

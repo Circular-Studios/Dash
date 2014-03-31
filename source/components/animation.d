@@ -4,13 +4,13 @@ import components.icomponent, components.assetanimation;
 
 import gl3n.linalg;
 
-class Animation : IComponent
+shared class Animation : IComponent
 {
 private:
-	AssetAnimation _animationData;
-	int _currentAnim;
-	float _currentAnimTime;
-	mat4[] _currBoneTransforms;
+	shared AssetAnimation _animationData;
+	shared int _currentAnim;
+	shared float _currentAnimTime;
+	shared mat4[] _currBoneTransforms;
 
 public:
 	mixin( Property!_animationData );
@@ -18,7 +18,7 @@ public:
 	mixin( Property!_currentAnimTime );
 	mixin( Property!_currBoneTransforms );
 
-	this( AssetAnimation assetAnimation)
+	this( shared AssetAnimation assetAnimation)
 	{
 		_currentAnim = 0;
 		_currentAnimTime = 0.0f;

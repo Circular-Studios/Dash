@@ -5,13 +5,12 @@ import utility.output;
 
 import derelict.assimp3.assimp;
 import gl3n.linalg;
-import std.string;
 
-class AssetAnimation
+shared class AssetAnimation
 {
 private:
-	AnimationSet _animationSet;
-	int _numberOfBones;
+	shared AnimationSet _animationSet;
+	shared int _numberOfBones;
 
 public:
 	mixin( Property!_animationSet );
@@ -21,30 +20,29 @@ public:
 	{
 		_animationSet.duration = cast(float)animation.mDuration;
 		_animationSet.fps = cast(float)animation.mTicksPerSecond;
-		
-		// Currently assuming bone hierarchy is in slot 1 and mesh transform is default
+
 		_animationSet.animNodes = makeNodesFromNode( animation, mesh, boneHierarchy.mChildren[ 1 ], null );
-		
-		Node temp = _animationSet.animNodes;
-		Node temp2 = _animationSet.animNodes.children[ 0 ];
-		Node temp3 = _animationSet.animNodes.children[ 0 ].children[ 0 ];
+
+		//Node temp = _animationSet.animNodes;
+		//Node temp2 = _animationSet.animNodes.children[ 0 ];
+		//Node temp3 = _animationSet.animNodes.children[ 0 ].children[ 0 ];
 	}
 
 	// Each bone has one of two setups:
 	// Split up into five seperate nodes (translation -> preRotation -> Rotation -> Scale -> Bone)
 	// Or the bone is one node in the hierarchy
-	Node makeNodesFromNode( const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) currNode, Node returnNode )
+	shared(Node) makeNodesFromNode( const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) currNode, shared Node returnNode )
 	{ 
 		string name = cast(string)currNode.mName.data[ 0 .. currNode.mName.length ];
 		int id = findNodeWithName( name, mesh );
-		Node node;
+		shared Node node;
 		// If the node is the translation segment of a bone add bone based on all of its parts (the next couple of children nodes)
 		// Else if the node is another segment of a bone add its data to the partial bone (the parent node)
 		// Else if the node is a full bone add it
 
 		if( id != -1 )
 		{
-			node = new Node( name );
+			node = new shared Node( name );
 			node.id = id;
 			node.transform = convertAIMatrix( mesh.mBones[ node.id ].mOffsetMatrix );
 			assignAnimationData( animation, node );
@@ -69,7 +67,8 @@ public:
 
 		return node;
 	}
-	void assignAnimationData( const(aiAnimation*) animation, Node nodeToAssign )
+
+	void assignAnimationData( const(aiAnimation*) animation, shared Node nodeToAssign )
 	{
 		// For each bone animation data
 		for( int i = 0; i < animation.mNumChannels; i++)
@@ -106,10 +105,10 @@ public:
 			}
 		}
 	}
-	// Go through array of keys and convert/store in vector[]
-	vec3[] convertVectorArray( const(aiVectorKey*) vectors, int numKeys )
+	// aiVectorKey[] to vec3[]
+	shared( vec3[] ) convertVectorArray( const(aiVectorKey*) vectors, int numKeys )
 	{
-		vec3[] keys;
+		shared vec3[] keys;
 		for( int i = 0; i < numKeys; i++ )
 		{
 			aiVector3D vector = vectors[ i ].mValue;
@@ -118,10 +117,10 @@ public:
 
 		return keys;
 	}
-	// Go through array of keys and convert/store quat
-	quat[] convertQuat( const(aiQuatKey*) quaternions, int numKeys )
+	// aiQuatKey[] to quat[]
+	shared( quat[] ) convertQuat( const(aiQuatKey*) quaternions, int numKeys )
 	{
-		quat[] keys;
+		shared quat[] keys;
 		for( int i = 0; i < numKeys; i++ )
 		{
 			aiQuatKey quaternion = quaternions[ i ];
@@ -131,7 +130,7 @@ public:
 
 		return keys;
 	}
-
+	
 	// Find bone with name in our structure
 	int findNodeWithName( string name, const(aiMesh*) mesh )
 	{
@@ -145,7 +144,6 @@ public:
 
 		return -1;
 	}
-
 	// Check if string stringToTest ends with string end
 	bool checkEnd( string stringToTest, string end )
 	{
@@ -162,9 +160,9 @@ public:
 		return false;
 	}
 
-	mat4[] getTransformsAtTime( float time )
+	shared( mat4[] ) getTransformsAtTime( shared float time )
 	{
-		mat4[] boneTransforms = new mat4[ _numberOfBones ];
+		shared mat4[] boneTransforms = new shared mat4[ _numberOfBones ];
 
 		// Check shader/model
 		for( int i = 0; i < _numberOfBones; i++)
@@ -181,21 +179,20 @@ public:
 		return boneTransforms;
 	}
 
-	void fillTransforms( mat4[] transforms, Node node, float time, mat4 parentTransform )
+	void fillTransforms( shared mat4[] transforms, shared Node node, shared float time, shared mat4 parentTransform )
 	{
 		// Calculate matrix based on node.bone data and time
-		mat4 finalTransform;
+		shared mat4 finalTransform;
+		shared mat4 boneTransform = mat4.identity;
+		shared quat temp = quat( 0.0f, 0.707106f, -0.707106f, 0.0f );
 
-		mat4 boneTransform = mat4.identity;
-		quat temp = quat( 0.0f, 0.707106f, -0.707106f, 0.0f );
-		
 		if( node.scaleKeys.length > cast(int)time )
-			boneTransform.scale( node.scaleKeys[ cast(int)time ].vector );
+			//boneTransform.scale( node.scaleKeys[ cast(int)time ].vector[ 0 ], node.scaleKeys[ cast(int)time ].vector[ 1 ], node.scaleKeys[ cast(int)time ].vector[ 2 ] );
 		if( node.rotationKeys.length > cast(int)time )
 			boneTransform = boneTransform * node.rotationKeys[ cast(int)time ].to_matrix!( 4, 4 );
 		if( node.positionKeys.length > cast(int)time )
-			boneTransform.translation( node.positionKeys[ cast(int)time ].vector );
-			
+			//boneTransform.translation( node.positionKeys[ cast(int)time ].vector[ 0 ], node.positionKeys[ cast(int)time ].vector[ 1 ], node.positionKeys[ cast(int)time ].vector[ 2 ] );
+
 		finalTransform = parentTransform * boneTransform;
  		transforms[ node.id ] = (temp.to_matrix!( 4, 4 ) * finalTransform) * node.transform;
 
@@ -235,27 +232,27 @@ public:
 
 	}
 
-	struct AnimationSet
+	shared struct AnimationSet
 	{
-		float duration;
-		float fps;
-		Node animNodes;
+		shared float duration;
+		shared float fps;
+		shared Node animNodes;
 	}
-	class Node
+	shared class Node
 	{
-		this( string nodeName )
+		this( shared string nodeName )
 		{
 			name = nodeName;
 		}
 
-		string name;
-		int id;
-		Node parent;
-		Node[] children;
-		
-		vec3[] positionKeys;
-		quat[] rotationKeys;
-		vec3[] scaleKeys;
-		mat4 transform;
+		shared string name;
+		shared int id;
+		shared Node parent;
+		shared Node[] children;
+
+		shared vec3[] positionKeys;
+		shared quat[] rotationKeys;
+		shared vec3[] scaleKeys;
+		shared mat4 transform;
 	}
 }

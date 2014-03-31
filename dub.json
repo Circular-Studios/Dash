@@ -10,32 +10,35 @@
 		"Tyler Wozniak",
 		"Sean Brennan",
 		"Timothy Reynolds"
-		],
+	],
 	"dependencies": {
 		"derelict-gl3": "~master",
 		"derelict-fi": "~master",
 		"derelict-assimp3": "~master",
 		"dyaml": "~master",
-		"gl3n" : "~master"
+		"gl3n-shared" : "~master"
 	},
 	"targetName": "dash",
 	"targetType": "library",
 	"mainSourceFile": "source/app.d",
 	"sourcePaths": [ "source/" ],
 	"importPaths": [ "source/" ],
+	"libs-windows": [
+		"Awesomium"
+	],
+
 	"-ddoxFilterArgs": [ "--min-protection=Protected" ],
 
-	"importPaths-windows": [ "third_party/DWinProgramming/WindowsAPI" ],
+	"importPaths-windows": [ "third_party/DWinProgramming" ],
 	"libs-windows": [
 		"gdi32", "ole32", "kernel32",
-		"user32", "comctl32", "comdlg32" 
+		"user32", "comctl32", "comdlg32"
 	],
 
 	"dependencies-linux": {
-		"x11": 
-			{
-				"version": "~master",
-				"optional": true
-			}
+		"x11": {
+			"version": "~master",
+			"optional": true
+		}
 	}
 }

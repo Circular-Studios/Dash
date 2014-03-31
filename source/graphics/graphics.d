@@ -42,4 +42,7 @@ public static:
 		Shaders.shutdown();
 		adapter.shutdown();
 	}
+
+private:
+	this() { }
 }

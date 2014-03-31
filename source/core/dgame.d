@@ -2,7 +2,10 @@
  * Defines the DGame class, the base class for all game logic.
  */
 module core.dgame;
-import core, components, graphics, utility;
+import core, components, graphics, utility, utility.awesomium;
+
+import std.string, std.datetime, std.parallelism, std.algorithm;
+public import core.time;
 
 /**
  * The states the game can be in.
@@ -22,11 +25,11 @@ enum GameState
 /**
  * The main game loop manager. Meant to be overridden.
  */
-class DGame
+shared class DGame
 {
 public:
 	/// The instance to be running from
-	static DGame instance;
+	shared static DGame instance;
 
 	/// Current state of the game
 	GameState currentState;
@@ -44,9 +47,9 @@ public:
 	 */
 	final void run()
 	{
+
 		// Init tasks
 		//TaskManager.initialize();
-
         start();
 
         // Loop until there is a quit message from the window or the user.
@@ -68,9 +71,31 @@ public:
 			// Update input
 			Input.update();
 
+			// Update webcore
+			UserInterface.updateAwesomium();
+
 			// Update physics
 			//if( currentState == GameState.Game )
 			//	PhysicsController.stepPhysics( Time.deltaTime );
+
+			uint[] toRemove;	// Indicies of tasks which are done
+			foreach( i, task; scheduledTasks )
+			{
+				if( task() )
+					toRemove ~= cast(uint)i;
+			}
+			foreach( i; toRemove )
+			{
+				// Get tasks after one being removed
+				auto end = scheduledTasks[ i+1..$ ];
+				// Get tasks before one being removed
+				scheduledTasks = scheduledTasks[ 0..i ];
+
+				// Allow data stomping
+				(cast(bool function()[])scheduledTasks).assumeSafeAppend();
+				// Add end back
+				scheduledTasks ~= end;
+			}
 
 			// Do the updating of the child class.
 			onUpdate();
@@ -90,6 +115,33 @@ public:
         }
 
         stop();
+	}
+
+	/**
+	 * Schedule a task to be executed until it returns true.
+	 * 
+	 * Params:
+	 * 	dg = 				The task to execute
+	 */
+	void scheduleTask( bool delegate() dg )
+	{
+		scheduledTasks ~= dg;
+	}
+
+	/**
+	 * Schedule a task to be executed until the duration expires.
+	 * 
+	 * Params:
+	 * 	dg = 				The task to execute
+	 * 	duration = 			The duration to execute the task for
+	 */
+	void scheduleTimedTask( void delegate() dg, Duration duration )
+	{
+		auto startTime = Time.totalTime;
+		scheduleTask( {
+			dg();
+			return Time.totalTime >= startTime + duration;
+		} );
 	}
 
 	//static Camera camera;
@@ -117,6 +169,9 @@ protected:
 	void onSaveState() { }
 
 private:
+	/// The tasks that have been scheduled
+	bool delegate()[] scheduledTasks;
+
 	/**
 	 * Function called to initialize controllers.
 	 */
@@ -125,17 +180,33 @@ private:
 		currentState = GameState.Game;
         //camera = null;
 
+		logInfo( "Initializing..." );
+		auto start = Clock.currTime;
+		auto subStart = start;
+
 		Config.initialize();
 		Input.initialize();
 		Output.initialize();
+
+		logInfo( "Graphics initialization:" );
+		subStart = Clock.currTime;
 		Graphics.initialize();
+		logInfo( "Graphics init time: ", Clock.currTime - subStart );
+
+		logInfo( "Assets initialization:" );
+		subStart = Clock.currTime;
 		Assets.initialize();
+		logInfo( "Assets init time: ", Clock.currTime - subStart );
+
 		Prefabs.initialize();
+
+		UserInterface.initializeAwesomium();
+
 		//Physics.initialize();
 
-        //ui = new UserInterface( this );
-
         onInitialize();
+
+		logInfo( "Total init time: ", Clock.currTime - start );
 	}
 
 	/**
@@ -144,6 +215,7 @@ private:
 	final void stop()
 	{
 		onShutdown();
+		UserInterface.shutdownAwesomium();
 		Assets.shutdown();
 		Graphics.shutdown();
 	}
@@ -170,7 +242,7 @@ private:
 /**
  * Initializes reflection things.
  */
-static this()
+shared static this()
 {
 	foreach( mod; ModuleInfo )
 	{
@@ -178,7 +250,7 @@ static this()
 		{
 			// Find the appropriate game loop.
 			if( klass.base == typeid(DGame) )
-				DGame.instance = cast(DGame)klass.create();
+				DGame.instance = cast(shared DGame)klass.create();
 		}
 	}
 }

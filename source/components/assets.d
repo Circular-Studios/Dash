@@ -7,16 +7,23 @@ import components, utility;
 import yaml;
 import derelict.freeimage.freeimage, derelict.assimp3.assimp;
 
+shared AssetManager Assets;
+
+shared static this()
+{
+	Assets = new shared AssetManager;
+}
+
 /**
  * Assets manages all assets that aren't code, GameObjects, or Prefabs.
  */
-final abstract class Assets
+shared final class AssetManager
 {
-public static:
+public:
 	/**
 	 * Get the asset with the given type and name.
 	 */
-	final T get( T )( string name ) if( is( T == Mesh ) || is( T == Texture ) || is( T == Material ) || is( T == AssetAnimation ))
+	final shared(T) get( T )( string name ) if( is( T == Mesh ) || is( T == Texture ) || is( T == Material ) || is( T == AssetAnimation ))
 	{
 		static if( is( T == Mesh ) )
 		{
@@ -50,17 +57,17 @@ public static:
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Meshes ) )
 		{
 			// Load mesh
-			const aiScene* scene = aiImportFile( ( file.fullPath ~ "\0" ).ptr,
+			const aiScene* scene = aiImportFile(( file.fullPath ~ "\0" ).ptr,
 			                                    aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
 			                                    aiProcess_JoinIdenticalVertices | aiProcess_SortByPType );
 												//| aiProcess_FlipWindingOrder );
 
 			// If animation data, add animation
 			if(scene.mNumAnimations > 0)
-				animations[ file.baseFileName ] = new AssetAnimation( scene.mAnimations[0], scene.mMeshes[0], scene.mRootNode );
+				animations[ file.baseFileName ] = new shared AssetAnimation( scene.mAnimations[0], scene.mMeshes[0], scene.mRootNode );
 
 			// Add mesh
-			meshes[ file.baseFileName ] = new Mesh( file.fullPath, scene.mMeshes[0] );
+			meshes[ file.baseFileName ] = new shared Mesh( file.fullPath, scene.mMeshes[0] );
 
 			// Release mesh
 			aiReleaseImport( scene );
@@ -68,17 +75,15 @@ public static:
 
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Textures ) )
 		{
-			textures[ file.baseFileName ] = new Texture( file.fullPath );
+			textures[ file.baseFileName ] = new shared Texture( file.fullPath );
 		}
 
-		Config.processYamlDirectory(
-			FilePath.Resources.Materials,
-			( Node object )
-			{
-				auto name = object[ "Name" ].as!string;
-
-				materials[ name ] = Material.createFromYaml( object );
-			} );
+		foreach( object; loadYamlDocuments( FilePath.Resources.Materials ) )
+		{
+			auto name = object[ "Name" ].as!string;
+			
+			materials[ name ] = Material.createFromYaml( object );
+		}
 
 		meshes.rehash();
 		textures.rehash();

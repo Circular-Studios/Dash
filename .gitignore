@@ -45,6 +45,7 @@ build/
 *.pidb
 *.log
 *.scc
+*.lib
 
 # Visual C++ cache files
 ipch/
@@ -165,6 +166,14 @@ $RECYCLE.BIN/
 *.resources
 test-results/
 
+### SublimeText ###
+# workspace files are user-specific
+*.sublime-workspace
+*.sublime-project
+
+# Merge leftovers
+*.orig
+
 # ========================
 # Dash stuffs
 # ========================
@@ -177,5 +186,7 @@ test-results/
 *.exe_cv
 *.dll
 *.dll_cv
+*.lib
+*.lib_cv
 __dummy.html
 docs.json

@@ -5,15 +5,24 @@ module utility.input;
 import utility;
 
 import yaml;
+import core.sync.mutex;
 import std.typecons, std.conv;
 
-final abstract class Input
+shared InputManager Input;
+
+shared static this()
 {
-public static:
+	Input = new shared InputManager;
+}
+
+shared final class InputManager
+{
+public:
 	/**
 	 * Function called when key event triggers.
 	 */
 	alias void delegate( uint, bool ) KeyEvent;
+	/// ditto
 	alias void delegate( uint ) KeyStateEvent;
 
 	/**
@@ -21,15 +30,13 @@ public static:
 	 */
 	final void initialize()
 	{
-		auto bindings = Config.loadYaml( FilePath.Resources.InputBindings );
+		auto bindings = FilePath.Resources.InputBindings.loadYamlFile();
 
 		foreach( key; keyBindings.keys )
 			keyBindings.remove( key );
 
 		foreach( string name, Node bind; bindings )
 		{
-			log( OutputType.Info, "Binding ", name );
-
 			if( bind.isScalar )
 			{
 				keyBindings[ name ] = bind.get!Keyboard;
@@ -83,16 +90,19 @@ public static:
 	 */
 	final void update()
 	{
-		auto diff = staging - current;
+		synchronized( this )
+		{
+			auto diff = staging - current;
 
-		previous = current;
-		current = staging;
-		staging.reset();
+			previous = current;
+			current = staging;
+			//staging.reset();
 
-		foreach( state; diff )
-			if( auto keyEvent = state[ 0 ] in keyEvents )
-				foreach( event; *keyEvent )
-					event( state[ 0 ], state[ 1 ] );
+			foreach( state; diff )
+				if( auto keyEvent = state[ 0 ] in keyEvents )
+					foreach( event; *keyEvent )
+						event( state[ 0 ], state[ 1 ] );
+		}
 	}
 
 	/**
@@ -102,9 +112,31 @@ public static:
 	 * 		keyCode =	The code of the key to add the event to.
 	 * 		func =		The function to call when the key state changes.
 	 */
-	final void addKeyEvent( uint keyCode, KeyEvent func )
+	synchronized final void addKeyEvent( uint keyCode, KeyEvent func )
 	{
 		keyEvents[ keyCode ] ~= func;
+	}
+	unittest
+	{
+		import std.stdio;
+		writeln( "Dash Input addKeyEvent unittest" );
+
+		Config.initialize();
+		Input.initialize();
+
+		bool keyDown;
+		Input.addKeyEvent( Keyboard.Space, ( uint keyCode, bool newState )
+		{
+			keyDown = newState;
+		} );
+
+		Input.setKeyState( Keyboard.Space, true );
+		Input.update();
+		assert( keyDown );
+
+		Input.setKeyState( Keyboard.Space, false );
+		Input.update();
+		assert( !keyDown );
 	}
 
 	/**
@@ -134,6 +166,23 @@ public static:
 	{
 		return current[ keyCode ] && ( !checkPrevious || !previous[ keyCode ] );
 	}
+	unittest
+	{
+		import std.stdio;
+		writeln( "Dash Input isKeyDown unittest" );
+
+		Config.initialize();
+		Input.initialize();
+		Input.setKeyState( Keyboard.Space, true );
+
+		Input.update();
+		assert( Input.isKeyDown( Keyboard.Space, true ) );
+		assert( Input.isKeyDown( Keyboard.Space, false ) );
+
+		Input.update();
+		assert( !Input.isKeyDown( Keyboard.Space, true ) );
+		assert( Input.isKeyDown( Keyboard.Space, false ) );
+	}
 
 	/**
 	 * Check if a given key is up.
@@ -146,6 +195,26 @@ public static:
 	{
 		return !current[ keyCode ] && ( !checkPrevious || previous[ keyCode ] );
 	}
+	unittest
+	{
+		import std.stdio;
+		writeln( "Dash Input isKeyUp unittest" );
+
+		Config.initialize();
+		Input.initialize();
+		Input.setKeyState( Keyboard.Space, true );
+
+		Input.update();
+		Input.setKeyState( Keyboard.Space, false );
+
+		Input.update();
+		assert( Input.isKeyUp( Keyboard.Space, true ) );
+		assert( Input.isKeyUp( Keyboard.Space, false ) );
+
+		Input.update();
+		assert( !Input.isKeyUp( Keyboard.Space, true ) );
+		assert( Input.isKeyUp( Keyboard.Space, false ) );
+	}
 
 	/**
 	 * Sets the state of the key to be assigned at the beginning of next frame.
@@ -153,7 +222,10 @@ public static:
 	 */
 	final void setKeyState( uint keyCode, bool newState )
 	{
-		staging[ keyCode ] = newState;
+		synchronized( this )
+		{
+			staging[ keyCode ] = newState;
+		}
 	}
 
 	/**
@@ -191,7 +263,9 @@ private:
 	KeyState previous;
 	KeyState staging;
 
-	struct KeyState
+	this() { }
+
+	shared struct KeyState
 	{
 	public:
 		enum TotalSize = 256u;
@@ -200,7 +274,7 @@ private:
 
 		uint[ Split ] keys;
 
-		ref KeyState opAssign( const ref KeyState other )
+		ref shared(KeyState) opAssign( const ref KeyState other )
 		{
 			for( uint ii = 0; ii < Split; ++ii )
 				keys[ ii ] = other.keys[ ii ];
@@ -215,11 +289,11 @@ private:
 
 		bool opIndexAssign( bool newValue, size_t keyCode )
 		{
-			keys[ keyCode / ElementSize ] = getBitAtIndex( keyCode ) & uint.max;
+			keys[ keyCode / ElementSize ] = getBitAtIndex( keyCode ) & ( newValue ? uint.max : 0 );
 			return newValue;
 		}
 
-		Tuple!( uint, bool )[] opBinary( string Op : "-" )( const ref KeyState other )
+		Tuple!( uint, bool )[] opBinary( string Op : "-" )( const ref shared KeyState other )
 		{
 			Tuple!( uint, bool )[] differences;
 

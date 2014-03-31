@@ -10,11 +10,53 @@ import components.assets, components.lights;
 import graphics.shaders;
 import utility.output : Verbosity;
 import utility.input : Keyboard;
+import utility;
 
 import gl3n.linalg;
 import yaml;
 
-import std.array, std.conv, std.string, std.path, std.typecons, std.variant;
+import std.array, std.conv, std.string, std.path,
+	std.typecons, std.variant, std.parallelism,
+	std.traits, std.algorithm;
+
+/**
+ * Process all yaml files in a directory.
+ * 
+ * Params:
+ * 	folder =				The folder to iterate over.
+ */
+Node[] loadYamlDocuments( string folder )
+{
+	Node[] nodes;
+
+	// Actually scan directories
+	foreach( file; FilePath.scanDirectory( folder, "*.yml" ) )
+	{
+		auto loader = Loader( file.fullPath );
+		loader.constructor = Config.constructor;
+
+		// Iterate over all documents in a file
+		foreach( doc; loader )
+		{
+			nodes ~= doc;
+		}
+	}
+
+	return nodes;
+}
+
+/**
+ * Load a yaml file with the engine-specific mappings.
+ * 
+ * Params:
+ * 	filePath = 				The path to file to load.
+ */
+Node loadYamlFile( string filePath )
+{
+	auto loader = Loader( filePath );
+	loader.constructor = Config.constructor;
+	return loader.load();
+}
 
 /**
  * Static class which handles the configuration options and YAML interactions.
@@ -29,7 +71,7 @@ public static:
 		constructor.addConstructorScalar( "!Vector2", &constructVector2 );
 		constructor.addConstructorMapping( "!Vector2-Map", &constructVector2 );
 		constructor.addConstructorScalar( "!Vector3", &constructVector3 );
-		constructor.addConstructorMapping( "!Vector3-Map", &constructVector2 );
+		constructor.addConstructorMapping( "!Vector3-Map", &constructVector3 );
 		constructor.addConstructorScalar( "!Quaternion", &constructQuaternion );
 		constructor.addConstructorMapping( "!Quaternion-Map", &constructQuaternion );
 		constructor.addConstructorScalar( "!GameState", &constructConv!GameState );
@@ -38,38 +80,12 @@ public static:
 		constructor.addConstructorScalar( "!Shader", ( ref Node node ) => Shaders.get( node.get!string ) );
 		constructor.addConstructorMapping( "!Light-Directional", &constructDirectionalLight );
 		constructor.addConstructorMapping( "!Light-Ambient", &constructAmbientLight );
+		constructor.addConstructorMapping( "!Light-Point", &constructPointLight );
 		//constructor.addConstructorScalar( "!Texture", ( ref Node node ) => Assets.get!Texture( node.get!string ) );
 		//constructor.addConstructorScalar( "!Mesh", ( ref Node node ) => Assets.get!Mesh( node.get!string ) );
 		//constructor.addConstructorScalar( "!Material", ( ref Node node ) => Assets.get!Material( node.get!string ) );
 
-		config = loadYaml( FilePath.Resources.ConfigFile );
-	}
-
-	/**
-	 * Load a yaml file with the engine-specific mappings.
-	 */
-	final Node loadYaml( string path )
-	{
-		auto loader = Loader( path );
-		loader.constructor = constructor;
-		return loader.load();
-	}
-
-	/**
-	 * Process all yaml files in a directory, and call the callback with all the root level nodes.
-	 */
-	final void processYamlDirectory( string folder, void delegate( Node ) callback )
-	{
-		foreach( file; FilePath.scanDirectory( folder, "*.yml" ) )
-		{
-			auto object = Config.loadYaml( file.fullPath );
-
-			if( object.isSequence() )
-				foreach( Node innerObj; object )
-					callback( innerObj );
-			else
-				callback( object );
-		}
+		config = loadYamlFile( FilePath.Resources.ConfigFile );
 	}
 
 	/**
@@ -95,6 +111,22 @@ public static:
 				current = current[ left ];
 			}
 		}
+	}
+	unittest
+	{
+		import std.stdio;
+		writeln( "Dash Config get unittest" );
+
+		auto n1 = Node( [ "test1": 10 ] );
+
+		assert( Config.get!int( "test1", n1 ) == 10, "Config.get error." );
+
+		try
+		{
+			Config.get!int( "dontexist", n1 );
+			assert( false, "Config.get didn't throw." );
+		}
+		catch { }
 	}
 
 	/**
@@ -157,6 +189,18 @@ public static:
 
 	@disable bool tryGet( T: Variant )( string path, ref T result, Node node = config );
 
+	unittest
+	{
+		import std.stdio;
+		writeln( "Dash Config tryGet unittest" );
+
+		auto n1 = Node( [ "test1": 10 ] );
+
+		int val;
+		assert( Config.tryGet( "test1", val, n1 ), "Config.tryGet failed." );
+		assert( !Config.tryGet( "dontexist", val, n1 ), "Config.tryGet returned true." );
+	}
+
 	/**
 	 * Get element as a file path.
 	 */
@@ -165,14 +209,73 @@ public static:
 		return FilePath.ResourceHome ~ get!string( path );//buildNormalizedPath( FilePath.ResourceHome, get!string( path ) );;
 	}
 
+	final T getObject( T )( Node node )
+	{
+		T toReturn;
+
+		static if( is( T == class ) )
+			toReturn = new T;
+
+		// Get each member of the type
+		foreach( memberName; __traits(derivedMembers, T) )
+		{
+			// If it is a field and not a function, tryGet it's value
+			static if( !__traits( compiles, ParameterTypeTuple!( __traits( getMember, toReturn, memberName ) ) ) &&
+			           !__traits( compiles, isBasicType!( __traits( getMember, toReturn, memberName ) ) ) )
+			{
+				tryGet( memberName, __traits(getMember, toReturn, memberName), node );
+			}
+			else
+			{
+				// Iterate over each overload of the function (common to have getter and setter)
+				foreach( func; __traits(getOverloads, T, memberName) )
+				{
+					// Get the param types of the function
+					alias params = ParameterTypeTuple!func;
+
+					// If it can be a setter and is a property
+					static if( params.length == 1 && ( functionAttributes!func & FunctionAttribute.property ) )
+					{
+						// Else, set as temp
+						params[ 0 ] tempValue;
+						if( tryGet( memberName, tempValue, node ) )
+							mixin( "toReturn." ~ memberName ~ " = tempValue;" );
+					}
+				}
+			}
+		}
+
+		return toReturn;
+	}
+	unittest
+	{
+		import std.stdio;
+		writeln( "Dash Config getObject unittest" );
+
+		auto t = getObject!Test( Node( ["x": 5, "y": 7, "z": 9] ) );
+
+		assert( t.x == 5 );
+		assert( t.y == 7 );
+		assert( t.z == 9 );
+	}
+	version(unittest) class Test
+	{
+		int x;
+		int y;
+		private int _z;
+
+		@property int z() { return _z; }
+		@property void z( int newZ ) { _z = newZ; }
+	}
+
 private:
 	Node config;
 	Constructor constructor;
 }
 
-vec2 constructVector2( ref Node node )
+shared(vec2) constructVector2( ref Node node )
 {
-	vec2 result;
+	shared vec2 result;
 
 	if( node.isMapping )
 	{
@@ -195,9 +298,9 @@ vec2 constructVector2( ref Node node )
 	return result;
 }
 
-vec3 constructVector3( ref Node node )
+shared(vec3) constructVector3( ref Node node )
 {
-	vec3 result;
+	shared vec3 result;
 
 	if( node.isMapping )
 	{
@@ -222,9 +325,9 @@ vec3 constructVector3( ref Node node )
 	return result;
 }
 
-quat constructQuaternion( ref Node node )
+shared(quat) constructQuaternion( ref Node node )
 {
-	quat result;
+	shared quat result;
 
 	if( node.isMapping )
 	{
@@ -251,24 +354,36 @@ quat constructQuaternion( ref Node node )
 	return result;
 }
 
+Light constructAmbientLight( ref Node node )
+{
+	shared vec3 color;
+	Config.tryGet( "Color", color, node );
+	
+	return cast()new shared AmbientLight( color );
+}
+
 Light constructDirectionalLight( ref Node node )
 {
-	vec3 color;
-	vec3 dir;
+	shared vec3 color;
+	shared vec3 dir;
 
 	Config.tryGet( "Color", color, node );
 	Config.tryGet( "Direction", dir, node );
 
-	return new DirectionalLight( color, dir );
+	return cast()new shared DirectionalLight( color, dir );
 }
 
-Light constructAmbientLight( ref Node node )
+Light constructPointLight( ref Node node )
 {
-	vec3 color;
-	Config.tryGet( "Color", color, node );
+	shared vec3 color;
+	float radius;
 
-	return new AmbientLight( color );
+	Config.tryGet( "Color", color, node );
+	Config.tryGet( "Radius", radius, node );
+
+	return cast()new shared PointLight( color, radius );
 }
+
 
 T constructConv( T )( ref Node node ) if( is( T == enum ) )
 {
@@ -281,32 +396,3 @@ T constructConv( T )( ref Node node ) if( is( T == enum ) )
 		throw new Exception( "Enum must be represented as a scalar." );
 	}
 }
-
-unittest
-{
-	import std.stdio;
-	writeln( "Dash Config get unittest" );
-
-	auto n1 = Node( [ "test1": 10 ] );
-
-	assert( Config.get!int( "test1", n1 ) == 10, "Config.get error." );
-
-	try
-	{
-		Config.get!int( "dontexist", n1 );
-		assert( false, "Config.get didn't throw." );
-	}
-	catch { }
-}
-unittest
-{
-	import std.stdio;
-	writeln( "Dash Config tryGet unittest" );
-
-	auto n1 = Node( [ "test1": 10 ] );
-
-	int val;
-	assert( Config.tryGet( "test1", val, n1 ), "Config.tryGet failed." );
-	assert( !Config.tryGet( "dontexist", val, n1 ), "Config.tryGet returned true." );
-}
-

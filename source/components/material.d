@@ -3,24 +3,29 @@ import core, components, graphics, utility;
 
 import yaml;
 import derelict.opengl3.gl3, derelict.freeimage.freeimage;
-import std.variant, std.conv;
+import std.variant, std.conv, std.string;
 
-final class Material : IComponent
+shared final class Material : IComponent
 {
 private:
 	Texture _diffuse, _normal, _specular;
 
 public:
-	mixin( Property!_diffuse );
-	mixin( Property!_normal );
-	mixin( Property!_specular );
+	mixin( Property!(_diffuse, AccessModifier.Public) );
+	mixin( Property!(_normal, AccessModifier.Public) );
+	mixin( Property!(_specular, AccessModifier.Public) );
+
+	this()
+	{
+		_diffuse = _normal = _specular = defaultTex;
+	}
 
 	/**
 	* Create a Material from a Yaml node.
 	*/
-	static Material createFromYaml( Node yamlObj )
+	static shared(Material) createFromYaml( Node yamlObj )
 	{
-		auto obj = new Material;
+		auto obj = new shared Material;
 		Variant prop;
 
 		if( Config.tryGet!string( "Diffuse", prop, yamlObj ) )
@@ -39,10 +44,29 @@ public:
 	override void shutdown() { }
 }
 
-final class Texture
+shared class Texture
 {
-private:
+protected:
 	uint _width, _height, _glID;
+
+	this( ubyte* buffer )
+	{
+		glGenTextures( 1, cast(uint*)&_glID );
+		glBindTexture( GL_TEXTURE_2D, glID );
+		updateBuffer( buffer );
+	}
+
+	void updateBuffer( const ubyte* buffer )
+	{
+		// Set texture to update
+		glBindTexture( GL_TEXTURE_2D, glID );
+
+		// Update texture
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_BGRA, GL_UNSIGNED_BYTE, cast(GLvoid*)buffer );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+	}
 
 public:
 	mixin( Property!_width );
@@ -57,27 +81,34 @@ public:
 		width = FreeImage_GetWidth( imageData );
 		height = FreeImage_GetHeight( imageData );
 
-		glGenTextures( 1, &_glID );
-		glBindTexture( GL_TEXTURE_2D, glID );
-		glTexImage2D(
-					 GL_TEXTURE_2D,
-					 0,
-					 GL_RGBA,
-					 width,
-					 height,
-					 0,
-					 GL_BGRA, //FreeImage loads in BGR format because fuck you
-					 GL_UNSIGNED_BYTE,
-					 cast(GLvoid*)FreeImage_GetBits( imageData ) );
-		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+		this( cast(ubyte*)FreeImage_GetBits( imageData ) );
 
 		FreeImage_Unload( imageData );
-		glBindTexture( GL_TEXTURE_2D, 0 );
 	}
 
 	void shutdown()
 	{
 		glBindTexture( GL_TEXTURE_2D, 0 );
-		glDeleteBuffers( 1, &_glID );
+		glDeleteBuffers( 1, cast(uint*)&_glID );
 	}
+}
+
+
+@property shared(Texture) defaultTex()
+{
+	static shared Texture def;
+
+	if( !def )
+		def = new shared Texture( [0, 0, 0, 255] );
+
+	return def;
+}
+
+static this()
+{
+	IComponent.initializers[ "Material" ] = ( Node yml, shared GameObject obj )
+	{
+		obj.material = Assets.get!Material( yml.get!string );
+		return obj.material;
+	};
 }

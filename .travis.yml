@@ -13,6 +13,7 @@ install:
  - sudo git clone https://github.com/Circular-Studios/Sample-Dash-Game.git
  - cd Sample-Dash-Game/
  - git branch -r | grep -q $TRAVIS_BRANCH && sudo git checkout $TRAVIS_BRANCH || (exit 0)
+ - sudo cp libawesomium-1.6.5.so /usr/lib/libawesomium-1.6.5.so.0
 script: sudo dub test --force
 
 # For pushing results to gitter.im

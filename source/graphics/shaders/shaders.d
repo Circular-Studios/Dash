@@ -255,7 +255,7 @@ public:
 				matptr ~= matrix.value_ptr()[i];
 			}
 		}
-		glUniformMatrix4fv( getUniformLocation( uniform ), matrices.length, true, matptr.ptr );
+		glUniformMatrix4fv( getUniformLocation( uniform ), cast(int)matrices.length, true, matptr.ptr );
 	}
 
 	/*

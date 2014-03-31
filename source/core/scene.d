@@ -3,7 +3,7 @@
  * 
  */
 module core.scene;
-import core, graphics, utility;
+import core, components, graphics, utility;
 
 import std.path;
 
@@ -15,6 +15,9 @@ public:
 
     /// Allows functions to be called on this as if it were the AA.
     alias objects this;
+
+    /// The camera to render with.
+    Camera camera;
 
     /**
      * Load all objects inside the specified folder in FilePath.Objects.

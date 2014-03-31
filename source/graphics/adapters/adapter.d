@@ -43,7 +43,6 @@ private:
 	uint depthRenderTexture;
 	// Do not add properties for:
 	shared mat4 projection;
-	shared Camera activeCamera;
 	shared AmbientLight ambientLight;
 	shared DirectionalLight[] directionalLights;
 	shared PointLight[] pointLights;
@@ -143,8 +142,6 @@ public:
 		
 		
 	}
-
-	
 	
 	/**
 	 * called after all desired objects are drawn
@@ -152,36 +149,39 @@ public:
 	 */
 	final void endDraw()
 	{
-		shared mat4 view = activeCamera ? activeCamera.viewMatrix : mat4.identity;
-		shared mat4 perspProj = activeCamera ? 
-						  	activeCamera.buildPerspective( cast(float)width, cast(float)height ) : 
-			 				mat4.identity;
-
-		void geometryPass( )
+		if( !DGame.instance.activeScene )
 		{
-			foreach( object; DGame.instance.activeScene )
+			logWarning( "No active scene." );
+			return;
+		}
+
+		auto scene = DGame.instance.activeScene;
+
+		if( !scene.camera )
+		{
+			logWarning( "No camera on active scene." );
+			return;
+		}
+
+		shared mat4 perspProj = scene.camera.buildPerspective( cast(float)width, cast(float)height );
+
+		void geometryPass()
+		{
+			foreach( object; scene )
 			{
 				if( object.mesh )
 				{
 					// set the shader
-					Shader shader;
-					if( object.mesh.animated )
-					{
-						glUseProgram( Shaders[AnimatedGeometryShader].programID );
-						shader = Shaders[AnimatedGeometryShader];
-						
-					}
-					else // not animated mesh
-					{
-						glUseProgram( Shaders[GeometryShader].programID );
-						shader = Shaders[GeometryShader];
-					}
+					Shader shader = object.mesh.animated
+									? Shaders[AnimatedGeometryShader]
+									: Shaders[GeometryShader];
 
+					glUseProgram( shader.programID );
 					glBindVertexArray( object.mesh.glVertexArray );
 
 					shader.bindUniformMatrix4fv( ShaderUniform.World, object.transform.matrix );
 					shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection,
-												 perspProj * view * object.transform.matrix );
+												 perspProj * scene.camera.viewMatrix * object.transform.matrix );
 
 					shader.bindMaterial( object.material );
 
@@ -223,7 +223,7 @@ public:
 				shader.bindAmbientLight( ambientLight );
 				// bind inverseViewProj for rebuilding world positions from pixel locations
 				shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-				                            ( perspProj * view ).inverse() );
+				                            ( perspProj * scene.camera.viewMatrix ).inverse() );
 
 				// bind the window mesh for ambient lights
 				glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
@@ -240,8 +240,8 @@ public:
 
 				// bind inverseViewProj for rebuilding world positions from pixel locations
 				shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-				                            ( perspProj * view ).inverse() );
-				shader.setEyePosition( activeCamera ? activeCamera.owner.transform.worldPosition : shared vec3( 0, 0, 0 ) );
+				                            ( perspProj * scene.camera.viewMatrix ).inverse() );
+				shader.setEyePosition( scene.camera.owner.transform.worldPosition );
 
 				// bind the window mesh for directional lights
 				glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
@@ -264,8 +264,8 @@ public:
 
 				// bind inverseViewProj for rebuilding world positions from pixel locations
 				shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-				                            ( perspProj * view ).inverse() );
-				shader.setEyePosition( activeCamera ? activeCamera.owner.transform.worldPosition : shared vec3( 0, 0, 0 ) );
+				                            ( perspProj * scene.camera.viewMatrix ).inverse() );
+				shader.setEyePosition( scene.camera.owner.transform.worldPosition );
 
 				// bind the sphere mesh for point lights
 				glBindVertexArray( Assets.get!Mesh( UnitSphere ).glVertexArray );
@@ -275,7 +275,7 @@ public:
 				{
 				//	logInfo(light.owner.name);
 					shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection, 
-												 perspProj * view * light.getTransform() );
+												 perspProj * scene.camera.viewMatrix * light.getTransform() );
 					shader.bindPointLight( light );
 					glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSphere ).numVertices, GL_UNSIGNED_INT, null );
 				}
@@ -291,7 +291,7 @@ public:
 			foreach( ui; uis )
 			{
 				shader.bindUniformMatrix4fv( ShaderUniform.WorldProj, 
-					(activeCamera ? activeCamera.buildOrthogonal( cast(float)width, cast(float)height ) : mat4.identity) * ui.scaleMat );
+					( scene.camera.buildOrthogonal( cast(float)width, cast(float)height ) ) * ui.scaleMat );
 				shader.bindUI( ui );
 				glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSquare ).numVertices, GL_UNSIGNED_INT, null );
 
@@ -381,15 +381,6 @@ public:
 	final void addUI( shared UserInterface ui )
 	{
 		uis ~= ui;
-	}
-
-	/*
-	 * Set the camera to draw the scene from.
-	 * Should be set before endDraw.
-	 */
-	final void setCamera( shared Camera camera )
-	{
-		activeCamera = camera;
 	}
 
 protected:

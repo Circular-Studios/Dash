@@ -8,7 +8,7 @@ install:
  - sudo apt-get install dmd-bin
  - sudo dub install x11
  - sudo dub add-local . ~master
- - sudo ./setup-ubuntu.sh
+ - sudo bash ./setup-ubuntu.sh
  - cd ../
  - sudo git clone https://github.com/Circular-Studios/Sample-Dash-Game.git
  - cd Sample-Dash-Game/

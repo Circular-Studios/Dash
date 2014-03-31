@@ -3,10 +3,13 @@
  */
 module components.assets;
 import components, utility;
+import utility.string;
+
+import std.string;
+import std.exception;
 
 import yaml;
 import derelict.freeimage.freeimage, derelict.assimp3.assimp;
-
 shared AssetManager Assets;
 
 shared static this()
@@ -57,11 +60,13 @@ public:
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Meshes ) )
 		{
 			// Load mesh
-			const aiScene* scene = aiImportFile(( file.fullPath ~ "\0" ).ptr,
+			assert(aiIsExtensionSupported(".fbx".toStringz), "fbx format isn't supported by assimp instance!");
+			const aiScene* scene = aiImportFile( file.fullPath.toStringz,
 			                                    aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
 			                                    aiProcess_JoinIdenticalVertices | aiProcess_SortByPType );
 												//| aiProcess_FlipWindingOrder );
-
+			enforce(scene, "Failed to load scene file '" ~ file.fullPath ~ "' Error: " ~ aiGetErrorString().fromStringz);
+			
 			// If animation data, add animation
 			if(scene.mNumAnimations > 0)
 				animations[ file.baseFileName ] = new shared AssetAnimation( file.baseFileName, scene.mAnimations[0], scene.mRootNode.mChildren[1]);

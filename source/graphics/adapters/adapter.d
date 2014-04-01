@@ -215,7 +215,7 @@ public:
 			// Ambient Light
 			if( ambientLight !is null )
 			{
-				auto shader = Shaders[ AmbientLightShader ];
+				auto shader = Shaders.ambientLight;
 				glUseProgram( shader.programID );
 
 				bindGeometryOutputs( shader );
@@ -233,7 +233,7 @@ public:
 			// Directional Lights
 			if( directionalLights.length != 0 )
 			{
-				auto shader = Shaders[ DirectionalLightShader ];
+				auto shader = Shaders.directionalLight;
 				glUseProgram( shader.programID );
 
 				bindGeometryOutputs( shader );

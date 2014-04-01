@@ -54,8 +54,8 @@ immutable string geometryFS = q{
 
 	vec3 calculateMappedNormal()
 	{
-		vec3 normal = normalize( fNormal_w );
-		vec3 tangent = normalize( fTangent_w );
+		vec3 normal = normalize( fNormal_v );
+		vec3 tangent = normalize( fTangent_v );
 		//Use Gramm-Schmidt process to orthogonalize the two
 		tangent = normalize( tangent - dot( tangent, normal ) * normal );
 		vec3 bitangent = cross( tangent, normal );

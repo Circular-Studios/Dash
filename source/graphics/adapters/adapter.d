@@ -170,7 +170,7 @@ public:
 				glUseProgram( shader.programID );
 				glBindVertexArray( object.mesh.glVertexArray );
 
-				shader.bindUniformMatrix4fv( ShaderUniform.World, object.transform.matrix );
+				shader.bindUniformMatrix4fv( ShaderUniform.WorldView, view * object.transform.matrix );
 				shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection,
 											 perspProj * view * object.transform.matrix );
 				if( object.mesh.animated )

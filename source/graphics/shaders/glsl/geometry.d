@@ -11,10 +11,9 @@ immutable string geometryVS = q{
 	layout(location = 3) in vec3 vTangent_m;
 
 	out vec4 fPosition_s;
-	out vec3 fNormal_w;
+	out vec3 fNormal_v;
 	out vec2 fUV;
-	out vec3 fTangent_w;
-	out vec3 fBitangent_w;
+	out vec3 fTangent_v;
 
 	uniform mat4 world;
 	uniform mat4 worldView;
@@ -27,8 +26,8 @@ immutable string geometryVS = q{
 		gl_Position = fPosition_s;
 		fUV = vUV;
 
-		fNormal_w = ( world * vec4( vNormal_m, 0.0f ) ).xyz;
-		fTangent_w =  ( world * vec4( vTangent_m, 0.0f ) ).xyz;
+		fNormal_v = ( worldView * vec4( vNormal_m, 0.0f ) ).xyz;
+		fTangent_v =  ( worldView * vec4( vTangent_m, 0.0f ) ).xyz;
 	}
 };
 
@@ -36,12 +35,12 @@ immutable string geometryFS = q{
 	#version 400
 
 	in vec4 fPosition_s;
-	in vec3 fNormal_w;
+	in vec3 fNormal_v;
 	in vec2 fUV;
-	in vec3 fTangent_w;
+	in vec3 fTangent_v;
 
 	layout( location = 0 ) out vec4 color;
-	layout( location = 1 ) out vec4 normal_w;
+	layout( location = 1 ) out vec4 normal_v;
 
 	uniform sampler2D diffuseTexture;
 	uniform sampler2D normalTexture;
@@ -71,7 +70,7 @@ immutable string geometryFS = q{
 		// specular exponent
 		vec3 specularSample = texture( specularTexture, fUV ).xyz;
 		color.w = ( specularSample.x + specularSample.y + specularSample.z ) / 3;
-		normal_w = vec4( calculateMappedNormal(), 1.0f );
+		normal_v = vec4( calculateMappedNormal(), 1.0f );
 	}
 };
 

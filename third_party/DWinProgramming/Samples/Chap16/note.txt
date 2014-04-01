@@ -1,2 +1,0 @@
-This chapter was useful in days when 8-bit displays still existed. 
-It's unecessary now, so I haven't ported any examples.

@@ -20,6 +20,7 @@ private:
 	Transform _transform;
 	Material _material;
 	Mesh _mesh;
+	Animation _animation;
 	Light _light;
 	Camera _camera;
 	GameObject _parent;
@@ -33,6 +34,8 @@ public:
 	mixin( Property!( _material, AccessModifier.Public ) );
 	/// The Mesh belonging to the object.
 	mixin( Property!( _mesh, AccessModifier.Public ) );
+	/// The animation on the object.
+	mixin( Property!( _animation, AccessModifier.Public ) );
 	/// The light attached to this object.
 	mixin( Property!( _light, AccessModifier.Public ) );
 	/// The camera attached to this object.
@@ -57,7 +60,8 @@ public:
 	static shared(GameObject) createFromYaml( Node yamlObj, ref string[shared GameObject] parents, ref string[][shared GameObject] children, const ClassInfo scriptOverride = null )
 	{
 		shared GameObject obj;
-		string prop;
+		bool foundClassName;
+		string prop, className;
 		Node innerNode;
 
 		string objName = yamlObj[ "Name" ].as!string;
@@ -69,15 +73,16 @@ public:
 		}
 		else
 		{
+			foundClassName = Config.tryGet( "Script.ClassName", className, yamlObj );
 			// Get class to create script from
-			const ClassInfo scriptClass = Config.tryGet( "Script.ClassName", prop, yamlObj )
-					? ClassInfo.find( prop )
+			const ClassInfo scriptClass = foundClassName
+					? ClassInfo.find( className )
 					: null;
 
 			// Check that if a Script.ClassName was provided that it was valid
-			if( Config.tryGet("Script.ClassName", prop, yamlObj ) && scriptClass is null )
+			if( foundClassName && scriptClass is null )
 			{
-				logWarning( objName, ": Unable to find Script ClassName: ", prop );
+				logWarning( objName, ": Unable to find Script ClassName: ", className );
 			}
 			
 			if( Config.tryGet( "InstanceOf", prop, yamlObj ) )
@@ -105,6 +110,12 @@ public:
 				obj.transform.position = shared vec3( transVec );
 			if( Config.tryGet( "Rotation", transVec, innerNode ) )
 				obj.transform.rotation = quat.euler_rotation( radians(transVec.y), radians(transVec.z), radians(transVec.x) );
+		}
+
+		if( foundClassName && Config.tryGet( "Script.Fields", innerNode, yamlObj ) )
+		{
+			if( auto initParams = className in getInitParams )
+				obj.initialize( (*initParams)( innerNode ) );
 		}
 
 		// If parent is specified, add it to the map
@@ -147,7 +158,7 @@ public:
 				logWarning( "Unknown key: ", key );
 		}
 
-		obj.transform.updateMatrix();
+		//obj.transform.updateMatrix();
 		return obj;
 	}
 
@@ -238,23 +249,64 @@ public:
 	void onShutdown() { }
 	/// Called when the object collides with another object.
 	void onCollision( GameObject other ) { }
+	
+	/// Allows for GameObjectInit to pass o to typed func.
+	void initialize( Object o ) { }
 }
 
-shared class Transform
+private shared Object function( Node )[string] getInitParams;
+
+/**
+ * Class to extend when looking to use the onInitialize function.
+ * 
+ * Type Params:
+ * 	T =				The type onInitialize will recieve.
+ */
+class GameObjectInit(T) : GameObject if( is( T == class ) )
+{
+	/// Function to override to get args from Fields field in YAML.
+	abstract void onInitialize( T args );
+
+	/// Overridden to give params to child class.
+	final override void initialize( Object o )
+	{
+		onInitialize( cast(T)o );
+	}
+
+	/**
+	 * Registers subclasses with onInit function pointers/
+	 */
+	shared static this()
+	{
+		foreach( mod; ModuleInfo )
+		{
+			foreach( klass; mod.localClasses )
+			{
+				if( klass.base == typeid(GameObjectInit!T) )
+				{
+					getInitParams[ klass.name ] = &Config.getObject!T;
+				}
+			}
+		}
+	}
+}
+
+final shared class Transform : IDirtyable
 {
 private:
 	GameObject _owner;
+	vec3 _prevPos;
+	quat _prevRot;
+	vec3 _prevScale;
 
 public:
-	mixin Properties;
-
 	// these should remain public fields, properties return copies not references
 	vec3 position;
 	quat rotation;
 	vec3 scale;
 
 	mixin( Property!( _owner, AccessModifier.Public ) );
-
+	mixin( ThisDirtyGetter!( _localMatrix, updateMatrix ) );
 
 	this( shared GameObject obj = null )
 	{
@@ -262,7 +314,7 @@ public:
 		position = vec3(0,0,0);
 		scale = vec3(1,1,1);
 		rotation = quat.identity;
-		updateMatrix();
+		//updateMatrix();
 	}
 
 	~this()
@@ -296,45 +348,46 @@ public:
 
 	final @property shared(mat4) matrix()
 	{
-		if( _matrixIsDirty )
-			updateMatrix();
-
 		if( owner.parent is null )
-			return _matrix;
+			return localMatrix;
 		else
-			return owner.parent.transform.matrix * _matrix;
+			return owner.parent.transform.matrix * localMatrix;
 	}
 
+	final override @property bool isDirty() @safe pure nothrow
+	{
+		auto result = position != _prevPos ||
+				rotation != _prevRot ||
+				scale != _prevScale;
+
+		_prevPos = position;
+		_prevRot = rotation;
+		_prevScale = scale;
+
+		return result;
+	}
+	
 	/**
 	 * Rebuilds the object's matrix
 	 */
-	final void updateMatrix()
+	final void updateMatrix() @safe pure nothrow
 	{
-		_matrix = mat4.identity;
+		_localMatrix = mat4.identity;
 		// Scale
-		_matrix[ 0 ][ 0 ] = scale.x;
-		_matrix[ 1 ][ 1 ] = scale.y;
-		_matrix[ 2 ][ 2 ] = scale.z;
+		_localMatrix[ 0 ][ 0 ] = scale.x;
+		_localMatrix[ 1 ][ 1 ] = scale.y;
+		_localMatrix[ 2 ][ 2 ] = scale.z;
 		// Rotate
-		_matrix = _matrix * rotation.to_matrix!( 4, 4 );
-
+		_localMatrix = _localMatrix * rotation.to_matrix!( 4, 4 );
+		
 		//logInfo( "Pre translate: ", cast()_matrix );
 		// Translate
-		_matrix[ 0 ][ 3 ] = position.x;
-		_matrix[ 1 ][ 3 ] = position.y;
-		_matrix[ 2 ][ 3 ] = position.z;
+		_localMatrix[ 0 ][ 3 ] = position.x;
+		_localMatrix[ 1 ][ 3 ] = position.y;
+		_localMatrix[ 2 ][ 3 ] = position.z;
 		//logInfo( "Post: ", cast()_matrix );
-
-		_matrixIsDirty = false;
 	}
 
 private:
-	mat4 _matrix;
-	// Update flag
-	bool _matrixIsDirty;
-
-	final void setMatrixDirty( string prop, string newVal )
-	{
-		_matrixIsDirty = true;
-	}
+	mat4 _localMatrix;
 }

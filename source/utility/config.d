@@ -17,7 +17,46 @@ import yaml;
 
 import std.array, std.conv, std.string, std.path,
 	std.typecons, std.variant, std.parallelism,
-	std.traits;
+	std.traits, std.algorithm;
+
+/**
+ * Process all yaml files in a directory.
+ * 
+ * Params:
+ * 	folder =				The folder to iterate over.
+ */
+Node[] loadYamlDocuments( string folder )
+{
+	Node[] nodes;
+
+	// Actually scan directories
+	foreach( file; FilePath.scanDirectory( folder, "*.yml" ) )
+	{
+		auto loader = Loader( file.fullPath );
+		loader.constructor = Config.constructor;
+
+		// Iterate over all documents in a file
+		foreach( doc; loader )
+		{
+			nodes ~= doc;
+		}
+	}
+
+	return nodes;
+}
+
+/**
+ * Load a yaml file with the engine-specific mappings.
+ * 
+ * Params:
+ * 	filePath = 				The path to file to load.
+ */
+Node loadYamlFile( string filePath )
+{
+	auto loader = Loader( filePath );
+	loader.constructor = Config.constructor;
+	return loader.load();
+}
 
 /**
  * Static class which handles the configuration options and YAML interactions.
@@ -46,47 +85,7 @@ public static:
 		//constructor.addConstructorScalar( "!Mesh", ( ref Node node ) => Assets.get!Mesh( node.get!string ) );
 		//constructor.addConstructorScalar( "!Material", ( ref Node node ) => Assets.get!Material( node.get!string ) );
 
-		config = loadYaml( FilePath.Resources.ConfigFile );
-	}
-
-	/**
-	 * Load a yaml file with the engine-specific mappings.
-	 */
-	final Node loadYaml( string path )
-	{
-		auto loader = Loader( path );
-		loader.constructor = constructor;
-		return loader.load();
-	}
-
-	/**
-	 * Process all yaml files in a directory, and call the callback with all the root level nodes.
-	 * 
-	 * Params:
-	 * 	folder =				The folder to iterate over.
-	 * 	callback =				The function to call on each root level object.
-	 * 	concurrent =			Whether or not to run operation in parallel.
-	 */
-	final void processYamlDirectory( string folder, void delegate( Node ) callback, bool concurrent = false )
-	{
-		auto files = FilePath.scanDirectory( folder, "*.yml" );
-		auto fileFunc = ( FilePath file )
-		{
-			auto object = Config.loadYaml( file.fullPath );
-			
-			if( object.isSequence() )
-				foreach( Node innerObj; object )
-					callback( innerObj );
-			else
-				callback( object );
-		};
-
-		if( concurrent )
-			foreach( file; parallel( files ) )
-				fileFunc( file );
-		else
-			foreach( file; files )
-				fileFunc( file );
+		config = loadYamlFile( FilePath.Resources.ConfigFile );
 	}
 
 	/**
@@ -221,7 +220,8 @@ public static:
 		foreach( memberName; __traits(derivedMembers, T) )
 		{
 			// If it is a field and not a function, tryGet it's value
-			static if( !__traits(compiles, ParameterTypeTuple!(__traits(getMember, toReturn, memberName))) )
+			static if( !__traits( compiles, ParameterTypeTuple!( __traits( getMember, toReturn, memberName ) ) ) &&
+			           !__traits( compiles, isBasicType!( __traits( getMember, toReturn, memberName ) ) ) )
 			{
 				tryGet( memberName, __traits(getMember, toReturn, memberName), node );
 			}

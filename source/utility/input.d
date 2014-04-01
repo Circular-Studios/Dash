@@ -30,15 +30,13 @@ public:
 	 */
 	final void initialize()
 	{
-		auto bindings = Config.loadYaml( FilePath.Resources.InputBindings );
+		auto bindings = FilePath.Resources.InputBindings.loadYamlFile();
 
 		foreach( key; keyBindings.keys )
 			keyBindings.remove( key );
 
 		foreach( string name, Node bind; bindings )
 		{
-			log( OutputType.Info, "Binding ", name );
-
 			if( bind.isScalar )
 			{
 				keyBindings[ name ] = bind.get!Keyboard;
@@ -117,6 +115,28 @@ public:
 	synchronized final void addKeyEvent( uint keyCode, KeyEvent func )
 	{
 		keyEvents[ keyCode ] ~= func;
+	}
+	unittest
+	{
+		import std.stdio;
+		writeln( "Dash Input addKeyEvent unittest" );
+
+		Config.initialize();
+		Input.initialize();
+
+		bool keyDown;
+		Input.addKeyEvent( Keyboard.Space, ( uint keyCode, bool newState )
+		{
+			keyDown = newState;
+		} );
+
+		Input.setKeyState( Keyboard.Space, true );
+		Input.update();
+		assert( keyDown );
+
+		Input.setKeyState( Keyboard.Space, false );
+		Input.update();
+		assert( !keyDown );
 	}
 
 	/**

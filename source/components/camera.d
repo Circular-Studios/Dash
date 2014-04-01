@@ -10,16 +10,18 @@ import std.conv;
 /**
  * Camera manages the viewmatrix and audio listeners for the world.
  */
-shared final class Camera : IComponent
+shared final class Camera : IComponent, IDirtyable
 {
 private:
 	float _fov, _near, _far;
+	mat4 _prevLocalMatrix;
 	mat4 _viewMatrix;
+
 public:
 	override void update() { }
 	override void shutdown() { }
 
-	mixin( Property!( _viewMatrix, AccessModifier.Public ) );
+	mixin( ThisDirtyGetter!( _viewMatrix, updateViewMatrix ) );
 
 	mixin( Property!( _fov, AccessModifier.Public ) );
 	mixin( Property!( _near, AccessModifier.Public )  );
@@ -59,8 +61,15 @@ public:
 		_viewMatrix[ 1 ] = yaxis.vector ~ -( yaxis * owner.transform.position );
 		_viewMatrix[ 2 ] = zaxis.vector ~ -( zaxis * owner.transform.position );
 		_viewMatrix[ 3 ] = [ 0, 0, 0, 1 ];
+	}
 
-		//_viewMatrixIsDirty = false;
+	final override @property bool isDirty()
+	{
+		auto result = owner.transform.localMatrix != _prevLocalMatrix;
+
+		_prevLocalMatrix = owner.transform.localMatrix;
+
+		return result;
 	}
 }
 

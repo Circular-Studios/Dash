@@ -87,11 +87,6 @@ public:
 
 	final void initializeDeferredRendering()
 	{
-		// Set depth buffer
-		glClearDepth( 1.0f );
-		// set values for clear
-		glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
-
 		//http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
 
 		//Create the frame buffer, which will contain the textures to render to
@@ -133,7 +128,6 @@ public:
 
 		GLenum[ 2 ] DrawBuffers = [ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 ];
 		glDrawBuffers( 2, DrawBuffers.ptr );
-		glViewport(0, 0, width, height);
 
 		if( glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE )
 		{
@@ -159,7 +153,6 @@ public:
 	 */
 	final void endDraw()
 	{
-		if( activeCamera ) activeCamera.updateViewMatrix(); 
 		shared mat4 view = activeCamera ? activeCamera.viewMatrix : mat4.identity;
 		shared mat4 perspProj = activeCamera ? 
 						  	activeCamera.buildPerspective( cast(float)width, cast(float)height ) : 
@@ -170,24 +163,18 @@ public:
 			foreach( object; objectsInScene )
 			{
 				// set the shader
-				Shader shader;
-				if( object.mesh.animated )
-				{
-					glUseProgram( Shaders[AnimatedGeometryShader].programID );
-					shader = Shaders[AnimatedGeometryShader];
-					
-				}
-				else // not animated mesh
-				{
-					glUseProgram( Shaders[GeometryShader].programID );
-					shader = Shaders[GeometryShader];
-				}
+				auto shader = object.mesh.animated
+						 ? Shaders[AnimatedGeometryShader]
+						 : Shaders[GeometryShader];
 
+				glUseProgram( shader.programID );
 				glBindVertexArray( object.mesh.glVertexArray );
 
 				shader.bindUniformMatrix4fv( ShaderUniform.World, object.transform.matrix );
 				shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection,
 											 perspProj * view * object.transform.matrix );
+				if( object.mesh.animated )
+					shader.bindUniformMatrix4fvArray( ShaderUniform.Bones, object.animation.currBoneTransforms );
 
 				shader.bindMaterial( object.material );
 
@@ -319,7 +306,6 @@ public:
 		glDisable( GL_DEPTH_TEST );
 		glEnable( GL_BLEND );
 		glBlendFunc( GL_ONE, GL_ONE );
-		glBlendEquation( GL_FUNC_ADD );
 		
 		//This line switches back to the default framebuffer
 		glBindFramebuffer( GL_FRAMEBUFFER, 0 );

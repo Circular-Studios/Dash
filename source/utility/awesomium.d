@@ -1,5 +1,7 @@
 module utility.awesomium;
 
+version( Windows ):
+
 public {
     import core.stdc.stddef;
     version(Windows) {

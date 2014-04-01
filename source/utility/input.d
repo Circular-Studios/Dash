@@ -272,11 +272,11 @@ private:
 		enum ElementSize = uint.sizeof;
 		enum Split = TotalSize / ElementSize;
 
-		uint[ Split ] keys;
+		bool[ TotalSize ] keys;
 
 		ref shared(KeyState) opAssign( const ref KeyState other )
 		{
-			for( uint ii = 0; ii < Split; ++ii )
+			for( uint ii = 0; ii < other.keys.length; ++ii )
 				keys[ ii ] = other.keys[ ii ];
 
 			return this;
@@ -284,12 +284,12 @@ private:
 
 		bool opIndex( size_t keyCode ) const
 		{
-			return ( keys[ keyCode / ElementSize ] & getBitAtIndex( keyCode ) ) != 0;
+			return keys[ keyCode ];
 		}
 
 		bool opIndexAssign( bool newValue, size_t keyCode )
 		{
-			keys[ keyCode / ElementSize ] = getBitAtIndex( keyCode ) & ( newValue ? uint.max : 0 );
+			keys[ keyCode ] = newValue;
 			return newValue;
 		}
 
@@ -297,7 +297,7 @@ private:
 		{
 			Tuple!( uint, bool )[] differences;
 
-			for( uint ii = 0; ii < TotalSize; ++ii )
+			for( uint ii = 0; ii < keys.length; ++ii )
 				if( this[ ii ] != other[ ii ] )
 					differences ~= Tuple!( uint, bool )( ii, this[ ii ] );
 
@@ -306,14 +306,8 @@ private:
 
 		void reset()
 		{
-			for( uint ii = 0; ii < Split; ++ii )
-				keys[ ii ] = 0;
-		}
-
-	private:
-		static uint getBitAtIndex( size_t keyCode )
-		{
-			return 1 << ( keyCode % Split );
+			for( uint ii = 0; ii < keys.length; ++ii )
+				keys[ ii ] = false;
 		}
 	}
 }

@@ -173,8 +173,8 @@ public:
 				{
 					// set the shader
 					Shader shader = object.mesh.animated
-									? Shaders[AnimatedGeometryShader]
-									: Shaders[GeometryShader];
+									? Shaders.animatedGeometry
+									: Shaders.geometry;
 
 					glUseProgram( shader.programID );
 					glBindVertexArray( object.mesh.glVertexArray );
@@ -257,7 +257,7 @@ public:
 			// Point Lights
 			if( pointLights.length != 0 )
 			{
-				auto shader = Shaders[ PointLightShader ];
+				auto shader = Shaders.pointLight;
 				glUseProgram( shader.programID );
 
 				bindGeometryOutputs( shader );
@@ -284,7 +284,7 @@ public:
 
 		void uiPass()
 		{
-			Shader shader = Shaders[UserInterfaceShader];
+			Shader shader = Shaders.userInterface;
 			glUseProgram( shader.programID );
 			glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
 			

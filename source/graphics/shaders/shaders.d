@@ -48,14 +48,22 @@ public enum ShaderUniform
 final abstract class Shaders
 {
 public static:
+	Shader geometry;
+	Shader animatedGeometry;
+	Shader ambientLight;
+	Shader directionalLight;
+	Shader pointLight;
+	Shader userInterface;
+
 	final void initialize()
 	{
-		shaders[ GeometryShader ] = new Shader( GeometryShader, geometryVS, geometryFS, true );
-		shaders[ AnimatedGeometryShader ] = new Shader( AnimatedGeometryShader, animatedGeometryVS, geometryFS, true ); // Only VS changed, FS stays the same
-		shaders[ AmbientLightShader ] = new Shader( AmbientLightShader, ambientlightVS, ambientlightFS, true );
-		shaders[ DirectionalLightShader ] = new Shader( DirectionalLightShader, directionallightVS, directionallightFS, true );
-		shaders[ PointLightShader ] = new Shader( PointLightShader, pointlightVS, pointlightFS, true );
-		shaders[ UserInterfaceShader ] = new Shader( UserInterfaceShader, userinterfaceVS, userinterfaceFS, true );
+		shaders[ GeometryShader ] = geometry = new Shader( GeometryShader, geometryVS, geometryFS, true );
+		shaders[ AnimatedGeometryShader ] = animatedGeometry = new Shader( AnimatedGeometryShader, animatedGeometryVS, geometryFS, true ); // Only VS changed, FS stays the same
+		shaders[ AmbientLightShader ] = ambientLight = new Shader( AmbientLightShader, ambientlightVS, ambientlightFS, true );
+		shaders[ DirectionalLightShader ] =directionalLight = new Shader( DirectionalLightShader, directionallightVS, directionallightFS, true );
+		shaders[ PointLightShader ] = pointLight = new Shader( PointLightShader, pointlightVS, pointlightFS, true );
+		shaders[ UserInterfaceShader ] = userInterface = new Shader( UserInterfaceShader, userinterfaceVS, userinterfaceFS, true );
+		
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders, "*.fs.glsl" ) )
 		{
 			// Strip .fs from file name

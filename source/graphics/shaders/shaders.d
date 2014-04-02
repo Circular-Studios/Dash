@@ -30,6 +30,8 @@ public enum ShaderUniform
 	LightRadius = "light.radius",
 	LightPosition = "light.pos_w",
 	EyePosition = "eyePosition_w",
+	/// Animations
+	Bones = "bones",
 }
 
 final abstract class Shaders
@@ -222,6 +224,21 @@ public:
 		glUniformMatrix4fv( getUniformLocation( uniform ), 1, true, matrix.value_ptr );
 	}
 
+	/*
+	 * Bind an array of mat4s.
+	 */
+	final void bindUniformMatrix4fvArray( ShaderUniform uniform, shared mat4[] matrices )
+	{
+		float[] matptr;
+		foreach( matrix; matrices )
+		{
+			for( int i = 0; i < 16; i++ )
+			{
+				matptr ~= matrix.value_ptr()[i];
+			}
+		}
+		glUniformMatrix4fv( getUniformLocation( uniform ), cast(int)matrices.length, true, matptr.ptr );
+	}
 
 	/*
 	 * Binds diffuse, normal, and specular textures to the shader

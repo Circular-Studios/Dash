@@ -149,7 +149,6 @@ public:
 		auto startTime = Time.totalTime;
 		scheduleTask( {
 			dg();
-			logInfo( Time.totalTime.seconds, ":", startTime, " + ", duration );
 			return Time.totalTime >= startTime + duration;
 		} );
 	}

@@ -35,6 +35,7 @@ public:
             // Create the object
             auto object = GameObject.createFromYaml( yml, parents, children );
             
+            // If the object doesn't define a name, error.
             if( object.name != AnonymousName )
             {
                 if( object.name in objects )
@@ -49,6 +50,13 @@ public:
                 assert( false );
             }
             
+            // This goes through each child defined inline and adds it to the scene.
+            // An inline child may look like:
+            // Name: objParent
+            // Children:
+            //     - Name: objChild
+            //     - Mesh: myMesh
+            // In this case, objChild would be added to the scene.
             foreach( child; object.children )
             {
                 objects[ child.name ] = child;
@@ -56,6 +64,7 @@ public:
             }
         }
         
+        // Make sure the child graph is complete.
         foreach( object, parentName; parents )
             objects[ parentName ].addChild( object );
         foreach( object, childNames; children )

@@ -4,6 +4,8 @@ import core, components, graphics, utility;
 import gl3n.linalg;
 import derelict.opengl3.gl3;
 
+import std.algorithm, std.array;
+
 version( Windows )
 {
 	import win32.windef;
@@ -42,11 +44,11 @@ private:
 	uint normalRenderTexture; //Alpha channel stores nothing important
 	uint depthRenderTexture;
 	// Do not add properties for:
-	shared mat4 projection;
-	shared AmbientLight ambientLight;
-	shared DirectionalLight[] directionalLights;
-	shared PointLight[] pointLights;
-	shared SpotLight[] spotLights;
+	//shared mat4 projection;
+	//shared AmbientLight ambientLight;
+	//shared DirectionalLight[] directionalLights;
+	//shared PointLight[] pointLights;
+	//shared SpotLight[] spotLights;
 	shared UserInterface[] uis;
 
 public:
@@ -163,6 +165,22 @@ public:
 			return;
 		}
 
+		auto objsWithLights = scene.objects.values
+								.filter!(obj => obj.light)
+								.map!(obj => obj.light);
+
+		auto getOfType( Type, Range )( Range range )
+		{
+			return range
+					.filter!(obj => typeid(obj) == typeid(Type))
+					.map!(obj => cast(shared Type)obj);
+		}
+
+		auto ambientLights = getOfType!AmbientLight( objsWithLights );
+		auto directionalLights = getOfType!DirectionalLight( objsWithLights );
+		auto pointLights = getOfType!PointLight( objsWithLights );
+		auto spotLights = getOfType!SpotLight( objsWithLights );
+
 		shared mat4 perspProj = scene.camera.buildPerspective( cast(float)width, cast(float)height );
 
 		void geometryPass()
@@ -213,14 +231,14 @@ public:
 			}
 
 			// Ambient Light
-			if( ambientLight !is null )
+			if( !ambientLights.empty )
 			{
 				auto shader = Shaders[ AmbientLightShader ];
 				glUseProgram( shader.programID );
 
 				bindGeometryOutputs( shader );
 
-				shader.bindAmbientLight( ambientLight );
+				shader.bindAmbientLight( ambientLights.front );
 				// bind inverseViewProj for rebuilding world positions from pixel locations
 				shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
 				                            ( perspProj * scene.camera.viewMatrix ).inverse() );
@@ -228,10 +246,17 @@ public:
 				// bind the window mesh for ambient lights
 				glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
 				glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSquare ).numVertices, GL_UNSIGNED_INT, null );
+
+				ambientLights.popFront;
+
+				if( !ambientLights.empty )
+				{
+					logWarning( "Only one ambient light per scene is utilized." );
+				}
 			}
 
 			// Directional Lights
-			if( directionalLights.length != 0 )
+			if( !directionalLights.empty )
 			{
 				auto shader = Shaders[ DirectionalLightShader ];
 				glUseProgram( shader.programID );
@@ -255,7 +280,7 @@ public:
 			}
 
 			// Point Lights
-			if( pointLights.length != 0 )
+			if( !pointLights.empty )
 			{
 				auto shader = Shaders[ PointLightShader ];
 				glUseProgram( shader.programID );
@@ -279,6 +304,12 @@ public:
 					shader.bindPointLight( light );
 					glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSphere ).numVertices, GL_UNSIGNED_INT, null );
 				}
+			}
+
+			// Spot Lights
+			if( !spotLights.empty )
+			{
+				// TODO
 			}
 		}
 
@@ -332,46 +363,7 @@ public:
 		// clean up 
 		glBindVertexArray(0);
 		glUseProgram(0);
-		ambientLight = null;
-		directionalLights = [];
-		pointLights = [];
-		spotLights = [];
 		uis = [];
-	}
-
-	/*
-	 * Build arrays of lights in the scene to be drawn in endDraw
-	 */
-	final void addLight( shared Light light )
-	{
-		auto lightType = typeid( light );
-
-		if( lightType == typeid( AmbientLight ) )
-		{
-			if( ambientLight is null )
-			{
-				ambientLight = cast(shared AmbientLight)light;
-			}
-			else
-				logWarning( "Attemtping to add multiple ambient lights to the scene.  ",
-											"Ignoring additional ambient lights." );
-		}
-		else if( lightType == typeid( DirectionalLight ) )
-		{
-			directionalLights ~= cast(shared DirectionalLight)light;
-		}
-		else if( lightType == typeid( PointLight ) )
-		{
-			pointLights ~= cast(shared PointLight)light;
-		}
-		else if( lightType == typeid( SpotLight ) )
-		{
-			spotLights ~= cast(shared SpotLight)light;
-		}
-		else
-		{
-			logWarning( "Attempting to add unknown light type, light ignored." );
-		}
 	}
 
 	/*

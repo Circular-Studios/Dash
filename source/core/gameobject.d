@@ -191,11 +191,6 @@ public:
 	final void draw()
 	{
 		onDraw();
-		
-		if( light !is null )
-		{
-			Graphics.addLight( light );
-		}
 	}
 
 	/**

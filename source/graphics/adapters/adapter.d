@@ -44,11 +44,6 @@ private:
 	uint normalRenderTexture; //Alpha channel stores nothing important
 	uint depthRenderTexture;
 	// Do not add properties for:
-	//shared mat4 projection;
-	//shared AmbientLight ambientLight;
-	//shared DirectionalLight[] directionalLights;
-	//shared PointLight[] pointLights;
-	//shared SpotLight[] spotLights;
 	shared UserInterface[] uis;
 
 public:
@@ -62,16 +57,6 @@ public:
 	mixin( Property!_fullscreen );
 	mixin( Property!_backfaceCulling );
 	mixin( Property!_vsync );
-	
-
-	/**
-	 *  Constant strings for various parts of the render pipeline
-	 **/
-	enum : string 
-	{
-		UnitSquare = "unitsquare",
-		UnitSphere = "unitsphere",
-	}
 
 	abstract void initialize();
 	abstract void shutdown();
@@ -187,12 +172,14 @@ public:
 		{
 			foreach( object; scene )
 			{
+
 				if( object.mesh )
 				{
+					logInfo(object.name);
 					// set the shader
 					Shader shader = object.mesh.animated
-									? Shaders[AnimatedGeometryShader]
-									: Shaders[GeometryShader];
+									? Shaders.animatedGeometry
+									: Shaders.geometry;
 
 					glUseProgram( shader.programID );
 					glBindVertexArray( object.mesh.glVertexArray );
@@ -233,7 +220,7 @@ public:
 			// Ambient Light
 			if( !ambientLights.empty )
 			{
-				auto shader = Shaders[ AmbientLightShader ];
+				auto shader = Shaders.ambientLight;
 				glUseProgram( shader.programID );
 
 				bindGeometryOutputs( shader );
@@ -244,8 +231,8 @@ public:
 				                            ( perspProj * scene.camera.viewMatrix ).inverse() );
 
 				// bind the window mesh for ambient lights
-				glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
-				glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSquare ).numVertices, GL_UNSIGNED_INT, null );
+				glBindVertexArray( Assets.unitSquare.glVertexArray );
+				glDrawElements( GL_TRIANGLES, Assets.unitSquare.numVertices, GL_UNSIGNED_INT, null );
 
 				ambientLights.popFront;
 
@@ -258,7 +245,7 @@ public:
 			// Directional Lights
 			if( !directionalLights.empty )
 			{
-				auto shader = Shaders[ DirectionalLightShader ];
+				auto shader = Shaders.directionalLight;
 				glUseProgram( shader.programID );
 
 				bindGeometryOutputs( shader );
@@ -269,20 +256,20 @@ public:
 				shader.setEyePosition( scene.camera.owner.transform.worldPosition );
 
 				// bind the window mesh for directional lights
-				glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
+				glBindVertexArray( Assets.unitSquare.glVertexArray );
 
 				// bind and draw directional lights
 				foreach( light; directionalLights )
 				{
 					shader.bindDirectionalLight( light );
-					glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSquare ).numVertices, GL_UNSIGNED_INT, null );
+					glDrawElements( GL_TRIANGLES, Assets.unitSquare.numVertices, GL_UNSIGNED_INT, null );
 				}
 			}
 
 			// Point Lights
 			if( !pointLights.empty )
 			{
-				auto shader = Shaders[ PointLightShader ];
+				auto shader = Shaders.pointLight;
 				glUseProgram( shader.programID );
 
 				bindGeometryOutputs( shader );
@@ -293,7 +280,7 @@ public:
 				shader.setEyePosition( scene.camera.owner.transform.worldPosition );
 
 				// bind the sphere mesh for point lights
-				glBindVertexArray( Assets.get!Mesh( UnitSphere ).glVertexArray );
+				glBindVertexArray( Assets.unitSphere.glVertexArray );
 
 				// bind and draw point lights
 				foreach( light; pointLights )
@@ -302,7 +289,7 @@ public:
 					shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection, 
 												 perspProj * scene.camera.viewMatrix * light.getTransform() );
 					shader.bindPointLight( light );
-					glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSphere ).numVertices, GL_UNSIGNED_INT, null );
+					glDrawElements( GL_TRIANGLES, Assets.unitSphere.numVertices, GL_UNSIGNED_INT, null );
 				}
 			}
 
@@ -315,16 +302,16 @@ public:
 
 		void uiPass()
 		{
-			Shader shader = Shaders[UserInterfaceShader];
+			Shader shader = Shaders.userInterface;
 			glUseProgram( shader.programID );
-			glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
+			glBindVertexArray( Assets.unitSquare.glVertexArray );
 			
 			foreach( ui; uis )
 			{
 				shader.bindUniformMatrix4fv( ShaderUniform.WorldProj, 
 					( scene.camera.buildOrthogonal( cast(float)width, cast(float)height ) ) * ui.scaleMat );
 				shader.bindUI( ui );
-				glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSquare ).numVertices, GL_UNSIGNED_INT, null );
+				glDrawElements( GL_TRIANGLES, Assets.unitSquare.numVertices, GL_UNSIGNED_INT, null );
 
 			}
 

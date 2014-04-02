@@ -8,19 +8,6 @@ import gl3n.linalg;
 import std.string, std.traits;
 
 /*
- * String constants for shader names
- */
-public enum : string
-{
-	GeometryShader = "geometry",
-	AnimatedGeometryShader = "animatedgeometry",
-	AmbientLightShader = "ambientlight",
-	DirectionalLightShader = "direcionallight",
-	PointLightShader = "pointlight",
-	UserInterfaceShader = "userinterface",
-}
-
-/*
  * String constants for our shader uniforms
  */
 public enum ShaderUniform 
@@ -43,37 +30,34 @@ public enum ShaderUniform
 	LightRadius = "light.radius",
 	LightPosition = "light.pos_w",
 	EyePosition = "eyePosition_w",
+	/// Animations
+	Bones = "bones",
 }
 
 final abstract class Shaders
 {
 public static:
+	Shader geometry;
+	Shader animatedGeometry;
+	Shader ambientLight;
+	Shader directionalLight;
+	Shader pointLight;
+	Shader userInterface;
+
 	final void initialize()
 	{
-		shaders[ GeometryShader ] = new Shader( GeometryShader, geometryVS, geometryFS, true );
-		shaders[ AnimatedGeometryShader ] = new Shader( AnimatedGeometryShader, animatedGeometryVS, geometryFS, true ); // Only VS changed, FS stays the same
-		shaders[ AmbientLightShader ] = new Shader( AmbientLightShader, ambientlightVS, ambientlightFS, true );
-		shaders[ DirectionalLightShader ] = new Shader( DirectionalLightShader, directionallightVS, directionallightFS, true );
-		shaders[ PointLightShader ] = new Shader( PointLightShader, pointlightVS, pointlightFS, true );
-		shaders[ UserInterfaceShader ] = new Shader( UserInterfaceShader, userinterfaceVS, userinterfaceFS, true );
+		geometry = new Shader( "Geometry", geometryVS, geometryFS, true );
+		animatedGeometry = new Shader( "AnimatedGeometry", animatedGeometryVS, geometryFS, true ); // Only VS changed, FS stays the same
+		ambientLight = new Shader( "AmbientLight", ambientlightVS, ambientlightFS, true );
+		directionalLight = new Shader( "DirectionalLight", directionallightVS, directionallightFS, true );
+		pointLight = new Shader( "PointLight", pointlightVS, pointlightFS, true );
+		userInterface = new Shader( "UserInterface", userinterfaceVS, userinterfaceFS, true );
+
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders, "*.fs.glsl" ) )
 		{
 			// Strip .fs from file name
 			string name = file.baseFileName[ 0..$-3 ];
-			// if statement hitler
-			// blame: Tyler
-			if( name != GeometryShader &&
-			   name != AnimatedGeometryShader &&
-			   name != AmbientLightShader &&
-			   name != DirectionalLightShader &&
-			   name != PointLightShader )
-			{
-				shaders[ name ] = new Shader( name, file.directory ~ "\\" ~ name ~ ".vs.glsl", file.fullPath );
-			}
-			else
-			{
-				log( OutputType.Warning, "Shader not loaded: Shader found which would overwrite " ~ name ~ " shader" );
-			}
+			shaders[ name ] = new Shader( name, file.directory ~ "\\" ~ name ~ ".vs.glsl", file.fullPath );
 		}
 
 		shaders.rehash();
@@ -240,6 +224,21 @@ public:
 		glUniformMatrix4fv( getUniformLocation( uniform ), 1, true, matrix.value_ptr );
 	}
 
+	/*
+	 * Bind an array of mat4s.
+	 */
+	final void bindUniformMatrix4fvArray( ShaderUniform uniform, shared mat4[] matrices )
+	{
+		float[] matptr;
+		foreach( matrix; matrices )
+		{
+			for( int i = 0; i < 16; i++ )
+			{
+				matptr ~= matrix.value_ptr()[i];
+			}
+		}
+		glUniformMatrix4fv( getUniformLocation( uniform ), cast(int)matrices.length, true, matptr.ptr );
+	}
 
 	/*
 	 * Binds diffuse, normal, and specular textures to the shader

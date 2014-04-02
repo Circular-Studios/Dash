@@ -4,9 +4,11 @@
 module components.assets;
 import components, utility;
 
+import std.string;
+import std.exception;
+
 import yaml;
 import derelict.freeimage.freeimage, derelict.assimp3.assimp;
-
 shared AssetManager Assets;
 
 shared static this()
@@ -20,6 +22,9 @@ shared static this()
 shared final class AssetManager
 {
 public:
+	Mesh unitSquare;
+	Mesh unitSphere;
+
 	/**
 	 * Get the asset with the given type and name.
 	 */
@@ -54,17 +59,21 @@ public:
 		// Initial assimp start
 		DerelictASSIMP3.load();
 
+		// Make sure fbxs are supported.
+		assert(aiIsExtensionSupported(".fbx".toStringz), "fbx format isn't supported by assimp instance!");
+
 		foreach( file; FilePath.scanDirectory( FilePath.Resources.Meshes ) )
 		{
 			// Load mesh
-			const aiScene* scene = aiImportFile(( file.fullPath ~ "\0" ).ptr,
+			const aiScene* scene = aiImportFile( file.fullPath.toStringz,
 			                                    aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
 			                                    aiProcess_JoinIdenticalVertices | aiProcess_SortByPType );
 												//| aiProcess_FlipWindingOrder );
-
+			enforce(scene, "Failed to load scene file '" ~ file.fullPath ~ "' Error: " ~ aiGetErrorString().fromStringz);
+			
 			// If animation data, add animation
 			if(scene.mNumAnimations > 0)
-				animations[ file.baseFileName ] = new shared AssetAnimation( file.baseFileName, scene.mAnimations[0], scene.mRootNode.mChildren[1]);
+				animations[ file.baseFileName ] = new shared AssetAnimation( scene.mAnimations[0], scene.mMeshes[0], scene.mRootNode );
 
 			// Add mesh
 			meshes[ file.baseFileName ] = new shared Mesh( file.fullPath, scene.mMeshes[0] );
@@ -89,6 +98,9 @@ public:
 		textures.rehash();
 		materials.rehash();
 		animations.rehash();
+
+		unitSquare = meshes[ "unitsquare" ];
+		unitSphere = meshes[ "unitsphere" ];
 	}
 
 	/**

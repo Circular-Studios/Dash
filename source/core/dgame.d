@@ -100,9 +100,8 @@ public:
 				scheduledTasks ~= end;
 			}
 
-			if( activeScene )
-				foreach( obj; activeScene )
-					obj.update();
+			foreach( obj; activeScene )
+				obj.update();
 
 			// Do the updating of the child class.
 			onUpdate();
@@ -114,9 +113,8 @@ public:
 			// Begin drawing
 			Graphics.beginDraw();
 
-			if( activeScene )
-				foreach( obj; activeScene )
-					obj.draw();
+			foreach( obj; activeScene )
+				obj.draw();
 
 			// Draw in child class
 			onDraw();
@@ -151,7 +149,6 @@ public:
 		auto startTime = Time.totalTime;
 		scheduleTask( {
 			dg();
-			logInfo( Time.totalTime.seconds, ":", startTime, " + ", duration );
 			return Time.totalTime >= startTime + duration;
 		} );
 	}

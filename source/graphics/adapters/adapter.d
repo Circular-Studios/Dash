@@ -175,7 +175,6 @@ public:
 
 				if( object.mesh )
 				{
-					logInfo(object.name);
 					// set the shader
 					Shader shader = object.mesh.animated
 									? Shaders.animatedGeometry
@@ -187,6 +186,9 @@ public:
 					shader.bindUniformMatrix4fv( ShaderUniform.World, object.transform.matrix );
 					shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection,
 												 perspProj * scene.camera.viewMatrix * object.transform.matrix );
+
+					if( object.mesh.animated )
+						shader.bindUniformMatrix4fvArray( ShaderUniform.Bones, object.animation.currBoneTransforms );
 
 					shader.bindMaterial( object.material );
 

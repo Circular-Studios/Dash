@@ -17,7 +17,9 @@ public enum ShaderUniform
     WorldProj = "worldProj", // used this for scaling & orthogonal UI drawing
     WorldView = "worldView",
     WorldViewProjection = "worldViewProj",
-    InverseViewProjection = "invViewProj",
+    InverseProjection = "invProj",
+    /// Floats
+    ProjectionConstants = "projectionConstants",
     /// Textures
     UITexture = "uiTexture",
     DiffuseTexture = "diffuseTexture",
@@ -208,6 +210,14 @@ public:
     }
 
     /*
+     * Pass through for glUniform2f
+     */
+    final void bindUniform2f( ShaderUniform uniform, const shared vec2 value )
+    {
+        glUniform2f( getUniformLocation( uniform ), value.x, value.y );
+    }
+
+    /*
      * Pass through for glUniform 3f
      * Passes to the shader in XYZ order
      */
@@ -282,7 +292,7 @@ public:
      */
     final void bindDirectionalLight( shared DirectionalLight light )
     {
-        bindUniform3f( ShaderUniform.LightDirection, light.direction );
+        bindUniform3f( ShaderUniform.LightDirection, light.direction);
         bindUniform3f( ShaderUniform.LightColor, light.color );
     }
 

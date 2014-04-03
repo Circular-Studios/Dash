@@ -20,7 +20,7 @@ immutable string directionallightVS = q{
         fPosition_s = vec4( vPosition_s, 1.0f );
         gl_Position = fPosition_s;
 
-        vec3 position_v = mul( invProj, vPosition_s );
+        vec3 position_v = ( invProj * vec4( vPosition_s, 1.0f ) ).xyz;
         // This is the ray clamped to depth 1, and it'll just be moved & interpolated in the XY
         fViewRay = vec3( position_v.xy / position_v.z, 1.0f );
         fUV = vUV;
@@ -47,8 +47,7 @@ immutable string directionallightFS = q{
     uniform DirectionalLight light;
     // A pair of constants for reconstructing the linear Z
     // [ (-Far * Near ) / ( Far - Near ),  Far / ( Far - Near )  ]
-    uniform vec2 projectionConstant;
-    uniform mat4 invProj;
+    uniform vec2 projectionConstants;
 
     // https://stackoverflow.com/questions/9222217/how-does-the-fragment-shader-know-what-variable-to-use-for-the-color-of-a-pixel
     out vec4 color;
@@ -69,16 +68,16 @@ immutable string directionallightFS = q{
 
         // Reconstruct position from Depth
         float depth = texture( depthTexture, fUV ).x;
-        float linearDepth = projectionConstant.x / ( depth - projectionConstant.y );
-        vec3 position_v = viewRay * linearDepth;
+        float linearDepth = projectionConstants.x / ( depth - projectionConstants.y );
+        vec3 position_v = fViewRay * linearDepth;
 
 
         // Diffuse lighting calculations
-        float diffuseScale = clamp( dot( normal, -lightDir ), 0, 1 );
+        float diffuseScale = clamp( dot( normal_v, -lightDir_v ), 0, 1 );
 
         // Specular lighting calculations
         // Usually in these you see an "eyeDirection" variable, but in view space that is our position
-        float specularScale = clamp( dot( position_v, reflect( -lightDir, normal ) ), 0, 1 );
+        float specularScale = clamp( dot( normalize( -position_v ), reflect( -lightDir_v, normal_v ) ), 0, 1 );
 
         vec3 diffuse = ( diffuseScale * light.color ) * textureColor;
         // "8" is the reflectiveness

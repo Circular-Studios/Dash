@@ -167,6 +167,7 @@ public:
         auto spotLights = getOfType!SpotLight( objsWithLights );
 
         shared mat4 perspProj = scene.camera.buildPerspective( cast(float)width, cast(float)height );
+        shared mat4 invProj = perspProj.inverse();
 
         void geometryPass()
         {
@@ -183,9 +184,10 @@ public:
                     glUseProgram( shader.programID );
                     glBindVertexArray( object.mesh.glVertexArray );
 
-                    shader.bindUniformMatrix4fv( ShaderUniform.World, object.transform.matrix );
+                    shared mat4 worldView =  scene.camera.viewMatrix * object.transform.matrix;
+                    shader.bindUniformMatrix4fv( ShaderUniform.WorldView, worldView );
                     shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection,
-                                                 perspProj * scene.camera.viewMatrix * object.transform.matrix );
+                                                 perspProj * worldView );
 
                     if( object.mesh.animated )
                         shader.bindUniformMatrix4fvArray( ShaderUniform.Bones, object.animation.currBoneTransforms );
@@ -228,9 +230,6 @@ public:
                 bindGeometryOutputs( shader );
 
                 shader.bindAmbientLight( ambientLights.front );
-                // bind inverseViewProj for rebuilding world positions from pixel locations
-                shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-                                            ( perspProj * scene.camera.viewMatrix ).inverse() );
 
                 // bind the window mesh for ambient lights
                 glBindVertexArray( Assets.unitSquare.glVertexArray );
@@ -252,10 +251,9 @@ public:
 
                 bindGeometryOutputs( shader );
 
-                // bind inverseViewProj for rebuilding world positions from pixel locations
-                shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-                                            ( perspProj * scene.camera.viewMatrix ).inverse() );
-                shader.setEyePosition( scene.camera.owner.transform.worldPosition );
+                // bind inverseProj for rebuilding world positions from pixel locations
+                shader.bindUniformMatrix4fv( ShaderUniform.InverseProjection, invProj );
+                shader.bindUniform2f( ShaderUniform.ProjectionConstants, scene.camera.projectionConstants);
 
                 // bind the window mesh for directional lights
                 glBindVertexArray( Assets.unitSquare.glVertexArray );
@@ -263,7 +261,7 @@ public:
                 // bind and draw directional lights
                 foreach( light; directionalLights )
                 {
-                    shader.bindDirectionalLight( light );
+                    shader.bindDirectionalLight( new shared DirectionalLight( cast()light.color, cast()( scene.camera.viewMatrix * vec4( light.direction, 0.0f ) ).xyz ) );
                     glDrawElements( GL_TRIANGLES, Assets.unitSquare.numVertices, GL_UNSIGNED_INT, null );
                 }
             }
@@ -277,8 +275,7 @@ public:
                 bindGeometryOutputs( shader );
 
                 // bind inverseViewProj for rebuilding world positions from pixel locations
-                shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-                                            ( perspProj * scene.camera.viewMatrix ).inverse() );
+                shader.bindUniformMatrix4fv( ShaderUniform.InverseProjection, invProj );
                 shader.setEyePosition( scene.camera.owner.transform.worldPosition );
 
                 // bind the sphere mesh for point lights

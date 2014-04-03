@@ -15,7 +15,6 @@ immutable string geometryVS = q{
     out vec2 fUV;
     out vec3 fTangent_v;
 
-    uniform mat4 world;
     uniform mat4 worldView;
     uniform mat4 worldViewProj;
 

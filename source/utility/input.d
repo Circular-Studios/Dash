@@ -4,7 +4,7 @@
 module utility.input;
 import utility;
 
-import yaml;
+import yaml, gl3n.linalg;
 import core.sync.mutex;
 import std.typecons, std.conv;
 
@@ -252,6 +252,36 @@ public:
         {
 
         }*/
+    }
+
+    /**
+     * Get's the position of the cursor.
+     *
+     * Returns:     The position of the mouse cursor.
+     */
+    final shared vec2 getMousePos()
+    {
+        version( Windows )
+        {
+            import graphics;
+            import win32.windows;
+            POINT i;
+            GetCursorPos( &i );
+            ScreenToClient( Win32.get().hWnd, &i );
+
+            // Adjust for border
+            if( !Graphics.adapter.fullscreen )
+            {
+                i.x -= GetSystemMetrics( SM_CXBORDER );
+                i.y -= GetSystemMetrics( SM_CYBORDER );
+            }
+
+            return shared vec2( cast(float)i.x, cast(float)i.y );
+        }
+        else version( linux )
+        {
+            return shared vec2();
+        }
     }
 
 private:

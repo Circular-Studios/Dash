@@ -4,6 +4,8 @@ import core, components, graphics, utility;
 import gl3n.linalg;
 import derelict.opengl3.gl3;
 
+import std.algorithm, std.array;
+
 version( Windows )
 {
 	import win32.windef;
@@ -42,13 +44,6 @@ private:
 	uint normalRenderTexture; //Alpha channel stores nothing important
 	uint depthRenderTexture;
 	// Do not add properties for:
-	shared mat4 projection;
-	shared Camera activeCamera;
-	shared AmbientLight ambientLight;
-	shared DirectionalLight[] directionalLights;
-	shared PointLight[] pointLights;
-	shared SpotLight[] spotLights;
-	shared GameObject[] objectsInScene;
 	shared UserInterface[] uis;
 
 public:
@@ -62,16 +57,6 @@ public:
 	mixin( Property!_fullscreen );
 	mixin( Property!_backfaceCulling );
 	mixin( Property!_vsync );
-	
-
-	/**
-	 *  Constant strings for various parts of the render pipeline
-	 **/
-	enum : string 
-	{
-		UnitSquare = "unitsquare",
-		UnitSphere = "unitsphere",
-	}
 
 	abstract void initialize();
 	abstract void shutdown();
@@ -144,8 +129,6 @@ public:
 		
 		
 	}
-
-	
 	
 	/**
 	 * called after all desired objects are drawn
@@ -153,34 +136,66 @@ public:
 	 */
 	final void endDraw()
 	{
-		shared mat4 view = activeCamera ? activeCamera.viewMatrix : mat4.identity;
-		shared mat4 perspProj = activeCamera ? 
-						  	activeCamera.buildPerspective( cast(float)width, cast(float)height ) : 
-			 				mat4.identity;
-
-		void geometryPass( )
+		if( !DGame.instance.activeScene )
 		{
-			foreach( object; objectsInScene )
+			logWarning( "No active scene." );
+			return;
+		}
+
+		auto scene = DGame.instance.activeScene;
+
+		if( !scene.camera )
+		{
+			logWarning( "No camera on active scene." );
+			return;
+		}
+
+		auto objsWithLights = scene.objects.values
+								.filter!(obj => obj.light)
+								.map!(obj => obj.light);
+
+		auto getOfType( Type, Range )( Range range )
+		{
+			return range
+					.filter!(obj => typeid(obj) == typeid(Type))
+					.map!(obj => cast(shared Type)obj);
+		}
+
+		auto ambientLights = getOfType!AmbientLight( objsWithLights );
+		auto directionalLights = getOfType!DirectionalLight( objsWithLights );
+		auto pointLights = getOfType!PointLight( objsWithLights );
+		auto spotLights = getOfType!SpotLight( objsWithLights );
+
+		shared mat4 perspProj = scene.camera.buildPerspective( cast(float)width, cast(float)height );
+
+		void geometryPass()
+		{
+			foreach( object; scene )
 			{
-				// set the shader
-				auto shader = object.mesh.animated
-						 ? Shaders[AnimatedGeometryShader]
-						 : Shaders[GeometryShader];
 
-				glUseProgram( shader.programID );
-				glBindVertexArray( object.mesh.glVertexArray );
+				if( object.mesh )
+				{
+					// set the shader
+					Shader shader = object.mesh.animated
+									? Shaders.animatedGeometry
+									: Shaders.geometry;
 
-				shader.bindUniformMatrix4fv( ShaderUniform.World, object.transform.matrix );
-				shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection,
-											 perspProj * view * object.transform.matrix );
-				if( object.mesh.animated )
-					shader.bindUniformMatrix4fvArray( ShaderUniform.Bones, object.animation.currBoneTransforms );
+					glUseProgram( shader.programID );
+					glBindVertexArray( object.mesh.glVertexArray );
 
-				shader.bindMaterial( object.material );
+					shader.bindUniformMatrix4fv( ShaderUniform.World, object.transform.matrix );
+					shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection,
+												 perspProj * scene.camera.viewMatrix * object.transform.matrix );
 
-				glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
+					if( object.mesh.animated )
+						shader.bindUniformMatrix4fvArray( ShaderUniform.Bones, object.animation.currBoneTransforms );
 
-				glBindVertexArray(0);
+					shader.bindMaterial( object.material );
+
+					glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
+
+					glBindVertexArray(0);
+				}
 			}
 		}
 
@@ -205,87 +220,100 @@ public:
 			}
 
 			// Ambient Light
-			if( ambientLight !is null )
+			if( !ambientLights.empty )
 			{
-				auto shader = Shaders[ AmbientLightShader ];
+				auto shader = Shaders.ambientLight;
 				glUseProgram( shader.programID );
 
 				bindGeometryOutputs( shader );
 
-				shader.bindAmbientLight( ambientLight );
+				shader.bindAmbientLight( ambientLights.front );
 				// bind inverseViewProj for rebuilding world positions from pixel locations
 				shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-				                            ( perspProj * view ).inverse() );
+				                            ( perspProj * scene.camera.viewMatrix ).inverse() );
 
 				// bind the window mesh for ambient lights
-				glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
-				glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSquare ).numVertices, GL_UNSIGNED_INT, null );
+				glBindVertexArray( Assets.unitSquare.glVertexArray );
+				glDrawElements( GL_TRIANGLES, Assets.unitSquare.numVertices, GL_UNSIGNED_INT, null );
+
+				ambientLights.popFront;
+
+				if( !ambientLights.empty )
+				{
+					logWarning( "Only one ambient light per scene is utilized." );
+				}
 			}
 
 			// Directional Lights
-			if( directionalLights.length != 0 )
+			if( !directionalLights.empty )
 			{
-				auto shader = Shaders[ DirectionalLightShader ];
+				auto shader = Shaders.directionalLight;
 				glUseProgram( shader.programID );
 
 				bindGeometryOutputs( shader );
 
 				// bind inverseViewProj for rebuilding world positions from pixel locations
 				shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-				                            ( perspProj * view ).inverse() );
-				shader.setEyePosition( activeCamera ? activeCamera.owner.transform.worldPosition : shared vec3( 0, 0, 0 ) );
+				                            ( perspProj * scene.camera.viewMatrix ).inverse() );
+				shader.setEyePosition( scene.camera.owner.transform.worldPosition );
 
 				// bind the window mesh for directional lights
-				glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
+				glBindVertexArray( Assets.unitSquare.glVertexArray );
 
 				// bind and draw directional lights
 				foreach( light; directionalLights )
 				{
 					shader.bindDirectionalLight( light );
-					glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSquare ).numVertices, GL_UNSIGNED_INT, null );
+					glDrawElements( GL_TRIANGLES, Assets.unitSquare.numVertices, GL_UNSIGNED_INT, null );
 				}
 			}
 
 			// Point Lights
-			if( pointLights.length != 0 )
+			if( !pointLights.empty )
 			{
-				auto shader = Shaders[ PointLightShader ];
+				auto shader = Shaders.pointLight;
 				glUseProgram( shader.programID );
 
 				bindGeometryOutputs( shader );
 
 				// bind inverseViewProj for rebuilding world positions from pixel locations
 				shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-				                            ( perspProj * view ).inverse() );
-				shader.setEyePosition( activeCamera ? activeCamera.owner.transform.worldPosition : shared vec3( 0, 0, 0 ) );
+				                            ( perspProj * scene.camera.viewMatrix ).inverse() );
+				shader.setEyePosition( scene.camera.owner.transform.worldPosition );
 
 				// bind the sphere mesh for point lights
-				glBindVertexArray( Assets.get!Mesh( UnitSphere ).glVertexArray );
+				glBindVertexArray( Assets.unitSphere.glVertexArray );
 
 				// bind and draw point lights
 				foreach( light; pointLights )
 				{
 				//	logInfo(light.owner.name);
 					shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection, 
-												 perspProj * view * light.getTransform() );
+												 perspProj * scene.camera.viewMatrix * light.getTransform() );
 					shader.bindPointLight( light );
-					glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSphere ).numVertices, GL_UNSIGNED_INT, null );
+					glDrawElements( GL_TRIANGLES, Assets.unitSphere.numVertices, GL_UNSIGNED_INT, null );
 				}
+			}
+
+			// Spot Lights
+			if( !spotLights.empty )
+			{
+				// TODO
 			}
 		}
 
 		void uiPass()
 		{
-			Shader shader = Shaders[UserInterfaceShader];
+			Shader shader = Shaders.userInterface;
 			glUseProgram( shader.programID );
-			glBindVertexArray( Assets.get!Mesh( UnitSquare ).glVertexArray );
+			glBindVertexArray( Assets.unitSquare.glVertexArray );
 			
 			foreach( ui; uis )
 			{
 				shader.bindUniformMatrix4fv( ShaderUniform.WorldProj, 
-					(activeCamera ? activeCamera.buildOrthogonal( cast(float)width, cast(float)height ) : mat4.identity) * ui.scaleMat );
+					( scene.camera.buildOrthogonal( cast(float)width, cast(float)height ) ) * ui.scaleMat );
 				shader.bindUI( ui );
-				glDrawElements( GL_TRIANGLES, Assets.get!Mesh( UnitSquare ).numVertices, GL_UNSIGNED_INT, null );
+				glDrawElements( GL_TRIANGLES, Assets.unitSquare.numVertices, GL_UNSIGNED_INT, null );
 
 			}
 
@@ -324,58 +352,7 @@ public:
 		// clean up 
 		glBindVertexArray(0);
 		glUseProgram(0);
-		ambientLight = null;
-		directionalLights = [];
-		pointLights = [];
-		spotLights = [];
-		objectsInScene = [];
 		uis = [];
-	}
-
-	/**
-	 * Adds an object to the scene 
-	 * beginDraw must be called before any calls of this function
-	 * Params:
-	 *	object = the object to be drawn
-	 */
-	final void addObject( shared GameObject object )
-	{
-		objectsInScene ~= object;
-	}
-
-	/*
-	 * Build arrays of lights in the scene to be drawn in endDraw
-	 */
-	final void addLight( shared Light light )
-	{
-		auto lightType = typeid( light );
-
-		if( lightType == typeid( AmbientLight ) )
-		{
-			if( ambientLight is null )
-			{
-				ambientLight = cast(shared AmbientLight)light;
-			}
-			else
-				log( OutputType.Warning, "Attemtping to add multiple ambient lights to the scene.  ",
-											"Ignoring additional ambient lights." );
-		}
-		else if( lightType == typeid( DirectionalLight ) )
-		{
-			directionalLights ~= cast(shared DirectionalLight)light;
-		}
-		else if( lightType == typeid( PointLight ) )
-		{
-			pointLights ~= cast(shared PointLight)light;
-		}
-		else if( lightType == typeid( SpotLight ) )
-		{
-			spotLights ~= cast(shared SpotLight)light;
-		}
-		else
-		{
-			logWarning( "Attempting to add unknown light type, light ignored." );
-		}
 	}
 
 	/*
@@ -385,15 +362,6 @@ public:
 	final void addUI( shared UserInterface ui )
 	{
 		uis ~= ui;
-	}
-
-	/*
-	 * Set the camera to draw the scene from.
-	 * Should be set before endDraw.
-	 */
-	final void setCamera( shared Camera camera )
-	{
-		activeCamera = camera;
 	}
 
 protected:

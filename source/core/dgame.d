@@ -34,6 +34,9 @@ public:
 	/// Current state of the game
 	GameState currentState;
 
+	/// The currently active scene
+	Scene activeScene;
+
 	/**
 	 * Overrideable. Returns the name of the window.
 	 */
@@ -97,6 +100,9 @@ public:
 				scheduledTasks ~= end;
 			}
 
+			foreach( obj; activeScene )
+				obj.update();
+
 			// Do the updating of the child class.
 			onUpdate();
 
@@ -106,6 +112,9 @@ public:
 
 			// Begin drawing
 			Graphics.beginDraw();
+
+			foreach( obj; activeScene )
+				obj.draw();
 
 			// Draw in child class
 			onDraw();

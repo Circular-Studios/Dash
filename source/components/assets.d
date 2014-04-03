@@ -22,6 +22,9 @@ shared static this()
 shared final class AssetManager
 {
 public:
+	Mesh unitSquare;
+	Mesh unitSphere;
+
 	/**
 	 * Get the asset with the given type and name.
 	 */
@@ -95,6 +98,9 @@ public:
 		textures.rehash();
 		materials.rehash();
 		animations.rehash();
+
+		unitSquare = meshes[ "unitsquare" ];
+		unitSphere = meshes[ "unitsphere" ];
 	}
 
 	/**

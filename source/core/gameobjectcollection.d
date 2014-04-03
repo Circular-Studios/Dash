@@ -8,6 +8,8 @@ import yaml;
 
 import std.path, std.parallelism;
 
+deprecated( "Use Scenes instead." ):
+
 /**
  * Manages a collection of GameObjects.
  */

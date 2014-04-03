@@ -30,6 +30,8 @@ public:
     shared static struct UpdateFlags
     {
         bool updateScene;
+        bool updateUI;
+        bool updateTasks;
         //bool updatePhysics;
 
         void pauseAll()
@@ -93,33 +95,42 @@ public:
             Input.update();
 
             // Update webcore
-            UserInterface.updateAwesomium();
+            if ( updateFlags.updateUI )
+            {
+                UserInterface.updateAwesomium();
+            }
 
             // Update physics
-            //if( currentState == GameState.Game )
+            //if( updateFlags.updatePhysics )
             //  PhysicsController.stepPhysics( Time.deltaTime );
 
-            uint[] toRemove;    // Indicies of tasks which are done
-            foreach( i, task; scheduledTasks )
+            if ( updateFlags.updateTasks )
             {
-                if( task() )
-                    toRemove ~= cast(uint)i;
+                uint[] toRemove;    // Indicies of tasks which are done
+                foreach( i, task; scheduledTasks )
+                {
+                    if( task() )
+                        toRemove ~= cast(uint)i;
+                }
+                foreach( i; toRemove )
+                {
+                    // Get tasks after one being removed
+                    auto end = scheduledTasks[ i+1..$ ];
+                    // Get tasks before one being removed
+                    scheduledTasks = scheduledTasks[ 0..i ];
+
+                    // Allow data stomping
+                    (cast(bool function()[])scheduledTasks).assumeSafeAppend();
+                    // Add end back
+                    scheduledTasks ~= end;
+                }
             }
-            foreach( i; toRemove )
+
+            if ( updateFlags.updateScene )
             {
-                // Get tasks after one being removed
-                auto end = scheduledTasks[ i+1..$ ];
-                // Get tasks before one being removed
-                scheduledTasks = scheduledTasks[ 0..i ];
-
-                // Allow data stomping
-                (cast(bool function()[])scheduledTasks).assumeSafeAppend();
-                // Add end back
-                scheduledTasks ~= end;
+                foreach( obj; activeScene )
+                    obj.update();
             }
-
-            foreach( obj; activeScene )
-                obj.update();
 
             // Do the updating of the child class.
             onUpdate();

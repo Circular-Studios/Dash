@@ -5,21 +5,21 @@ import std.stdio;
 
 version( unittest )
 {
-	void main()
-	{
-		writeln( "Finished running unit tests." );
-	}
+    void main()
+    {
+        writeln( "Finished running unit tests." );
+    }
 }
 else
 {
-	void main()
-	{
-		if( !DGame.instance )
-		{
-			writeln( "No game supplied." );
-			return;
-		}
+    void main()
+    {
+        if( !DGame.instance )
+        {
+            writeln( "No game supplied." );
+            return;
+        }
 
-		DGame.instance.run();
-	}
+        DGame.instance.run();
+    }
 }

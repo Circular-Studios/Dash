@@ -11,55 +11,55 @@ import derelict.opengl3.gl3, derelict.opengl3.cgl;
 final class Mac : Adapter
 {
 public:
-	static @property Mac get() { return cast(Mac)Graphics.adapter; }
+    static @property Mac get() { return cast(Mac)Graphics.adapter; }
 
-	override void initialize()
-	{
+    override void initialize()
+    {
 
-	}
-	
-	override void shutdown()
-	{
+    }
+    
+    override void shutdown()
+    {
 
-	}
-	
-	override void resize()
-	{
+    }
+    
+    override void resize()
+    {
 
-	}
-	
-	override void reload()
-	{
+    }
+    
+    override void reload()
+    {
 
-	}
-	
-	override void beginDraw()
-	{
+    }
+    
+    override void beginDraw()
+    {
 
-	}
+    }
 
-	override void drawObject( GameObject obj )
-	{
+    override void drawObject( GameObject obj )
+    {
 
-	}
-	
-	override void endDraw()
-	{
+    }
+    
+    override void endDraw()
+    {
 
-	}
-	
-	override void openWindow()
-	{
+    }
+    
+    override void openWindow()
+    {
 
-	}
-	
-	override void closeWindow()
-	{
-		
-	}
-	
-	override void messageLoop()
-	{
+    }
+    
+    override void closeWindow()
+    {
+        
+    }
+    
+    override void messageLoop()
+    {
 
-	}
+    }
 }

@@ -12,7 +12,7 @@ shared PrefabManager Prefabs;
 
 shared static this()
 {
-	Prefabs = new shared PrefabManager;
+    Prefabs = new shared PrefabManager;
 }
 
 /**
@@ -21,27 +21,27 @@ shared static this()
 shared final class PrefabManager
 {
 public:
-	/// The AA of prefabs.
-	Prefab[string] prefabs;
+    /// The AA of prefabs.
+    Prefab[string] prefabs;
 
-	/// Allows functions to be called on this like it were the AA.
-	alias prefabs this;
+    /// Allows functions to be called on this like it were the AA.
+    alias prefabs this;
 
-	/**
-	 * Load and initialize all prefabs in FilePath.Resources.Prefabs.
-	 */
-	void initialize()
-	{
-		foreach( key; prefabs.keys )
-			prefabs.remove( key );
+    /**
+     * Load and initialize all prefabs in FilePath.Resources.Prefabs.
+     */
+    void initialize()
+    {
+        foreach( key; prefabs.keys )
+            prefabs.remove( key );
 
-		foreach( object; loadYamlDocuments( FilePath.Resources.Prefabs ) )
-		{
-			auto name = object[ "Name" ].as!string;
-			
-			prefabs[ name ] = new shared Prefab( object );
-		}
-	}
+        foreach( object; loadYamlDocuments( FilePath.Resources.Prefabs ) )
+        {
+            auto name = object[ "Name" ].as!string;
+            
+            prefabs[ name ] = new shared Prefab( object );
+        }
+    }
 }
 
 /**
@@ -50,31 +50,31 @@ public:
 shared final class Prefab
 {
 public:
-	/**
-	 * Create a prefab from a YAML node.
-	 * 
-	 * Params:
-	 * 	yml =			The YAML node to get info from.
-	 */
-	this( Node yml )
-	{
-		this.yaml = yml;
-	}
+    /**
+     * Create a prefab from a YAML node.
+     * 
+     * Params:
+     *  yml =           The YAML node to get info from.
+     */
+    this( Node yml )
+    {
+        this.yaml = yml;
+    }
 
-	/**
-	 * Creates a GameObject instance from the prefab.
-	 * 
-	 * Params:
-	 * 	scriptOverride =			Create the instance from this class type instead of the prefab's default.
-	 *
-	 * Returns:
-	 * 	The new GameObject from the Prefab.
-	 */
-	final shared(GameObject) createInstance( ref string[shared GameObject] parents, ref string[][shared GameObject] children, const ClassInfo scriptOverride = null )
-	{
-		return GameObject.createFromYaml( yaml, parents, children, scriptOverride );
-	}
+    /**
+     * Creates a GameObject instance from the prefab.
+     * 
+     * Params:
+     *  scriptOverride =            Create the instance from this class type instead of the prefab's default.
+     *
+     * Returns:
+     *  The new GameObject from the Prefab.
+     */
+    final shared(GameObject) createInstance( ref string[shared GameObject] parents, ref string[][shared GameObject] children, const ClassInfo scriptOverride = null )
+    {
+        return GameObject.createFromYaml( yaml, parents, children, scriptOverride );
+    }
 
 private:
-	immutable Node yaml;
+    immutable Node yaml;
 }

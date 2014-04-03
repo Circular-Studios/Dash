@@ -1,19 +1,13 @@
 /**
- * Defines the GameObjectCollection class, which manages game objects and allows for batch operations on them.
+ * This module defines the Scene class, 
+ * 
  */
-module core.gameobjectcollection;
-import core, graphics, utility;
+module core.scene;
+import core, components, graphics, utility;
 
-import yaml;
+import std.path;
 
-import std.path, std.parallelism;
-
-deprecated( "Use Scenes instead." ):
-
-/**
- * Manages a collection of GameObjects.
- */
-shared final class GameObjectCollection
+shared final class Scene
 {
 public:
     /// The AA of game objects managed.
@@ -21,6 +15,9 @@ public:
 
     /// Allows functions to be called on this as if it were the AA.
     alias objects this;
+
+    /// The camera to render with.
+    Camera camera;
 
     /**
      * Load all objects inside the specified folder in FilePath.Objects.
@@ -38,8 +35,12 @@ public:
             // Create the object
             auto object = GameObject.createFromYaml( yml, parents, children );
             
+            // If the object doesn't define a name, error.
             if( object.name != AnonymousName )
             {
+                if( object.name in objects )
+                    logWarning( "Duplicate object of name ", object.name, " detected." );
+
                 // Add to collection
                 objects[ object.name ] = object;
             }
@@ -49,6 +50,13 @@ public:
                 assert( false );
             }
             
+            // This goes through each child defined inline and adds it to the scene.
+            // An inline child may look like:
+            // Name: objParent
+            // Children:
+            //     - Name: objChild
+            //     - Mesh: myMesh
+            // In this case, objChild would be added to the scene.
             foreach( child; object.children )
             {
                 objects[ child.name ] = child;
@@ -56,6 +64,7 @@ public:
             }
         }
         
+        // Make sure the child graph is complete.
         foreach( object, parentName; parents )
             objects[ parentName ].addChild( object );
         foreach( object, childNames; children )
@@ -66,47 +75,9 @@ public:
     /**
      * Remove all objects from the collection.
      */
-    final void clearObjects()
+    final void clear()
     {
         foreach( key; objects.keys )
             objects.remove( key );
-    }
-
-    /**
-     * Call the given function on each game object.
-     * 
-     * Params:
-     *  func =              The function to call on each object.
-     *  concurrent =            Whether or not to execute function in parallel
-     * 
-     * Examples:
-     * ---
-     * goc.apply( go => go.update() );
-     * ---
-     */
-    final void apply( void function( shared GameObject ) func, bool concurrent = false )
-    {
-        if( concurrent )
-            foreach( value; parallel( objects.values ) )
-                func( value );
-        else
-            foreach( value; objects.values )
-                func( value );
-    }
-
-    /**
-     * Update all game objects.
-     */
-    final void update( bool concurrent = false )
-    {
-        apply( go => go.update(), concurrent );
-    }
-
-    /**
-     * Draw all game objects.
-     */
-    final void draw( bool concurrent = false )
-    {
-        apply( go => go.draw(), concurrent );
     }
 }

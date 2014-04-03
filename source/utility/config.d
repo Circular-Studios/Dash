@@ -136,8 +136,22 @@ public static:
     {
         Node res;
         bool found = tryGet( path, res, node );
+
         if( found )
-            result = res.get!T;
+        {
+            static if( !isSomeString!T && is( T U : U[] ) )
+            {
+                assert( res.isSequence, "Trying to access non-sequence node " ~ path ~ " as an array." );
+
+                foreach( Node element; res )
+                    result ~= element.get!U;
+            }
+            else
+            {
+                result = res.get!T;
+            }
+        }
+
         return found;
     }
 
@@ -170,6 +184,7 @@ public static:
         }
 
         result = current;
+
         return true;
     }
 

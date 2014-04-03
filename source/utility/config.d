@@ -5,7 +5,6 @@ module utility.config;
 import utility.filepath;
 
 // Imports for conversions
-import core.dgame : GameState;
 import components.assets, components.lights;
 import graphics.shaders;
 import utility.output : Verbosity;
@@ -74,7 +73,6 @@ public static:
         constructor.addConstructorMapping( "!Vector3-Map", &constructVector3 );
         constructor.addConstructorScalar( "!Quaternion", &constructQuaternion );
         constructor.addConstructorMapping( "!Quaternion-Map", &constructQuaternion );
-        constructor.addConstructorScalar( "!GameState", &constructConv!GameState );
         constructor.addConstructorScalar( "!Verbosity", &constructConv!Verbosity );
         constructor.addConstructorScalar( "!Keyboard", &constructConv!Keyboard );
         constructor.addConstructorScalar( "!Shader", ( ref Node node ) => Shaders.get( node.get!string ) );

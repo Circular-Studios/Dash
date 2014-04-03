@@ -10,16 +10,14 @@ public import core.time;
 /**
  * The states the game can be in.
  */
-enum GameState
+enum EngineState
 {
-    /// Render the menu, don't step physics.
-    Menu = 0,
     /// The main game state.
-    Game = 1,
+    Run,
     /// Reload all assets at the beginning of the next cycle.
-    Reset = 2,
+    Reset,
     /// Quit the game and the end of this cycle.
-    Quit = 3
+    Quit
 };
 
 /**
@@ -32,7 +30,7 @@ public:
     shared static DGame instance;
 
     /// Current state of the game
-    GameState currentState;
+    EngineState currentState;
 
     /// The currently active scene
     Scene activeScene;
@@ -56,9 +54,9 @@ public:
         start();
 
         // Loop until there is a quit message from the window or the user.
-        while( currentState != GameState.Quit )
+        while( currentState != EngineState.Quit )
         {
-            if( currentState == GameState.Reset )
+            if( currentState == EngineState.Reset )
                 reload();
 
             //////////////////////////////////////////////////////////////////////////
@@ -186,8 +184,7 @@ private:
      */
     final void start()
     {
-        currentState = GameState.Game;
-        //camera = null;
+        currentState = EngineState.Run;
 
         logInfo( "Initializing..." );
         auto start = Clock.currTime;

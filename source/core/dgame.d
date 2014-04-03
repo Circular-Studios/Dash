@@ -26,11 +26,31 @@ enum EngineState
 shared class DGame
 {
 public:
+
+    shared static struct UpdateFlags
+    {
+        bool updateScene;
+        //bool updatePhysics;
+
+        void pauseAll()
+        {
+
+        }
+
+        void resumeAll()
+        {
+
+        }
+    }
+
     /// The instance to be running from
     shared static DGame instance;
 
     /// Current state of the game
     EngineState currentState;
+
+    /// 
+    UpdateFlags* updateFlags;
 
     /// The currently active scene
     Scene activeScene;
@@ -185,6 +205,9 @@ private:
     final void start()
     {
         currentState = EngineState.Run;
+
+        updateFlags = new UpdateFlags;
+        updateFlags.resumeAll();
 
         logInfo( "Initializing..." );
         auto start = Clock.currTime;

@@ -228,7 +228,7 @@ public:
 
     final void addChild( shared GameObject object )
     {
-        object._children ~= object;
+        _children ~= object;
         object.parent = this;
     }
 
@@ -289,6 +289,7 @@ private:
     vec3 _prevPos;
     quat _prevRot;
     vec3 _prevScale;
+    mat4 _matrix;
 
 public:
     // these should remain public fields, properties return copies not references
@@ -297,7 +298,7 @@ public:
     vec3 scale;
 
     mixin( Property!( _owner, AccessModifier.Public ) );
-    mixin( ThisDirtyGetter!( _localMatrix, updateMatrix ) );
+    mixin( ThisDirtyGetter!( _matrix, updateMatrix ) );
 
     this( shared GameObject obj = null )
     {
@@ -318,7 +319,7 @@ public:
     /**
     * This returns the object's position relative to the world origin, not the parent
     */
-    final @property shared(vec3) worldPosition()
+    final @property shared(vec3) worldPosition() @safe pure nothrow
     {
         if( owner.parent is null )
             return position;
@@ -329,7 +330,7 @@ public:
     /**
     * This returns the object's rotation relative to the world origin, not the parent
     */
-    final @property shared(quat) worldRotation()
+    final @property shared(quat) worldRotation() @safe pure nothrow
     {
         if( owner.parent is null )
             return rotation;
@@ -337,13 +338,17 @@ public:
             return owner.parent.transform.worldRotation * rotation;
     }
 
-    final @property shared(mat4) matrix()
+    /*final @property shared(mat4) matrix()
     {
         if( owner.parent is null )
             return localMatrix;
         else
-            return owner.parent.transform.matrix * localMatrix;
-    }
+        {
+            auto matrix = owner.parent.transform.matrix * localMatrix;
+            logInfo( owner.name, " has matrix: ", matrix );
+            return matrix;
+        }
+    }*/
 
     final override @property bool isDirty() @safe pure nothrow
     {
@@ -361,7 +366,7 @@ public:
     /**
      * Rebuilds the object's matrix
      */
-    final void updateMatrix() @safe pure nothrow
+    /*final void updateLocalMatrix() @safe pure nothrow
     {
         _localMatrix = mat4.identity;
         // Scale
@@ -377,8 +382,26 @@ public:
         _localMatrix[ 1 ][ 3 ] = position.y;
         _localMatrix[ 2 ][ 3 ] = position.z;
         //logInfo( "Post: ", cast()_matrix );
-    }
+    }*/
 
-private:
-    mat4 _localMatrix;
+    /**
+     * Rebuilds the object's matrix
+     */
+    final void updateMatrix() @safe pure nothrow
+    {
+        _matrix = mat4.identity;
+        // Scale
+        _matrix[ 0 ][ 0 ] = scale.x;
+        _matrix[ 1 ][ 1 ] = scale.y;
+        _matrix[ 2 ][ 2 ] = scale.z;
+        // Rotate
+        _matrix = _matrix * worldRotation.to_matrix!( 4, 4 );
+        
+        //logInfo( "Pre translate: ", cast()_matrix );
+        // Translate
+        _matrix[ 0 ][ 3 ] = worldPosition.x;
+        _matrix[ 1 ][ 3 ] = worldPosition.y;
+        _matrix[ 2 ][ 3 ] = worldPosition.z;
+        //logInfo( "Post: ", cast()_matrix );
+    }
 }

@@ -65,9 +65,9 @@ public:
 
     final override @property bool isDirty()
     {
-        auto result = owner.transform.localMatrix != _prevLocalMatrix;
+        auto result = owner.transform.matrix != _prevLocalMatrix;
 
-        _prevLocalMatrix = owner.transform.localMatrix;
+        _prevLocalMatrix = owner.transform.matrix;
 
         return result;
     }

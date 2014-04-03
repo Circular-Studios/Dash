@@ -4,7 +4,7 @@
 module core.dgame;
 import core, components, graphics, utility, utility.awesomium;
 
-import std.string, std.datetime, std.parallelism, std.algorithm;
+import std.string, std.datetime, std.parallelism, std.algorithm, std.traits;
 public import core.time;
 
 /**
@@ -18,7 +18,35 @@ enum EngineState
     Reset,
     /// Quit the game and the end of this cycle.
     Quit
-};
+}
+
+shared struct UpdateFlags
+{
+    bool updateScene;
+    bool updateUI;
+    bool updateTasks;
+    //bool updatePhysics;
+
+    /**
+     * Set each member to false.
+     */
+    void pauseAll()
+    {
+        foreach( member; __traits(allMembers, UpdateFlags) )
+            static if( __traits(compiles, __traits(getMember, UpdateFlags, member) = false) )
+                __traits(getMember, UpdateFlags, member) = false;
+    }
+
+    /**
+     * Set each member to true.
+     */
+    void resumeAll()
+    {
+        foreach( member; __traits(allMembers, UpdateFlags) )
+            static if( __traits(compiles, __traits(getMember, UpdateFlags, member) = true) )
+                __traits(getMember, UpdateFlags, member) = true;
+    }
+}
 
 /**
  * The main game loop manager. Meant to be overridden.
@@ -26,25 +54,6 @@ enum EngineState
 shared class DGame
 {
 public:
-
-    shared static struct UpdateFlags
-    {
-        bool updateScene;
-        bool updateUI;
-        bool updateTasks;
-        //bool updatePhysics;
-
-        void pauseAll()
-        {
-
-        }
-
-        void resumeAll()
-        {
-
-        }
-    }
-
     /// The instance to be running from
     shared static DGame instance;
 
@@ -217,7 +226,7 @@ private:
     {
         currentState = EngineState.Run;
 
-        updateFlags = new UpdateFlags;
+        updateFlags = new shared UpdateFlags;
         updateFlags.resumeAll();
 
         logInfo( "Initializing..." );

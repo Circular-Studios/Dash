@@ -109,7 +109,7 @@ public:
             if( Config.tryGet( "Position", transVec, innerNode ) )
                 obj.transform.position = shared vec3( transVec );
             if( Config.tryGet( "Rotation", transVec, innerNode ) )
-                obj.transform.rotation = quat.euler_rotation( transVec.y.radians, transVec.z.radians, transVec.x.radians );
+                obj.transform.rotation = quat.euler_rotation( transVec.z.radians, transVec.y.radians, transVec.x.radians );
         }
 
         if( foundClassName && Config.tryGet( "Script.Fields", innerNode, yamlObj ) )

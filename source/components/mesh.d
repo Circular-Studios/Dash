@@ -82,7 +82,7 @@ public:
             {
                 // (8 floats for animation data)
                 animated = true;
-                floatsPerVertex = 20;
+                floatsPerVertex = 19;
                 vertexSize = cast(int)(float.sizeof * floatsPerVertex);
                 
                 // Get the vertex anim data
@@ -148,7 +148,6 @@ public:
                         outputData ~= tangent.x;
                         outputData ~= tangent.y;
                         outputData ~= tangent.z;
-                        outputData ~= w;
                         //outputData ~= bitangent.x;
                         //outputData ~= bitangent.y;
                         //outputData ~= bitangent.z;
@@ -161,7 +160,7 @@ public:
             if( mesh.mNumBones == 0 || animated == false ) // No animation or animation failed
             {
                 animated = false;
-                floatsPerVertex = 12;
+                floatsPerVertex = 11;
                 vertexSize = cast(int)(float.sizeof * floatsPerVertex);
 
                 // For each vertex on each face
@@ -191,7 +190,6 @@ public:
                         outputData ~= tangent.x;
                         outputData ~= tangent.y;
                         outputData ~= tangent.z;
-                        outputData ~= w;
                         //outputData ~= bitangent.x;
                         //outputData ~= bitangent.y;
                         //outputData ~= bitangent.z;
@@ -240,7 +238,7 @@ public:
         glVertexAttribPointer( NORMAL_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, vertexSize, cast(char*)0 + ( GLfloat.sizeof * 5 ) );
         // Connect the tangent to the vertex shader
         glEnableVertexAttribArray( TANGENT_ATTRIBUTE );
-        glVertexAttribPointer( TANGENT_ATTRIBUTE, 4, GL_FLOAT, GL_FALSE, vertexSize, cast(char*)0 + ( GLfloat.sizeof * 8 ) );
+        glVertexAttribPointer( TANGENT_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, vertexSize, cast(char*)0 + ( GLfloat.sizeof * 8 ) );
         // Connect the binormal to the vertex shader (Remember to change animation data values properly!!!)
         //glEnableVertexAttribArray( BINORMAL_ATTRIBUTE );
         //glVertexAttribPointer( BINORMAL_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, vertexSize, cast(char*)0 + ( GLfloat.sizeof * 11 ) );
@@ -279,6 +277,10 @@ public:
     }
 }
 
+/**
+ * Helper function that calculates a modifier for the reconstructed bitangent based on regenerating them
+ * May be needed elsewhere
+ */
 private float calcTangentHandedness( aiVector3D nor, aiVector3D tan, aiVector3D bit )
 {
     shared vec3 n = vec3( nor.x, nor.y, nor.z );

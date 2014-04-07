@@ -8,13 +8,12 @@ immutable string geometryVS = q{
     layout(location = 0) in vec3 vPosition_m;
     layout(location = 1) in vec2 vUV;
     layout(location = 2) in vec3 vNormal_m;
-    layout(location = 3) in vec4 vTangent_m;
+    layout(location = 3) in vec3 vTangent_m;
 
     out vec4 fPosition_s;
     out vec3 fNormal_v;
     out vec2 fUV;
     out vec3 fTangent_v;
-    flat out float fBitangentDirection;
 
     uniform mat4 worldView;
     uniform mat4 worldViewProj;
@@ -27,8 +26,7 @@ immutable string geometryVS = q{
         fUV = vUV;
 
         fNormal_v = ( worldView * vec4( vNormal_m, 0.0f ) ).xyz;
-        fTangent_v =  ( worldView * vec4( vTangent_m.xyz, 0.0f ) ).xyz;
-        fBitangentDirection = vTangent_m.w;
+        fTangent_v =  ( worldView * vec4( vTangent_m, 0.0f ) ).xyz;
     }
 };
 
@@ -39,7 +37,6 @@ immutable string geometryFS = q{
     in vec3 fNormal_v;
     in vec2 fUV;
     in vec3 fTangent_v;
-    flat in float fBitangentDirection;
 
     layout( location = 0 ) out vec4 color;
     layout( location = 1 ) out vec4 normal_v;

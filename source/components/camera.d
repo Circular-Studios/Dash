@@ -50,19 +50,19 @@ public:
     final void updateViewMatrix()
     {
         //Assuming pitch & yaw are in radians
-        float cosPitch = cos( owner.transform.worldRotation.pitch );
-        float sinPitch = sin( owner.transform.worldRotation.pitch );
-        float cosYaw = cos( owner.transform.worldRotation.yaw );
-        float sinYaw = sin( owner.transform.worldRotation.yaw );
+        float cosPitch = cos( owner.transform.rotation.pitch );
+        float sinPitch = sin( owner.transform.rotation.pitch );
+        float cosYaw = cos( owner.transform.rotation.yaw );
+        float sinYaw = sin( owner.transform.rotation.yaw );
 
         shared vec3 xaxis = shared vec3( cosYaw, 0.0f, -sinYaw );
         shared vec3 yaxis = shared vec3( sinYaw * sinPitch, cosPitch, cosYaw * sinPitch );
         shared vec3 zaxis = shared vec3( sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw );
 
         _viewMatrix.clear( 0.0f );
-        _viewMatrix[ 0 ] = xaxis.vector ~ -( xaxis * owner.transform.worldPosition );
-        _viewMatrix[ 1 ] = yaxis.vector ~ -( yaxis * owner.transform.worldPosition );
-        _viewMatrix[ 2 ] = zaxis.vector ~ -( zaxis * owner.transform.worldPosition );
+        _viewMatrix[ 0 ] = xaxis.vector ~ -( xaxis * owner.transform.position );
+        _viewMatrix[ 1 ] = yaxis.vector ~ -( yaxis * owner.transform.position );
+        _viewMatrix[ 2 ] = zaxis.vector ~ -( zaxis * owner.transform.position );
         _viewMatrix[ 3 ] = [ 0, 0, 0, 1 ];
     }
 

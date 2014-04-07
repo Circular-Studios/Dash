@@ -46,6 +46,17 @@ Node[] loadYamlDocuments( string folder )
 }
 
 /**
+ * Processes all yaml files in a directory, and converts each document into an object of type T.
+ * 
+ * Params:
+ *  folder =            The folder to look in.
+ */
+T[] loadYamlObjects( T )( string folder )
+{
+    return folder.loadYamlDocuments.map!(yml => Config.toObject!T( yml ) );
+}
+
+/**
  * Load a yaml file with the engine-specific mappings.
  * 
  * Params:
@@ -234,32 +245,55 @@ public static:
         // Get each member of the type
         foreach( memberName; __traits(derivedMembers, T) )
         {
-            // If it is a field and not a function, tryGet it's value
-            static if( !__traits( compiles, ParameterTypeTuple!( __traits( getMember, toReturn, memberName ) ) ) &&
-                       !__traits( compiles, isBasicType!( __traits( getMember, toReturn, memberName ) ) ) )
+            // Make sure member is accessable
+            enum protection = __traits( getProtection, __traits( getMember, toReturn, memberName ) );
+            static if( protection == "public" || protection == "export" &&
+                       __traits( compiles, isMutable!( __traits( getMember, toReturn, memberName ) ) ) )
             {
-                tryGet( memberName, __traits(getMember, toReturn, memberName), node );
-            }
-            else
-            {
-                // Iterate over each overload of the function (common to have getter and setter)
-                foreach( func; __traits(getOverloads, T, memberName) )
+                // If it is a field and not a function, tryGet it's value
+                static if( !__traits( compiles, ParameterTypeTuple!( __traits( getMember, toReturn, memberName ) ) ) &&
+                           !__traits( compiles, isBasicType!( __traits( getMember, toReturn, memberName ) ) ) )
                 {
-                    // Get the param types of the function
-                    alias params = ParameterTypeTuple!func;
-
-                    // If it can be a setter and is a property
-                    static if( params.length == 1 && ( functionAttributes!func & FunctionAttribute.property ) )
+                    // Make sure member is mutable
+                    static if( isMutable!( typeof( __traits( getMember, toReturn, memberName ) ) ) )
                     {
-                        // Else, set as temp
-                        params[ 0 ] tempValue;
-                        if( tryGet( memberName, tempValue, node ) )
-                            mixin( "toReturn." ~ memberName ~ " = tempValue;" );
+                        tryGet( memberName, __traits( getMember, toReturn, memberName ), node );
+                    }
+                }
+                else
+                {
+                    // Iterate over each overload of the function (common to have getter and setter)
+                    foreach( func; __traits( getOverloads, T, memberName ) )
+                    {
+                        enum funcProtection = __traits( getProtection, func );
+                        static if( funcProtection == "public" || funcProtection == "export" )
+                        {
+                            // Get the param types of the function
+                            alias params = ParameterTypeTuple!func;
+
+                            // If it can be a setter and is a property
+                            static if( params.length == 1 && ( functionAttributes!func & FunctionAttribute.property ) )
+                            {
+                                // Else, set as temp
+                                static if( is( params[ 0 ] == enum ) )
+                                {
+                                    string tempValue;
+                                }
+                                else
+                                {
+                                    params[ 0 ] otherTempValue;
+                                    auto tempValue = cast()otherTempValue;
+                                }
+
+                                if( tryGet( memberName, tempValue, node ) )
+                                    mixin( "toReturn." ~ memberName ~ " = tempValue.to!(params[0]);" );
+                            }
+                        }
                     }
                 }
             }
         }
-
+        
         return toReturn;
     }
     unittest

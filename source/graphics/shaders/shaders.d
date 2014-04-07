@@ -296,6 +296,15 @@ public:
         bindUniform3f( ShaderUniform.LightColor, light.color );
     }
 
+    /* 
+     * Bind a directional light after a modifying transform
+     */
+    final void bindDirectionalLight( shared DirectionalLight light, shared mat4 transform )
+    {
+        bindUniform3f( ShaderUniform.LightDirection, ( transform * shared vec4( light.direction, 0.0f ) ).xyz );
+        bindUniform3f( ShaderUniform.LightColor, light.color );
+    }
+
     /*
      * Bind a point light
      */
@@ -303,6 +312,17 @@ public:
     {
         bindUniform3f( ShaderUniform.LightColor, light.color );
         bindUniform3f( ShaderUniform.LightPosition, light.owner.transform.worldPosition );
+        bindUniform1f( ShaderUniform.LightRadius, light.radius );
+    }
+
+    /*
+     * Bind a point light after a modifying transform
+     */
+    final void bindPointLight( shared PointLight light, shared mat4 transform )
+    {
+        logInfo( ( transform * shared vec4( light.owner.transform.worldPosition, 1.0f ) ).xyz );
+        bindUniform3f( ShaderUniform.LightColor, light.color );
+        bindUniform3f( ShaderUniform.LightPosition, ( transform * shared vec4( light.owner.transform.worldPosition, 1.0f ) ).xyz );
         bindUniform1f( ShaderUniform.LightRadius, light.radius );
     }
 

@@ -261,7 +261,7 @@ public:
                 // bind and draw directional lights
                 foreach( light; directionalLights )
                 {
-                    shader.bindDirectionalLight( new shared DirectionalLight( cast()light.color, cast()( scene.camera.viewMatrix * vec4( light.direction, 0.0f ) ).xyz ) );
+                    shader.bindDirectionalLight( light, scene.camera.viewMatrix );
                     glDrawElements( GL_TRIANGLES, Assets.unitSquare.numVertices, GL_UNSIGNED_INT, null );
                 }
             }
@@ -274,9 +274,8 @@ public:
 
                 bindGeometryOutputs( shader );
 
-                // bind inverseViewProj for rebuilding world positions from pixel locations
-                shader.bindUniformMatrix4fv( ShaderUniform.InverseProjection, invProj );
-                shader.setEyePosition( scene.camera.owner.transform.worldPosition );
+                // bind WorldView for creating the View rays for reconstruction position
+                shader.bindUniform2f( ShaderUniform.ProjectionConstants, scene.camera.projectionConstants);
 
                 // bind the sphere mesh for point lights
                 glBindVertexArray( Assets.unitSphere.glVertexArray );
@@ -285,9 +284,10 @@ public:
                 foreach( light; pointLights )
                 {
                 //  logInfo(light.owner.name);
+                    shader.bindUniformMatrix4fv( ShaderUniform.WorldView, scene.camera.viewMatrix * light.getTransform() );
                     shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection, 
                                                  perspProj * scene.camera.viewMatrix * light.getTransform() );
-                    shader.bindPointLight( light );
+                    shader.bindPointLight( light, scene.camera.viewMatrix );
                     glDrawElements( GL_TRIANGLES, Assets.unitSphere.numVertices, GL_UNSIGNED_INT, null );
                 }
             }

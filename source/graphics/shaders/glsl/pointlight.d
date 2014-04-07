@@ -11,13 +11,10 @@ immutable string pointlightVS = q{
     layout(location = 3) in vec3 vTangent_m;
     
     out vec4 fPosition_s;
-    //out vec3 fNormal_w;
-    out vec2 fUV;
-    //out vec3 fTangent_w;
-    //out vec3 fBitangent_w;
+    out vec3 fViewRay;
     
     //uniform mat4 world;
-    //uniform mat4 worldView;
+    uniform mat4 worldView;
     uniform mat4 worldViewProj;
     
     void main( void )
@@ -25,10 +22,9 @@ immutable string pointlightVS = q{
         // gl_Position is like SV_Position
         fPosition_s = worldViewProj * vec4( vPosition_m, 1.0f );
         gl_Position = fPosition_s;
-        //fUV = vUV;
-        
-        //fNormal_w = ( world * vec4( vNormal_m, 0.0f ) ).xyz;
-        //fTangent_w =  ( world * vec4( vTangent_m, 0.0f ) ).xyz;
+
+        fViewRay = ( worldView * vec4( vPosition_m, 1.0 ) ).xyz;
+
     }
 };
 
@@ -36,15 +32,13 @@ immutable string pointlightFS = q{
 #version 400
 
     struct PointLight{
-        vec3 pos_w;
+        vec3 pos_v;
         vec3 color;
         float radius;
     };
     
     in vec4 fPosition_s;
-    //in vec3 fNormal_w;
-    //in vec2 fUV;
-    //in vec3 fTangent_w;
+    in vec3 fViewRay;
     
     out vec4 color;
     
@@ -52,25 +46,26 @@ immutable string pointlightFS = q{
     uniform sampler2D normalTexture;
     uniform sampler2D depthTexture;
     uniform PointLight light;
-    uniform vec3 eyePosition_w;
-    uniform mat4 invViewProj;
+    // A pair of constants for reconstructing the linear Z
+    // [ (-Far * Near ) / ( Far - Near ),  Far / ( Far - Near )  ]
+    uniform vec2 projectionConstants;
 
     void main( void )
     {
-        vec2 position_s = fPosition_s.xy / fPosition_s.w;
-        vec2 UV = ( position_s + 1 ) / 2;
+        // The viewray should have interpolated across the pixels covered by the light, so we should just be able to clamp it's depth to 1
+        vec3 viewRay = vec3( fViewRay.xy / fViewRay.z, 1.0f );
+        vec2 UV = ( ( fPosition_s.xy / fPosition_s.w ) + 1 ) / 2;
         vec3 textureColor = texture( diffuseTexture, UV ).xyz;
         float specularIntensity = texture( diffuseTexture, UV ).w;
         vec3 normal = normalize(texture( normalTexture, UV ).xyz);
 
-        // pixelPosition is essentially 3D screen space coordinates - x, y, z of the screen
-        vec3 pixelPosition_s = vec3( position_s, (texture( depthTexture, UV ).x * 2 - 1));
-        // Multiplying screen space coordinates by the inverse viewProjection matrix gives you world coordinates
-        vec4 pixelPosition_w = ( invViewProj * vec4( pixelPosition_s, 1.0f ) );
-        pixelPosition_w /= pixelPosition_w.w;
+        // Reconstruct position from depth
+        float depth = texture( depthTexture, UV ).x;
+        float linearDepth = projectionConstants.x / ( projectionConstants.y - depth );
+        vec3 position_v = viewRay * linearDepth;
 
-        // calculate normalized light direction, distance
-        vec3 lightDir = light.pos_w - pixelPosition_w.xyz;
+        // calculate normalized light direction, and distance
+        vec3 lightDir = light.pos_v - position_v;
         float distance = sqrt( dot(lightDir,lightDir) );
         lightDir = normalize( lightDir );
 
@@ -84,15 +79,15 @@ immutable string pointlightFS = q{
         float diffuseScale = clamp( dot( normal, lightDir ), 0, 1 );
         
         // Specular lighting calculations
-        vec3 eyeDirection = normalize( pixelPosition_w.xyz - eyePosition_w );
-        float specularScale = clamp( dot( eyeDirection, normalize(reflect( lightDir, normal )) ), 0, 1 );
+        float specularScale = clamp( dot( position_v, normalize(reflect( lightDir, normal )) ), 0, 1 );
         
         vec3 diffuse = ( diffuseScale * light.color ) * textureColor ;
         // "8" is the reflectiveness
         // textureColor.w is the shininess
         // specularIntensity is the light's contribution
         vec3 specular = ( pow( specularScale, 8 ) * light.color * specularIntensity);
-        color = vec4( (diffuse + specular)* attenuation, 1.0f ) ;
+        if(isnan(linearDepth)) linearDepth = 150;
+        color = vec4( linearDepth / 150f, linearDepth / 150f, linearDepth / 150f, 1.0f ) ;
         //color = vec4( vec3(1,0,0), 1.0f );
         
     }

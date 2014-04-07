@@ -5,6 +5,7 @@ module components.mesh;
 import core, components, graphics, utility;
 
 import derelict.opengl3.gl3, derelict.assimp3.assimp;
+import gl3n.linalg;
 
 import std.stdio, std.stream, std.format, std.math;
 
@@ -81,7 +82,7 @@ public:
             {
                 // (8 floats for animation data)
                 animated = true;
-                floatsPerVertex = 19;
+                floatsPerVertex = 20;
                 vertexSize = cast(int)(float.sizeof * floatsPerVertex);
                 
                 // Get the vertex anim data
@@ -133,6 +134,7 @@ public:
                         aiVector3D normal = mesh.mNormals[ face.mIndices[ j ] ];
                         aiVector3D tangent = mesh.mTangents[ face.mIndices[ j ] ];
                         aiVector3D bitangent = mesh.mBitangents[ face.mIndices[ j ] ];
+                        float w = calcTangentHandedness(normal, tangent, bitangent);
 
                         // Append the data
                         outputData ~= pos.x;
@@ -146,6 +148,7 @@ public:
                         outputData ~= tangent.x;
                         outputData ~= tangent.y;
                         outputData ~= tangent.z;
+                        outputData ~= w;
                         //outputData ~= bitangent.x;
                         //outputData ~= bitangent.y;
                         //outputData ~= bitangent.z;
@@ -158,7 +161,7 @@ public:
             if( mesh.mNumBones == 0 || animated == false ) // No animation or animation failed
             {
                 animated = false;
-                floatsPerVertex = 11;
+                floatsPerVertex = 12;
                 vertexSize = cast(int)(float.sizeof * floatsPerVertex);
 
                 // For each vertex on each face
@@ -174,6 +177,7 @@ public:
                         aiVector3D normal = mesh.mNormals[ face.mIndices[ j ] ];
                         aiVector3D tangent = mesh.mTangents[ face.mIndices[ j ] ];
                         aiVector3D bitangent = mesh.mBitangents[ face.mIndices[ j ] ];
+                        float w = calcTangentHandedness(normal, tangent, bitangent);
 
                         // Append the data
                         outputData ~= pos.x;
@@ -187,6 +191,7 @@ public:
                         outputData ~= tangent.x;
                         outputData ~= tangent.y;
                         outputData ~= tangent.z;
+                        outputData ~= w;
                         //outputData ~= bitangent.x;
                         //outputData ~= bitangent.y;
                         //outputData ~= bitangent.z;
@@ -235,7 +240,7 @@ public:
         glVertexAttribPointer( NORMAL_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, vertexSize, cast(char*)0 + ( GLfloat.sizeof * 5 ) );
         // Connect the tangent to the vertex shader
         glEnableVertexAttribArray( TANGENT_ATTRIBUTE );
-        glVertexAttribPointer( TANGENT_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, vertexSize, cast(char*)0 + ( GLfloat.sizeof * 8 ) );
+        glVertexAttribPointer( TANGENT_ATTRIBUTE, 4, GL_FLOAT, GL_FALSE, vertexSize, cast(char*)0 + ( GLfloat.sizeof * 8 ) );
         // Connect the binormal to the vertex shader (Remember to change animation data values properly!!!)
         //glEnableVertexAttribArray( BINORMAL_ATTRIBUTE );
         //glVertexAttribPointer( BINORMAL_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, vertexSize, cast(char*)0 + ( GLfloat.sizeof * 11 ) );
@@ -272,6 +277,18 @@ public:
         glDeleteBuffers( 1, cast(uint*)&_glVertexBuffer );
         glDeleteBuffers( 1, cast(uint*)&_glVertexArray );
     }
+}
+
+private float calcTangentHandedness( aiVector3D nor, aiVector3D tan, aiVector3D bit )
+{
+    shared vec3 n = vec3( nor.x, nor.y, nor.z );
+    shared vec3 t = vec3( tan.x, tan.y, tan.z );
+    shared vec3 b = vec3( bit.x, bit.y, bit.z );
+
+    //Gramm-schmidt
+    t = (t - n * dot( n, t )).normalized();
+
+    return (dot(cross(n,t),b) > 0.0f) ? -1.0f : 1.0f;
 }
 
 static this()

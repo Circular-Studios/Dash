@@ -11,7 +11,7 @@ immutable string animatedGeometryVS = q{
     layout(location = 0) in vec3 vPosition_m;
     layout(location = 1) in vec2 vUV;
     layout(location = 2) in vec3 vNormal_m;
-    layout(location = 3) in vec3 vTangent_m;
+    layout(location = 3) in vec4 vTangent_m;
     layout(location = 4) in vec4 vBone_m;
     layout(location = 5) in vec4 vWeight_m;
 
@@ -19,6 +19,7 @@ immutable string animatedGeometryVS = q{
     out vec3 fNormal_v;
     out vec2 fUV;
     out vec3 fTangent_v;
+    flat out float fBitangentDirection;
 
     uniform mat4 world;
     uniform mat4 worldView;
@@ -40,6 +41,7 @@ immutable string animatedGeometryVS = q{
         fUV = vUV;
 
         fNormal_v = ( worldView * boneTransform * vec4( vNormal_m, 0.0f ) ).xyz;
-        fTangent_v =  ( worldView * boneTransform * vec4( vTangent_m, 0.0f ) ).xyz;
+        fTangent_v =  ( worldView * boneTransform * vec4( vTangent_m.xyz, 0.0f ) ).xyz;
+        fBitangentDirection = vTangent_m.w;
     }
 };

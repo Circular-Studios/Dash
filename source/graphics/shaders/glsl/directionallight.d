@@ -68,7 +68,7 @@ immutable string directionallightFS = q{
 
         // Reconstruct position from Depth
         float depth = texture( depthTexture, fUV ).x;
-        float linearDepth = projectionConstants.x / ( depth - projectionConstants.y );
+        float linearDepth = projectionConstants.x / ( projectionConstants.y - depth );
         vec3 position_v = fViewRay * linearDepth;
 
 
@@ -77,7 +77,7 @@ immutable string directionallightFS = q{
 
         // Specular lighting calculations
         // Usually in these you see an "eyeDirection" variable, but in view space that is our position
-        float specularScale = clamp( dot( normalize( -position_v ), reflect( -lightDir_v, normal_v ) ), 0, 1 );
+        float specularScale = clamp( dot( normalize( position_v ), reflect( -lightDir_v, normal_v ) ), 0, 1 );
 
         vec3 diffuse = ( diffuseScale * light.color ) * textureColor;
         // "8" is the reflectiveness

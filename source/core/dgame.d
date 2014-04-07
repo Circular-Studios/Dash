@@ -4,23 +4,49 @@
 module core.dgame;
 import core, components, graphics, utility, utility.awesomium;
 
-import std.string, std.datetime, std.parallelism, std.algorithm;
+import std.string, std.datetime, std.parallelism, std.algorithm, std.traits;
 public import core.time;
 
 /**
  * The states the game can be in.
  */
-enum GameState
+enum EngineState
 {
-    /// Render the menu, don't step physics.
-    Menu = 0,
     /// The main game state.
-    Game = 1,
+    Run,
     /// Reload all assets at the beginning of the next cycle.
-    Reset = 2,
+    Reset,
     /// Quit the game and the end of this cycle.
-    Quit = 3
-};
+    Quit
+}
+
+shared struct UpdateFlags
+{
+    bool updateScene;
+    bool updateUI;
+    bool updateTasks;
+    //bool updatePhysics;
+
+    /**
+     * Set each member to false.
+     */
+    void pauseAll()
+    {
+        foreach( member; __traits(allMembers, UpdateFlags) )
+            static if( __traits(compiles, __traits(getMember, UpdateFlags, member) = false) )
+                __traits(getMember, UpdateFlags, member) = false;
+    }
+
+    /**
+     * Set each member to true.
+     */
+    void resumeAll()
+    {
+        foreach( member; __traits(allMembers, UpdateFlags) )
+            static if( __traits(compiles, __traits(getMember, UpdateFlags, member) = true) )
+                __traits(getMember, UpdateFlags, member) = true;
+    }
+}
 
 /**
  * The main game loop manager. Meant to be overridden.
@@ -32,7 +58,10 @@ public:
     shared static DGame instance;
 
     /// Current state of the game
-    GameState currentState;
+    EngineState currentState;
+
+    /// 
+    UpdateFlags* updateFlags;
 
     /// The currently active scene
     Scene activeScene;
@@ -56,9 +85,9 @@ public:
         start();
 
         // Loop until there is a quit message from the window or the user.
-        while( currentState != GameState.Quit )
+        while( currentState != EngineState.Quit )
         {
-            if( currentState == GameState.Reset )
+            if( currentState == EngineState.Reset )
                 reload();
 
             //////////////////////////////////////////////////////////////////////////
@@ -75,33 +104,42 @@ public:
             Input.update();
 
             // Update webcore
-            UserInterface.updateAwesomium();
+            if ( updateFlags.updateUI )
+            {
+                UserInterface.updateAwesomium();
+            }
 
             // Update physics
-            //if( currentState == GameState.Game )
+            //if( updateFlags.updatePhysics )
             //  PhysicsController.stepPhysics( Time.deltaTime );
 
-            uint[] toRemove;    // Indicies of tasks which are done
-            foreach( i, task; scheduledTasks )
+            if ( updateFlags.updateTasks )
             {
-                if( task() )
-                    toRemove ~= cast(uint)i;
+                uint[] toRemove;    // Indicies of tasks which are done
+                foreach( i, task; scheduledTasks )
+                {
+                    if( task() )
+                        toRemove ~= cast(uint)i;
+                }
+                foreach( i; toRemove )
+                {
+                    // Get tasks after one being removed
+                    auto end = scheduledTasks[ i+1..$ ];
+                    // Get tasks before one being removed
+                    scheduledTasks = scheduledTasks[ 0..i ];
+
+                    // Allow data stomping
+                    (cast(bool function()[])scheduledTasks).assumeSafeAppend();
+                    // Add end back
+                    scheduledTasks ~= end;
+                }
             }
-            foreach( i; toRemove )
+
+            if ( updateFlags.updateScene )
             {
-                // Get tasks after one being removed
-                auto end = scheduledTasks[ i+1..$ ];
-                // Get tasks before one being removed
-                scheduledTasks = scheduledTasks[ 0..i ];
-
-                // Allow data stomping
-                (cast(bool function()[])scheduledTasks).assumeSafeAppend();
-                // Add end back
-                scheduledTasks ~= end;
+                foreach( obj; activeScene )
+                    obj.update();
             }
-
-            foreach( obj; activeScene )
-                obj.update();
 
             // Do the updating of the child class.
             onUpdate();
@@ -186,8 +224,10 @@ private:
      */
     final void start()
     {
-        currentState = GameState.Game;
-        //camera = null;
+        currentState = EngineState.Run;
+
+        updateFlags = new shared UpdateFlags;
+        updateFlags.resumeAll();
 
         logInfo( "Initializing..." );
         auto start = Clock.currTime;

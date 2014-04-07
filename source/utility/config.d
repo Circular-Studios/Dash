@@ -5,7 +5,6 @@ module utility.config;
 import utility.filepath;
 
 // Imports for conversions
-import core.dgame : GameState;
 import components.assets, components.lights;
 import graphics.shaders;
 import utility.output : Verbosity;
@@ -74,7 +73,6 @@ public static:
         constructor.addConstructorMapping( "!Vector3-Map", &constructVector3 );
         constructor.addConstructorScalar( "!Quaternion", &constructQuaternion );
         constructor.addConstructorMapping( "!Quaternion-Map", &constructQuaternion );
-        constructor.addConstructorScalar( "!GameState", &constructConv!GameState );
         constructor.addConstructorScalar( "!Verbosity", &constructConv!Verbosity );
         constructor.addConstructorScalar( "!Keyboard", &constructConv!Keyboard );
         constructor.addConstructorScalar( "!Shader", ( ref Node node ) => Shaders.get( node.get!string ) );
@@ -136,8 +134,22 @@ public static:
     {
         Node res;
         bool found = tryGet( path, res, node );
+
         if( found )
-            result = res.get!T;
+        {
+            static if( !isSomeString!T && is( T U : U[] ) )
+            {
+                assert( res.isSequence, "Trying to access non-sequence node " ~ path ~ " as an array." );
+
+                foreach( Node element; res )
+                    result ~= element.get!U;
+            }
+            else
+            {
+                result = res.get!T;
+            }
+        }
+
         return found;
     }
 
@@ -170,6 +182,7 @@ public static:
         }
 
         result = current;
+
         return true;
     }
 

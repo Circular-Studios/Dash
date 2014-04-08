@@ -9,6 +9,9 @@ import derelict.opengl3.gl3, derelict.opengl3.glx, derelict.opengl3.glxext;
 
 import std.traits;
 
+alias GLXContext GLRenderContext;
+alias uint GLDeviceContext;
+
 final class Linux : Adapter
 {
 public:

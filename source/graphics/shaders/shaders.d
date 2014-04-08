@@ -30,7 +30,7 @@ public enum ShaderUniform
     LightDirection = "light.direction",
     LightColor = "light.color",
     LightRadius = "light.radius",
-    LightPosition = "light.pos_w",
+    LightPosition = "light.pos_v",
     EyePosition = "eyePosition_w",
     /// Animations
     Bones = "bones",
@@ -320,9 +320,8 @@ public:
      */
     final void bindPointLight( shared PointLight light, shared mat4 transform )
     {
-        logInfo( ( transform * shared vec4( light.owner.transform.worldPosition, 1.0f ) ).xyz );
         bindUniform3f( ShaderUniform.LightColor, light.color );
-        bindUniform3f( ShaderUniform.LightPosition, ( transform * shared vec4( light.owner.transform.worldPosition, 1.0f ) ).xyz );
+        bindUniform3f( ShaderUniform.LightPosition, ( transform * shared vec4( light.owner.transform.worldPosition, 1.0f ) ).xyz);
         bindUniform1f( ShaderUniform.LightRadius, light.radius );
     }
 

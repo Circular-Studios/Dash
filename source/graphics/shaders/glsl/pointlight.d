@@ -57,7 +57,7 @@ immutable string pointlightFS = q{
         vec2 UV = ( ( fPosition_s.xy / fPosition_s.w ) + 1 ) / 2;
         vec3 textureColor = texture( diffuseTexture, UV ).xyz;
         float specularIntensity = texture( diffuseTexture, UV ).w;
-        vec3 normal = normalize(texture( normalTexture, UV ).xyz);
+        vec3 normal_v = normalize(texture( normalTexture, UV ).xyz);
 
         // Reconstruct position from depth
         float depth = texture( depthTexture, UV ).x;
@@ -65,29 +65,31 @@ immutable string pointlightFS = q{
         vec3 position_v = viewRay * linearDepth;
 
         // calculate normalized light direction, and distance
-        vec3 lightDir = light.pos_v - position_v;
-        float distance = sqrt( dot(lightDir,lightDir) );
-        lightDir = normalize( lightDir );
+        vec3 lightDir_v = light.pos_v - position_v;
+        float distance = sqrt( dot(lightDir_v,lightDir_v) );
+        lightDir_v = normalize( lightDir_v );
 
         // attenuation = 1 / ( constant + linear*d + quadratic*d^2 )
         // .005 is the cutoff, 10 is the intensity just hard coded for now
         float attenuation = max( light.radius-distance, 0) / light.radius; //( 1 + 2/light.radius*distance + 1/(light.radius*light.radius)*(distance*distance) );
+        //attenuation = pow(max(0.0, 1.0 - (distance / radius)), f + 1.0);
         //attenuation = (attenuation - .005) / (1 - .005);
         //attenuation = max(attenuation, 0);
 
         // Diffuse lighting calculations
-        float diffuseScale = clamp( dot( normal, lightDir ), 0, 1 );
+        float diffuseScale = clamp( dot( normal_v, lightDir_v ), 0, 1 );
         
         // Specular lighting calculations
-        float specularScale = clamp( dot( position_v, normalize(reflect( lightDir, normal )) ), 0, 1 );
+        // Usually in these you see an "eyeDirection" variable, but in view space that is our position
+        float specularScale = clamp( dot( normalize( position_v ), reflect( lightDir_v, normal_v ) ), 0, 1 );
         
         vec3 diffuse = ( diffuseScale * light.color ) * textureColor ;
         // "8" is the reflectiveness
         // textureColor.w is the shininess
         // specularIntensity is the light's contribution
         vec3 specular = ( pow( specularScale, 8 ) * light.color * specularIntensity);
-        if(isnan(linearDepth)) linearDepth = 150;
-        color = vec4( linearDepth / 150f, linearDepth / 150f, linearDepth / 150f, 1.0f ) ;
+        
+        color = vec4((diffuse + specular ) * attenuation, 1.0f ) ;
         //color = vec4( vec3(1,0,0), 1.0f );
         
     }

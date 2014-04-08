@@ -185,12 +185,12 @@ public:
                     glBindVertexArray( object.mesh.glVertexArray );
 
                     shared mat4 worldView =  scene.camera.viewMatrix * object.transform.matrix;
-                    shader.bindUniformMatrix4fv( ShaderUniform.WorldView, worldView );
-                    shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection,
+                    shader.bindUniformMatrix4fv( shader.WorldView, worldView );
+                    shader.bindUniformMatrix4fv( shader.WorldViewProjection,
                                                  perspProj * worldView );
 
                     if( object.mesh.animated )
-                        shader.bindUniformMatrix4fvArray( ShaderUniform.Bones, object.animation.currBoneTransforms );
+                        shader.bindUniformMatrix4fvArray( shader.Bones, object.animation.currBoneTransforms );
 
                     shader.bindMaterial( object.material );
 
@@ -206,17 +206,17 @@ public:
             void bindGeometryOutputs( Shader shader )
             {
                 // diffuse
-                glUniform1i( shader.getUniformLocation( ShaderUniform.DiffuseTexture ), 0 );
+                glUniform1i( shader.DiffuseTexture, 0 );
                 glActiveTexture( GL_TEXTURE0 );
                 glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
                 
                 // normal
-                glUniform1i( shader.getUniformLocation( ShaderUniform.NormalTexture ), 1 );
+                glUniform1i( shader.NormalTexture, 1 );
                 glActiveTexture( GL_TEXTURE1 );
                 glBindTexture( GL_TEXTURE_2D, normalRenderTexture );
                 
                 // depth
-                glUniform1i( shader.getUniformLocation( ShaderUniform.DepthTexture ), 2 );
+                glUniform1i( shader.DepthTexture, 2 );
                 glActiveTexture( GL_TEXTURE2 );
                 glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
             }
@@ -252,8 +252,8 @@ public:
                 bindGeometryOutputs( shader );
 
                 // bind inverseProj for rebuilding world positions from pixel locations
-                shader.bindUniformMatrix4fv( ShaderUniform.InverseProjection, invProj );
-                shader.bindUniform2f( ShaderUniform.ProjectionConstants, scene.camera.projectionConstants);
+                shader.bindUniformMatrix4fv( shader.InverseProjection, invProj );
+                shader.bindUniform2f( shader.ProjectionConstants, scene.camera.projectionConstants);
 
                 // bind the window mesh for directional lights
                 glBindVertexArray( Assets.unitSquare.glVertexArray );
@@ -275,7 +275,7 @@ public:
                 bindGeometryOutputs( shader );
 
                 // bind WorldView for creating the View rays for reconstruction position
-                shader.bindUniform2f( ShaderUniform.ProjectionConstants, scene.camera.projectionConstants);
+                shader.bindUniform2f( shader.ProjectionConstants, scene.camera.projectionConstants);
 
                 // bind the sphere mesh for point lights
                 glBindVertexArray( Assets.unitSphere.glVertexArray );
@@ -284,8 +284,8 @@ public:
                 foreach( light; pointLights )
                 {
                 //  logInfo(light.owner.name);
-                    shader.bindUniformMatrix4fv( ShaderUniform.WorldView, scene.camera.viewMatrix * light.getTransform() );
-                    shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection, 
+                    shader.bindUniformMatrix4fv( shader.WorldView, scene.camera.viewMatrix * light.getTransform() );
+                    shader.bindUniformMatrix4fv( shader.WorldViewProjection, 
                                                  perspProj * scene.camera.viewMatrix * light.getTransform() );
                     shader.bindPointLight( light, scene.camera.viewMatrix );
                     glDrawElements( GL_TRIANGLES, Assets.unitSphere.numVertices, GL_UNSIGNED_INT, null );
@@ -307,7 +307,7 @@ public:
             
             foreach( ui; uis )
             {
-                shader.bindUniformMatrix4fv( ShaderUniform.WorldProj, 
+                shader.bindUniformMatrix4fv( shader.WorldProj, 
                     ( scene.camera.buildOrthogonal( cast(float)width, cast(float)height ) ) * ui.scaleMat );
                 shader.bindUI( ui );
                 glDrawElements( GL_TRIANGLES, Assets.unitSquare.numVertices, GL_UNSIGNED_INT, null );

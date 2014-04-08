@@ -69,7 +69,7 @@ immutable string geometryFS = q{
         // specular exponent
         vec3 specularSample = texture( specularTexture, fUV ).xyz;
         color.w = ( specularSample.x + specularSample.y + specularSample.z ) / 3;
-        normal_v = vec4( calculateMappedNormal(), 1.0f );
+        normal_v = vec4( encode(calculateMappedNormal()), 0.0f, 1.0f );
     }
 };
 

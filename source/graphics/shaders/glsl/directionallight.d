@@ -63,7 +63,7 @@ immutable string directionallightFS = q{
     {
         vec3 textureColor = texture( diffuseTexture, fUV ).xyz;
         float specularIntensity = texture( diffuseTexture, fUV ).w;
-        vec3 normal_v = texture( normalTexture, fUV ).xyz;
+        vec3 normal_v = decode(texture( normalTexture, fUV ).xy);
         vec3 lightDir_v = -normalize( light.direction );
 
         // Reconstruct position from Depth
@@ -84,6 +84,6 @@ immutable string directionallightFS = q{
         // textureColor.w is the shininess
         // specularIntensity is the light's contribution
         vec3 specular = ( pow( specularScale, 8 ) * light.color * specularIntensity);
-        color = vec4( ( diffuse + specular ), 1.0f );
+        color = vec4( ( normal_v ), 1.0f );
     }
 };

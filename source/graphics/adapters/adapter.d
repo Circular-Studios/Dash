@@ -147,9 +147,6 @@ public:
 
         void geometryPass()
         {
-
-            logInfo( "Drawing ", scene.objects.length, " objects." );
-
             foreach( object; scene.objects )
             {
 

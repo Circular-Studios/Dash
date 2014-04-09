@@ -16,10 +16,10 @@ private:
     uint _height, _screenHeight;
     bool _fullscreen, _backfaceCulling, _vsync;
     
-    uint deferredFrameBuffer;
-    uint diffuseRenderTexture; //Alpha channel stores Specular map average
-    uint normalRenderTexture; //Alpha channel stores nothing important
-    uint depthRenderTexture;
+    uint _deferredFrameBuffer;
+    uint _diffuseRenderTexture; //Alpha channel stores Specular map average
+    uint _normalRenderTexture; //Alpha channel stores nothing important
+    uint _depthRenderTexture;
     // Do not add properties for:
     shared UserInterface[] uis;
 
@@ -34,6 +34,10 @@ public:
     mixin( Property!_fullscreen );
     mixin( Property!_backfaceCulling );
     mixin( Property!_vsync );
+    mixin( Property!_deferredFrameBuffer );
+    mixin( Property!_diffuseRenderTexture );
+    mixin( Property!_normalRenderTexture );
+    mixin( Property!_depthRenderTexture );
 
     abstract void initialize();
     abstract void shutdown();
@@ -53,30 +57,30 @@ public:
 
         //Create the frame buffer, which will contain the textures to render to
         deferredFrameBuffer = 0;
-        glGenFramebuffers( 1, &deferredFrameBuffer );
-        glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
+        glGenFramebuffers( 1, &_deferredFrameBuffer );
+        glBindFramebuffer( GL_FRAMEBUFFER, _deferredFrameBuffer );
 
         //Generate our 3 textures
-        glGenTextures( 1, &diffuseRenderTexture );
-        glGenTextures( 1, &normalRenderTexture );
-        glGenTextures( 1, &depthRenderTexture );
+        glGenTextures( 1, &_diffuseRenderTexture );
+        glGenTextures( 1, &_normalRenderTexture );
+        glGenTextures( 1, &_depthRenderTexture );
 
         //For each texture, we bind it to our active texture, and set the format and filtering
-        glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
+        glBindTexture( GL_TEXTURE_2D, _diffuseRenderTexture );
         glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, null );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 
-        glBindTexture( GL_TEXTURE_2D, normalRenderTexture );
+        glBindTexture( GL_TEXTURE_2D, _normalRenderTexture );
         glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, null );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 
-        glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
+        glBindTexture( GL_TEXTURE_2D, _depthRenderTexture );
         glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, null );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
@@ -84,9 +88,9 @@ public:
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 
         //And finally set all of these to our frameBuffer
-        glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, diffuseRenderTexture, 0 );
-        glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, normalRenderTexture, 0 );
-        glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthRenderTexture, 0 );
+        glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _diffuseRenderTexture, 0 );
+        glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, _normalRenderTexture, 0 );
+        glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _depthRenderTexture, 0 );
 
         GLenum[ 2 ] DrawBuffers = [ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 ];
         glDrawBuffers( 2, DrawBuffers.ptr );
@@ -183,17 +187,17 @@ public:
                 // diffuse
                 glUniform1i( shader.getUniformLocation( ShaderUniform.DiffuseTexture ), 0 );
                 glActiveTexture( GL_TEXTURE0 );
-                glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
+                glBindTexture( GL_TEXTURE_2D, _diffuseRenderTexture );
                 
                 // normal
                 glUniform1i( shader.getUniformLocation( ShaderUniform.NormalTexture ), 1 );
                 glActiveTexture( GL_TEXTURE1 );
-                glBindTexture( GL_TEXTURE_2D, normalRenderTexture );
+                glBindTexture( GL_TEXTURE_2D, _normalRenderTexture );
                 
                 // depth
                 glUniform1i( shader.getUniformLocation( ShaderUniform.DepthTexture ), 2 );
                 glActiveTexture( GL_TEXTURE2 );
-                glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
+                glBindTexture( GL_TEXTURE_2D, _depthRenderTexture );
             }
 
             // Ambient Light
@@ -297,7 +301,7 @@ public:
             glBindVertexArray(0);
         }
 
-        glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
+        glBindFramebuffer( GL_FRAMEBUFFER, _deferredFrameBuffer );
         // must be called before glClear to clear the depth buffer, otherwise depth buffer won't be cleared
         glDepthMask( GL_TRUE );
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );

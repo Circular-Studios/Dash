@@ -2,9 +2,10 @@
  * Defines the static Input class, which is responsible for handling all keyboard/mouse/controller interactions.
  */
 module utility.input;
-import utility;
+import utility, core, graphics;
 
 import yaml, gl3n.linalg;
+import derelict.opengl3.gl3;
 import core.sync.mutex;
 import std.typecons, std.conv;
 
@@ -282,6 +283,47 @@ public:
         {
             return shared vec2();
         }
+    }
+
+    /**
+     * Get's the world position of the cursor in the active scene.
+     *
+     * Returns:     The position of the mouse cursor in world space.
+     */
+    final shared vec3 getMousePosWorld()
+    {
+        if( !DGame.instance.activeScene )
+        {
+            logWarning( "No active scene." );
+            return shared vec3( 0.0f, 0.0f, 0.0f );
+        }
+
+        auto scene = DGame.instance.activeScene;
+
+        if( !scene.camera )
+        {
+            logWarning( "No camera on active scene." );
+            return shared vec3( 0.0f, 0.0f, 0.0f );
+        }
+        shared vec2 mouse = getMousePos();
+        float* depth = [ 0.0f ].ptr;
+        int x = cast(int)mouse.x;
+        int y = cast(int)mouse.y;
+        auto world = shared vec3( 0, 0, 0 );
+
+        if( x >= 0 && x <= Graphics.width && y >= 0 && y <= Graphics.height )
+        {
+            glBindFramebuffer( GL_FRAMEBUFFER, Graphics.deferredFrameBuffer );
+            glReadBuffer( GL_DEPTH_ATTACHMENT );
+            glReadPixels( x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, depth);
+            logInfo( *depth );
+
+            auto linearDepth = 
+
+            glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+        }
+
+        return shared vec3( 0, 0, 0 );
     }
 
 private:

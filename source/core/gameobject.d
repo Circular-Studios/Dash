@@ -182,6 +182,9 @@ public:
      */
     final void update()
     {
+        foreach( obj; children )
+            obj.update();
+
         onUpdate();
 
         foreach( ci, component; componentList )
@@ -193,6 +196,9 @@ public:
      */
     final void draw()
     {
+        foreach( obj; children )
+            obj.draw();
+
         onDraw();
     }
 

@@ -11,30 +11,17 @@ shared class AssetAnimation
 private:
     shared AnimationSet _animationSet;
     shared int _numberOfBones;
-	shared mat4 _inverseTransform;
 
 public:
     mixin( Property!_animationSet );
     mixin( Property!_numberOfBones );
-	mixin( Property!_inverseTransform );
 
     this( const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) boneHierarchy )
     {
         _animationSet.duration = cast(float)animation.mDuration;
         _animationSet.fps = cast(float)animation.mTicksPerSecond;
-		_inverseTransform = convertAIMatrix(boneHierarchy.mChildren[ 1 ].mTransformation);
-		//_inverseTransform = _inverseTransform.inverse();
-
-		log( OutputType.Warning, "Node Transform: ", _inverseTransform[0][0], " ", _inverseTransform[0][1], " ", _inverseTransform[0][2], " ", _inverseTransform[0][3] );
-		log( OutputType.Warning, "Node Transform: ", _inverseTransform[1][0], " ", _inverseTransform[1][1], " ", _inverseTransform[1][2], " ", _inverseTransform[1][3] );
-		log( OutputType.Warning, "Node Transform: ", _inverseTransform[2][0], " ", _inverseTransform[2][1], " ", _inverseTransform[2][2], " ", _inverseTransform[2][3] );
-		log( OutputType.Warning, "Node Transform: ", _inverseTransform[3][0], " ", _inverseTransform[3][1], " ", _inverseTransform[3][2], " ", _inverseTransform[3][3] );
-
-        _animationSet.animNodes = makeNodesFromNode( animation, mesh, boneHierarchy.mChildren[ 1 ], null );
-
-        //Node temp = _animationSet.animNodes;
-        //Node temp2 = _animationSet.animNodes.children[ 0 ];
-        //Node temp3 = _animationSet.animNodes.children[ 0 ].children[ 0 ];
+        
+		_animationSet.animNodes = makeNodesFromNode( animation, mesh, boneHierarchy.mChildren[ 1 ], null );
     }
 
     // Each bone has one of two setups:
@@ -45,14 +32,6 @@ public:
         string name = cast(string)currNode.mName.data[ 0 .. currNode.mName.length ];
         int id = findNodeWithName( name, mesh );
         shared Node node;
-        // If the node is the translation segment of a bone add bone based on all of its parts (the next couple of children nodes)
-        // Else if the node is another segment of a bone add its data to the partial bone (the parent node)
-        // Else if the node is a full bone add it
-
-		log( OutputType.Warning, "Node Transform: ", currNode.mTransformation.a1, " ", currNode.mTransformation.a2, " ", currNode.mTransformation.a3, " ", currNode.mTransformation.a4 );
-		log( OutputType.Warning, "Node Transform: ", currNode.mTransformation.b1, " ", currNode.mTransformation.b2, " ", currNode.mTransformation.b3, " ", currNode.mTransformation.b4 );
-		log( OutputType.Warning, "Node Transform: ", currNode.mTransformation.c1, " ", currNode.mTransformation.c2, " ", currNode.mTransformation.c3, " ", currNode.mTransformation.c4 );
-		log( OutputType.Warning, "Node Transform: ", currNode.mTransformation.d1, " ", currNode.mTransformation.d2, " ", currNode.mTransformation.d3, " ", currNode.mTransformation.d4 );
 
         if( id != -1 )
         {
@@ -60,16 +39,6 @@ public:
             node = new shared Node( name );
             node.id = id;
             node.transform = convertAIMatrix( mesh.mBones[ node.id ].mOffsetMatrix );
-
-			//log( OutputType.Warning, "Node Transform: ", node.transform[0][0], " ", node.transform[0][1], " ", node.transform[0][2], " ", node.transform[0][3] );
-			//log( OutputType.Warning, "Node Transform: ", node.transform[1][0], " ", node.transform[1][1], " ", node.transform[1][2], " ", node.transform[1][3] );
-			//log( OutputType.Warning, "Node Transform: ", node.transform[2][0], " ", node.transform[2][1], " ", node.transform[2][2], " ", node.transform[2][3] );
-			//log( OutputType.Warning, "Node Transform: ", node.transform[3][0], " ", node.transform[3][1], " ", node.transform[3][2], " ", node.transform[3][3] );
-			//aiMatrix4x4 matrix = mesh.mBones[ node.id ].mOffsetMatrix;
-			//log( OutputType.Warning, "Node Transform: ", matrix.a1, " ", matrix.a2, " ", matrix.a3, " ", matrix.a4 );
-			//log( OutputType.Warning, "Node Transform: ", matrix.b1, " ", matrix.b2, " ", matrix.b3, " ", matrix.b4 );
-			//log( OutputType.Warning, "Node Transform: ", matrix.c1, " ", matrix.c2, " ", matrix.c3, " ", matrix.c4 );
-			//log( OutputType.Warning, "Node Transform: ", matrix.d1, " ", matrix.d2, " ", matrix.d3, " ", matrix.d4 );
 			
             assignAnimationData( animation, node );
 
@@ -197,10 +166,6 @@ public:
         }
 
         fillTransforms( boneTransforms, _animationSet.animNodes, time, mat4.identity, 0 );
-		
-        //mat4 temp = boneTransforms[ 0 ];
-        //mat4 temp2 = boneTransforms[ 1 ];
-        //mat4 temp3 = boneTransforms[ 2 ];
 
         return boneTransforms;
     }
@@ -208,108 +173,42 @@ public:
     void fillTransforms( shared mat4[] transforms, shared Node node, shared float time, shared mat4 parentTransform, int boneNum)
     {
         // Calculate matrix based on node.bone data and time
-        /*shared mat4 finalTransform;
+        shared mat4 finalTransform;
         shared mat4 boneTransform = mat4.identity;
-        shared quat temp = quat( 0.0f, 0.707106f, -0.707106f, 0.0f );
+		// Data in the transform/scale partial nodes
 		shared mat4 test = mat4(0.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 32.7f, 0.0f, 0.0f, 1.0f, 0.02f, 0.0f, 0.0f, 0.0f, 1.0f);
 		shared mat4 test2 = mat4(0.978468f, 0.0f, -0.2064f, 12.2843f, 0.0f, 1.0f, 0.0f, 0.0f, 0.2064f, 0.0f, 0.978468f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 		shared mat4 test3 = mat4(0.0f, -0.977f,  0.212f, 16.632f, 1.0f,  0.0f,  0.0f,  0.0f, 0.0f,  0.212f,  0.977f,  0.0f, 0.0f,  0.0f,  0.0f,  1.0f);
 		
 		if( node.positionKeys.length > cast(int)time )
-            //boneTransform.translation( node.positionKeys[ cast(int)time ].vector[ 0 ], node.positionKeys[ cast(int)time ].vector[ 1 ], node.positionKeys[ cast(int)time ].vector[ 2 ] );
+            boneTransform = boneTransform * boneTransform.translation( node.positionKeys[ cast(int)time ].vector[ 0 ], node.positionKeys[ cast(int)time ].vector[ 1 ], node.positionKeys[ cast(int)time ].vector[ 2 ] );
 		if( node.rotationKeys.length > cast(int)time )
 			boneTransform = boneTransform * node.rotationKeys[ cast(int)time ].to_matrix!( 4, 4 );
 		if( node.scaleKeys.length > cast(int)time )
-            //boneTransform.scale( node.scaleKeys[ cast(int)time ].vector[ 0 ], node.scaleKeys[ cast(int)time ].vector[ 1 ], node.scaleKeys[ cast(int)time ].vector[ 2 ] );
+            boneTransform.scale( node.scaleKeys[ cast(int)time ].vector[ 0 ], node.scaleKeys[ cast(int)time ].vector[ 1 ], node.scaleKeys[ cast(int)time ].vector[ 2 ] );
         
-		
-		// ASSIMP SKELETAL ANIMATION TUTORIAL HAS A GLOBAL INVERSE TRANSFORM, CHECK IF CAUSING ISSUES
-		// CHECK TO SEE IF WEIRD EXTRA ASSIMP NODES CONTAIN NEEDED DATA
 		if(boneNum == 0)
 		{
-			finalTransform = (test * parentTransform) * boneTransform;
+			finalTransform = (parentTransform * test) * boneTransform;
 			transforms[ node.id ] = finalTransform * node.transform;
 		}
 		if(boneNum == 1)
 		{
-			finalTransform = boneTransform * parentTransform;
+			finalTransform = parentTransform * boneTransform;
 			transforms[ node.id ] = finalTransform * node.transform;
 		}
 		if(boneNum == 2)
 		{
-			finalTransform = (test3 * parentTransform) * boneTransform;
-			transforms[ node.id ] = finalTransform * node.transform;
-		}
-		if(boneNum == 0)
-		{
-			finalTransform = (test * parentTransform) * boneTransform;
-			transforms[ node.id ] = finalTransform * node.transform;
-		}
-		if(boneNum == 1)
-		{
-			finalTransform = (test2 * parentTransform) * boneTransform;
-			transforms[ node.id ] = finalTransform * node.transform;
-		}
-		if(boneNum == 2)
-		{
-			finalTransform = (test3 * parentTransform) * boneTransform;
+			finalTransform = (parentTransform) * boneTransform;
 			transforms[ node.id ] = finalTransform * node.transform;
 		}
 		boneNum++;
-
-		log( OutputType.Warning, "Node Transform: ", transforms[ node.id ][0][0], " ", transforms[ node.id ][0][1], " ", transforms[ node.id ][0][2], " ", transforms[ node.id ][0][3] );
-		log( OutputType.Warning, "Node Transform: ", transforms[ node.id ][1][0], " ", transforms[ node.id ][1][1], " ", transforms[ node.id ][1][2], " ", transforms[ node.id ][1][3] );
-		log( OutputType.Warning, "Node Transform: ", transforms[ node.id ][2][0], " ", transforms[ node.id ][2][1], " ", transforms[ node.id ][2][2], " ", transforms[ node.id ][2][3] );
-		log( OutputType.Warning, "Node Transform: ", transforms[ node.id ][3][0], " ", transforms[ node.id ][3][1], " ", transforms[ node.id ][3][2], " ", transforms[ node.id ][3][3] );
 
         // Store the transform in the correct place and check children
         for( int i = 0; i < node.children.length; i++ )
         {
             fillTransforms( transforms, node.children[ i ], time, finalTransform, boneNum );
-        }*/
-
-		// Calculate matrix based on node.bone data and time
-		shared mat4 finalTransform;
-		shared mat4 boneTransform = mat4.identity;
-		shared quat temp = quat( 0.0f, 0.707106f, -0.707106f, 0.0f );
-
-		if( node.scaleKeys.length > cast(int)time )
-			boneTransform = boneTransform * boneTransform.scale( node.scaleKeys[ cast(int)time ].vector[ 0 ], node.scaleKeys[ cast(int)time ].vector[ 1 ], node.scaleKeys[ cast(int)time ].vector[ 2 ] );
-		if( node.rotationKeys.length > cast(int)time )
-			boneTransform = boneTransform * node.rotationKeys[ cast(int)time ].to_matrix!( 4, 4 );
-		if( node.positionKeys.length > cast(int)time )
-		{
-			boneTransform = boneTransform * boneTransform.translation( node.positionKeys[ cast(int)time ].vector[ 0 ], node.positionKeys[ cast(int)time ].vector[ 1 ], node.positionKeys[ cast(int)time ].vector[ 2 ] );
-		}
-
-		finalTransform = parentTransform * boneTransform;
- 		transforms[ node.id ] = finalTransform * node.transform;
-
-		if(time == 0.002f)
-		{
-			log( OutputType.Warning, node.positionKeys[ cast(int)time ].vector[ 1 ] );
-			log( OutputType.Warning, "Bone Transform" );
-			log( OutputType.Warning, boneTransform[0][0], " ", boneTransform[0][1], " ", boneTransform[0][2], " ", boneTransform[0][3] );
-			log( OutputType.Warning, boneTransform[1][0], " ", boneTransform[1][1], " ", boneTransform[1][2], " ", boneTransform[1][3] );
-			log( OutputType.Warning, boneTransform[2][0], " ", boneTransform[2][1], " ", boneTransform[2][2], " ", boneTransform[2][3] );
-			log( OutputType.Warning, boneTransform[3][0], " ", boneTransform[3][1], " ", boneTransform[3][2], " ", boneTransform[3][3] );
-			log( OutputType.Warning, "Node Offset" );
-			log( OutputType.Warning, node.transform[0][0], " ", node.transform[0][1], " ", node.transform[0][2], " ", node.transform[0][3] );
-			log( OutputType.Warning, node.transform[1][0], " ", node.transform[1][1], " ", node.transform[1][2], " ", node.transform[1][3] );
-			log( OutputType.Warning, node.transform[2][0], " ", node.transform[2][1], " ", node.transform[2][2], " ", node.transform[2][3] );
-			log( OutputType.Warning, node.transform[3][0], " ", node.transform[3][1], " ", node.transform[3][2], " ", node.transform[3][3] );
-			log( OutputType.Warning, "Final Matrix" );
-			log( OutputType.Warning, transforms[ node.id ][0][0], " ", transforms[ node.id ][0][1], " ", transforms[ node.id ][0][2], " ", transforms[ node.id ][0][3] );
-			log( OutputType.Warning, transforms[ node.id ][1][0], " ", transforms[ node.id ][1][1], " ", transforms[ node.id ][1][2], " ", transforms[ node.id ][1][3] );
-			log( OutputType.Warning, transforms[ node.id ][2][0], " ", transforms[ node.id ][2][1], " ", transforms[ node.id ][2][2], " ", transforms[ node.id ][2][3] );
-			log( OutputType.Warning, transforms[ node.id ][3][0], " ", transforms[ node.id ][3][1], " ", transforms[ node.id ][3][2], " ", transforms[ node.id ][3][3] );
-		}
-
-		// Store the transform in the correct place and check children
-		for( int i = 0; i < node.children.length; i++ )
-		{
-			fillTransforms( transforms, node.children[ i ], time, finalTransform, 0 );
-		}
+        }
     }
 
     mat4 convertAIMatrix( aiMatrix4x4 aiMatrix )

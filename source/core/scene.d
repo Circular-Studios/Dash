@@ -16,6 +16,7 @@ public:
     this()
     {
         root = new shared GameObject;
+        root.name = "[scene]";
     }
 
     /**

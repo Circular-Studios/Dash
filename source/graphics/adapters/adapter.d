@@ -149,7 +149,6 @@ public:
         {
             foreach( object; scene.objects )
             {
-
                 if( object.mesh )
                 {
                     // set the shader

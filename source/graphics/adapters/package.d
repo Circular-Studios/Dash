@@ -1,6 +1,9 @@
 module graphics.adapters;
 public:
 import graphics.adapters.adapter;
-import graphics.adapters.win32;
-import graphics.adapters.mac;
-import graphics.adapters.linux;
+version( Windows )
+    import graphics.adapters.win32;
+else version( OSX )
+    import graphics.adapters.mac;
+else version( linux )
+    import graphics.adapters.linux;

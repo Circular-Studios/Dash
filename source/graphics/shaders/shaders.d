@@ -10,7 +10,7 @@ import std.string, std.traits, std.algorithm;
 /*
  * String constants for our shader uniforms
  */
-private enum ShaderUniform 
+private enum ShaderUniform
 {
     /// Matrices
     World = "world",
@@ -96,7 +96,7 @@ private:
     Shader[string] shaders;
 }
 
-enum ShaderUniformFields = reduce!( ( a, b ) => a ~ "uint " ~ b ~ ";\n" )( "", [__traits(allMembers,ShaderUniform )] );
+enum ShaderUniformFields = reduce!( ( a, b ) => a ~ "immutable uint " ~ b ~ ";\n" )( "", [__traits(allMembers,ShaderUniform )] );
 
 final package class Shader
 {
@@ -288,7 +288,7 @@ public:
         bindUniform3f( LightColor, light.color );
     }
 
-    /* 
+    /*
      * Bind a directional light after a modifying transform
      */
     final void bindDirectionalLight( shared DirectionalLight light, shared mat4 transform )
@@ -331,4 +331,3 @@ public:
         // please write me :(
     }
 }
-

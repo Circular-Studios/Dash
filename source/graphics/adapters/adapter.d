@@ -15,7 +15,7 @@ private:
     uint _width, _screenWidth;
     uint _height, _screenHeight;
     bool _fullscreen, _backfaceCulling, _vsync;
-    
+
     uint deferredFrameBuffer;
     uint diffuseRenderTexture; //Alpha channel stores Specular map average
     uint normalRenderTexture; //Alpha channel stores nothing important
@@ -43,7 +43,7 @@ public:
 
     abstract void openWindow();
     abstract void closeWindow();
-    
+
     abstract void messageLoop();
 
 
@@ -97,19 +97,18 @@ public:
             assert(false);
         }
     }
-    
+
     /**
-     * sets up the rendering pipeline for the geometry pass
+     * Sets up the render pipeline.
      */
     final void beginDraw()
     {
-        
-        
+
     }
-    
+
     /**
-     * called after all desired objects are drawn
-     * handles lighting and post processing
+     * Called after all desired objects are drawn.
+     * Handles lighting and post processing.
      */
     final void endDraw()
     {
@@ -131,17 +130,17 @@ public:
                                 .filter!(obj => obj.light)
                                 .map!(obj => obj.light);
 
-        auto getOfType( Type, Range )( Range range )
+        auto getOfType( Type )()
         {
-            return range
+            return objsWithLights
                     .filter!(obj => typeid(obj) == typeid(Type))
                     .map!(obj => cast(shared Type)obj);
         }
 
-        auto ambientLights = getOfType!AmbientLight( objsWithLights );
-        auto directionalLights = getOfType!DirectionalLight( objsWithLights );
-        auto pointLights = getOfType!PointLight( objsWithLights );
-        auto spotLights = getOfType!SpotLight( objsWithLights );
+        auto ambientLights = getOfType!AmbientLight;
+        auto directionalLights = getOfType!DirectionalLight;
+        auto pointLights = getOfType!PointLight;
+        auto spotLights = getOfType!SpotLight;
 
         shared mat4 perspProj = scene.camera.buildPerspective( cast(float)width, cast(float)height );
         shared mat4 invProj = perspProj.inverse();
@@ -150,7 +149,6 @@ public:
         {
             foreach( object; scene )
             {
-
                 if( object.mesh )
                 {
                     // set the shader
@@ -186,12 +184,12 @@ public:
                 glUniform1i( shader.DiffuseTexture, 0 );
                 glActiveTexture( GL_TEXTURE0 );
                 glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
-                
+
                 // normal
                 glUniform1i( shader.NormalTexture, 1 );
                 glActiveTexture( GL_TEXTURE1 );
                 glBindTexture( GL_TEXTURE_2D, normalRenderTexture );
-                
+
                 // depth
                 glUniform1i( shader.DepthTexture, 2 );
                 glActiveTexture( GL_TEXTURE2 );
@@ -262,7 +260,7 @@ public:
                 {
                 //  logInfo(light.owner.name);
                     shader.bindUniformMatrix4fv( shader.WorldView, scene.camera.viewMatrix * light.getTransform() );
-                    shader.bindUniformMatrix4fv( shader.WorldViewProjection, 
+                    shader.bindUniformMatrix4fv( shader.WorldViewProjection,
                                                  perspProj * scene.camera.viewMatrix * light.getTransform() );
                     shader.bindPointLight( light, scene.camera.viewMatrix );
                     glDrawElements( GL_TRIANGLES, Assets.unitSphere.numVertices, GL_UNSIGNED_INT, null );
@@ -281,14 +279,13 @@ public:
             Shader shader = Shaders.userInterface;
             glUseProgram( shader.programID );
             glBindVertexArray( Assets.unitSquare.glVertexArray );
-            
+
             foreach( ui; uis )
             {
-                shader.bindUniformMatrix4fv( shader.WorldProj, 
-                    ( scene.camera.buildOrthogonal( cast(float)width, cast(float)height ) ) * ui.scaleMat );
+                shader.bindUniformMatrix4fv( shader.WorldProj,
+                    scene.camera.buildOrthogonal( cast(float)width, cast(float)height ) * ui.scaleMat );
                 shader.bindUI( ui );
                 glDrawElements( GL_TRIANGLES, Assets.unitSquare.numVertices, GL_UNSIGNED_INT, null );
-
             }
 
             glBindVertexArray(0);
@@ -308,7 +305,7 @@ public:
         glDisable( GL_DEPTH_TEST );
         glEnable( GL_BLEND );
         glBlendFunc( GL_ONE, GL_ONE );
-        
+
         //This line switches back to the default framebuffer
         glBindFramebuffer( GL_FRAMEBUFFER, 0 );
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -323,7 +320,7 @@ public:
         // put it on the screen
         swapBuffers();
 
-        // clean up 
+        // clean up
         glBindVertexArray(0);
         glUseProgram(0);
         uis = [];
@@ -356,7 +353,4 @@ protected:
         backfaceCulling = Config.get!bool( "Graphics.BackfaceCulling" );
         vsync = Config.get!bool( "Graphics.VSync" );
     }
-
-private:
-    
 }

@@ -26,16 +26,16 @@ public:
     static shared(Material) createFromYaml( Node yamlObj )
     {
         auto obj = new shared Material;
-        Variant prop;
+        string prop;
 
-        if( Config.tryGet!string( "Diffuse", prop, yamlObj ) )
-            obj.diffuse = Assets.get!Texture( prop.get!string );
+        if( Config.tryGet( "Diffuse", prop, yamlObj ) )
+            obj.diffuse = Assets.get!Texture( prop );
 
-        if( Config.tryGet!string( "Normal", prop, yamlObj ) )
-            obj.normal = Assets.get!Texture( prop.get!string );
+        if( Config.tryGet( "Normal", prop, yamlObj ) )
+            obj.normal = Assets.get!Texture( prop );
 
-        if( Config.tryGet!string( "Specular", prop, yamlObj ) )
-            obj.specular = Assets.get!Texture( prop.get!string );
+        if( Config.tryGet( "Specular", prop, yamlObj ) )
+            obj.specular = Assets.get!Texture( prop );
 
         return obj;
     }

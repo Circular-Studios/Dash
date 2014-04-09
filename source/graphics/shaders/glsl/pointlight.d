@@ -50,6 +50,14 @@ immutable string pointlightFS = q{
     // [ (-Far * Near ) / ( Far - Near ),  Far / ( Far - Near )  ]
     uniform vec2 projectionConstants;
 
+    // Function for decoding normals
+    vec3 decode( vec2 enc )
+    {
+        float t = ( ( enc.x * enc.x ) + ( enc.y * enc.y ) ) / 4;
+        float ti = sqrt( 1 - t );
+        return vec3( ti * enc.x, ti * enc.y, -1 + t * 2 );
+    }
+
     void main( void )
     {
         // The viewray should have interpolated across the pixels covered by the light, so we should just be able to clamp it's depth to 1
@@ -57,7 +65,7 @@ immutable string pointlightFS = q{
         vec2 UV = ( ( fPosition_s.xy / fPosition_s.w ) + 1 ) / 2;
         vec3 textureColor = texture( diffuseTexture, UV ).xyz;
         float specularIntensity = texture( diffuseTexture, UV ).w;
-        vec3 normal_v = normalize(texture( normalTexture, UV ).xyz);
+        vec3 normal_v = decode(texture( normalTexture, UV ).xy);
 
         // Reconstruct position from depth
         float depth = texture( depthTexture, UV ).x;

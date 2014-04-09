@@ -52,6 +52,7 @@ immutable string directionallightFS = q{
     // https://stackoverflow.com/questions/9222217/how-does-the-fragment-shader-know-what-variable-to-use-for-the-color-of-a-pixel
     out vec4 color;
 
+    // Function for decoding normals
     vec3 decode( vec2 enc )
     {
         float t = ( ( enc.x * enc.x ) + ( enc.y * enc.y ) ) / 4;
@@ -84,6 +85,6 @@ immutable string directionallightFS = q{
         // textureColor.w is the shininess
         // specularIntensity is the light's contribution
         vec3 specular = ( pow( specularScale, 8 ) * light.color * specularIntensity);
-        color = vec4( ( normal_v ), 1.0f );
+        color = vec4( ( diffuse + specular ), 1.0f );
     }
 };

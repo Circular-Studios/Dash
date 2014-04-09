@@ -39,7 +39,7 @@ immutable string geometryFS = q{
     in vec3 fTangent_v;
 
     layout( location = 0 ) out vec4 color;
-    layout( location = 1 ) out vec4 normal_v;
+    layout( location = 1 ) out vec2 normal_v;
 
     uniform sampler2D diffuseTexture;
     uniform sampler2D normalTexture;
@@ -47,7 +47,7 @@ immutable string geometryFS = q{
 
     vec2 encode( vec3 normal )
     {
-        float t = sqrt( 2 / 1 - normal.z );
+        float t = sqrt( 2 / ( 1 - normal.z ) );
         return normal.xy * t;
     }
 
@@ -69,7 +69,7 @@ immutable string geometryFS = q{
         // specular exponent
         vec3 specularSample = texture( specularTexture, fUV ).xyz;
         color.w = ( specularSample.x + specularSample.y + specularSample.z ) / 3;
-        normal_v = vec4( encode(calculateMappedNormal()), 0.0f, 1.0f );
+        normal_v = encode(calculateMappedNormal());
     }
 };
 

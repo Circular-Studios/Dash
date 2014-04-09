@@ -95,8 +95,10 @@ public:
 
         while( objs.length )
         {
-            toReturn ~= objs[ 0 ].children;
+            auto temp = objs[ 0 ];
             objs = objs[ 1..$ ];
+            toReturn ~= temp.children;
+            objs ~= temp.children;
         }
 
         return toReturn;

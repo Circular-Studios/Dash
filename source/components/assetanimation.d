@@ -208,7 +208,7 @@ public:
     void fillTransforms( shared mat4[] transforms, shared Node node, shared float time, shared mat4 parentTransform, int boneNum)
     {
         // Calculate matrix based on node.bone data and time
-        shared mat4 finalTransform;
+        /*shared mat4 finalTransform;
         shared mat4 boneTransform = mat4.identity;
         shared quat temp = quat( 0.0f, 0.707106f, -0.707106f, 0.0f );
 		shared mat4 test = mat4(0.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 32.7f, 0.0f, 0.0f, 1.0f, 0.02f, 0.0f, 0.0f, 0.0f, 1.0f);
@@ -240,7 +240,7 @@ public:
 			finalTransform = (test3 * parentTransform) * boneTransform;
 			transforms[ node.id ] = finalTransform * node.transform;
 		}
-		/*if(boneNum == 0)
+		if(boneNum == 0)
 		{
 			finalTransform = (test * parentTransform) * boneTransform;
 			transforms[ node.id ] = finalTransform * node.transform;
@@ -254,7 +254,7 @@ public:
 		{
 			finalTransform = (test3 * parentTransform) * boneTransform;
 			transforms[ node.id ] = finalTransform * node.transform;
-		}*/
+		}
 		boneNum++;
 
 		log( OutputType.Warning, "Node Transform: ", transforms[ node.id ][0][0], " ", transforms[ node.id ][0][1], " ", transforms[ node.id ][0][2], " ", transforms[ node.id ][0][3] );
@@ -266,7 +266,50 @@ public:
         for( int i = 0; i < node.children.length; i++ )
         {
             fillTransforms( transforms, node.children[ i ], time, finalTransform, boneNum );
-        }
+        }*/
+
+		// Calculate matrix based on node.bone data and time
+		shared mat4 finalTransform;
+		shared mat4 boneTransform = mat4.identity;
+		shared quat temp = quat( 0.0f, 0.707106f, -0.707106f, 0.0f );
+
+		if( node.scaleKeys.length > cast(int)time )
+			boneTransform = boneTransform.scale( node.scaleKeys[ cast(int)time ].vector[ 0 ], node.scaleKeys[ cast(int)time ].vector[ 1 ], node.scaleKeys[ cast(int)time ].vector[ 2 ] );
+		if( node.rotationKeys.length > cast(int)time )
+			boneTransform = boneTransform * node.rotationKeys[ cast(int)time ].to_matrix!( 4, 4 );
+		if( node.positionKeys.length > cast(int)time )
+		{
+			boneTransform = boneTransform * boneTransform.translation( node.positionKeys[ cast(int)time ].vector[ 0 ], node.positionKeys[ cast(int)time ].vector[ 1 ], node.positionKeys[ cast(int)time ].vector[ 2 ] );
+		}
+
+		finalTransform = parentTransform * boneTransform;
+ 		transforms[ node.id ] = finalTransform * node.transform;
+
+		if(time == 0.002f)
+		{
+			log( OutputType.Warning, node.positionKeys[ cast(int)time ].vector[ 1 ] );
+			log( OutputType.Warning, "Bone Transform" );
+			log( OutputType.Warning, boneTransform[0][0], " ", boneTransform[0][1], " ", boneTransform[0][2], " ", boneTransform[0][3] );
+			log( OutputType.Warning, boneTransform[1][0], " ", boneTransform[1][1], " ", boneTransform[1][2], " ", boneTransform[1][3] );
+			log( OutputType.Warning, boneTransform[2][0], " ", boneTransform[2][1], " ", boneTransform[2][2], " ", boneTransform[2][3] );
+			log( OutputType.Warning, boneTransform[3][0], " ", boneTransform[3][1], " ", boneTransform[3][2], " ", boneTransform[3][3] );
+			log( OutputType.Warning, "Node Offset" );
+			log( OutputType.Warning, node.transform[0][0], " ", node.transform[0][1], " ", node.transform[0][2], " ", node.transform[0][3] );
+			log( OutputType.Warning, node.transform[1][0], " ", node.transform[1][1], " ", node.transform[1][2], " ", node.transform[1][3] );
+			log( OutputType.Warning, node.transform[2][0], " ", node.transform[2][1], " ", node.transform[2][2], " ", node.transform[2][3] );
+			log( OutputType.Warning, node.transform[3][0], " ", node.transform[3][1], " ", node.transform[3][2], " ", node.transform[3][3] );
+			log( OutputType.Warning, "Final Matrix" );
+			log( OutputType.Warning, transforms[ node.id ][0][0], " ", transforms[ node.id ][0][1], " ", transforms[ node.id ][0][2], " ", transforms[ node.id ][0][3] );
+			log( OutputType.Warning, transforms[ node.id ][1][0], " ", transforms[ node.id ][1][1], " ", transforms[ node.id ][1][2], " ", transforms[ node.id ][1][3] );
+			log( OutputType.Warning, transforms[ node.id ][2][0], " ", transforms[ node.id ][2][1], " ", transforms[ node.id ][2][2], " ", transforms[ node.id ][2][3] );
+			log( OutputType.Warning, transforms[ node.id ][3][0], " ", transforms[ node.id ][3][1], " ", transforms[ node.id ][3][2], " ", transforms[ node.id ][3][3] );
+		}
+
+		// Store the transform in the correct place and check children
+		for( int i = 0; i < node.children.length; i++ )
+		{
+			fillTransforms( transforms, node.children[ i ], time, finalTransform, 0 );
+		}
     }
 
     mat4 convertAIMatrix( aiMatrix4x4 aiMatrix )

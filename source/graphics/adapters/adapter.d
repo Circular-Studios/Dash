@@ -6,29 +6,6 @@ import derelict.opengl3.gl3;
 
 import std.algorithm, std.array;
 
-version( Windows )
-{
-    import win32.windef;
-    
-    alias HGLRC GLRenderContext;
-    alias HDC GLDeviceContext;
-}
-else version( OSX )
-{
-    import derelict.opengl3.gl3, derelict.opengl3.cgl;
-    
-    alias CGLContextObj GLRenderContext;
-    alias uint GLDeviceContext;
-}
-else
-{
-    import derelict.opengl3.glx, derelict.opengl3.glxext;
-    
-    //alias OpenGLRenderContext GLRenderContext;
-    alias GLXContext GLRenderContext;
-    alias uint GLDeviceContext;
-}
-
 abstract class Adapter
 {
 private:

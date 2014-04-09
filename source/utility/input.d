@@ -290,7 +290,7 @@ public:
      *
      * Returns:     The position of the mouse cursor in world space.
      */
-    final shared vec3 getMousePosWorld()
+    final shared vec3 getMousePosView()
     {
         if( !DGame.instance.activeScene )
         {
@@ -309,21 +309,39 @@ public:
         float* depth = [ 0.0f ].ptr;
         int x = cast(int)mouse.x;
         int y = cast(int)mouse.y;
-        auto world = shared vec3( 0, 0, 0 );
+        auto view = shared vec3( 0, 0, 0 );
 
         if( x >= 0 && x <= Graphics.width && y >= 0 && y <= Graphics.height )
         {
             glBindFramebuffer( GL_FRAMEBUFFER, Graphics.deferredFrameBuffer );
             glReadBuffer( GL_DEPTH_ATTACHMENT );
-            glReadPixels( x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, depth);
-            logInfo( *depth );
+            glReadPixels( x, Graphics.height - y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, depth);
 
-            //auto linearDepth = scene.camera.projection
+            auto linearDepth = scene.camera.projectionConstants.x / ( scene.camera.projectionConstants.y - *depth );
+            //Convert x and y to normalized device coords
+            shared float screenX = ( mouse.x / cast(shared float)Graphics.width ) * 2 - 1;
+            shared float screenY = -( ( mouse.y / cast(shared float)Graphics.height ) * 2 - 1 );
+
+            auto invProj = cast(shared)scene.camera.buildPerspective( cast(float)Graphics.width, cast(float)Graphics.height ).inverse();
+            auto screenSpace = shared vec4( screenX, screenY, 1.0f, 1.0f);
+            auto viewSpace = invProj * screenSpace;
+            auto viewRay = shared vec3( viewSpace.xy * (1.0f / viewSpace.z), 1.0f);
+            view = viewRay * linearDepth;
 
             glBindFramebuffer( GL_FRAMEBUFFER, 0 );
         }
 
-        return shared vec3( 0, 0, 0 );
+        return view;
+    }
+
+    /**
+     * Get's the world position of the cursor in the active scene.
+     *
+     * Returns:     The position of the mouse cursor in world space.
+     */
+    final shared vec3 getMousePosWorld()
+    {
+        return (cast(shared)DGame.instance.activeScene.camera.viewMatrix().inverse() * shared vec4( getMousePosView(), 1.0f )).xyz;
     }
 
 private:

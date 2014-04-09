@@ -14,7 +14,7 @@ public:
 
     this( shared vec3 color )
     {
-        this.color = vec3( color );
+        this.color = color;
     }
     
     override void update() { }
@@ -42,7 +42,7 @@ public:
 
     this( shared vec3 color, shared vec3 direction )
     {
-        this.direction = vec3( direction );
+        this.direction = direction;
         super( color );
     }
 }

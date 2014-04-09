@@ -318,7 +318,7 @@ public:
             glReadPixels( x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, depth);
             logInfo( *depth );
 
-            auto linearDepth = 
+            //auto linearDepth = scene.camera.projection
 
             glBindFramebuffer( GL_FRAMEBUFFER, 0 );
         }

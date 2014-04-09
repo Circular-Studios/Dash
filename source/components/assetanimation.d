@@ -274,7 +274,7 @@ public:
 		shared quat temp = quat( 0.0f, 0.707106f, -0.707106f, 0.0f );
 
 		if( node.scaleKeys.length > cast(int)time )
-			boneTransform = boneTransform.scale( node.scaleKeys[ cast(int)time ].vector[ 0 ], node.scaleKeys[ cast(int)time ].vector[ 1 ], node.scaleKeys[ cast(int)time ].vector[ 2 ] );
+			boneTransform = boneTransform * boneTransform.scale( node.scaleKeys[ cast(int)time ].vector[ 0 ], node.scaleKeys[ cast(int)time ].vector[ 1 ], node.scaleKeys[ cast(int)time ].vector[ 2 ] );
 		if( node.rotationKeys.length > cast(int)time )
 			boneTransform = boneTransform * node.rotationKeys[ cast(int)time ].to_matrix!( 4, 4 );
 		if( node.positionKeys.length > cast(int)time )

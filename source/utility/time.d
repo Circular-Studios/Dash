@@ -33,12 +33,13 @@ public:
      */
     synchronized final void update()
     {
-        // For first run
-        if( cast()cur == SysTime.min )
-            cast()cur = (cast()prev) = Clock.currTime;
+        if( !(cast()sw).running )
+        {
+            (cast()sw).start();
+            cur = prev = (cast()sw).peek();
+        }
 
-        delta = cast()cur - cast()prev;
-        cast()total += cast()delta;
+        delta = cast(shared Duration)( cast()cur - cast()prev );
 
         debug
         {
@@ -46,19 +47,20 @@ public:
             cast()second += cast()delta;
             if( cast()second >= 1.seconds )
             {
-                log( OutputType.Info, "Framerate: ", frameCount );
+                logInfo( "Framerate: ", frameCount );
                 cast()second = Duration.zero;
                 frameCount = 0;
             }
         }
 
-        cast()prev = cur;
-        cast()cur = Clock.currTime;
+        prev = cur;
+        cur = (cast()sw).peek();
     }
 
 private:
-    SysTime cur;
-    SysTime prev;
+    StopWatch sw;
+    TickDuration cur;
+    TickDuration prev;
     Duration delta;
     Duration total;
     Duration second;
@@ -69,7 +71,7 @@ private:
      */
     shared this()
     {
-        cur = prev = SysTime.min;
+        cur = prev = TickDuration.min;
         cast()second = cast()total = cast()delta = Duration.zero;
         frameCount = 0;
     }

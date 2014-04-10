@@ -6,10 +6,11 @@ import core.gameobject;
 import graphics.graphics;
 import graphics.adapters.adapter;
 
-import derelict.opengl3.gl3, derelict.opengl3.cgl;
+public import derelict.opengl3.cgl;
+import derelict.opengl3.gl3;
 
-alias CGLContextObj GLRenderContext;
-alias uint GLDeviceContext;
+public alias CGLContextObj GLRenderContext;
+public alias uint GLDeviceContext;
 
 final class Mac : Adapter
 {
@@ -20,22 +21,22 @@ public:
     {
 
     }
-    
+
     override void shutdown()
     {
 
     }
-    
+
     override void resize()
     {
 
     }
-    
+
     override void reload()
     {
 
     }
-    
+
     override void beginDraw()
     {
 
@@ -45,22 +46,22 @@ public:
     {
 
     }
-    
+
     override void endDraw()
     {
 
     }
-    
+
     override void openWindow()
     {
 
     }
-    
+
     override void closeWindow()
     {
-        
+
     }
-    
+
     override void messageLoop()
     {
 

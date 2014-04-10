@@ -60,7 +60,7 @@ public:
     /// Current state of the game
     EngineState currentState;
 
-    /// 
+    ///
     UpdateFlags* updateFlags;
 
     /// The currently active scene
@@ -164,7 +164,7 @@ public:
 
     /**
      * Schedule a task to be executed until it returns true.
-     * 
+     *
      * Params:
      *  dg =                The task to execute
      */
@@ -175,7 +175,7 @@ public:
 
     /**
      * Schedule a task to be executed until the duration expires.
-     * 
+     *
      * Params:
      *  dg =                The task to execute
      *  duration =          The duration to execute the task for

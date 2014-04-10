@@ -26,6 +26,7 @@ private:
     GameObject _parent;
     GameObject[] _children;
     IComponent[TypeInfo] componentList;
+    string _name;
 
 public:
     /// The current transform of the object.
@@ -44,16 +45,16 @@ public:
     mixin( Property!( _parent, AccessModifier.Public ) );
     /// All of the objects which list this as parent
     mixin( Property!( _children, AccessModifier.Public ) );
-
-    string name;
+    /// The name of the object.
+    mixin( Property!( _name, AccessModifier.Public ) );
 
     /**
      * Create a GameObject from a Yaml node.
-     * 
+     *
      * Params:
      *  yamlObj =           The YAML node to pull info from.
      *  scriptOverride =    The ClassInfo to use to create the object. Overrides YAML setting.
-     * 
+     *
      * Returns:
      *  A new game object with components and info pulled from yaml.
      */
@@ -65,7 +66,7 @@ public:
         Node innerNode;
 
         string objName = yamlObj[ "Name" ].as!string;
-        
+
         // Try to get from script
         if( scriptOverride !is null )
         {
@@ -84,7 +85,7 @@ public:
             {
                 logWarning( objName, ": Unable to find Script ClassName: ", className );
             }
-            
+
             if( Config.tryGet( "InstanceOf", prop, yamlObj ) )
             {
                 obj = Prefabs[ prop ].createInstance( parents, children, scriptClass );
@@ -109,7 +110,7 @@ public:
             if( Config.tryGet( "Position", transVec, innerNode ) )
                 obj.transform.position = shared vec3( transVec );
             if( Config.tryGet( "Rotation", transVec, innerNode ) )
-                obj.transform.rotation = quat.euler_rotation( radians(transVec.y), radians(transVec.z), radians(transVec.x) );
+                obj.transform.rotation = quat.identity.rotatey( transVec.y.radians ).rotatez( transVec.z.radians ).rotatex( transVec.x.radians );
         }
 
         if( foundClassName && Config.tryGet( "Script.Fields", innerNode, yamlObj ) )
@@ -145,7 +146,7 @@ public:
                 logWarning( "Scalar values and mappings in 'Children' of ", obj.name, " are not supported, and it is being ignored." );
             }
         }
-        
+
         // Init components
         foreach( string key, Node value; yamlObj )
         {
@@ -169,6 +170,7 @@ public:
     {
         transform = new shared Transform( this );
         //transform.connect( &emit );
+        // Create default material
         material = new shared Material();
     }
 
@@ -230,7 +232,8 @@ public:
     /**
      * Gets a component of the given type.
      */
-    final T getComponent( T )() if( is( T : Component ) )
+    deprecated( "Make properties for any component being accessed." )
+    final T getComponent( T )() if( is( T : IComponent ) )
     {
         return componentList[ T.classinfo ];
     }
@@ -249,7 +252,7 @@ public:
     void onShutdown() { }
     /// Called when the object collides with another object.
     void onCollision( GameObject other ) { }
-    
+
     /// Allows for GameObjectInit to pass o to typed func.
     void initialize( Object o ) { }
 }
@@ -258,7 +261,7 @@ private shared Object function( Node )[string] getInitParams;
 
 /**
  * Class to extend when looking to use the onInitialize function.
- * 
+ *
  * Type Params:
  *  T =             The type onInitialize will recieve.
  */
@@ -321,7 +324,7 @@ public:
     ~this()
     {
         //destroy( position );
-        //destroy( rotation ); 
+        //destroy( rotation );
         //destroy( scale );
     }
 
@@ -371,7 +374,7 @@ public:
 
         return owner.parent ? (result || owner.parent.transform.isDirty()) : result;
     }
-    
+
     /**
      * Rebuilds the object's matrix
      */
@@ -384,7 +387,7 @@ public:
         _localMatrix[ 2 ][ 2 ] = scale.z;
         // Rotate
         _localMatrix = _localMatrix * rotation.to_matrix!( 4, 4 );
-        
+
         //logInfo( "Pre translate: ", cast()_matrix );
         // Translate
         _localMatrix[ 0 ][ 3 ] = position.x;
@@ -410,7 +413,7 @@ public:
 
         // Rotate
         _matrix = _matrix * rotation.to_matrix!(4,4);
-        
+
         // Translate
         _matrix[ 0 ][ 3 ] = position.x;
         _matrix[ 1 ][ 3 ] = position.y;

@@ -12,9 +12,9 @@ private:
 public:
     mixin( Property!( _color, AccessModifier.Public ) );
 
-    this( vec3 color )
+    this( shared vec3 color )
     {
-        this.color = cast(shared)vec3( color );
+        this.color = color;
     }
     
     override void update() { }
@@ -23,7 +23,7 @@ public:
 
 shared class AmbientLight : Light 
 { 
-    this( vec3 color )
+    this( shared vec3 color )
     {
         super( color );
     }
@@ -40,9 +40,9 @@ private:
 public:
     mixin( Property!( _direction, AccessModifier.Public ) );
 
-    this( vec3 color, vec3 direction )
+    this( shared vec3 color, shared vec3 direction )
     {
-        this.direction = cast(shared)vec3( direction );
+        this.direction = direction;
         super( color );
     }
 }
@@ -62,7 +62,7 @@ public:
      */
     mixin( Property!( _radius, AccessModifier.Public ) );
 
-    this( vec3 color, float radius )
+    this( shared vec3 color, shared float radius )
     {
         this.radius = radius;
         super( color );
@@ -91,7 +91,7 @@ public:
 shared class SpotLight : Light
 {
 public:
-    this( vec3 color )
+    this( shared vec3 color )
     {
         super( color );
     }

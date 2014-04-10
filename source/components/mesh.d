@@ -5,6 +5,7 @@ module components.mesh;
 import core, components, graphics, utility;
 
 import derelict.opengl3.gl3, derelict.assimp3.assimp;
+import gl3n.linalg;
 
 import std.stdio, std.stream, std.format, std.math;
 
@@ -133,6 +134,7 @@ public:
                         aiVector3D normal = mesh.mNormals[ face.mIndices[ j ] ];
                         aiVector3D tangent = mesh.mTangents[ face.mIndices[ j ] ];
                         aiVector3D bitangent = mesh.mBitangents[ face.mIndices[ j ] ];
+                        float w = calcTangentHandedness(normal, tangent, bitangent);
 
                         // Append the data
                         outputData ~= pos.x;
@@ -174,6 +176,7 @@ public:
                         aiVector3D normal = mesh.mNormals[ face.mIndices[ j ] ];
                         aiVector3D tangent = mesh.mTangents[ face.mIndices[ j ] ];
                         aiVector3D bitangent = mesh.mBitangents[ face.mIndices[ j ] ];
+                        float w = calcTangentHandedness(normal, tangent, bitangent);
 
                         // Append the data
                         outputData ~= pos.x;
@@ -272,6 +275,22 @@ public:
         glDeleteBuffers( 1, cast(uint*)&_glVertexBuffer );
         glDeleteBuffers( 1, cast(uint*)&_glVertexArray );
     }
+}
+
+/**
+ * Helper function that calculates a modifier for the reconstructed bitangent based on regenerating them
+ * May be needed elsewhere
+ */
+private float calcTangentHandedness( aiVector3D nor, aiVector3D tan, aiVector3D bit )
+{
+    shared vec3 n = vec3( nor.x, nor.y, nor.z );
+    shared vec3 t = vec3( tan.x, tan.y, tan.z );
+    shared vec3 b = vec3( bit.x, bit.y, bit.z );
+
+    //Gramm-schmidt
+    t = (t - n * dot( n, t )).normalized();
+
+    return (dot(cross(n,t),b) > 0.0f) ? -1.0f : 1.0f;
 }
 
 static this()

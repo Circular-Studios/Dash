@@ -15,7 +15,7 @@ private:
     uint _width, _screenWidth;
     uint _height, _screenHeight;
     bool _fullscreen, _backfaceCulling, _vsync;
-    
+
     uint deferredFrameBuffer;
     uint diffuseRenderTexture; //Alpha channel stores Specular map average
     uint normalRenderTexture; //Alpha channel stores nothing important
@@ -43,7 +43,7 @@ public:
 
     abstract void openWindow();
     abstract void closeWindow();
-    
+
     abstract void messageLoop();
 
 
@@ -70,7 +70,7 @@ public:
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 
         glBindTexture( GL_TEXTURE_2D, normalRenderTexture );
-        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, null );
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RG16F, width, height, 0, GL_RG, GL_FLOAT, null );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
@@ -97,19 +97,18 @@ public:
             assert(false);
         }
     }
-    
+
     /**
-     * sets up the rendering pipeline for the geometry pass
+     * Sets up the render pipeline.
      */
     final void beginDraw()
     {
-        
-        
+
     }
-    
+
     /**
-     * called after all desired objects are drawn
-     * handles lighting and post processing
+     * Called after all desired objects are drawn.
+     * Handles lighting and post processing.
      */
     final void endDraw()
     {
@@ -131,25 +130,25 @@ public:
                                 .filter!(obj => obj.light)
                                 .map!(obj => obj.light);
 
-        auto getOfType( Type, Range )( Range range )
+        auto getOfType( Type )()
         {
-            return range
+            return objsWithLights
                     .filter!(obj => typeid(obj) == typeid(Type))
                     .map!(obj => cast(shared Type)obj);
         }
 
-        auto ambientLights = getOfType!AmbientLight( objsWithLights );
-        auto directionalLights = getOfType!DirectionalLight( objsWithLights );
-        auto pointLights = getOfType!PointLight( objsWithLights );
-        auto spotLights = getOfType!SpotLight( objsWithLights );
+        auto ambientLights = getOfType!AmbientLight;
+        auto directionalLights = getOfType!DirectionalLight;
+        auto pointLights = getOfType!PointLight;
+        auto spotLights = getOfType!SpotLight;
 
         shared mat4 perspProj = scene.camera.buildPerspective( cast(float)width, cast(float)height );
+        shared mat4 invProj = perspProj.inverse();
 
         void geometryPass()
         {
             foreach( object; scene )
             {
-
                 if( object.mesh )
                 {
                     // set the shader
@@ -160,12 +159,13 @@ public:
                     glUseProgram( shader.programID );
                     glBindVertexArray( object.mesh.glVertexArray );
 
-                    shader.bindUniformMatrix4fv( ShaderUniform.World, object.transform.matrix );
-                    shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection,
-                                                 perspProj * scene.camera.viewMatrix * object.transform.matrix );
+                    shared mat4 worldView =  scene.camera.viewMatrix * object.transform.matrix;
+                    shader.bindUniformMatrix4fv( shader.WorldView, worldView );
+                    shader.bindUniformMatrix4fv( shader.WorldViewProjection,
+                                                 perspProj * worldView );
 
                     if( object.mesh.animated )
-                        shader.bindUniformMatrix4fvArray( ShaderUniform.Bones, object.animation.currBoneTransforms );
+                        shader.bindUniformMatrix4fvArray( shader.Bones, object.animation.currBoneTransforms );
 
                     shader.bindMaterial( object.material );
 
@@ -181,17 +181,17 @@ public:
             void bindGeometryOutputs( Shader shader )
             {
                 // diffuse
-                glUniform1i( shader.getUniformLocation( ShaderUniform.DiffuseTexture ), 0 );
+                glUniform1i( shader.DiffuseTexture, 0 );
                 glActiveTexture( GL_TEXTURE0 );
                 glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
-                
+
                 // normal
-                glUniform1i( shader.getUniformLocation( ShaderUniform.NormalTexture ), 1 );
+                glUniform1i( shader.NormalTexture, 1 );
                 glActiveTexture( GL_TEXTURE1 );
                 glBindTexture( GL_TEXTURE_2D, normalRenderTexture );
-                
+
                 // depth
-                glUniform1i( shader.getUniformLocation( ShaderUniform.DepthTexture ), 2 );
+                glUniform1i( shader.DepthTexture, 2 );
                 glActiveTexture( GL_TEXTURE2 );
                 glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
             }
@@ -205,9 +205,6 @@ public:
                 bindGeometryOutputs( shader );
 
                 shader.bindAmbientLight( ambientLights.front );
-                // bind inverseViewProj for rebuilding world positions from pixel locations
-                shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-                                            ( perspProj * scene.camera.viewMatrix ).inverse() );
 
                 // bind the window mesh for ambient lights
                 glBindVertexArray( Assets.unitSquare.glVertexArray );
@@ -229,10 +226,9 @@ public:
 
                 bindGeometryOutputs( shader );
 
-                // bind inverseViewProj for rebuilding world positions from pixel locations
-                shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-                                            ( perspProj * scene.camera.viewMatrix ).inverse() );
-                shader.setEyePosition( scene.camera.owner.transform.worldPosition );
+                // bind inverseProj for rebuilding world positions from pixel locations
+                shader.bindUniformMatrix4fv( shader.InverseProjection, invProj );
+                shader.bindUniform2f( shader.ProjectionConstants, scene.camera.projectionConstants);
 
                 // bind the window mesh for directional lights
                 glBindVertexArray( Assets.unitSquare.glVertexArray );
@@ -240,7 +236,7 @@ public:
                 // bind and draw directional lights
                 foreach( light; directionalLights )
                 {
-                    shader.bindDirectionalLight( light );
+                    shader.bindDirectionalLight( light, scene.camera.viewMatrix );
                     glDrawElements( GL_TRIANGLES, Assets.unitSquare.numVertices, GL_UNSIGNED_INT, null );
                 }
             }
@@ -253,10 +249,8 @@ public:
 
                 bindGeometryOutputs( shader );
 
-                // bind inverseViewProj for rebuilding world positions from pixel locations
-                shader.bindUniformMatrix4fv( ShaderUniform.InverseViewProjection, 
-                                            ( perspProj * scene.camera.viewMatrix ).inverse() );
-                shader.setEyePosition( scene.camera.owner.transform.worldPosition );
+                // bind WorldView for creating the View rays for reconstruction position
+                shader.bindUniform2f( shader.ProjectionConstants, scene.camera.projectionConstants);
 
                 // bind the sphere mesh for point lights
                 glBindVertexArray( Assets.unitSphere.glVertexArray );
@@ -265,9 +259,10 @@ public:
                 foreach( light; pointLights )
                 {
                 //  logInfo(light.owner.name);
-                    shader.bindUniformMatrix4fv( ShaderUniform.WorldViewProjection, 
+                    shader.bindUniformMatrix4fv( shader.WorldView, scene.camera.viewMatrix * light.getTransform() );
+                    shader.bindUniformMatrix4fv( shader.WorldViewProjection,
                                                  perspProj * scene.camera.viewMatrix * light.getTransform() );
-                    shader.bindPointLight( light );
+                    shader.bindPointLight( light, scene.camera.viewMatrix );
                     glDrawElements( GL_TRIANGLES, Assets.unitSphere.numVertices, GL_UNSIGNED_INT, null );
                 }
             }
@@ -284,14 +279,13 @@ public:
             Shader shader = Shaders.userInterface;
             glUseProgram( shader.programID );
             glBindVertexArray( Assets.unitSquare.glVertexArray );
-            
+
             foreach( ui; uis )
             {
-                shader.bindUniformMatrix4fv( ShaderUniform.WorldProj, 
-                    ( scene.camera.buildOrthogonal( cast(float)width, cast(float)height ) ) * ui.scaleMat );
+                shader.bindUniformMatrix4fv( shader.WorldProj,
+                    scene.camera.buildOrthogonal( cast(float)width, cast(float)height ) * ui.scaleMat );
                 shader.bindUI( ui );
                 glDrawElements( GL_TRIANGLES, Assets.unitSquare.numVertices, GL_UNSIGNED_INT, null );
-
             }
 
             glBindVertexArray(0);
@@ -311,7 +305,7 @@ public:
         glDisable( GL_DEPTH_TEST );
         glEnable( GL_BLEND );
         glBlendFunc( GL_ONE, GL_ONE );
-        
+
         //This line switches back to the default framebuffer
         glBindFramebuffer( GL_FRAMEBUFFER, 0 );
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -326,7 +320,7 @@ public:
         // put it on the screen
         swapBuffers();
 
-        // clean up 
+        // clean up
         glBindVertexArray(0);
         glUseProgram(0);
         uis = [];
@@ -359,7 +353,4 @@ protected:
         backfaceCulling = Config.get!bool( "Graphics.BackfaceCulling" );
         vsync = Config.get!bool( "Graphics.VSync" );
     }
-
-private:
-    
 }

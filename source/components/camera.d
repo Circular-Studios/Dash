@@ -14,6 +14,7 @@ shared final class Camera : IComponent, IDirtyable
 {
 private:
     float _fov, _near, _far;
+    vec2 _projectionConstants; // For rebuilding linear Z in shaders
     mat4 _prevLocalMatrix;
     mat4 _viewMatrix;
 
@@ -24,11 +25,13 @@ public:
     mixin( ThisDirtyGetter!( _viewMatrix, updateViewMatrix ) );
 
     mixin( Property!( _fov, AccessModifier.Public ) );
-    mixin( Property!( _near, AccessModifier.Public )  );
-    mixin( Property!( _far, AccessModifier.Public )  );
+    mixin( Property!( _near, AccessModifier.Public ) );
+    mixin( Property!( _far, AccessModifier.Public ) );
+    mixin( Property!( _projectionConstants, AccessModifier.Public ) );
 
     final shared(mat4) buildPerspective( float width, float height )
     {
+        _projectionConstants = vec2( ( -_far * _near ) / ( _far - _near ), _far / ( _far - _near ) );
         return mat4.perspective( width, height, _fov, _near, _far );
     }
 

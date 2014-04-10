@@ -11,7 +11,7 @@ shared class UserInterface
 private:
     uint _height;
     uint _width;
-    mat4 _scaleMat;
+    shared mat4 _scaleMat;
     AwesomiumView _view;
     // TODO: Handle JS
 

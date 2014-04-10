@@ -260,7 +260,7 @@ public:
      *
      * Returns:     The position of the mouse cursor.
      */
-    final shared vec2 getMousePos()
+    final shared(vec2) getMousePos()
     {
         version( Windows )
         {
@@ -290,7 +290,7 @@ public:
      *
      * Returns:     The position of the mouse cursor in world space.
      */
-    final shared vec3 getMousePosView()
+    final shared(vec3) getMousePosView()
     {
         if( !DGame.instance.activeScene )
         {
@@ -322,9 +322,7 @@ public:
             shared float screenX = ( mouse.x / cast(shared float)Graphics.width ) * 2 - 1;
             shared float screenY = -( ( mouse.y / cast(shared float)Graphics.height ) * 2 - 1 );
 
-            auto invProj = cast(shared)scene.camera.buildPerspective( cast(float)Graphics.width, cast(float)Graphics.height ).inverse();
-            auto screenSpace = shared vec4( screenX, screenY, 1.0f, 1.0f);
-            auto viewSpace = invProj * screenSpace;
+            auto viewSpace = scene.camera.inversePerspectiveMatrix * shared vec4( screenX, screenY, 1.0f, 1.0f);
             auto viewRay = shared vec3( viewSpace.xy * (1.0f / viewSpace.z), 1.0f);
             view = viewRay * linearDepth;
 
@@ -339,9 +337,9 @@ public:
      *
      * Returns:     The position of the mouse cursor in world space.
      */
-    final shared vec3 getMousePosWorld()
+    final shared(vec3) getMousePosWorld()
     {
-        return (cast(shared)DGame.instance.activeScene.camera.viewMatrix().inverse() * shared vec4( getMousePosView(), 1.0f )).xyz;
+        return (cast(shared)DGame.instance.activeScene.camera.inverseViewMatrix * shared vec4( getMousePosView(), 1.0f )).xyz;
     }
 
 private:

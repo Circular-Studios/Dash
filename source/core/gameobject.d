@@ -178,36 +178,39 @@ public:
     }
 
     /**
-     * Called once per frame to update all components.
+     * Called once per frame to update all children and components.
      */
     final void update()
     {
+        onUpdate();
+
         foreach( obj; children )
             obj.update();
-
-        onUpdate();
 
         foreach( ci, component; componentList )
             component.update();
     }
 
     /**
-     * Called once per frame to draw all components.
+     * Called once per frame to draw all children.
      */
     final void draw()
     {
+        onDraw();
+
         foreach( obj; children )
             obj.draw();
-
-        onDraw();
     }
 
     /**
-     * Called when the game is shutting down, to shutdown all components.
+     * Called when the game is shutting down, to shutdown all children.
      */
     final void shutdown()
     {
         onShutdown();
+
+        foreach( obj; children )
+            obj.shutdown();
 
         /*foreach_reverse( ci, component; componentList )
         {
@@ -330,7 +333,7 @@ public:
         if( owner.parent is null )
             return position;
         else
-            return owner.parent.transform.worldPosition + position;
+            return (owner.parent.transform.matrix * shared vec4(position.x,position.y,position.z,1.0f)).xyz;
     }
 
     /**
@@ -356,17 +359,17 @@ public:
         }
     }*/
 
+    /*
+     * Check if current or a parent's matrix needs to be updated.
+     * Called automatically when getting matrix.
+     */
     final override @property bool isDirty() @safe pure nothrow
     {
-        auto result = position != _prevPos ||
-                rotation != _prevRot ||
-                scale != _prevScale;
+        bool result = position != _prevPos ||
+                      rotation != _prevRot ||
+                      scale != _prevScale;
 
-        _prevPos = position;
-        _prevRot = rotation;
-        _prevScale = scale;
-
-        return result;
+        return owner.parent ? (result || owner.parent.transform.isDirty()) : result;
     }
     
     /**
@@ -395,19 +398,31 @@ public:
      */
     final void updateMatrix() @safe pure nothrow
     {
+        _prevPos = position;
+        _prevRot = rotation;
+        _prevScale = scale;
+
         _matrix = mat4.identity;
         // Scale
         _matrix[ 0 ][ 0 ] = scale.x;
         _matrix[ 1 ][ 1 ] = scale.y;
         _matrix[ 2 ][ 2 ] = scale.z;
+
         // Rotate
-        _matrix = _matrix * worldRotation.to_matrix!( 4, 4 );
+        _matrix = _matrix * rotation.to_matrix!(4,4);
         
-        //logInfo( "Pre translate: ", cast()_matrix );
         // Translate
-        _matrix[ 0 ][ 3 ] = worldPosition.x;
-        _matrix[ 1 ][ 3 ] = worldPosition.y;
-        _matrix[ 2 ][ 3 ] = worldPosition.z;
-        //logInfo( "Post: ", cast()_matrix );
+        _matrix[ 0 ][ 3 ] = position.x;
+        _matrix[ 1 ][ 3 ] = position.y;
+        _matrix[ 2 ][ 3 ] = position.z;
+
+        // include parent objects' transforms
+        if( owner.parent )
+            _matrix = owner.parent.transform.matrix * _matrix;
+
+        // force children to update to reflect changes to this
+        // compensates for children that don't update properly when only parent is dirty
+        foreach( child; owner.children )
+            child.transform.updateMatrix();
     }
 }

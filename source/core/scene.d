@@ -64,18 +64,44 @@ public:
 
     final shared(GameObject) opIndex( string name )
     {
-        if( auto id = name in idByName )
-            return this[ *id ];
-        else
-            return null;
+        shared GameObject[] objs;
+
+        objs ~= root;
+
+        while( objs.length )
+        {
+            auto curObj = objs[ 0 ];
+            objs = objs[ 1..$ ];
+
+            if( curObj.name == name )
+                return curObj;
+            else
+                foreach( obj; curObj.children )
+                    objs ~= obj;
+        }
+
+        return null;
     }
 
-    final shared(GameObject) opIndex( size_t index )
+    final shared(GameObject) opIndex( uint index )
     {
-        if( auto obj = index in objectById )
-            return *obj;
-        else
-            return null;
+        shared GameObject[] objs;
+
+        objs ~= root;
+
+        while( objs.length )
+        {
+            auto curObj = objs[ 0 ];
+            objs = objs[ 1..$ ];
+
+            if( curObj.id == index )
+                return curObj;
+            else
+                foreach( obj; curObj.children )
+                    objs ~= obj;
+        }
+
+        return null;
     }
 
     final @property shared(GameObject[]) objects()

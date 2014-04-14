@@ -27,6 +27,7 @@ private:
     GameObject[] _children;
     IComponent[TypeInfo] componentList;
     string _name;
+    static uint nextId = 1;
 
 public:
     /// The current transform of the object.
@@ -47,6 +48,8 @@ public:
     mixin( Property!( _children, AccessModifier.Public ) );
     /// The name of the object.
     mixin( Property!( _name, AccessModifier.Public ) );
+    /// The ID of the object
+    immutable uint id;
 
     /**
      * Create a GameObject from a Yaml node.
@@ -172,6 +175,7 @@ public:
         //transform.connect( &emit );
         // Create default material
         material = new shared Material();
+        id = nextId++;
     }
 
     ~this()
@@ -255,8 +259,8 @@ public:
 
         if( auto scene = cast(shared Scene)par )
         {
-            //scene.objectById[ currentId ] = object;
-            //scene.idByName[ object.name ] = currentId++;
+            scene.objectById[ object.id ] = object;
+            scene.idByName[ object.name ] = object.id;
         }
     }
 

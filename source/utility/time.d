@@ -88,6 +88,6 @@ void updateTime()
     cur = sw.peek();
 
     // Pass to shared values
-    Time.delta = cast(shared)delta;
+    Time.delta = delta;
     Time.total += delta;
 }

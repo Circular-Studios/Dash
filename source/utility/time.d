@@ -7,19 +7,32 @@ import utility;
 import std.datetime;
 
 /**
+ * Converts a duration to a float of seconds.
+ * 
+ * Params:
+ *  dur =           The duration to convert.
+ *
+ * Returns: The duration in seconds.
+ */
+float toSeconds( Duration dur )
+{
+    return cast(float)dur.fracSec.hnsecs / cast(float)1.convert!( "seconds", "hnsecs" );
+}
+
+/**
  * Manages time and delta time.
  */
 shared final struct Time
 {
 public static:
     /**
-     * Time since last frame.
+     * Time since last frame in seconds.
      */
-    @property const Duration deltaTime() { return delta; }
+    @property float deltaTime() { return delta.toSeconds; }
     /**
-     * Total time spent running.
+     * Total time spent running in seconds.
      */
-    @property const Duration totalTime() { return total; }
+    @property float totalTime() { return total.toSeconds; }
 
     /**
      * Update the times. Only call once per frame!

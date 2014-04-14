@@ -255,7 +255,10 @@ public:
         // Add new child to scene graph
         shared GameObject par;
 
-        for( par = this.parent; parent; par = par.parent ) { }
+        if( !cast(shared Scene)this )
+            for( par = this.parent; parent; par = par.parent ) { }
+        else
+            par = this;
 
         if( auto scene = cast(shared Scene)par )
         {

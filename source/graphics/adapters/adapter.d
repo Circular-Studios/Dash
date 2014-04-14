@@ -130,7 +130,7 @@ public:
             return;
         }
 
-        auto objsWithLights = scene.objects.values
+        auto objsWithLights = scene.objects
                                 .filter!(obj => obj.light)
                                 .map!(obj => obj.light);
 
@@ -151,7 +151,7 @@ public:
 
         void geometryPass()
         {
-            foreach( object; scene )
+            foreach( object; scene.objects )
             {
                 if( object.mesh )
                 {

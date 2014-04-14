@@ -137,8 +137,7 @@ public:
 
             if ( updateFlags.updateScene )
             {
-                foreach( obj; activeScene )
-                    obj.update();
+                activeScene.update();
             }
 
             // Do the updating of the child class.
@@ -151,8 +150,7 @@ public:
             // Begin drawing
             Graphics.beginDraw();
 
-            foreach( obj; activeScene )
-                obj.draw();
+            activeScene.draw();
 
             // Draw in child class
             onDraw();

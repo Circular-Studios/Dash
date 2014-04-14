@@ -121,6 +121,10 @@ public:
         return toReturn;
     }
 
+package:
+    GameObject[uint] objectById;
+    uint[string] idByName;
+
 private:
     GameObject root;
 }

@@ -14,9 +14,11 @@ immutable string geometryVS = q{
     out vec3 fNormal_v;
     out vec2 fUV;
     out vec3 fTangent_v;
+    flat out uint fObjectId;
 
     uniform mat4 worldView;
     uniform mat4 worldViewProj;
+    uniform uint objectId;
 
     void main( void )
     {
@@ -27,6 +29,7 @@ immutable string geometryVS = q{
 
         fNormal_v = ( worldView * vec4( vNormal_m, 0.0f ) ).xyz;
         fTangent_v =  ( worldView * vec4( vTangent_m, 0.0f ) ).xyz;
+        fObjectId = objectId;
     }
 };
 
@@ -37,9 +40,10 @@ immutable string geometryFS = q{
     in vec3 fNormal_v;
     in vec2 fUV;
     in vec3 fTangent_v;
+    flat in uint fObjectId;
 
     layout( location = 0 ) out vec4 color;
-    layout( location = 1 ) out vec2 normal_v;
+    layout( location = 1 ) out vec3 normal_v;
 
     uniform sampler2D diffuseTexture;
     uniform sampler2D normalTexture;
@@ -69,7 +73,7 @@ immutable string geometryFS = q{
         // specular exponent
         vec3 specularSample = texture( specularTexture, fUV ).xyz;
         color.w = ( specularSample.x + specularSample.y + specularSample.z ) / 3;
-        normal_v = encode(calculateMappedNormal());
+        normal_v = vec3( encode( calculateMappedNormal()), float(fObjectId) );
     }
 };
 

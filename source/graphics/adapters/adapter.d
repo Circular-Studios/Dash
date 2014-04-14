@@ -74,7 +74,7 @@ public:
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 
         glBindTexture( GL_TEXTURE_2D, _normalRenderTexture );
-        glTexImage2D( GL_TEXTURE_2D, 0, GL_RG16F, width, height, 0, GL_RG, GL_FLOAT, null );
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, null );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
@@ -167,6 +167,7 @@ public:
                     shader.bindUniformMatrix4fv( shader.WorldView, worldView );
                     shader.bindUniformMatrix4fv( shader.WorldViewProjection,
                                                  projection * worldView );
+                    shader.bindUniform1ui( shader.ObjectId, object.id );
 
                     if( object.mesh.animated )
                         shader.bindUniformMatrix4fvArray( shader.Bones, object.animation.currBoneTransforms );

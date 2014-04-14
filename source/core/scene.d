@@ -83,8 +83,24 @@ public:
         return null;
     }
 
-    final shared(GameObject) opIndex( size_t index )
+    final shared(GameObject) opIndex( uint index )
     {
+        shared GameObject[] objs;
+
+        objs ~= root;
+
+        while( objs.length )
+        {
+            auto curObj = objs[ 0 ];
+            objs = objs[ 1..$ ];
+
+            if( curObj.id == index )
+                return curObj;
+            else
+                foreach( obj; curObj.children )
+                    objs ~= obj;
+        }
+
         return null;
     }
 

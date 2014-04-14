@@ -256,11 +256,11 @@ public:
     }
 
     /**
-     * Get's the position of the cursor.
+     * Gets the position of the cursor.
      *
      * Returns:     The position of the mouse cursor.
      */
-    final shared(vec2) getMousePos()
+    final @property shared(vec2) mousePos()
     {
         version( Windows )
         {
@@ -286,11 +286,11 @@ public:
     }
 
     /**
-     * Get's the world position of the cursor in the active scene.
+     * Gets the world position of the cursor in the active scene.
      *
      * Returns:     The position of the mouse cursor in world space.
      */
-    final shared(vec3) getMousePosView()
+    final @property shared(vec3) mousePosView()
     {
         if( !DGame.instance.activeScene )
         {
@@ -305,8 +305,8 @@ public:
             logWarning( "No camera on active scene." );
             return shared vec3( 0.0f, 0.0f, 0.0f );
         }
-        shared vec2 mouse = getMousePos();
-        float* depth = [ 0.0f ].ptr;
+        shared vec2 mouse = mousePos;
+        float depth;
         int x = cast(int)mouse.x;
         int y = cast(int)mouse.y;
         auto view = shared vec3( 0, 0, 0 );
@@ -315,9 +315,9 @@ public:
         {
             glBindFramebuffer( GL_FRAMEBUFFER, Graphics.deferredFrameBuffer );
             glReadBuffer( GL_DEPTH_ATTACHMENT );
-            glReadPixels( x, Graphics.height - y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, depth);
+            glReadPixels( x, Graphics.height - y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
 
-            auto linearDepth = scene.camera.projectionConstants.x / ( scene.camera.projectionConstants.y - *depth );
+            auto linearDepth = scene.camera.projectionConstants.x / ( scene.camera.projectionConstants.y - depth );
             //Convert x and y to normalized device coords
             shared float screenX = ( mouse.x / cast(shared float)Graphics.width ) * 2 - 1;
             shared float screenY = -( ( mouse.y / cast(shared float)Graphics.height ) * 2 - 1 );
@@ -333,13 +333,55 @@ public:
     }
 
     /**
-     * Get's the world position of the cursor in the active scene.
+     * Gets the world position of the cursor in the active scene.
      *
      * Returns:     The position of the mouse cursor in world space.
      */
-    final shared(vec3) getMousePosWorld()
+    final @property shared(vec3) mousePosWorld()
     {
-        return (cast(shared)DGame.instance.activeScene.camera.inverseViewMatrix * shared vec4( getMousePosView(), 1.0f )).xyz;
+        return (cast(shared)DGame.instance.activeScene.camera.inverseViewMatrix * shared vec4( mousePosView(), 1.0f )).xyz;
+    }
+
+    /**
+     * Gets the world position of the cursor in the active scene.
+     *
+     * Returns:     The GameObject located at the current mouse Position
+     */
+    final @property shared(GameObject) mouseObject()
+    {
+        if( !DGame.instance.activeScene )
+        {
+            logWarning( "No active scene." );
+            return null;
+        }
+
+        auto scene = DGame.instance.activeScene;
+
+        if( !scene.camera )
+        {
+            logWarning( "No camera on active scene." );
+            return null;
+        }
+
+        shared vec2 mouse = mousePos();
+        float fId;
+        int x = cast(int)mouse.x;
+        int y = cast(int)mouse.y;
+
+        if( x >= 0 && x <= Graphics.width && y >= 0 && y <= Graphics.height )
+        {
+            glBindFramebuffer( GL_FRAMEBUFFER, Graphics.deferredFrameBuffer );
+            glReadBuffer( GL_COLOR_ATTACHMENT1 );
+            glReadPixels( x, Graphics.height - y, 1, 1, GL_BLUE, GL_FLOAT, &fId);
+
+            uint id = cast(int)(fId);
+            glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+
+            if(id > 0)
+                return scene[id];
+        }
+
+        return null;
     }
 
 private:

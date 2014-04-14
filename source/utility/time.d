@@ -2,9 +2,9 @@
  * Defines the static Time class, which manages all game time related things.
  */
 module utility.time;
-import utility.output;
+import utility;
 
-import std.datetime, core.atomic;
+import std.datetime;
 
 /**
  * Manages time and delta time.
@@ -26,6 +26,8 @@ public static:
      */
     void update()
     {
+        assert( onMainThread, "Must call Time.update from main thread." );
+
         updateTime();
     }
 

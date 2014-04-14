@@ -64,28 +64,18 @@ public:
 
     final shared(GameObject) opIndex( string name )
     {
-        shared GameObject[] objs;
-
-        objs ~= root;
-
-        while( objs.length )
-        {
-            auto curObj = objs[ 0 ];
-            objs = objs[ 1..$ ];
-
-            if( curObj.name == name )
-                return curObj;
-            else
-                foreach( obj; curObj.children )
-                    objs ~= obj;
-        }
-
-        return null;
+        if( auto id = name in idByName )
+            return this[ *id ];
+        else
+            return null;
     }
 
     final shared(GameObject) opIndex( size_t index )
     {
-        return null;
+        if( auto obj = index in objectById )
+            return *obj;
+        else
+            return null;
     }
 
     final @property shared(GameObject[]) objects()
@@ -104,6 +94,10 @@ public:
 
         return toReturn;
     }
+
+package:
+    GameObject[uint] objectById;
+    uint[string] idByName;
 
 private:
     GameObject root;

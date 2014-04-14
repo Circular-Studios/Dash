@@ -238,10 +238,26 @@ public:
         return componentList[ T.classinfo ];
     }
 
+    /**
+     * Adds object to the children, adds it to the scene graph.
+     * Params:
+     *  object =            The object to add.
+     */
     final void addChild( shared GameObject object )
     {
         _children ~= object;
         object.parent = this;
+
+        // Add new child to scene graph
+        shared GameObject par;
+
+        for( par = this.parent; parent; par = par.parent ) { }
+
+        if( auto scene = cast(shared Scene)par )
+        {
+            //scene.objectById[ currentId ] = object;
+            //scene.idByName[ object.name ] = currentId++;
+        }
     }
 
     /// Called on the update cycle.

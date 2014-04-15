@@ -1,7 +1,11 @@
-﻿module graphics.shaders.glsl.ambientlight;
+﻿/**
+* TODO
+*/
+module graphics.shaders.glsl.ambientlight;
 
 package:
 
+/// TODO
 immutable string ambientlightVS = q{
 #version 400
     
@@ -19,6 +23,7 @@ immutable string ambientlightVS = q{
     }
 };
 
+/// TODO
 immutable string ambientlightFS = q{
 #version 400
 

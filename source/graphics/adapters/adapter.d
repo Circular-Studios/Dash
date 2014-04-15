@@ -1,3 +1,6 @@
+/**
+* TODO
+*/
 module graphics.adapters.adapter;
 import core, components, graphics, utility;
 
@@ -6,6 +9,9 @@ import derelict.opengl3.gl3;
 
 import std.algorithm, std.array;
 
+/**
+* TODO
+*/
 abstract class Adapter
 {
 private:
@@ -24,33 +30,72 @@ private:
     shared UserInterface[] uis;
 
 public:
+    /// TODO
     mixin( Property!_deviceContext );
+    /// TODO
     mixin( Property!_renderContext );
 
+    /// TODO
     mixin( Property!_width );
+    /// TODO
     mixin( Property!_screenWidth );
+    /// TODO
     mixin( Property!_height );
+    /// TODO
     mixin( Property!_screenHeight );
+    /// TODO
     mixin( Property!_fullscreen );
+    /// TODO
     mixin( Property!_backfaceCulling );
+    /// TODO
     mixin( Property!_vsync );
+    /// TODO
     mixin( Property!_deferredFrameBuffer );
+    /// TODO
     mixin( Property!_diffuseRenderTexture );
+    /// TODO
     mixin( Property!_normalRenderTexture );
+    /// TODO
     mixin( Property!_depthRenderTexture );
 
+    /**
+    * TODO
+    */
     abstract void initialize();
+    /**
+    * TODO
+    */
     abstract void shutdown();
+    /**
+    * TODO
+    */
     abstract void resize();
+    /**
+    * TODO
+    */
     abstract void reload();
+    /**
+    * TODO
+    */
     abstract void swapBuffers();
 
+    /**
+    * TODO
+    */
     abstract void openWindow();
+    /**
+    * TODO
+    */
     abstract void closeWindow();
 
+    /**
+    * TODO
+    */
     abstract void messageLoop();
 
-
+    /**
+    * TODO
+    */
     final void initializeDeferredRendering()
     {
         //http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
@@ -149,6 +194,9 @@ public:
         shared mat4 projection = scene.camera.perspectiveMatrix;
         shared mat4 invProj = scene.camera.inversePerspectiveMatrix;
 
+        /**
+        * TODO
+        */
         void geometryPass()
         {
             foreach( object; scene.objects )
@@ -181,8 +229,14 @@ public:
             }
         }
 
+        /**
+        * TODO
+        */
         void lightPass()
         {
+            /**
+            * TODO
+            */
             void bindGeometryOutputs( Shader shader )
             {
                 // diffuse
@@ -280,6 +334,9 @@ public:
             }
         }
 
+        /**
+        * TODO
+        */
         void uiPass()
         {
             Shader shader = Shaders.userInterface;
@@ -342,6 +399,9 @@ public:
     }
 
 protected:
+    /**
+    * TODO
+    */
     final void loadProperties()
     {
         fullscreen = Config.get!bool( "Display.Fullscreen" );

@@ -105,6 +105,9 @@ private:
         }
     }
 
+    /**
+     * TODO
+     */
     final bool shouldPrint( OutputType type )
     {
         return type >= verbosity;

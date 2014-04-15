@@ -41,6 +41,7 @@ public:
      * Function called on update.
      */
     void update();
+    
     /**
      * Function called on shutdown.
      */

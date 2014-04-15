@@ -21,7 +21,14 @@ shared static this()
  */
 shared final class AssetManager
 {
+private:
+    Mesh[string] meshes;
+    Texture[string] textures;
+    Material[string] materials;
+    AssetAnimation[string] animations;
+
 public:
+    /// TODO
     Mesh unitSquare;
 
     /**
@@ -135,14 +142,9 @@ public:
             animations.remove( name );
         }
     }
-
-private:
-    Mesh[string] meshes;
-    Texture[string] textures;
-    Material[string] materials;
-    AssetAnimation[string] animations;
 }
 
+/// TODO
 immutable string unitSquareMesh = q{
 v -1.0 1.0 0.0
 v -1.0 -1.0 0.0

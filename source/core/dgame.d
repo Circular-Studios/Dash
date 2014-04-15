@@ -20,6 +20,9 @@ enum EngineState
     Quit
 }
 
+/**
+ * TODO
+ */
 shared struct UpdateFlags
 {
     bool updateScene;
@@ -188,8 +191,6 @@ public:
             return Time.totalTime >= startTime + duration.toSeconds;
         } );
     }
-
-    //static Camera camera;
 
 protected:
     /**

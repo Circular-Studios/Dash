@@ -31,6 +31,10 @@ shared static this()
  */
 shared final class TimeManager
 {
+private:
+    Duration delta;
+    Duration total;
+    
 public:
     /**
      * Time since last frame in seconds.
@@ -52,9 +56,6 @@ public:
     }
 
 private:
-    Duration delta;
-    Duration total;
-
     this() { }
 }
 

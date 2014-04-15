@@ -1,10 +1,11 @@
+/**
+* TODO
+*/
 module graphics.shaders.glsl.animatedgeometry;
 
 package:
 
-///
 /// Animated Geometry Shader
-///
 immutable string animatedGeometryVS = q{
     #version 400
 

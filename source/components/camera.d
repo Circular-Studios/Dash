@@ -1,5 +1,5 @@
 /**
- * Defines the Camera class, which controls the view matrix for the world.
+ * Defines the Camera class, which manages a view and projection matrix.
  */
 module components.camera;
 import core, components, graphics, utility;
@@ -8,7 +8,7 @@ import gl3n.linalg;
 import std.conv;
 
 /**
- * Camera manages the viewmatrix and audio listeners for the world.
+ * Camera manages a view and projection matrix.
  */
 shared final class Camera : IComponent, IDirtyable
 {
@@ -29,13 +29,24 @@ public:
     override void update() { }
     override void shutdown() { }
 
+    /// TODO
     mixin( ThisDirtyGetter!( _viewMatrix, updateViewMatrix ) );
+    /// TODO
     mixin( ThisDirtyGetter!( _inverseViewMatrix, updateViewMatrix ) );
-
+    /// TODO
     mixin( Property!( _fov, AccessModifier.Public ) );
+    /// TODO
     mixin( Property!( _near, AccessModifier.Public ) );
+    /// TODO
     mixin( Property!( _far, AccessModifier.Public ) );
     
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     final shared(vec2) projectionConstants()
     {
         if( this.projectionDirty )
@@ -48,6 +59,13 @@ public:
         return _projectionConstants;
     }
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     final shared(mat4) perspectiveMatrix()
     {
         if( this.projectionDirty )
@@ -60,6 +78,13 @@ public:
         return _perspectiveMatrix;
     }
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     final shared(mat4) inversePerspectiveMatrix()
     {
         if( this.projectionDirty )
@@ -72,6 +97,13 @@ public:
         return _inversePerspectiveMatrix;
     }
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     final shared(mat4) orthogonalMatrix()
     {
         if( this.projectionDirty )
@@ -84,6 +116,13 @@ public:
         return _orthogonalMatrix;
     }
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     final shared(mat4) inverseOrthogonalMatrix()
     {
         if( this.projectionDirty )
@@ -96,6 +135,13 @@ public:
         return _inverseOrthogonalMatrix;
     }
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     final void updateViewMatrix()
     {
         //Assuming pitch & yaw are in radians
@@ -117,6 +163,13 @@ public:
         _inverseViewMatrix = cast(shared)_viewMatrix.inverse();
     }
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     final override @property bool isDirty()
     {
         auto result = owner.transform.matrix != _prevLocalMatrix;

@@ -1,3 +1,6 @@
+/**
+ * TODO
+ */
 module components.assetanimation;
 import core.properties;
 import components.icomponent;
@@ -6,6 +9,9 @@ import utility.output;
 import derelict.assimp3.assimp;
 import gl3n.linalg;
 
+/**
+ * TODO
+ */
 shared class AssetAnimation
 {
 private:
@@ -13,9 +19,18 @@ private:
     shared int _numberOfBones;
 
 public:
+    /// TODO
     mixin( Property!_animationSet );
+    /// TODO
     mixin( Property!_numberOfBones );
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     this( const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) boneHierarchy )
     {
         _animationSet.duration = cast(float)animation.mDuration;
@@ -24,9 +39,15 @@ public:
         _animationSet.animNodes = makeNodesFromNode( animation, mesh, boneHierarchy.mChildren[ 1 ], null );
     }
 
-    // Each bone has one of two setups:
-    // Split up into five seperate nodes (translation -> preRotation -> Rotation -> Scale -> Bone)
-    // Or the bone is one node in the hierarchy
+    /**
+     * Each bone has one of two setups:
+     * Split up into five seperate nodes (translation -> preRotation -> Rotation -> Scale -> Bone)
+     * Or the bone is one node in the hierarchy
+     *
+     * Params: TODO
+     *
+     * Returns: TODO
+     */
     shared(Node) makeNodesFromNode( const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) currNode, shared Node returnNode )
     { 
         string name = cast(string)currNode.mName.data[ 0 .. currNode.mName.length ];
@@ -63,6 +84,13 @@ public:
         return node;
     }
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     void assignAnimationData( const(aiAnimation*) animation, shared Node nodeToAssign )
     {
         // For each bone animation data
@@ -100,7 +128,14 @@ public:
             }
         }
     }
-    // aiVectorKey[] to vec3[]
+
+    /**
+     * Converts a aiVectorKey[] to vec3[].
+     *
+     * Params:
+     *
+     * Returns:
+     */ 
     shared( vec3[] ) convertVectorArray( const(aiVectorKey*) vectors, int numKeys )
     {
         shared vec3[] keys;
@@ -112,7 +147,14 @@ public:
 
         return keys;
     }
-    // aiQuatKey[] to quat[]
+
+    /**
+     * Converts a aiQuatKey[] to quat[].
+     *
+     * Params:
+     *
+     * Returns:
+     */
     shared( quat[] ) convertQuat( const(aiQuatKey*) quaternions, int numKeys )
     {
         shared quat[] keys;
@@ -126,7 +168,13 @@ public:
         return keys;
     }
     
-    // Find bone with name in our structure
+    /**
+     * Find bone with name in our structure.
+     *
+     * Params:
+     *
+     * Returns:
+     */
     int findNodeWithName( string name, const(aiMesh*) mesh )
     {
         for( int i = 0; i < mesh.mNumBones; i++ )
@@ -139,7 +187,14 @@ public:
 
         return -1;
     }
-    // Check if string stringToTest ends with string end
+
+    /**
+     * Check if string stringToTest ends with string end
+     *
+     * Params:
+     *
+     * Returns:
+     */
     bool checkEnd( string stringToTest, string end )
     {
         if( stringToTest.length > end.length )
@@ -155,6 +210,13 @@ public:
         return false;
     }
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     shared( mat4[] ) getTransformsAtTime( shared float time )
     {
         shared mat4[] boneTransforms = new shared mat4[ _numberOfBones ];
@@ -170,6 +232,13 @@ public:
         return boneTransforms;
     }
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     void fillTransforms( shared mat4[] transforms, shared Node node, shared float time, shared mat4 parentTransform, int boneNum)
     {
         // Calculate matrix based on node.bone data and time
@@ -211,6 +280,13 @@ public:
         }
     }
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     mat4 convertAIMatrix( aiMatrix4x4 aiMatrix )
     {
         mat4 matrix = mat4.identity;
@@ -235,17 +311,31 @@ public:
         return matrix;
     }
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     void shutdown()
     {
 
     }
 
+    /**
+     * TODO
+     */
     shared struct AnimationSet
     {
         shared float duration;
         shared float fps;
         shared Node animNodes;
     }
+
+    /**
+     * TODO
+     */
     shared class Node
     {
         this( shared string nodeName )

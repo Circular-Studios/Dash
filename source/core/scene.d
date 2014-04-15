@@ -1,5 +1,5 @@
 /**
- * This module defines the Scene class, 
+ * This module defines the Scene class, TODO
  * 
  */
 module core.scene;
@@ -7,8 +7,18 @@ import core, components, graphics, utility;
 
 import std.path;
 
+/**
+ * TODO
+ */
 shared final class Scene
 {
+private:
+    GameObject root;
+    
+package:
+    GameObject[uint] objectById;
+    uint[string] idByName;
+
 public:
     /// The camera to render with.
     Camera camera;
@@ -52,16 +62,25 @@ public:
         root = new shared GameObject;
     }
 
+    /**
+    * TODO
+    */
     final void update()
     {
         root.update();
     }
 
+    /**
+    * TODO
+    */
     final void draw()
     {
         root.draw();
     }
 
+    /**
+    * TODO
+    */
     final shared(GameObject) opIndex( string name )
     {
         shared GameObject[] objs;
@@ -83,6 +102,9 @@ public:
         return null;
     }
 
+    /**
+    * TODO
+    */
     final shared(GameObject) opIndex( uint index )
     {
         shared GameObject[] objs;
@@ -104,6 +126,9 @@ public:
         return null;
     }
 
+    /**
+    * TODO
+    */
     final @property shared(GameObject[]) objects()
     {
         shared GameObject[] objs, toReturn;
@@ -120,11 +145,4 @@ public:
 
         return toReturn;
     }
-
-package:
-    GameObject[uint] objectById;
-    uint[string] idByName;
-
-private:
-    GameObject root;
 }

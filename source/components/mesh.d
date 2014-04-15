@@ -55,11 +55,17 @@ private:
     bool _animated;
 
 public:
+    /// TODO
     mixin( Property!_glVertexArray );
+    /// TODO
     mixin( Property!_numVertices );
+    /// TODO
     mixin( Property!_numIndices );
+    /// TODO
     mixin( Property!_glIndexBuffer );
+    /// TODO
     mixin( Property!_glVertexBuffer );
+    /// TODO
     mixin( Property!_animated );
 
     /**
@@ -277,9 +283,14 @@ public:
     }
 }
 
+
 /**
  * Helper function that calculates a modifier for the reconstructed bitangent based on regenerating them
  * May be needed elsewhere
+ *
+ * Params: TODO
+ *
+ * Returns:
  */
 private float calcTangentHandedness( aiVector3D nor, aiVector3D tan, aiVector3D bit )
 {

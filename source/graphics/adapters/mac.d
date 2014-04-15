@@ -1,3 +1,6 @@
+/**
+* TODO
+*/
 module graphics.adapters.mac;
 
 version( OSX ):
@@ -12,6 +15,9 @@ import derelict.opengl3.gl3;
 public alias CGLContextObj GLRenderContext;
 public alias uint GLDeviceContext;
 
+/**
+* TODO
+*/
 final class Mac : Adapter
 {
 public:

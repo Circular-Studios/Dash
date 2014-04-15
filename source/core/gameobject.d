@@ -162,7 +162,6 @@ public:
                 logWarning( "Unknown key: ", key );
         }
 
-        //obj.transform.updateMatrix();
         return obj;
     }
 
@@ -172,7 +171,7 @@ public:
     this()
     {
         transform = new shared Transform( this );
-        //transform.connect( &emit );
+
         // Create default material
         material = new shared Material();
         id = nextId++;
@@ -317,6 +316,9 @@ class GameObjectInit(T) : GameObject if( is( T == class ) )
     }
 }
 
+/**
+ * TODO
+ */
 final shared class Transform : IDirtyable
 {
 private:
@@ -328,27 +330,35 @@ private:
 
 public:
     // these should remain public fields, properties return copies not references
+    /// TODO
     vec3 position;
+    /// TODO
     quat rotation;
+    /// TODO
     vec3 scale;
 
+    /// TODO
     mixin( Property!( _owner, AccessModifier.Public ) );
+    /// TODO
     mixin( ThisDirtyGetter!( _matrix, updateMatrix ) );
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     this( shared GameObject obj = null )
     {
         owner = obj;
         position = vec3(0,0,0);
         scale = vec3(1,1,1);
         rotation = quat.identity;
-        //updateMatrix();
     }
 
     ~this()
     {
-        //destroy( position );
-        //destroy( rotation );
-        //destroy( scale );
     }
 
     /**
@@ -373,18 +383,6 @@ public:
             return owner.parent.transform.worldRotation * rotation;
     }
 
-    /*final @property shared(mat4) matrix()
-    {
-        if( owner.parent is null )
-            return localMatrix;
-        else
-        {
-            auto matrix = owner.parent.transform.matrix * localMatrix;
-            logInfo( owner.name, " has matrix: ", matrix );
-            return matrix;
-        }
-    }*/
-
     /*
      * Check if current or a parent's matrix needs to be updated.
      * Called automatically when getting matrix.
@@ -397,27 +395,6 @@ public:
 
         return owner.parent ? (result || owner.parent.transform.isDirty()) : result;
     }
-
-    /**
-     * Rebuilds the object's matrix
-     */
-    /*final void updateLocalMatrix() @safe pure nothrow
-    {
-        _localMatrix = mat4.identity;
-        // Scale
-        _localMatrix[ 0 ][ 0 ] = scale.x;
-        _localMatrix[ 1 ][ 1 ] = scale.y;
-        _localMatrix[ 2 ][ 2 ] = scale.z;
-        // Rotate
-        _localMatrix = _localMatrix * rotation.to_matrix!( 4, 4 );
-
-        //logInfo( "Pre translate: ", cast()_matrix );
-        // Translate
-        _localMatrix[ 0 ][ 3 ] = position.x;
-        _localMatrix[ 1 ][ 3 ] = position.y;
-        _localMatrix[ 2 ][ 3 ] = position.z;
-        //logInfo( "Post: ", cast()_matrix );
-    }*/
 
     /**
      * Rebuilds the object's matrix

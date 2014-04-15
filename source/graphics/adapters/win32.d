@@ -1,3 +1,6 @@
+/**
+* TODO
+*/
 module graphics.adapters.win32;
 
 version( Windows ):
@@ -14,6 +17,9 @@ enum DWS_WINDOWED = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
 alias HGLRC GLRenderContext;
 alias HDC GLDeviceContext;
 
+/**
+* TODO
+*/
 extern( Windows )
 LRESULT WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
@@ -55,6 +61,9 @@ LRESULT WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
     return 0;
 }
 
+/**
+* TODO
+*/
 final class Win32 : Adapter
 {
 private:
@@ -62,11 +71,16 @@ private:
     HINSTANCE _hInstance;
 
 public:
+    /// TODO
     mixin( Property!_hWnd );
+    /// TODO
     mixin( Property!_hInstance );
-
+    /// TODO
     static @property Win32 get() { return cast(Win32)Graphics.adapter; }
 
+    /**
+    * TODO
+    */
     override void initialize()
     {
         // Load opengl functions
@@ -160,6 +174,9 @@ public:
         
     }
 
+    /**
+    * TODO
+    */
     override void shutdown()
     {
         wglMakeCurrent( null, null );
@@ -170,6 +187,9 @@ public:
         closeWindow();
     }
 
+    /**
+    * TODO
+    */
     override void resize()
     {
         LONG style = GetWindowLong( hWnd, GWL_STYLE ) & ~( DWS_FULLSCREEN | DWS_WINDOWED );
@@ -196,6 +216,9 @@ public:
         glViewport( 0, 0, width, height );
     }
 
+    /**
+    * TODO
+    */
     override void reload()
     {
         resize();
@@ -211,16 +234,25 @@ public:
         wglSwapIntervalEXT( vsync );
     }
 
+    /**
+    * TODO
+    */
     override void swapBuffers()
     {
         SwapBuffers( deviceContext );
     }
 
+    /**
+    * TODO
+    */
     override void openWindow()
     {
         openWindow( true );
     }
 
+    /**
+    * TODO
+    */
     final void openWindow( bool showWindow )
     {
         hWnd = CreateWindowEx( 0, DGame.instance.title.ptr, DGame.instance.title.ptr, fullscreen ? DWS_FULLSCREEN : DWS_WINDOWED,
@@ -234,12 +266,18 @@ public:
         ShowWindow( hWnd, showWindow ? SW_NORMAL : SW_HIDE );
     }
 
+    /**
+    * TODO
+    */
     override void closeWindow()
     {
         DestroyWindow( hWnd );
         hWnd = null;
     }
 
+    /**
+    * TODO
+    */
     override void messageLoop()
     {
         MSG msg;

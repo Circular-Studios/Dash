@@ -1,7 +1,11 @@
-﻿module graphics.shaders.glsl.pointlight;
+﻿/**
+* TODO
+*/
+module graphics.shaders.glsl.pointlight;
 
 package:
 
+/// TODO
 immutable string pointlightVS = q{
 #version 400
     
@@ -28,6 +32,7 @@ immutable string pointlightVS = q{
     }
 };
 
+/// TODO
 immutable string pointlightFS = q{
 #version 400
 

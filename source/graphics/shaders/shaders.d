@@ -5,19 +5,21 @@ import graphics.shaders.glsl;
 import derelict.opengl3.gl3;
 import gl3n.linalg;
 
-import std.string, std.traits;
+import std.string, std.traits, std.algorithm;
 
 /*
  * String constants for our shader uniforms
  */
-public enum ShaderUniform 
+private enum ShaderUniform
 {
     /// Matrices
     World = "world",
     WorldProj = "worldProj", // used this for scaling & orthogonal UI drawing
     WorldView = "worldView",
     WorldViewProjection = "worldViewProj",
-    InverseViewProjection = "invViewProj",
+    InverseProjection = "invProj",
+    /// Floats
+    ProjectionConstants = "projectionConstants",
     /// Textures
     UITexture = "uiTexture",
     DiffuseTexture = "diffuseTexture",
@@ -28,15 +30,18 @@ public enum ShaderUniform
     LightDirection = "light.direction",
     LightColor = "light.color",
     LightRadius = "light.radius",
-    LightPosition = "light.pos_w",
+    LightPosition = "light.pos_v",
     EyePosition = "eyePosition_w",
     /// Animations
     Bones = "bones",
+    /// Object data
+    ObjectId = "objectId",
 }
 
 final abstract class Shaders
 {
 public static:
+
     Shader geometry;
     Shader animatedGeometry;
     Shader ambientLight;
@@ -93,6 +98,8 @@ private:
     Shader[string] shaders;
 }
 
+enum ShaderUniformFields = reduce!( ( a, b ) => a ~ "immutable uint " ~ b ~ ";\n" )( "", [__traits(allMembers,ShaderUniform )] );
+
 final package class Shader
 {
 private:
@@ -104,7 +111,9 @@ public:
     mixin( Property!_vertexShaderID );
     mixin( Property!_fragmentShaderID );
     mixin( Property!_shaderName );
-    protected int[string] uniformLocations;
+
+    //mixin( reduce!( ( a, b ) => a ~ "uint " ~ b ~ ";\n" )( [__traits(allMembers,ShaderUniform )] ) );
+    mixin( ShaderUniformFields );
 
     this(string name, string vertex, string fragment, bool preloaded = false )
     {
@@ -125,6 +134,12 @@ public:
         else
         {
             compile( vertex, fragment );
+        }
+
+        //uniform is the *name* of the enum member not it's value
+        foreach( uniform; __traits(allMembers,ShaderUniform ) )
+        {
+            mixin(uniform) = glGetUniformLocation( programID, mixin("ShaderUniform." ~ uniform).ptr );
         }
     }
 
@@ -168,8 +183,6 @@ public:
         glAttachShader( programID, fragmentShaderID );
         glLinkProgram( programID );
 
-        bindUniforms();
-
         glGetProgramiv( programID, GL_LINK_STATUS, &compileStatus );
         if( compileStatus != GL_TRUE )
         {
@@ -182,52 +195,51 @@ public:
         }
     }
 
-    void bindUniforms()
-    {
-        //uniform is the *name* of the enum member not it's value
-        foreach( uniform; [ EnumMembers!ShaderUniform ] )
-        {
-            //thus we use the mixin to get the value at compile time
-            int uniformLocation = glGetUniformLocation( programID, uniform.ptr );
-
-            uniformLocations[ uniform ] = uniformLocation;
-        }
-    }
-
-    int getUniformLocation( ShaderUniform uniform )
-    {
-        return uniformLocations[ uniform ];
-    }
-
     /*
      * Pass through for glUniform1f
      */
-    final void bindUniform1f( ShaderUniform uniform, const float value )
+    final void bindUniform1f( uint uniform, const float value )
     {
-        glUniform1f( getUniformLocation( uniform ), value );
+        glUniform1f( uniform, value );
+    }
+
+    /*
+     * Pass through for glUniform2f
+     */
+    final void bindUniform2f( uint uniform, const shared vec2 value )
+    {
+        glUniform2f( uniform, value.x, value.y );
     }
 
     /*
      * Pass through for glUniform 3f
      * Passes to the shader in XYZ order
      */
-    final void bindUniform3f( ShaderUniform uniform, const shared vec3 value )
+    final void bindUniform3f( uint uniform, const shared vec3 value )
     {
-        glUniform3f( getUniformLocation( uniform ), value.x, value.y, value.z );
+        glUniform3f( uniform, value.x, value.y, value.z );
+    }
+
+    /*
+     * Pass through for glUniform2f
+     */
+    final void bindUniform1ui( uint uniform, const uint value )
+    {
+        glUniform1ui( uniform, value );
     }
 
     /*
      *  pass through for glUniformMatrix4fv
      */
-    final void bindUniformMatrix4fv( ShaderUniform uniform, shared mat4 matrix )
+    final void bindUniformMatrix4fv( uint uniform, shared mat4 matrix )
     {
-        glUniformMatrix4fv( getUniformLocation( uniform ), 1, true, matrix.value_ptr );
+        glUniformMatrix4fv( uniform, 1, true, matrix.value_ptr );
     }
 
     /*
      * Bind an array of mat4s.
      */
-    final void bindUniformMatrix4fvArray( ShaderUniform uniform, shared mat4[] matrices )
+    final void bindUniformMatrix4fvArray( uint uniform, shared mat4[] matrices )
     {
         float[] matptr;
         foreach( matrix; matrices )
@@ -237,7 +249,7 @@ public:
                 matptr ~= matrix.value_ptr()[i];
             }
         }
-        glUniformMatrix4fv( getUniformLocation( uniform ), cast(int)matrices.length, true, matptr.ptr );
+        glUniformMatrix4fv( uniform, cast(int)matrices.length, true, matptr.ptr );
     }
 
     /*
@@ -246,15 +258,15 @@ public:
     final void bindMaterial( shared Material material )
     {
         //This is finding the uniform for the given texture, and setting that texture to the appropriate one for the object
-        glUniform1i( getUniformLocation( ShaderUniform.DiffuseTexture ), 0 );
+        glUniform1i( DiffuseTexture, 0 );
         glActiveTexture( GL_TEXTURE0 );
         glBindTexture( GL_TEXTURE_2D, material.diffuse.glID );
 
-        glUniform1i( getUniformLocation( ShaderUniform.NormalTexture ), 1 );
+        glUniform1i( NormalTexture, 1 );
         glActiveTexture( GL_TEXTURE1 );
         glBindTexture( GL_TEXTURE_2D, material.normal.glID );
 
-        glUniform1i( getUniformLocation( ShaderUniform.SpecularTexture ), 2 );
+        glUniform1i( SpecularTexture, 2 );
         glActiveTexture( GL_TEXTURE2 );
         glBindTexture( GL_TEXTURE_2D, material.specular.glID );
     }
@@ -264,7 +276,7 @@ public:
      */
      final void bindUI( shared UserInterface ui )
      {
-        glUniform1i( getUniformLocation( ShaderUniform.UITexture ), 0 );
+        glUniform1i( UITexture, 0 );
         glActiveTexture( GL_TEXTURE0 );
         glBindTexture( GL_TEXTURE_2D, ui.view.glID );
      }
@@ -274,7 +286,7 @@ public:
      */
     final void bindAmbientLight( shared AmbientLight light )
     {
-        bindUniform3f( ShaderUniform.LightColor, light.color );
+        bindUniform3f( LightColor, light.color );
     }
 
     /*
@@ -282,8 +294,17 @@ public:
      */
     final void bindDirectionalLight( shared DirectionalLight light )
     {
-        bindUniform3f( ShaderUniform.LightDirection, light.direction );
-        bindUniform3f( ShaderUniform.LightColor, light.color );
+        bindUniform3f( LightDirection, light.direction);
+        bindUniform3f( LightColor, light.color );
+    }
+
+    /*
+     * Bind a directional light after a modifying transform
+     */
+    final void bindDirectionalLight( shared DirectionalLight light, shared mat4 transform )
+    {
+        bindUniform3f( LightDirection, ( transform * shared vec4( light.direction, 0.0f ) ).xyz );
+        bindUniform3f( LightColor, light.color );
     }
 
     /*
@@ -291,9 +312,19 @@ public:
      */
     final void bindPointLight( shared PointLight light )
     {
-        bindUniform3f( ShaderUniform.LightColor, light.color );
-        bindUniform3f( ShaderUniform.LightPosition, light.owner.transform.worldPosition );
-        bindUniform1f( ShaderUniform.LightRadius, light.radius );
+        bindUniform3f( LightColor, light.color );
+        bindUniform3f( LightPosition, light.owner.transform.worldPosition );
+        bindUniform1f( LightRadius, light.radius );
+    }
+
+    /*
+     * Bind a point light after a modifying transform
+     */
+    final void bindPointLight( shared PointLight light, shared mat4 transform )
+    {
+        bindUniform3f( LightColor, light.color );
+        bindUniform3f( LightPosition, ( transform * shared vec4( light.owner.transform.worldPosition, 1.0f ) ).xyz);
+        bindUniform1f( LightRadius, light.radius );
     }
 
 
@@ -302,7 +333,7 @@ public:
      */
     final void setEyePosition( shared vec3 pos )
     {
-        glUniform3f( getUniformLocation( ShaderUniform.EyePosition ), pos.x, pos.y, pos.z );
+        glUniform3f( EyePosition, pos.x, pos.y, pos.z );
     }
 
     void shutdown()
@@ -310,4 +341,3 @@ public:
         // please write me :(
     }
 }
-

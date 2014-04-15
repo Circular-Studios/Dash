@@ -26,6 +26,8 @@ private:
     GameObject _parent;
     GameObject[] _children;
     IComponent[TypeInfo] componentList;
+    string _name;
+    static uint nextId = 1;
 
 public:
     /// The current transform of the object.
@@ -44,16 +46,18 @@ public:
     mixin( Property!( _parent, AccessModifier.Public ) );
     /// All of the objects which list this as parent
     mixin( Property!( _children, AccessModifier.Public ) );
-
-    string name;
+    /// The name of the object.
+    mixin( Property!( _name, AccessModifier.Public ) );
+    /// The ID of the object
+    immutable uint id;
 
     /**
      * Create a GameObject from a Yaml node.
-     * 
+     *
      * Params:
      *  yamlObj =           The YAML node to pull info from.
      *  scriptOverride =    The ClassInfo to use to create the object. Overrides YAML setting.
-     * 
+     *
      * Returns:
      *  A new game object with components and info pulled from yaml.
      */
@@ -65,7 +69,7 @@ public:
         Node innerNode;
 
         string objName = yamlObj[ "Name" ].as!string;
-        
+
         // Try to get from script
         if( scriptOverride !is null )
         {
@@ -84,7 +88,7 @@ public:
             {
                 logWarning( objName, ": Unable to find Script ClassName: ", className );
             }
-            
+
             if( Config.tryGet( "InstanceOf", prop, yamlObj ) )
             {
                 obj = Prefabs[ prop ].createInstance( parents, children, scriptClass );
@@ -145,7 +149,7 @@ public:
                 logWarning( "Scalar values and mappings in 'Children' of ", obj.name, " are not supported, and it is being ignored." );
             }
         }
-        
+
         // Init components
         foreach( string key, Node value; yamlObj )
         {
@@ -169,7 +173,9 @@ public:
     {
         transform = new shared Transform( this );
         //transform.connect( &emit );
+        // Create default material
         material = new shared Material();
+        id = nextId++;
     }
 
     ~this()
@@ -178,30 +184,39 @@ public:
     }
 
     /**
-     * Called once per frame to update all components.
+     * Called once per frame to update all children and components.
      */
     final void update()
     {
         onUpdate();
+
+        foreach( obj; children )
+            obj.update();
 
         foreach( ci, component; componentList )
             component.update();
     }
 
     /**
-     * Called once per frame to draw all components.
+     * Called once per frame to draw all children.
      */
     final void draw()
     {
         onDraw();
+
+        foreach( obj; children )
+            obj.draw();
     }
 
     /**
-     * Called when the game is shutting down, to shutdown all components.
+     * Called when the game is shutting down, to shutdown all children.
      */
     final void shutdown()
     {
         onShutdown();
+
+        foreach( obj; children )
+            obj.shutdown();
 
         /*foreach_reverse( ci, component; componentList )
         {
@@ -221,15 +236,35 @@ public:
     /**
      * Gets a component of the given type.
      */
-    final T getComponent( T )() if( is( T : Component ) )
+    deprecated( "Make properties for any component being accessed." )
+    final T getComponent( T )() if( is( T : IComponent ) )
     {
         return componentList[ T.classinfo ];
     }
 
+    /**
+     * Adds object to the children, adds it to the scene graph.
+     * Params:
+     *  object =            The object to add.
+     */
     final void addChild( shared GameObject object )
     {
         _children ~= object;
         object.parent = this;
+
+        // Add new child to scene graph
+        shared GameObject par;
+
+        if( cast(shared Scene)this )
+            par = this;
+        else
+            for( par = this.parent; par; par = par.parent ) { }
+
+        if( auto scene = cast(shared Scene)par )
+        {
+            scene.objectById[ object.id ] = object;
+            scene.idByName[ object.name ] = object.id;
+        }
     }
 
     /// Called on the update cycle.
@@ -240,7 +275,7 @@ public:
     void onShutdown() { }
     /// Called when the object collides with another object.
     void onCollision( GameObject other ) { }
-    
+
     /// Allows for GameObjectInit to pass o to typed func.
     void initialize( Object o ) { }
 }
@@ -249,7 +284,7 @@ private shared Object function( Node )[string] getInitParams;
 
 /**
  * Class to extend when looking to use the onInitialize function.
- * 
+ *
  * Type Params:
  *  T =             The type onInitialize will recieve.
  */
@@ -312,7 +347,7 @@ public:
     ~this()
     {
         //destroy( position );
-        //destroy( rotation ); 
+        //destroy( rotation );
         //destroy( scale );
     }
 
@@ -324,7 +359,7 @@ public:
         if( owner.parent is null )
             return position;
         else
-            return owner.parent.transform.worldPosition + position;
+            return (owner.parent.transform.matrix * shared vec4(position.x,position.y,position.z,1.0f)).xyz;
     }
 
     /**
@@ -350,19 +385,19 @@ public:
         }
     }*/
 
+    /*
+     * Check if current or a parent's matrix needs to be updated.
+     * Called automatically when getting matrix.
+     */
     final override @property bool isDirty() @safe pure nothrow
     {
-        auto result = position != _prevPos ||
-                rotation != _prevRot ||
-                scale != _prevScale;
+        bool result = position != _prevPos ||
+                      rotation != _prevRot ||
+                      scale != _prevScale;
 
-        _prevPos = position;
-        _prevRot = rotation;
-        _prevScale = scale;
-
-        return result;
+        return owner.parent ? (result || owner.parent.transform.isDirty()) : result;
     }
-    
+
     /**
      * Rebuilds the object's matrix
      */
@@ -375,7 +410,7 @@ public:
         _localMatrix[ 2 ][ 2 ] = scale.z;
         // Rotate
         _localMatrix = _localMatrix * rotation.to_matrix!( 4, 4 );
-        
+
         //logInfo( "Pre translate: ", cast()_matrix );
         // Translate
         _localMatrix[ 0 ][ 3 ] = position.x;
@@ -389,19 +424,31 @@ public:
      */
     final void updateMatrix() @safe pure nothrow
     {
+        _prevPos = position;
+        _prevRot = rotation;
+        _prevScale = scale;
+
         _matrix = mat4.identity;
         // Scale
         _matrix[ 0 ][ 0 ] = scale.x;
         _matrix[ 1 ][ 1 ] = scale.y;
         _matrix[ 2 ][ 2 ] = scale.z;
+
         // Rotate
-        _matrix = _matrix * worldRotation.to_matrix!( 4, 4 );
-        
-        //logInfo( "Pre translate: ", cast()_matrix );
+        _matrix = _matrix * rotation.to_matrix!(4,4);
+
         // Translate
-        _matrix[ 0 ][ 3 ] = worldPosition.x;
-        _matrix[ 1 ][ 3 ] = worldPosition.y;
-        _matrix[ 2 ][ 3 ] = worldPosition.z;
-        //logInfo( "Post: ", cast()_matrix );
+        _matrix[ 0 ][ 3 ] = position.x;
+        _matrix[ 1 ][ 3 ] = position.y;
+        _matrix[ 2 ][ 3 ] = position.z;
+
+        // include parent objects' transforms
+        if( owner.parent )
+            _matrix = owner.parent.transform.matrix * _matrix;
+
+        // force children to update to reflect changes to this
+        // compensates for children that don't update properly when only parent is dirty
+        foreach( child; owner.children )
+            child.transform.updateMatrix();
     }
 }

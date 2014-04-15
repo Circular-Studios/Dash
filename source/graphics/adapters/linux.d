@@ -5,9 +5,13 @@ version( linux ):
 import core, graphics, utility;
 
 import x11.X, x11.Xlib, x11.Xutil;
-import derelict.opengl3.gl3, derelict.opengl3.glx, derelict.opengl3.glxext;
+public import derelict.opengl3.glx;
+import derelict.opengl3.gl3, derelict.opengl3.glxext;
 
 import std.traits;
+
+public alias GLXContext GLRenderContext;
+public alias uint GLDeviceContext;
 
 final class Linux : Adapter
 {

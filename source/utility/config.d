@@ -108,7 +108,7 @@ public static:
 
         while( true )
         {
-            auto split = right.indexOf( '.' );
+            auto split = right.countUntil( '.' );
             if( split == -1 )
             {
                 return current[ right ].get!T;
@@ -173,7 +173,7 @@ public static:
 
         for( current = node; right.length; )
         {
-            auto split = right.indexOf( '.' );
+            auto split = right.countUntil( '.' );
 
             if( split == -1 )
             {

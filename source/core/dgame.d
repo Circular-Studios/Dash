@@ -185,7 +185,7 @@ public:
         auto startTime = Time.totalTime;
         scheduleTask( {
             dg();
-            return Time.totalTime >= startTime + duration;
+            return Time.totalTime >= startTime + duration.toSeconds;
         } );
     }
 

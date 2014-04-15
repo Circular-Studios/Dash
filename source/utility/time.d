@@ -78,8 +78,13 @@ debug
 static this()
 {
     cur = prev = TickDuration.min;
-    second = total = delta = Duration.zero;
-    frameCount = 0;
+    total = delta = Duration.zero;
+
+    debug
+    {
+        second = Duration.zero;    
+        frameCount = 0;
+    }
 
     Time.delta = Time.total = Duration.min;
 }

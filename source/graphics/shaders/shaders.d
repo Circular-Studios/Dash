@@ -52,10 +52,11 @@ enum ShaderUniformFields = reduce!( ( a, b ) => a ~ "immutable uint " ~ b ~ ";\n
 */
 final abstract class Shaders
 {
+static:
 private:
     Shader[string] shaders;
 
-public static:
+public:
     /// TODO
     Shader geometry;
     /// TODO

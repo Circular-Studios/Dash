@@ -23,7 +23,6 @@ shared final class AssetManager
 {
 public:
     Mesh unitSquare;
-    Mesh unitSphere;
 
     /**
      * Get the asset with the given type and name.
@@ -62,6 +61,12 @@ public:
         // Make sure fbxs are supported.
         assert(aiIsExtensionSupported(".fbx".toStringz), "fbx format isn't supported by assimp instance!");
 
+        // Load the unitSquare
+        unitSquare = new shared Mesh( "", aiImportFileFromMemory(unitSquareMesh.toStringz, unitSquareMesh.length,
+                                                aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
+                                                aiProcess_JoinIdenticalVertices | aiProcess_SortByPType,
+                                                "obj" ).mMeshes[0] );
+
         foreach( file; FilePath.scanDirectory( FilePath.Resources.Meshes ) )
         {
             // Load mesh
@@ -98,9 +103,6 @@ public:
         textures.rehash();
         materials.rehash();
         animations.rehash();
-
-        unitSquare = meshes[ "unitsquare" ];
-        unitSphere = meshes[ "unitsphere" ];
     }
 
     /**
@@ -140,3 +142,20 @@ private:
     Material[string] materials;
     AssetAnimation[string] animations;
 }
+
+immutable string unitSquareMesh = q{
+v -1.0 1.0 0.0
+v -1.0 -1.0 0.0
+v 1.0 1.0 0.0
+v 1.0 -1.0 0.0
+
+vt 0.0 0.0
+vt 0.0 1.0
+vt 1.0 0.0
+vt 1.0 1.0
+
+vn 0.0 0.0 1.0
+
+f 4/3/1 3/4/1 1/2/1
+f 2/1/1 4/3/1 1/2/1
+};

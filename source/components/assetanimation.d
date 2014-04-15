@@ -21,7 +21,7 @@ public:
         _animationSet.duration = cast(float)animation.mDuration;
         _animationSet.fps = cast(float)animation.mTicksPerSecond;
         
-		_animationSet.animNodes = makeNodesFromNode( animation, mesh, boneHierarchy.mChildren[ 1 ], null );
+        _animationSet.animNodes = makeNodesFromNode( animation, mesh, boneHierarchy.mChildren[ 1 ], null );
     }
 
     // Each bone has one of two setups:
@@ -35,11 +35,11 @@ public:
 
         if( id != -1 )
         {
-			log( OutputType.Warning, "Animation Node ");
+            log( OutputType.Warning, "Animation Node ");
             node = new shared Node( name );
             node.id = id;
             node.transform = convertAIMatrix( mesh.mBones[ node.id ].mOffsetMatrix );
-			
+            
             assignAnimationData( animation, node );
 
             returnNode = node;
@@ -175,34 +175,34 @@ public:
         // Calculate matrix based on node.bone data and time
         shared mat4 finalTransform;
         shared mat4 boneTransform = mat4.identity;
-		// Data in the transform/scale partial nodes
-		shared mat4 test = mat4(0.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 32.7f, 0.0f, 0.0f, 1.0f, 0.02f, 0.0f, 0.0f, 0.0f, 1.0f);
-		shared mat4 test2 = mat4(0.978468f, 0.0f, -0.2064f, 12.2843f, 0.0f, 1.0f, 0.0f, 0.0f, 0.2064f, 0.0f, 0.978468f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-		shared mat4 test3 = mat4(0.0f, -0.977f,  0.212f, 16.632f, 1.0f,  0.0f,  0.0f,  0.0f, 0.0f,  0.212f,  0.977f,  0.0f, 0.0f,  0.0f,  0.0f,  1.0f);
-		
-		if( node.positionKeys.length > cast(int)time )
+        // Data in the transform/scale partial nodes
+        shared mat4 test = mat4(0.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 32.7f, 0.0f, 0.0f, 1.0f, 0.02f, 0.0f, 0.0f, 0.0f, 1.0f);
+        shared mat4 test2 = mat4(0.978468f, 0.0f, -0.2064f, 12.2843f, 0.0f, 1.0f, 0.0f, 0.0f, 0.2064f, 0.0f, 0.978468f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+        shared mat4 test3 = mat4(0.0f, -0.977f,  0.212f, 16.632f, 1.0f,  0.0f,  0.0f,  0.0f, 0.0f,  0.212f,  0.977f,  0.0f, 0.0f,  0.0f,  0.0f,  1.0f);
+        
+        if( node.positionKeys.length > cast(int)time )
             boneTransform = boneTransform * boneTransform.translation( node.positionKeys[ cast(int)time ].vector[ 0 ], node.positionKeys[ cast(int)time ].vector[ 1 ], node.positionKeys[ cast(int)time ].vector[ 2 ] );
-		if( node.rotationKeys.length > cast(int)time )
-			boneTransform = boneTransform * node.rotationKeys[ cast(int)time ].to_matrix!( 4, 4 );
-		if( node.scaleKeys.length > cast(int)time )
+        if( node.rotationKeys.length > cast(int)time )
+            boneTransform = boneTransform * node.rotationKeys[ cast(int)time ].to_matrix!( 4, 4 );
+        if( node.scaleKeys.length > cast(int)time )
             boneTransform.scale( node.scaleKeys[ cast(int)time ].vector[ 0 ], node.scaleKeys[ cast(int)time ].vector[ 1 ], node.scaleKeys[ cast(int)time ].vector[ 2 ] );
         
-		if(boneNum == 0)
-		{
-			finalTransform = (parentTransform * test) * boneTransform;
-			transforms[ node.id ] = finalTransform * node.transform;
-		}
-		if(boneNum == 1)
-		{
-			finalTransform = parentTransform * boneTransform;
-			transforms[ node.id ] = finalTransform * node.transform;
-		}
-		if(boneNum == 2)
-		{
-			finalTransform = (parentTransform) * boneTransform;
-			transforms[ node.id ] = finalTransform * node.transform;
-		}
-		boneNum++;
+        if(boneNum == 0)
+        {
+            finalTransform = (parentTransform * test) * boneTransform;
+            transforms[ node.id ] = finalTransform * node.transform;
+        }
+        if(boneNum == 1)
+        {
+            finalTransform = parentTransform * boneTransform;
+            transforms[ node.id ] = finalTransform * node.transform;
+        }
+        if(boneNum == 2)
+        {
+            finalTransform = (parentTransform) * boneTransform;
+            transforms[ node.id ] = finalTransform * node.transform;
+        }
+        boneNum++;
 
         // Store the transform in the correct place and check children
         for( int i = 0; i < node.children.length; i++ )

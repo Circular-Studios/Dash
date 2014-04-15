@@ -423,12 +423,13 @@ Light constructDirectionalLight( ref Node node )
 Light constructPointLight( ref Node node )
 {
     shared vec3 color;
-    float radius;
+    float radius, falloffRate;
 
     Config.tryGet( "Color", color, node );
     Config.tryGet( "Radius", radius, node );
+    Config.tryGet( "FalloffRate", falloffRate, node );
 
-    return cast()new shared PointLight( color, radius );
+    return cast()new shared PointLight( color, radius, falloffRate );
 }
 
 

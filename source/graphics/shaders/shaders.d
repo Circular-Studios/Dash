@@ -30,6 +30,7 @@ private enum ShaderUniform
     LightDirection = "light.direction",
     LightColor = "light.color",
     LightRadius = "light.radius",
+    LightFalloffRate = "light.falloffRate",
     LightPosition = "light.pos_v",
     EyePosition = "eyePosition_w",
     /// Animations
@@ -315,6 +316,7 @@ public:
         bindUniform3f( LightColor, light.color );
         bindUniform3f( LightPosition, light.owner.transform.worldPosition );
         bindUniform1f( LightRadius, light.radius );
+        bindUniform1f( LightFalloffRate, light.falloffRate );
     }
 
     /*
@@ -325,6 +327,7 @@ public:
         bindUniform3f( LightColor, light.color );
         bindUniform3f( LightPosition, ( transform * shared vec4( light.owner.transform.worldPosition, 1.0f ) ).xyz);
         bindUniform1f( LightRadius, light.radius );
+        bindUniform1f( LightFalloffRate, light.falloffRate );
     }
 
 

@@ -54,6 +54,7 @@ shared class PointLight : Light
 {
 private:
     float _radius;
+    float _falloffRate;
     mat4 _matrix;
 
 public:
@@ -61,10 +62,12 @@ public:
      * The area that lighting will be calculated for 
      */
     mixin( Property!( _radius, AccessModifier.Public ) );
+    mixin( Property!( _falloffRate, AccessModifier.Public ) );
 
-    this( shared vec3 color, shared float radius )
+    this( shared vec3 color, float radius, float falloffRate )
     {
         this.radius = radius;
+        this.falloffRate = falloffRate;
         super( color );
     }
 

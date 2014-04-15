@@ -73,7 +73,14 @@ Node loadYamlFile( string filePath )
  */
 final abstract class Config
 {
+private:
+    Node config;
+    Constructor constructor;
+
 public static:
+    /**
+     * TODO
+     */
     final void initialize()
     {
         constructor = new Constructor;
@@ -108,7 +115,7 @@ public static:
 
         while( true )
         {
-            auto split = right.indexOf( '.' );
+            auto split = right.countUntil( '.' );
             if( split == -1 )
             {
                 return current[ right ].get!T;
@@ -173,7 +180,7 @@ public static:
 
         for( current = node; right.length; )
         {
-            auto split = right.indexOf( '.' );
+            auto split = right.countUntil( '.' );
 
             if( split == -1 )
             {
@@ -314,12 +321,11 @@ public static:
         @property int z() { return _z; }
         @property void z( int newZ ) { _z = newZ; }
     }
-
-private:
-    Node config;
-    Constructor constructor;
 }
 
+/**
+ * TODO
+ */
 shared(vec2) constructVector2( ref Node node )
 {
     shared vec2 result;
@@ -345,6 +351,9 @@ shared(vec2) constructVector2( ref Node node )
     return result;
 }
 
+/**
+ * TODO
+ */
 shared(vec3) constructVector3( ref Node node )
 {
     shared vec3 result;
@@ -372,6 +381,9 @@ shared(vec3) constructVector3( ref Node node )
     return result;
 }
 
+/**
+ * TODO
+ */
 shared(quat) constructQuaternion( ref Node node )
 {
     shared quat result;
@@ -401,6 +413,9 @@ shared(quat) constructQuaternion( ref Node node )
     return result;
 }
 
+/**
+ * TODO
+ */
 Light constructAmbientLight( ref Node node )
 {
     shared vec3 color;
@@ -409,6 +424,9 @@ Light constructAmbientLight( ref Node node )
     return cast()new shared AmbientLight( color );
 }
 
+/**
+ * TODO
+ */
 Light constructDirectionalLight( ref Node node )
 {
     shared vec3 color;
@@ -420,18 +438,24 @@ Light constructDirectionalLight( ref Node node )
     return cast()new shared DirectionalLight( color, dir );
 }
 
+/**
+ * TODO
+ */
 Light constructPointLight( ref Node node )
 {
     shared vec3 color;
-    float radius;
+    float radius, falloffRate;
 
     Config.tryGet( "Color", color, node );
     Config.tryGet( "Radius", radius, node );
+    Config.tryGet( "FalloffRate", falloffRate, node );
 
-    return cast()new shared PointLight( color, radius );
+    return cast()new shared PointLight( color, radius, falloffRate );
 }
 
-
+/**
+ * TODO
+ */
 T constructConv( T )( ref Node node ) if( is( T == enum ) )
 {
     if( node.isScalar )

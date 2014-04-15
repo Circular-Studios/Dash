@@ -20,6 +20,9 @@ enum EngineState
     Quit
 }
 
+/**
+ * TODO
+ */
 shared struct UpdateFlags
 {
     bool updateScene;
@@ -137,8 +140,7 @@ public:
 
             if ( updateFlags.updateScene )
             {
-                foreach( obj; activeScene )
-                    obj.update();
+                activeScene.update();
             }
 
             // Do the updating of the child class.
@@ -151,8 +153,7 @@ public:
             // Begin drawing
             Graphics.beginDraw();
 
-            foreach( obj; activeScene )
-                obj.draw();
+            activeScene.draw();
 
             // Draw in child class
             onDraw();
@@ -187,11 +188,9 @@ public:
         auto startTime = Time.totalTime;
         scheduleTask( {
             dg();
-            return Time.totalTime >= startTime + duration;
+            return Time.totalTime >= startTime + duration.toSeconds;
         } );
     }
-
-    //static Camera camera;
 
 protected:
     /**

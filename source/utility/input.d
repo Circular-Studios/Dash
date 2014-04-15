@@ -2,9 +2,10 @@
  * Defines the static Input class, which is responsible for handling all keyboard/mouse/controller interactions.
  */
 module utility.input;
-import utility;
+import utility, core, graphics;
 
 import yaml, gl3n.linalg;
+import derelict.opengl3.gl3;
 import core.sync.mutex;
 import std.typecons, std.conv;
 
@@ -255,11 +256,11 @@ public:
     }
 
     /**
-     * Get's the position of the cursor.
+     * Gets the position of the cursor.
      *
      * Returns:     The position of the mouse cursor.
      */
-    final shared vec2 getMousePos()
+    final @property shared(vec2) mousePos()
     {
         version( Windows )
         {
@@ -282,6 +283,105 @@ public:
         {
             return shared vec2();
         }
+    }
+
+    /**
+     * Gets the world position of the cursor in the active scene.
+     *
+     * Returns:     The position of the mouse cursor in world space.
+     */
+    final @property shared(vec3) mousePosView()
+    {
+        if( !DGame.instance.activeScene )
+        {
+            logWarning( "No active scene." );
+            return shared vec3( 0.0f, 0.0f, 0.0f );
+        }
+
+        auto scene = DGame.instance.activeScene;
+
+        if( !scene.camera )
+        {
+            logWarning( "No camera on active scene." );
+            return shared vec3( 0.0f, 0.0f, 0.0f );
+        }
+        shared vec2 mouse = mousePos;
+        float depth;
+        int x = cast(int)mouse.x;
+        int y = cast(int)mouse.y;
+        auto view = shared vec3( 0, 0, 0 );
+
+        if( x >= 0 && x <= Graphics.width && y >= 0 && y <= Graphics.height )
+        {
+            glBindFramebuffer( GL_FRAMEBUFFER, Graphics.deferredFrameBuffer );
+            glReadBuffer( GL_DEPTH_ATTACHMENT );
+            glReadPixels( x, Graphics.height - y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+
+            auto linearDepth = scene.camera.projectionConstants.x / ( scene.camera.projectionConstants.y - depth );
+            //Convert x and y to normalized device coords
+            shared float screenX = ( mouse.x / cast(shared float)Graphics.width ) * 2 - 1;
+            shared float screenY = -( ( mouse.y / cast(shared float)Graphics.height ) * 2 - 1 );
+
+            auto viewSpace = scene.camera.inversePerspectiveMatrix * shared vec4( screenX, screenY, 1.0f, 1.0f);
+            auto viewRay = shared vec3( viewSpace.xy * (1.0f / viewSpace.z), 1.0f);
+            view = viewRay * linearDepth;
+
+            glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+        }
+
+        return view;
+    }
+
+    /**
+     * Gets the world position of the cursor in the active scene.
+     *
+     * Returns:     The position of the mouse cursor in world space.
+     */
+    final @property shared(vec3) mousePosWorld()
+    {
+        return (cast(shared)DGame.instance.activeScene.camera.inverseViewMatrix * shared vec4( mousePosView(), 1.0f )).xyz;
+    }
+
+    /**
+     * Gets the world position of the cursor in the active scene.
+     *
+     * Returns:     The GameObject located at the current mouse Position
+     */
+    final @property shared(GameObject) mouseObject()
+    {
+        if( !DGame.instance.activeScene )
+        {
+            logWarning( "No active scene." );
+            return null;
+        }
+
+        auto scene = DGame.instance.activeScene;
+
+        if( !scene.camera )
+        {
+            logWarning( "No camera on active scene." );
+            return null;
+        }
+
+        shared vec2 mouse = mousePos();
+        float fId;
+        int x = cast(int)mouse.x;
+        int y = cast(int)mouse.y;
+
+        if( x >= 0 && x <= Graphics.width && y >= 0 && y <= Graphics.height )
+        {
+            glBindFramebuffer( GL_FRAMEBUFFER, Graphics.deferredFrameBuffer );
+            glReadBuffer( GL_COLOR_ATTACHMENT1 );
+            glReadPixels( x, Graphics.height - y, 1, 1, GL_BLUE, GL_FLOAT, &fId);
+
+            uint id = cast(int)(fId);
+            glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+
+            if(id > 0)
+                return scene[id];
+        }
+
+        return null;
     }
 
 private:

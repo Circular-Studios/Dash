@@ -12,6 +12,15 @@ import std.stdio;
  */
 final class FilePath
 {
+private:
+    string _fullPath;
+    string _relativePath;
+    string _fileName;
+    string _baseFileName;
+    string _directory;
+    string _extension;
+    File* file;
+    
 public:
     /**
      * The path to the resources home folder.
@@ -127,6 +136,9 @@ public:
         return file;
     }
 
+    /**
+     * TODO
+     */
     final string getContents()
     {
         return cast(string)std.file.read(_fullPath);
@@ -151,17 +163,7 @@ public:
         if( file && file.isOpen )
             file.close();
     }
-
-private:
-    string _fullPath;
-    string _relativePath;
-    string _fileName;
-    string _baseFileName;
-    string _directory;
-    string _extension;
-    File* file;
 }
-
 unittest
 {
     import std.stdio;

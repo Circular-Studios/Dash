@@ -1,3 +1,6 @@
+/**
+ * TODO
+ */
 module components.material;
 import core, components, graphics, utility;
 
@@ -5,24 +8,41 @@ import yaml;
 import derelict.opengl3.gl3, derelict.freeimage.freeimage;
 import std.variant, std.conv, std.string;
 
+/**
+ * TODO
+ */
 shared final class Material : IComponent
 {
 private:
     Texture _diffuse, _normal, _specular;
 
 public:
+    /// TODO
     mixin( Property!(_diffuse, AccessModifier.Public) );
+    /// TODO
     mixin( Property!(_normal, AccessModifier.Public) );
+    /// TODO
     mixin( Property!(_specular, AccessModifier.Public) );
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     this()
     {
         _diffuse = _normal = _specular = defaultTex;
     }
 
     /**
-    * Create a Material from a Yaml node.
-    */
+     * Create a Material from a Yaml node.
+     *
+     * Params: TODO
+     *
+     * Returns:
+     */
     static shared(Material) createFromYaml( Node yamlObj )
     {
         auto obj = new shared Material;
@@ -44,11 +64,21 @@ public:
     override void shutdown() { }
 }
 
+/**
+ * TODO
+ */
 shared class Texture
 {
 protected:
     uint _width, _height, _glID;
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     this( ubyte* buffer )
     {
         glGenTextures( 1, cast(uint*)&_glID );
@@ -56,6 +86,13 @@ protected:
         updateBuffer( buffer );
     }
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     void updateBuffer( const ubyte* buffer )
     {
         // Set texture to update
@@ -69,10 +106,20 @@ protected:
     }
 
 public:
+    /// TODO
     mixin( Property!_width );
+    /// TODO
     mixin( Property!_height );
+    /// TODO
     mixin( Property!_glID );
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     this( string filePath )
     {
         filePath ~= "\0";
@@ -86,6 +133,13 @@ public:
         FreeImage_Unload( imageData );
     }
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     void shutdown()
     {
         glBindTexture( GL_TEXTURE_2D, 0 );
@@ -93,7 +147,13 @@ public:
     }
 }
 
-
+/**
+ * TODO
+ *
+ * Params:
+ *
+ * Returns:
+ */
 @property shared(Texture) defaultTex()
 {
     static shared Texture def;

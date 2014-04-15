@@ -1,7 +1,11 @@
-﻿module graphics.shaders.glsl.pointlight;
+﻿/**
+* TODO
+*/
+module graphics.shaders.glsl.pointlight;
 
 package:
 
+/// TODO
 immutable string pointlightVS = q{
 #version 400
     
@@ -28,6 +32,7 @@ immutable string pointlightVS = q{
     }
 };
 
+/// TODO
 immutable string pointlightFS = q{
 #version 400
 
@@ -35,6 +40,7 @@ immutable string pointlightFS = q{
         vec3 pos_v;
         vec3 color;
         float radius;
+        float falloffRate;
     };
     
     in vec4 fPosition_s;
@@ -77,12 +83,8 @@ immutable string pointlightFS = q{
         float distance = sqrt( dot(lightDir_v,lightDir_v) );
         lightDir_v = normalize( lightDir_v );
 
-        // attenuation = 1 / ( constant + linear*d + quadratic*d^2 )
-        // .005 is the cutoff, 10 is the intensity just hard coded for now
-        float attenuation = max( light.radius-distance, 0) / light.radius; //( 1 + 2/light.radius*distance + 1/(light.radius*light.radius)*(distance*distance) );
-        //attenuation = pow(max(0.0, 1.0 - (distance / radius)), f + 1.0);
-        //attenuation = (attenuation - .005) / (1 - .005);
-        //attenuation = max(attenuation, 0);
+        // calculate exponential attenuation
+        float attenuation = pow( max( 1-distance/light.radius, 0), light.falloffRate + 1.0f );
 
         // Diffuse lighting calculations
         float diffuseScale = clamp( dot( normal_v, lightDir_v ), 0, 1 );

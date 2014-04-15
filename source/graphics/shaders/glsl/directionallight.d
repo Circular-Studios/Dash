@@ -1,8 +1,11 @@
+/**
+* TODO
+*/
 module graphics.shaders.glsl.directionallight;
 
 package:
 
-
+/// TODO
 immutable string directionallightVS = q{
     #version 400
 
@@ -27,6 +30,7 @@ immutable string directionallightVS = q{
     }
 };
 
+/// TODO
 immutable string directionallightFS = q{
     #version 400
 

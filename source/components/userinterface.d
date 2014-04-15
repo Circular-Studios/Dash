@@ -6,17 +6,22 @@ import core;
 import utility.awesomium, components, utility, graphics.graphics;
 import std.string, gl3n.linalg;
 
+/**
+ * TODO
+ */
 shared class UserInterface
 {
 private:
     uint _height;
     uint _width;
-    mat4 _scaleMat;
+    shared mat4 _scaleMat;
     AwesomiumView _view;
     // TODO: Handle JS
 
 public:
+    /// TODO
     mixin( Property!(_view, AccessModifier.Public) );
+    /// TODO
     mixin( Property!(_scaleMat, AccessModifier.Public) );
 
     this( uint w, uint h, string filePath ) 

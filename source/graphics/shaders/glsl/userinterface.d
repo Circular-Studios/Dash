@@ -1,3 +1,6 @@
+/**
+* TODO
+*/
 module graphics.shaders.glsl.userinterface;
 
 package:
@@ -25,6 +28,7 @@ immutable string userinterfaceVS = q{
     
 };
 
+/// Put the texture on the screen.
 immutable string userinterfaceFS = q{
     #version 400
 

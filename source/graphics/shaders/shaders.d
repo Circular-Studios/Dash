@@ -34,6 +34,8 @@ private enum ShaderUniform
     EyePosition = "eyePosition_w",
     /// Animations
     Bones = "bones",
+    /// Object data
+    ObjectId = "objectId",
 }
 
 final abstract class Shaders
@@ -216,6 +218,14 @@ public:
     final void bindUniform3f( uint uniform, const shared vec3 value )
     {
         glUniform3f( uniform, value.x, value.y, value.z );
+    }
+
+    /*
+     * Pass through for glUniform2f
+     */
+    final void bindUniform1ui( uint uniform, const uint value )
+    {
+        glUniform1ui( uniform, value );
     }
 
     /*

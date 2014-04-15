@@ -16,10 +16,10 @@ private:
     uint _height, _screenHeight;
     bool _fullscreen, _backfaceCulling, _vsync;
 
-    uint deferredFrameBuffer;
-    uint diffuseRenderTexture; //Alpha channel stores Specular map average
-    uint normalRenderTexture; //Alpha channel stores nothing important
-    uint depthRenderTexture;
+    uint _deferredFrameBuffer;
+    uint _diffuseRenderTexture; //Alpha channel stores Specular map average
+    uint _normalRenderTexture; //Alpha channel stores nothing important
+    uint _depthRenderTexture;
     // Do not add properties for:
     shared UserInterface[] uis;
 
@@ -34,6 +34,10 @@ public:
     mixin( Property!_fullscreen );
     mixin( Property!_backfaceCulling );
     mixin( Property!_vsync );
+    mixin( Property!_deferredFrameBuffer );
+    mixin( Property!_diffuseRenderTexture );
+    mixin( Property!_normalRenderTexture );
+    mixin( Property!_depthRenderTexture );
 
     abstract void initialize();
     abstract void shutdown();
@@ -53,30 +57,30 @@ public:
 
         //Create the frame buffer, which will contain the textures to render to
         deferredFrameBuffer = 0;
-        glGenFramebuffers( 1, &deferredFrameBuffer );
-        glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
+        glGenFramebuffers( 1, &_deferredFrameBuffer );
+        glBindFramebuffer( GL_FRAMEBUFFER, _deferredFrameBuffer );
 
         //Generate our 3 textures
-        glGenTextures( 1, &diffuseRenderTexture );
-        glGenTextures( 1, &normalRenderTexture );
-        glGenTextures( 1, &depthRenderTexture );
+        glGenTextures( 1, &_diffuseRenderTexture );
+        glGenTextures( 1, &_normalRenderTexture );
+        glGenTextures( 1, &_depthRenderTexture );
 
         //For each texture, we bind it to our active texture, and set the format and filtering
-        glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
+        glBindTexture( GL_TEXTURE_2D, _diffuseRenderTexture );
         glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, null );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 
-        glBindTexture( GL_TEXTURE_2D, normalRenderTexture );
-        glTexImage2D( GL_TEXTURE_2D, 0, GL_RG16F, width, height, 0, GL_RG, GL_FLOAT, null );
+        glBindTexture( GL_TEXTURE_2D, _normalRenderTexture );
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, null );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 
-        glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
+        glBindTexture( GL_TEXTURE_2D, _depthRenderTexture );
         glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, null );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
@@ -84,9 +88,9 @@ public:
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 
         //And finally set all of these to our frameBuffer
-        glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, diffuseRenderTexture, 0 );
-        glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, normalRenderTexture, 0 );
-        glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthRenderTexture, 0 );
+        glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _diffuseRenderTexture, 0 );
+        glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, _normalRenderTexture, 0 );
+        glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _depthRenderTexture, 0 );
 
         GLenum[ 2 ] DrawBuffers = [ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 ];
         glDrawBuffers( 2, DrawBuffers.ptr );
@@ -142,8 +146,8 @@ public:
         auto pointLights = getOfType!PointLight;
         auto spotLights = getOfType!SpotLight;
 
-        shared mat4 perspProj = scene.camera.buildPerspective( cast(float)width, cast(float)height );
-        shared mat4 invProj = perspProj.inverse();
+        shared mat4 projection = scene.camera.perspectiveMatrix;
+        shared mat4 invProj = scene.camera.inversePerspectiveMatrix;
 
         void geometryPass()
         {
@@ -162,7 +166,8 @@ public:
                     shared mat4 worldView =  scene.camera.viewMatrix * object.transform.matrix;
                     shader.bindUniformMatrix4fv( shader.WorldView, worldView );
                     shader.bindUniformMatrix4fv( shader.WorldViewProjection,
-                                                 perspProj * worldView );
+                                                 projection * worldView );
+                    shader.bindUniform1ui( shader.ObjectId, object.id );
 
                     if( object.mesh.animated )
                         shader.bindUniformMatrix4fvArray( shader.Bones, object.animation.currBoneTransforms );
@@ -183,17 +188,17 @@ public:
                 // diffuse
                 glUniform1i( shader.DiffuseTexture, 0 );
                 glActiveTexture( GL_TEXTURE0 );
-                glBindTexture( GL_TEXTURE_2D, diffuseRenderTexture );
+                glBindTexture( GL_TEXTURE_2D, _diffuseRenderTexture );
 
                 // normal
                 glUniform1i( shader.NormalTexture, 1 );
                 glActiveTexture( GL_TEXTURE1 );
-                glBindTexture( GL_TEXTURE_2D, normalRenderTexture );
+                glBindTexture( GL_TEXTURE_2D, _normalRenderTexture );
 
                 // depth
                 glUniform1i( shader.DepthTexture, 2 );
                 glActiveTexture( GL_TEXTURE2 );
-                glBindTexture( GL_TEXTURE_2D, depthRenderTexture );
+                glBindTexture( GL_TEXTURE_2D, _depthRenderTexture );
             }
 
             // Ambient Light
@@ -228,7 +233,7 @@ public:
 
                 // bind inverseProj for rebuilding world positions from pixel locations
                 shader.bindUniformMatrix4fv( shader.InverseProjection, invProj );
-                shader.bindUniform2f( shader.ProjectionConstants, scene.camera.projectionConstants);
+                shader.bindUniform2f( shader.ProjectionConstants, scene.camera.projectionConstants );
 
                 // bind the window mesh for directional lights
                 glBindVertexArray( Assets.unitSquare.glVertexArray );
@@ -250,7 +255,7 @@ public:
                 bindGeometryOutputs( shader );
 
                 // bind WorldView for creating the View rays for reconstruction position
-                shader.bindUniform2f( shader.ProjectionConstants, scene.camera.projectionConstants);
+                shader.bindUniform2f( shader.ProjectionConstants, scene.camera.projectionConstants );
 
                 // bind the sphere mesh for point lights
                 glBindVertexArray( Assets.unitSphere.glVertexArray );
@@ -261,7 +266,7 @@ public:
                 //  logInfo(light.owner.name);
                     shader.bindUniformMatrix4fv( shader.WorldView, scene.camera.viewMatrix * light.getTransform() );
                     shader.bindUniformMatrix4fv( shader.WorldViewProjection,
-                                                 perspProj * scene.camera.viewMatrix * light.getTransform() );
+                                                 projection * scene.camera.viewMatrix * light.getTransform() );
                     shader.bindPointLight( light, scene.camera.viewMatrix );
                     glDrawElements( GL_TRIANGLES, Assets.unitSphere.numVertices, GL_UNSIGNED_INT, null );
                 }
@@ -283,7 +288,7 @@ public:
             foreach( ui; uis )
             {
                 shader.bindUniformMatrix4fv( shader.WorldProj,
-                    scene.camera.buildOrthogonal( cast(float)width, cast(float)height ) * ui.scaleMat );
+                    scene.camera.orthogonalMatrix * ui.scaleMat );
                 shader.bindUI( ui );
                 glDrawElements( GL_TRIANGLES, Assets.unitSquare.numVertices, GL_UNSIGNED_INT, null );
             }
@@ -291,7 +296,7 @@ public:
             glBindVertexArray(0);
         }
 
-        glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
+        glBindFramebuffer( GL_FRAMEBUFFER, _deferredFrameBuffer );
         // must be called before glClear to clear the depth buffer, otherwise depth buffer won't be cleared
         glDepthMask( GL_TRUE );
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );

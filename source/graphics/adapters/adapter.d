@@ -258,17 +258,18 @@ public:
                 shader.bindUniform2f( shader.ProjectionConstants, scene.camera.projectionConstants );
 
                 // bind the sphere mesh for point lights
-                glBindVertexArray( Assets.unitSphere.glVertexArray );
+                glBindVertexArray( Assets.unitSquare.glVertexArray );
 
                 // bind and draw point lights
                 foreach( light; pointLights )
                 {
                 //  logInfo(light.owner.name);
-                    shader.bindUniformMatrix4fv( shader.WorldView, scene.camera.viewMatrix * light.getTransform() );
+                    shader.bindUniformMatrix4fv( shader.WorldView, 
+                                                 scene.camera.viewMatrix * light.getTransform() );
                     shader.bindUniformMatrix4fv( shader.WorldViewProjection,
                                                  projection * scene.camera.viewMatrix * light.getTransform() );
                     shader.bindPointLight( light, scene.camera.viewMatrix );
-                    glDrawElements( GL_TRIANGLES, Assets.unitSphere.numVertices, GL_UNSIGNED_INT, null );
+                    glDrawElements( GL_TRIANGLES, Assets.unitSquare.numVertices, GL_UNSIGNED_INT, null );
                 }
             }
 

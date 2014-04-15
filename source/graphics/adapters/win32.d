@@ -94,15 +94,15 @@ public:
         };
         
         RegisterClassEx( &wcex );
-        openWindow( false );
-
+        
         // Setup opengl     
         uint formatCount;
         int pixelFormat;
         PIXELFORMATDESCRIPTOR pfd;
-        
-        HGLRC handle;
-        
+
+        // Check for OpenGL version
+        openWindow( false );
+
         deviceContext = GetDC( hWnd );      
         SetPixelFormat( deviceContext, 1, &pfd );
         renderContext = wglCreateContext( deviceContext );
@@ -116,8 +116,8 @@ public:
             //throw new Exception( "Unsupported version of OpenGL." );
             return;
         }
-        
-        closeWindow();
+
+        shutdown();
         openWindow();
         
         // Set attributes list

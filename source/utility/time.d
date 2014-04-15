@@ -19,12 +19,19 @@ float toSeconds( Duration dur )
     return cast(float)dur.fracSec.hnsecs / cast(float)1.convert!( "seconds", "hnsecs" );
 }
 
+shared TimeManager Time;
+
+shared static this()
+{
+    Time = new shared TimeManager;
+}
+
 /**
  * Manages time and delta time.
  */
-shared final struct Time
+shared final class TimeManager
 {
-public static:
+public:
     /**
      * Time since last frame in seconds.
      */
@@ -47,6 +54,8 @@ public static:
 private:
     Duration delta;
     Duration total;
+
+    this() { }
 }
 
 private:
@@ -103,6 +112,6 @@ void updateTime()
     cur = sw.peek();
 
     // Pass to shared values
-    Time.delta = delta;
-    Time.total += delta;
+    cast()Time.delta = delta;
+    cast()Time.total += delta;
 }

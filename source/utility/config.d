@@ -73,11 +73,12 @@ Node loadYamlFile( string filePath )
  */
 final abstract class Config
 {
+static:
 private:
     Node config;
     Constructor constructor;
 
-public static:
+public:
     /**
      * TODO
      */

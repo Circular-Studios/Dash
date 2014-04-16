@@ -260,14 +260,8 @@ public:
         else if( newChild.parent && cast()newChild.parent != cast()this )
             newChild.parent.children = cast(shared)(cast(GameObject[])newChild.parent.children).remove( (cast(GameObject[])newChild.parent.children).countUntil( cast()newChild ) );
 
-        logInfo( "Adding ", newChild.name, " as child to ", name );
         _children ~= newChild;
         newChild.parent = this;
-
-        enum addToScene = q{
-            par.scene.objectsById[ newChild.id ] = newChild;
-            par.scene.idByName[ newChild.name ] = newChild.id;
-        };
         
         // Get root object
         shared GameObject par;
@@ -297,10 +291,6 @@ public:
                 par.scene.objectById[ child.id ] = child;
                 par.scene.idByName[ child.name ] = child.id;
             }   
-        }
-        else
-        {
-            logInfo( "Scene not found as parent of ", name, ". Current par: ", par.name );
         }
         
     }

@@ -223,38 +223,36 @@ private:
      */
     final void start()
     {
+        void init( alias func )( string name )
+        {
+            debug
+            {
+                auto result = cast(Duration)benchmark!func( 1 );
+                logDebug( name, " init time:\t\t\t", result );
+            }
+            else
+            {
+                func();
+            }
+        }
+
         currentState = EngineState.Run;
 
         updateFlags = new shared UpdateFlags;
         updateFlags.resumeAll();
 
-        logInfo( "Initializing..." );
-        auto start = Clock.currTime;
-        auto subStart = start;
+        logDebug( "Initializing..." );
 
         Config.initialize();
         Input.initialize();
         Output.initialize();
 
-        logInfo( "Graphics initialization:" );
-        subStart = Clock.currTime;
-        Graphics.initialize();
-        logInfo( "Graphics init time: ", Clock.currTime - subStart );
-
-        logInfo( "Assets initialization:" );
-        subStart = Clock.currTime;
-        Assets.initialize();
-        logInfo( "Assets init time: ", Clock.currTime - subStart );
-
-        Prefabs.initialize();
-
-        UserInterface.initializeAwesomium();
-
-        //Physics.initialize();
+        init!( { Graphics.initialize(); } )( "Graphics" );
+        init!( { Assets.initialize(); } )( "Assets" );
+        init!( { Prefabs.initialize(); } )( "Prefabs" );
+        init!( { UserInterface.initializeAwesomium(); } )( "UI" );
 
         onInitialize();
-
-        logInfo( "Total init time: ", Clock.currTime - start );
     }
 
     /**

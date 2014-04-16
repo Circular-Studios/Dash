@@ -106,6 +106,17 @@ public:
     }
 
     /**
+     * Adds object to the children, adds it to the scene graph.
+     *
+     * Params:
+     *  newChild =            The object to add.
+     */
+    final void addChild( shared GameObject newChild )
+    {
+        root.addChild( newChild );
+    }
+
+    /**
     * TODO
     */
     final @property shared(GameObject[]) objects()

@@ -246,6 +246,7 @@ public:
 
     /**
      * Adds object to the children, adds it to the scene graph.
+     *
      * Params:
      *  newChild =            The object to add.
      */

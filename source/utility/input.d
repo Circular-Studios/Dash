@@ -141,11 +141,31 @@ public:
     }
 
     /**
+     * Add an event to be fired when the given key changes.
+     * 
+     * Params:
+     *      inputName = The name of the input to add the event to.
+     *      func =      The function to call when the key state changes.
+     */
+    final void addKeyEvent( string inputName, KeyEvent func )
+    {
+        addKeyEvent( keyBindings[ inputName ], func );
+    }
+
+    /**
      * Add a key event only when the key is down.
      */
     final void addKeyDownEvent( uint keyCode, KeyStateEvent func )
     {
-        keyEvents[ keyCode ] ~= ( uint keyCode, bool newState ) { if( newState ) func( newState ); };
+        addKeyEvent( keyCode, ( uint keyCode, bool newState ) { if( newState ) func( newState ); } );
+    }
+
+    /**
+     * Add a key event only when the key is down.
+     */
+    final void addKeyDownEvent( string inputName, KeyStateEvent func )
+    {
+        addKeyEvent( keyBindings[ inputName ], ( uint keyCode, bool newState ) { if( newState ) func( keyCode ); } );
     }
 
     /**
@@ -153,7 +173,15 @@ public:
      */
     final void addKeyUpEvent( uint keyCode, KeyStateEvent func )
     {
-        keyEvents[ keyCode ] ~= ( uint keyCode, bool newState ) { if( !newState ) func( keyCode ); };
+        addKeyEvent( keyCode, ( uint keyCode, bool newState ) { if( !newState ) func( keyCode ); } );
+    }
+
+    /**
+     * Add a key event only when the key is up.
+     */
+    final void addKeyUpEvent( string inputName, KeyStateEvent func )
+    {
+        addKeyEvent( keyBindings[ inputName ], ( uint keyCode, bool newState ) { if( !newState ) func( keyCode ); } );
     }
 
     /**

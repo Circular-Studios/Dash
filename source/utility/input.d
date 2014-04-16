@@ -40,7 +40,7 @@ public:
         {
             if( bind.isScalar )
             {
-                keyBindings[ name ] = bind.get!Keyboard;
+                keyBindings[ name ] ~= bind.get!Keyboard;
             }
             else if( bind.isSequence )
             {
@@ -48,7 +48,7 @@ public:
                 {
                     try
                     {
-                        keyBindings[ name ] = child.get!Keyboard;
+                        keyBindings[ name ] ~= child.get!Keyboard;
                     }
                     catch
                     {
@@ -65,13 +65,13 @@ public:
                         case "Keyboard":
                             try
                             {
-                                keyBindings[ name ] = value.get!Keyboard;
+                                keyBindings[ name ] ~= value.get!Keyboard;
                             }
                             catch
                             {
                                 try
                                 {
-                                    keyBindings[ name ] = value.get!string.to!Keyboard;
+                                    keyBindings[ name ] ~= value.get!string.to!Keyboard;
                                 }
                                 catch
                                 {
@@ -149,7 +149,9 @@ public:
      */
     final void addKeyEvent( string inputName, KeyEvent func )
     {
-        addKeyEvent( keyBindings[ inputName ], func );
+        if( auto keys = inputName in keyBindings )
+            foreach( key; *keys )
+                addKeyEvent( key, func );
     }
 
     /**
@@ -165,7 +167,9 @@ public:
      */
     final void addKeyDownEvent( string inputName, KeyStateEvent func )
     {
-        addKeyEvent( keyBindings[ inputName ], ( uint keyCode, bool newState ) { if( newState ) func( keyCode ); } );
+        if( auto keys = inputName in keyBindings )
+            foreach( key; *keys )
+                addKeyEvent( key, ( uint keyCode, bool newState ) { if( newState ) func( keyCode ); } );
     }
 
     /**
@@ -181,7 +185,9 @@ public:
      */
     final void addKeyUpEvent( string inputName, KeyStateEvent func )
     {
-        addKeyEvent( keyBindings[ inputName ], ( uint keyCode, bool newState ) { if( !newState ) func( keyCode ); } );
+        if( auto keys = inputName in keyBindings )
+            foreach( key; *keys )
+                addKeyEvent( key, ( uint keyCode, bool newState ) { if( !newState ) func( keyCode ); } );
     }
 
     /**
@@ -268,9 +274,14 @@ public:
     {
         static if( is( T == bool ) )
         {
-            if( input in keyBindings )
+            bool result = false;
+
+            if( auto keys = input in keyBindings )
             {
-                return isKeyDown( keyBindings[ input ], checkPrevious );
+                foreach( key; *keys )
+                    result = result || isKeyDown( key, checkPrevious );
+
+                return result;
             }
             else
             {
@@ -413,7 +424,7 @@ public:
     }
 
 private:
-    Keyboard[ string ] keyBindings;
+    Keyboard[][ string ] keyBindings;
 
     KeyEvent[][ uint ] keyEvents;
 

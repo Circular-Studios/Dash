@@ -286,19 +286,3 @@ private:
         onSaveState();
     }
 }
-
-/**
- * Initializes reflection things.
- */
-shared static this()
-{
-    foreach( mod; ModuleInfo )
-    {
-        foreach( klass; mod.localClasses )
-        {
-            // Find the appropriate game loop.
-            if( klass.base == typeid(DGame) )
-                DGame.instance = cast(shared DGame)klass.create();
-        }
-    }
-}

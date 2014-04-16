@@ -7,6 +7,8 @@ import core, components, graphics, utility;
 
 import std.path;
 
+enum SceneName = "[scene]";
+
 /**
  * TODO
  */
@@ -26,7 +28,8 @@ public:
     this()
     {
         root = new shared GameObject;
-        root.name = "[scene]";
+        root.name = SceneName;
+        root.scene = this;
     }
 
     /**
@@ -83,23 +86,12 @@ public:
     */
     final shared(GameObject) opIndex( string name )
     {
-        shared GameObject[] objs;
+        logInfo( idByName );
 
-        objs ~= root;
-
-        while( objs.length )
-        {
-            auto curObj = objs[ 0 ];
-            objs = objs[ 1..$ ];
-
-            if( curObj.name == name )
-                return curObj;
-            else
-                foreach( obj; curObj.children )
-                    objs ~= obj;
-        }
-
-        return null;
+        if( auto id = name in idByName )
+            return this[ *id ];
+        else
+            return null;
     }
 
     /**
@@ -107,23 +99,10 @@ public:
     */
     final shared(GameObject) opIndex( uint index )
     {
-        shared GameObject[] objs;
-
-        objs ~= root;
-
-        while( objs.length )
-        {
-            auto curObj = objs[ 0 ];
-            objs = objs[ 1..$ ];
-
-            if( curObj.id == index )
-                return curObj;
-            else
-                foreach( obj; curObj.children )
-                    objs ~= obj;
-        }
-
-        return null;
+        if( auto obj = index in objectById )
+            return *obj;
+        else
+            return null;
     }
 
     /**
@@ -131,18 +110,6 @@ public:
     */
     final @property shared(GameObject[]) objects()
     {
-        shared GameObject[] objs, toReturn;
-
-        objs ~= root;
-
-        while( objs.length )
-        {
-            auto temp = objs[ 0 ];
-            objs = objs[ 1..$ ];
-            toReturn ~= temp.children;
-            objs ~= temp.children;
-        }
-
-        return toReturn;
+        return objectById.values;
     }
 }

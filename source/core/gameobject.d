@@ -29,6 +29,9 @@ private:
     string _name;
     static uint nextId = 1;
 
+package:
+    Scene scene;
+
 public:
     /// The current transform of the object.
     mixin( Property!( _transform, AccessModifier.Public ) );
@@ -238,32 +241,67 @@ public:
     deprecated( "Make properties for any component being accessed." )
     final T getComponent( T )() if( is( T : IComponent ) )
     {
-        return componentList[ T.classinfo ];
+        return componentList[ typeid(T) ];
     }
 
     /**
      * Adds object to the children, adds it to the scene graph.
      * Params:
-     *  object =            The object to add.
+     *  newChild =            The object to add.
      */
-    final void addChild( shared GameObject object )
+    final void addChild( shared GameObject newChild )
     {
-        _children ~= object;
-        object.parent = this;
+        import std.algorithm;
+        // Nothing to see here.
+        if( cast()newChild.parent == cast()this )
+            return;
+        // Remove from current parent
+        else if( newChild.parent && cast()newChild.parent != cast()this )
+            newChild.parent.children = cast(shared)(cast(GameObject[])newChild.parent.children).remove( (cast(GameObject[])newChild.parent.children).countUntil( cast()newChild ) );
 
-        // Add new child to scene graph
+        logInfo( "Adding ", newChild.name, " as child to ", name );
+        _children ~= newChild;
+        newChild.parent = this;
+
+        enum addToScene = q{
+            par.scene.objectsById[ newChild.id ] = newChild;
+            par.scene.idByName[ newChild.name ] = newChild.id;
+        };
+        
+        // Get root object
         shared GameObject par;
+        for( par = this; par.parent; par = par.parent ) { }
 
-        if( cast(shared Scene)this )
-            par = this;
-        else
-            for( par = this.parent; par; par = par.parent ) { }
-
-        if( auto scene = cast(shared Scene)par )
+        shared GameObject[] objectChildren;
         {
-            scene.objectById[ object.id ] = object;
-            scene.idByName[ object.name ] = object.id;
+            shared GameObject[] objs;
+            objs ~= newChild;
+
+            while( objs.length )
+            {
+                auto obj = objs[ 0 ];
+                objs = objs[ 1..$ ];
+                objectChildren ~= obj;
+
+                foreach( child; obj.children )
+                    objs ~= child;
+            }
         }
+
+        if( par.scene )
+        {
+            // If adding to the scene, make sure all new children are in.
+            foreach( child; objectChildren )
+            {
+                par.scene.objectById[ child.id ] = child;
+                par.scene.idByName[ child.name ] = child.id;
+            }   
+        }
+        else
+        {
+            logInfo( "Scene not found as parent of ", name, ". Current par: ", par.name );
+        }
+        
     }
 
     /// Called on the update cycle.

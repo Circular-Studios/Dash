@@ -1,8 +1,5 @@
-Dash
-====
-[![Build Status](https://travis-ci.org/Circular-Studios/Dash.png?branch=develop)](https://travis-ci.org/Circular-Studios/Dash)
-[![Stories in Ready](https://badge.waffle.io/Circular-Studios/Dash.png?label=ready)](http://waffle.io/Circular-Studios/Dash)
-[![Gitter Chat](https://badges.gitter.im/Circular-Studios/Dash.png)](https://gitter.im/Circular-Studios/Dash)
+# Dash  [![Build Status](https://travis-ci.org/Circular-Studios/Dash.png?branch=develop)](https://travis-ci.org/Circular-Studios/Dash) [![Stories in Ready](https://badge.waffle.io/Circular-Studios/Dash.png?label=ready)](http://waffle.io/Circular-Studios/Dash) [![Gitter Chat](https://badges.gitter.im/Circular-Studios/Dash.png)](https://gitter.im/Circular-Studios/Dash)
+![Dash Logo](https://cloud.githubusercontent.com/assets/512416/2726786/6618d624-c5c2-11e3-9049-23637e5a1739.png)
 
 Dash is an free and open game engine written in the D Programming Language.
 

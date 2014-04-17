@@ -448,8 +448,8 @@ public:
 
         auto trans = new shared Transform();
 
-        auto forward = shared vec3( 0.0f, 0.0f, -1.0f );
-        trans.rotation.rotatey( 180.radians );
+        auto forward = shared vec3( 1.0f, 0.0f, 0.0f );
+        trans.rotation.rotatey( 90.radians );
         assert( almost_equal( trans.forward, forward ) );
     }
 
@@ -473,8 +473,9 @@ public:
 
         auto trans = new shared Transform();
 
-        auto up = shared vec3( 0.0f, -1.0f, 0.0f );
-        trans.rotation.rotatex( 180.radians );
+        auto up = shared vec3( 0.0f, 0.0f, 1.0f );
+        trans.rotation.rotatex( 90.radians );
+        writeln(trans.up );
         assert( almost_equal( trans.up, up ) );
     }
  
@@ -498,8 +499,8 @@ public:
 
         auto trans = new shared Transform();
 
-        auto right = shared vec3( -1.0f, 0.0f, 0.0f );
-        trans.rotation.rotatey( 180.radians );
+        auto right = shared vec3( 0.0f, 0.0f, -1.0f );
+        trans.rotation.rotatey( 90.radians );
         assert( almost_equal( trans.right, right ) );
     }
 

@@ -1,8 +1,7 @@
-Dash
-====
-[![Build Status](https://travis-ci.org/Circular-Studios/Dash.png?branch=develop)](https://travis-ci.org/Circular-Studios/Dash)
-[![Stories in Ready](https://badge.waffle.io/Circular-Studios/Dash.png?label=ready)](http://waffle.io/Circular-Studios/Dash)
-[![Gitter Chat](https://badges.gitter.im/Circular-Studios/Dash.png)](https://gitter.im/Circular-Studios/Dash)
+[![Dash Logo](https://cloud.githubusercontent.com/assets/512416/2726786/6618d624-c5c2-11e3-9049-23637e5a1739.png)](https://github.com/Circular-Studios/Dash/wiki)
+
+# [![Build Status](https://travis-ci.org/Circular-Studios/Dash.png?branch=develop)](https://travis-ci.org/Circular-Studios/Dash) [![Stories in Ready](https://badge.waffle.io/Circular-Studios/Dash.png?label=ready)](http://waffle.io/Circular-Studios/Dash) [![Docs](http://img.shields.io/badge/docs-ddoc-yellow.svg)](http://circular-studios.github.io/Dash/docs/) [![Gitter Chat](http://img.shields.io/badge/gitter-dash-brightgreen.svg)](https://gitter.im/Circular-Studios/Dash) [![Release](http://img.shields.io/github/release/Circular-Studios/Dash.svg)](http://code.dlang.org/packages/dash)
+
 
 Dash is an free and open game engine written in the D Programming Language.
 
@@ -19,7 +18,7 @@ We are a team of 6 students attending Rochester Institute of Technology's Game D
 
 ### Contact
 
-We'd love to hear from you, and we're currently setting up an avenue for you to get in touch with us. Check back soon!
+We'd love to hear from you, feel free to email us at dash [at] circularstudios [dot] com. We'll do our best to have the appropriate team member respond as quickly as we can.
 
 ### Copyright & License
 

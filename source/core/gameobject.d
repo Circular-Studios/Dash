@@ -260,14 +260,8 @@ public:
         else if( newChild.parent && cast()newChild.parent != cast()this )
             newChild.parent.children = cast(shared)(cast(GameObject[])newChild.parent.children).remove( (cast(GameObject[])newChild.parent.children).countUntil( cast()newChild ) );
 
-        logInfo( "Adding ", newChild.name, " as child to ", name );
         _children ~= newChild;
         newChild.parent = this;
-
-        enum addToScene = q{
-            par.scene.objectsById[ newChild.id ] = newChild;
-            par.scene.idByName[ newChild.name ] = newChild.id;
-        };
         
         // Get root object
         shared GameObject par;
@@ -297,10 +291,6 @@ public:
                 par.scene.objectById[ child.id ] = child;
                 par.scene.idByName[ child.name ] = child.id;
             }   
-        }
-        else
-        {
-            logInfo( "Scene not found as parent of ", name, ". Current par: ", par.name );
         }
         
     }
@@ -356,7 +346,10 @@ class GameObjectInit(T) : GameObject if( is( T == class ) )
 }
 
 /**
- * TODO
+ * Handles 3D Transformations for an object.
+ * Stores position, rotation, and scale
+ * and can generate a World matrix, worldPosition/Rotation (based on parents' transforms)
+ * as well as forward, up, and right axes based on rotation
  */
 final shared class Transform : IDirtyable
 {
@@ -433,6 +426,82 @@ public:
                       scale != _prevScale;
 
         return owner.parent ? (result || owner.parent.transform.isDirty()) : result;
+    }
+
+    /*
+     * Gets the forward axis of the current transform
+     *
+     * Returns: The forward axis of the current transform
+     */
+    final @property const shared(vec3) forward()
+    {
+        return shared vec3( 2 * (rotation.x * rotation.z + rotation.w * rotation.y),
+                            2 * (rotation.y * rotation.x - rotation.w * rotation.x),
+                            1 - 2 * (rotation.x * rotation.x + rotation.y * rotation.y ));
+    }
+    ///
+    unittest
+    {
+        import std.stdio;
+        import gl3n.math;
+        writeln( "Dash Transform forward unittest" );
+
+        auto trans = new shared Transform();
+
+        auto forward = shared vec3( 1.0f, 0.0f, 0.0f );
+        trans.rotation.rotatey( 90.radians );
+        assert( almost_equal( trans.forward, forward ) );
+    }
+
+    /*
+     * Gets the up axis of the current transform
+     *
+     * Returns: The up axis of the current transform
+     */
+    final  @property const shared(vec3) up()
+    {
+        return shared vec3( 2 * (rotation.x * rotation.y - rotation.w * rotation.z),
+                        1 - 2 * (rotation.x * rotation.x + rotation.z * rotation.z),
+                        2 * (rotation.y * rotation.z + rotation.w * rotation.x));
+    }
+    ///
+    unittest
+    {
+        import std.stdio;
+        import gl3n.math;
+        writeln( "Dash Transform up unittest" );
+
+        auto trans = new shared Transform();
+
+        auto up = shared vec3( 0.0f, 0.0f, 1.0f );
+        trans.rotation.rotatex( 90.radians );
+        writeln(trans.up );
+        assert( almost_equal( trans.up, up ) );
+    }
+ 
+    /*
+     * Gets the right axis of the current transform
+     *
+     * Returns: The right axis of the current transform
+     */
+    final  @property const shared(vec3) right()
+    {
+        return shared vec3( 1 - 2 * (rotation.y * rotation.y + rotation.z * rotation.z),
+                        2 * (rotation.x * rotation.y + rotation.w * rotation.z),
+                        2 * (rotation.x * rotation.z - rotation.w * rotation.y));
+    }
+    ///
+    unittest
+    {
+        import std.stdio;
+        import gl3n.math;
+        writeln( "Dash Transform right unittest" );
+
+        auto trans = new shared Transform();
+
+        auto right = shared vec3( 0.0f, 0.0f, -1.0f );
+        trans.rotation.rotatey( 90.radians );
+        assert( almost_equal( trans.right, right ) );
     }
 
     /**

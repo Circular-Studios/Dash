@@ -346,7 +346,10 @@ class GameObjectInit(T) : GameObject if( is( T == class ) )
 }
 
 /**
- * TODO
+ * Handles 3D Transformations for an object.
+ * Stores position, rotation, and scale
+ * and can generate a World matrix, worldPosition/Rotation (based on parents' transforms)
+ * as well as forward, up, and right axes based on rotation
  */
 final shared class Transform : IDirtyable
 {

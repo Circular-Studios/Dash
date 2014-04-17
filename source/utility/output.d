@@ -10,12 +10,14 @@ import std.stdio, std.functional;
  */
 enum OutputType
 {
+    /// Info for developers.
+    Debug,
     /// Purely informational.
     Info,
     /// Something went wrong, but it's recoverable.
     Warning,
     /// The ship is sinking.
-    Error
+    Error,
 }
 
 /**
@@ -23,14 +25,16 @@ enum OutputType
  */
 enum Verbosity
 {
+    /// Show me everything++.
+    Debug,
     /// Show me everything.
     High,
-    /// Show me just warnings and errors.
+    /// Show me things that shouldn't have happened.
     Medium,
     /// I only care about things gone horribly wrong.
     Low,
     /// I like to live on the edge.
-    Off
+    Off,
 }
 
 /// Alias for Output.printMessage
@@ -38,6 +42,20 @@ void log( A... )( OutputType type, A messages ) { Output.log( type, messages ); 
 alias logInfo       = curry!( log, OutputType.Info );
 alias logWarning    = curry!( log, OutputType.Warning );
 alias logError      = curry!( log, OutputType.Error );
+alias logDebug      = curry!( log, OutputType.Debug );
+
+/**
+ * Benchmark the running of a function, and log the result to the debug buffer.
+ *
+ * Params:
+ *  func =              The function to benchmark
+ *  name =              The name to print in the log
+ */
+void bench( alias func )( lazy string name )
+{
+    import std.datetime, core.time;
+    logDebug( name, " time:\t\t\t", cast(Duration)benchmark!func( 1 ) );
+}
 
 shared OutputManager Output;
 
@@ -89,19 +107,19 @@ private:
      */
     final string getHeader( OutputType type )
     {
-        switch( type )
+        final switch( type ) with( OutputType )
         {
-            case OutputType.Info:
+            case Info:
                 //SetConsoleTextAttribute( hConsole, 15 );
                 return "[INFO]    ";
-            case OutputType.Warning:
+            case Warning:
                 //SetConsoleTextAttribute( hConsole, 14 );
                 return "[WARNING] ";
-            case OutputType.Error:
+            case Error:
                 //SetConsoleTextAttribute( hConsole, 12 );
                 return "[ERROR]   ";
-            default:
-                return "          ";
+            case Debug:
+                return "[DEBUG]   ";
         }
     }
 

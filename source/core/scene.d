@@ -86,8 +86,6 @@ public:
     */
     final shared(GameObject) opIndex( string name )
     {
-        logInfo( idByName );
-
         if( auto id = name in idByName )
             return this[ *id ];
         else

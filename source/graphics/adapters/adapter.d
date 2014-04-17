@@ -176,7 +176,7 @@ public:
         }
 
         auto objsWithLights = scene.objects
-                                .filter!(obj => obj.updateFlags.renderLight && obj.light)
+                                .filter!(obj => obj.updateFlags.drawLight && obj.light)
                                 .map!(obj => obj.light);
 
         auto getOfType( Type )()
@@ -201,7 +201,7 @@ public:
         {
             foreach( object; scene.objects )
             {
-                if( object.mesh && object.updateFlags.renderMesh )
+                if( object.mesh && object.updateFlags.drawMesh )
                 {
                     // set the shader
                     Shader shader = object.mesh.animated

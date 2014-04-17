@@ -11,12 +11,15 @@ import std.conv, std.variant;
 
 enum AnonymousName = "__anonymous";
 
+/**
+ * Contains flags for all things that could be disabled.
+ */
 shared struct ObjectUpdateFlags
 {
     bool update;
     bool updateChildren;
-    bool renderMesh;
-    bool renderLight;
+    bool drawMesh;
+    bool drawLight;
 
     /**
      * Set each member to false.

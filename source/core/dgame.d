@@ -21,7 +21,7 @@ enum EngineState
 }
 
 /**
- * TODO
+ * Contains flags for all things that could be disabled.
  */
 shared struct GameUpdateFlags
 {

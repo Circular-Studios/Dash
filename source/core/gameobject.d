@@ -425,6 +425,81 @@ public:
         return owner.parent ? (result || owner.parent.transform.isDirty()) : result;
     }
 
+    /*
+     * Gets the forward axis of the current transform
+     *
+     * Returns: The forward axis of the current transform
+     */
+    final @property const shared(vec3) forward()
+    {
+        return shared vec3( 2 * (rotation.x * rotation.z + rotation.w * rotation.y),
+                            2 * (rotation.y * rotation.x - rotation.w * rotation.x),
+                            1 - 2 * (rotation.x * rotation.x + rotation.y * rotation.y ));
+    }
+    ///
+    unittest
+    {
+        import std.stdio;
+        import gl3n.math;
+        writeln( "Dash Transform forward unittest" );
+
+        auto trans = new shared Transform();
+
+        auto forward = shared vec3( 0.0f, 0.0f, -1.0f );
+        trans.rotation.rotatey( 180.radians );
+        assert( almost_equal( trans.forward, forward ) );
+    }
+
+    /*
+     * Gets the up axis of the current transform
+     *
+     * Returns: The up axis of the current transform
+     */
+    final  @property const shared(vec3) up()
+    {
+        return shared vec3( 2 * (rotation.x * rotation.y - rotation.w * rotation.z),
+                        1 - 2 * (rotation.x * rotation.x + rotation.z * rotation.z),
+                        2 * (rotation.y * rotation.z + rotation.w * rotation.x));
+    }
+    ///
+    unittest
+    {
+        import std.stdio;
+        import gl3n.math;
+        writeln( "Dash Transform forward unittest" );
+
+        auto trans = new shared Transform();
+
+        auto up = shared vec3( 0.0f, -1.0f, 0.0f );
+        trans.rotation.rotatex( 180.radians );
+        assert( almost_equal( trans.up, up ) );
+    }
+ 
+    /*
+     * Gets the right axis of the current transform
+     *
+     * Returns: The right axis of the current transform
+     */
+    final  @property const shared(vec3) right()
+    {
+        return shared vec3( 1 - 2 * (rotation.y * rotation.y + rotation.z * rotation.z),
+                        2 * (rotation.x * rotation.y + rotation.w * rotation.z),
+                        2 * (rotation.x * rotation.z - rotation.w * rotation.y));
+    }
+    ///
+    unittest
+    {
+        import std.stdio;
+        import gl3n.math;
+        writeln( "Dash Transform forward unittest" );
+
+        auto trans = new shared Transform();
+
+        auto right = shared vec3( -1.0f, 0.0f, 0.0f );
+        trans.rotation.rotatey( 180.radians );
+        assert( almost_equal( trans.right, right ) );
+    }
+
     /**
      * Rebuilds the object's matrix
      */

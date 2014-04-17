@@ -466,7 +466,7 @@ public:
     {
         import std.stdio;
         import gl3n.math;
-        writeln( "Dash Transform forward unittest" );
+        writeln( "Dash Transform up unittest" );
 
         auto trans = new shared Transform();
 
@@ -491,7 +491,7 @@ public:
     {
         import std.stdio;
         import gl3n.math;
-        writeln( "Dash Transform forward unittest" );
+        writeln( "Dash Transform right unittest" );
 
         auto trans = new shared Transform();
 

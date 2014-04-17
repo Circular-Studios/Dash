@@ -18,9 +18,9 @@ enum EngineState
 }
 
 /**
- * TODO
+ * Contains flags for all things that could be disabled.
  */
-shared struct UpdateFlags
+shared struct GameStateFlags
 {
     bool updateScene;
     bool updateUI;
@@ -32,9 +32,9 @@ shared struct UpdateFlags
      */
     void pauseAll()
     {
-        foreach( member; __traits(allMembers, UpdateFlags) )
-            static if( __traits(compiles, __traits(getMember, UpdateFlags, member) = false) )
-                __traits(getMember, UpdateFlags, member) = false;
+        foreach( member; __traits(allMembers, GameStateFlags) )
+            static if( __traits(compiles, __traits(getMember, GameStateFlags, member) = false) )
+                __traits(getMember, GameStateFlags, member) = false;
     }
 
     /**
@@ -42,9 +42,9 @@ shared struct UpdateFlags
      */
     void resumeAll()
     {
-        foreach( member; __traits(allMembers, UpdateFlags) )
-            static if( __traits(compiles, __traits(getMember, UpdateFlags, member) = true) )
-                __traits(getMember, UpdateFlags, member) = true;
+        foreach( member; __traits(allMembers, GameStateFlags) )
+            static if( __traits(compiles, __traits(getMember, GameStateFlags, member) = true) )
+                __traits(getMember, GameStateFlags, member) = true;
     }
 }
 
@@ -60,8 +60,8 @@ public:
     /// Current state of the game
     EngineState currentState;
 
-    ///
-    UpdateFlags* updateFlags;
+    /// The current update settings
+    GameStateFlags* stateFlags;
 
     /// The currently active scene
     Scene activeScene;
@@ -104,21 +104,21 @@ public:
             Input.update();
 
             // Update webcore
-            if ( updateFlags.updateUI )
+            if ( stateFlags.updateUI )
             {
                 UserInterface.updateAwesomium();
             }
 
             // Update physics
-            //if( updateFlags.updatePhysics )
+            //if( stateFlags.updatePhysics )
             //  PhysicsController.stepPhysics( Time.deltaTime );
 
-            if ( updateFlags.updateTasks )
+            if ( stateFlags.updateTasks )
             {
                 executeTasks();
             }
 
-            if ( updateFlags.updateScene )
+            if ( stateFlags.updateScene )
             {
                 activeScene.update();
             }
@@ -175,8 +175,8 @@ private:
     {
         currentState = EngineState.Run;
 
-        updateFlags = new shared UpdateFlags;
-        updateFlags.resumeAll();
+        stateFlags = new shared GameStateFlags;
+        stateFlags.resumeAll();
 
         logDebug( "Initializing..." );
         bench!( { Config.initialize(); } )( "Config init" );

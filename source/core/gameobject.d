@@ -299,7 +299,16 @@ public:
             return;
         // Remove from current parent
         else if( newChild.parent && cast()newChild.parent != cast()this )
-            newChild.parent.children = cast(shared)(cast(GameObject[])newChild.parent.children).remove( (cast(GameObject[])newChild.parent.children).countUntil( cast()newChild ) );
+        {
+            // Get index of object being removed
+            auto newChildIndex = (cast(GameObject[])newChild.parent.children).countUntil( cast()newChild );
+            // Get objects after one being removed
+            auto end = newChild.parent.children[ newChildIndex+1..$ ];
+            // Get objects before one being removed
+            newChild.parent.children = newChild.parent.children[ 0..newChildIndex ];
+            // Add end back
+            newChild.parent._children ~= end;
+        }
 
         _children ~= newChild;
         newChild.parent = this;

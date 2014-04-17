@@ -14,9 +14,9 @@ enum AnonymousName = "__anonymous";
 shared struct ObjectUpdateFlags
 {
     bool update;
+    bool updateChildren;
     bool renderMesh;
     bool renderLight;
-    //bool updatePhysics;
 
     /**
      * Set each member to false.
@@ -224,13 +224,17 @@ public:
      */
     final void update()
     {
-        onUpdate();
+        if( updateFlags.update )
+        {
+            onUpdate();
 
-        foreach( obj; children )
-            obj.update();
+            foreach( ci, component; componentList )
+                component.update();
+        }
 
-        foreach( ci, component; componentList )
-            component.update();
+        if( updateFlags.updateChildren )
+            foreach( obj; children )
+                obj.update();
     }
 
     /**

@@ -14,7 +14,7 @@ enum AnonymousName = "__anonymous";
 /**
  * Contains flags for all things that could be disabled.
  */
-shared struct ObjectUpdateFlags
+shared struct ObjectStateFlags
 {
     bool update;
     bool updateChildren;
@@ -26,9 +26,9 @@ shared struct ObjectUpdateFlags
      */
     void pauseAll()
     {
-        foreach( member; __traits(allMembers, ObjectUpdateFlags) )
-            static if( __traits(compiles, __traits(getMember, ObjectUpdateFlags, member) = false) )
-                __traits(getMember, ObjectUpdateFlags, member) = false;
+        foreach( member; __traits(allMembers, ObjectStateFlags) )
+            static if( __traits(compiles, __traits(getMember, ObjectStateFlags, member) = false) )
+                __traits(getMember, ObjectStateFlags, member) = false;
     }
 
     /**
@@ -36,9 +36,9 @@ shared struct ObjectUpdateFlags
      */
     void resumeAll()
     {
-        foreach( member; __traits(allMembers, ObjectUpdateFlags) )
-            static if( __traits(compiles, __traits(getMember, ObjectUpdateFlags, member) = true) )
-                __traits(getMember, ObjectUpdateFlags, member) = true;
+        foreach( member; __traits(allMembers, ObjectStateFlags) )
+            static if( __traits(compiles, __traits(getMember, ObjectStateFlags, member) = true) )
+                __traits(getMember, ObjectStateFlags, member) = true;
     }
 }
 
@@ -58,7 +58,7 @@ private:
     GameObject[] _children;
     IComponent[TypeInfo] componentList;
     string _name;
-    ObjectUpdateFlags* _updateFlags;
+    ObjectStateFlags* _updateFlags;
     static uint nextId = 1;
 
 package:
@@ -213,7 +213,7 @@ public:
         material = new shared Material();
         id = nextId++;
 
-        updateFlags = new ObjectUpdateFlags;
+        updateFlags = new ObjectStateFlags;
         updateFlags.resumeAll();
     }
 

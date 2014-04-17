@@ -23,7 +23,7 @@ enum EngineState
 /**
  * Contains flags for all things that could be disabled.
  */
-shared struct GameUpdateFlags
+shared struct GameStateFlags
 {
     bool updateScene;
     bool updateUI;
@@ -35,9 +35,9 @@ shared struct GameUpdateFlags
      */
     void pauseAll()
     {
-        foreach( member; __traits(allMembers, GameUpdateFlags) )
-            static if( __traits(compiles, __traits(getMember, GameUpdateFlags, member) = false) )
-                __traits(getMember, GameUpdateFlags, member) = false;
+        foreach( member; __traits(allMembers, GameStateFlags) )
+            static if( __traits(compiles, __traits(getMember, GameStateFlags, member) = false) )
+                __traits(getMember, GameStateFlags, member) = false;
     }
 
     /**
@@ -45,9 +45,9 @@ shared struct GameUpdateFlags
      */
     void resumeAll()
     {
-        foreach( member; __traits(allMembers, GameUpdateFlags) )
-            static if( __traits(compiles, __traits(getMember, GameUpdateFlags, member) = true) )
-                __traits(getMember, GameUpdateFlags, member) = true;
+        foreach( member; __traits(allMembers, GameStateFlags) )
+            static if( __traits(compiles, __traits(getMember, GameStateFlags, member) = true) )
+                __traits(getMember, GameStateFlags, member) = true;
     }
 }
 
@@ -64,7 +64,7 @@ public:
     EngineState currentState;
 
     /// The current update settings
-    GameUpdateFlags* updateFlags;
+    GameStateFlags* updateFlags;
 
     /// The currently active scene
     Scene activeScene;
@@ -225,7 +225,7 @@ private:
     {
         currentState = EngineState.Run;
 
-        updateFlags = new shared GameUpdateFlags;
+        updateFlags = new shared GameStateFlags;
         updateFlags.resumeAll();
 
         logInfo( "Initializing..." );

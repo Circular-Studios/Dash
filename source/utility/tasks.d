@@ -85,4 +85,4 @@ void executeTasks()
 
 private:
 /// The tasks that have been scheduled
-shared(bool delegate()[]) scheduledTasks;
+bool delegate()[] scheduledTasks;

@@ -58,7 +58,7 @@ private:
     GameObject[] _children;
     IComponent[TypeInfo] componentList;
     string _name;
-    ObjectStateFlags* _updateFlags;
+    ObjectStateFlags* _stateFlags;
     static uint nextId = 1;
 
 package:
@@ -84,7 +84,7 @@ public:
     /// The name of the object.
     mixin( Property!( _name, AccessModifier.Public ) );
     /// The current update settings
-    mixin( Property!( _updateFlags, AccessModifier.Public ) );
+    mixin( Property!( _stateFlags, AccessModifier.Public ) );
     /// The ID of the object
     immutable uint id;
 
@@ -213,8 +213,8 @@ public:
         material = new shared Material();
         id = nextId++;
 
-        updateFlags = new ObjectStateFlags;
-        updateFlags.resumeAll();
+        stateFlags = new ObjectStateFlags;
+        stateFlags.resumeAll();
     }
 
     ~this()
@@ -227,7 +227,7 @@ public:
      */
     final void update()
     {
-        if( updateFlags.update )
+        if( stateFlags.update )
         {
             onUpdate();
 
@@ -235,7 +235,7 @@ public:
                 component.update();
         }
 
-        if( updateFlags.updateChildren )
+        if( stateFlags.updateChildren )
             foreach( obj; children )
                 obj.update();
     }

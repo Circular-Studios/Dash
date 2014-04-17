@@ -64,7 +64,7 @@ public:
     EngineState currentState;
 
     /// The current update settings
-    GameStateFlags* updateFlags;
+    GameStateFlags* stateFlags;
 
     /// The currently active scene
     Scene activeScene;
@@ -107,16 +107,16 @@ public:
             Input.update();
 
             // Update webcore
-            if ( updateFlags.updateUI )
+            if ( stateFlags.updateUI )
             {
                 UserInterface.updateAwesomium();
             }
 
             // Update physics
-            //if( updateFlags.updatePhysics )
+            //if( stateFlags.updatePhysics )
             //  PhysicsController.stepPhysics( Time.deltaTime );
 
-            if ( updateFlags.updateTasks )
+            if ( stateFlags.updateTasks )
             {
                 uint[] toRemove;    // Indicies of tasks which are done
                 foreach( i, task; scheduledTasks )
@@ -138,7 +138,7 @@ public:
                 }
             }
 
-            if ( updateFlags.updateScene )
+            if ( stateFlags.updateScene )
             {
                 activeScene.update();
             }
@@ -225,8 +225,8 @@ private:
     {
         currentState = EngineState.Run;
 
-        updateFlags = new shared GameStateFlags;
-        updateFlags.resumeAll();
+        stateFlags = new shared GameStateFlags;
+        stateFlags.resumeAll();
 
         logInfo( "Initializing..." );
         auto start = Clock.currTime;

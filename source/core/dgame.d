@@ -118,24 +118,7 @@ public:
 
             if ( updateFlags.updateTasks )
             {
-                uint[] toRemove;    // Indicies of tasks which are done
-                foreach( i, task; scheduledTasks )
-                {
-                    if( task() )
-                        toRemove ~= cast(uint)i;
-                }
-                foreach( i; toRemove )
-                {
-                    // Get tasks after one being removed
-                    auto end = scheduledTasks[ i+1..$ ];
-                    // Get tasks before one being removed
-                    scheduledTasks = scheduledTasks[ 0..i ];
-
-                    // Allow data stomping
-                    (cast(bool function()[])scheduledTasks).assumeSafeAppend();
-                    // Add end back
-                    scheduledTasks ~= end;
-                }
+                executeTasks();
             }
 
             if ( updateFlags.updateScene )

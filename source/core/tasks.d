@@ -58,6 +58,32 @@ void scheduleDelayedTask( void delegate() dg, Duration delay )
     } );
 }
 
+package:
+/**
+ * Executes all scheduled tasks.
+ */
+void executeTasks()
+{
+    size_t[] toRemove;    // Indicies of tasks which are done
+    foreach( i, task; scheduledTasks )
+    {
+        if( task() )
+            toRemove ~= i;
+    }
+    foreach( i; toRemove )
+    {
+        // Get tasks after one being removed
+        auto end = scheduledTasks[ i+1..$ ];
+        // Get tasks before one being removed
+        scheduledTasks = scheduledTasks[ 0..i ];
+
+        // Allow data stomping
+        (cast(bool function()[])scheduledTasks).assumeSafeAppend();
+        // Add end back
+        scheduledTasks ~= end;
+    }
+}
+
 private:
 /// The tasks that have been scheduled
 bool delegate()[] scheduledTasks;

@@ -242,7 +242,7 @@ private:
         init!( { Assets.initialize(); } )( "Assets" );
         init!( { Prefabs.initialize(); } )( "Prefabs" );
         init!( { UserInterface.initializeAwesomium(); } )( "UI" );
-        init!( { onInitialize(); } )( "Game" );
+        init!( { DGame.instance.onInitialize(); } )( "Game" );
     }
 
     /**

@@ -23,7 +23,7 @@ enum EngineState
 /**
  * TODO
  */
-shared struct UpdateFlags
+shared struct GameUpdateFlags
 {
     bool updateScene;
     bool updateUI;
@@ -35,9 +35,9 @@ shared struct UpdateFlags
      */
     void pauseAll()
     {
-        foreach( member; __traits(allMembers, UpdateFlags) )
-            static if( __traits(compiles, __traits(getMember, UpdateFlags, member) = false) )
-                __traits(getMember, UpdateFlags, member) = false;
+        foreach( member; __traits(allMembers, GameUpdateFlags) )
+            static if( __traits(compiles, __traits(getMember, GameUpdateFlags, member) = false) )
+                __traits(getMember, GameUpdateFlags, member) = false;
     }
 
     /**
@@ -45,9 +45,9 @@ shared struct UpdateFlags
      */
     void resumeAll()
     {
-        foreach( member; __traits(allMembers, UpdateFlags) )
-            static if( __traits(compiles, __traits(getMember, UpdateFlags, member) = true) )
-                __traits(getMember, UpdateFlags, member) = true;
+        foreach( member; __traits(allMembers, GameUpdateFlags) )
+            static if( __traits(compiles, __traits(getMember, GameUpdateFlags, member) = true) )
+                __traits(getMember, GameUpdateFlags, member) = true;
     }
 }
 
@@ -63,8 +63,8 @@ public:
     /// Current state of the game
     EngineState currentState;
 
-    ///
-    UpdateFlags* updateFlags;
+    /// The current update settings
+    GameUpdateFlags* updateFlags;
 
     /// The currently active scene
     Scene activeScene;
@@ -225,7 +225,7 @@ private:
     {
         currentState = EngineState.Run;
 
-        updateFlags = new shared UpdateFlags;
+        updateFlags = new shared GameUpdateFlags;
         updateFlags.resumeAll();
 
         logInfo( "Initializing..." );

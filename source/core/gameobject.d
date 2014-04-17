@@ -11,6 +11,34 @@ import std.conv, std.variant;
 
 enum AnonymousName = "__anonymous";
 
+shared struct ObjectUpdateFlags
+{
+    bool update;
+    bool renderMesh;
+    bool renderLight;
+    //bool updatePhysics;
+
+    /**
+     * Set each member to false.
+     */
+    void pauseAll()
+    {
+        foreach( member; __traits(allMembers, ObjectUpdateFlags) )
+            static if( __traits(compiles, __traits(getMember, ObjectUpdateFlags, member) = false) )
+                __traits(getMember, ObjectUpdateFlags, member) = false;
+    }
+
+    /**
+     * Set each member to true.
+     */
+    void resumeAll()
+    {
+        foreach( member; __traits(allMembers, ObjectUpdateFlags) )
+            static if( __traits(compiles, __traits(getMember, ObjectUpdateFlags, member) = true) )
+                __traits(getMember, ObjectUpdateFlags, member) = true;
+    }
+}
+
 /**
  * Manages all components and transform in the world. Can be overridden.
  */
@@ -27,6 +55,7 @@ private:
     GameObject[] _children;
     IComponent[TypeInfo] componentList;
     string _name;
+    ObjectUpdateFlags* _updateFlags;
     static uint nextId = 1;
 
 package:
@@ -51,6 +80,8 @@ public:
     mixin( Property!( _children, AccessModifier.Public ) );
     /// The name of the object.
     mixin( Property!( _name, AccessModifier.Public ) );
+    /// The current update settings
+    mixin( Property!( _updateFlags, AccessModifier.Public ) );
     /// The ID of the object
     immutable uint id;
 
@@ -178,6 +209,9 @@ public:
         // Create default material
         material = new shared Material();
         id = nextId++;
+
+        updateFlags = new ObjectUpdateFlags;
+        updateFlags.resumeAll();
     }
 
     ~this()

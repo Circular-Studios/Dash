@@ -115,24 +115,7 @@ public:
 
             if ( updateFlags.updateTasks )
             {
-                uint[] toRemove;    // Indicies of tasks which are done
-                foreach( i, task; scheduledTasks )
-                {
-                    if( task() )
-                        toRemove ~= cast(uint)i;
-                }
-                foreach( i; toRemove )
-                {
-                    // Get tasks after one being removed
-                    auto end = scheduledTasks[ i+1..$ ];
-                    // Get tasks before one being removed
-                    scheduledTasks = scheduledTasks[ 0..i ];
-
-                    // Allow data stomping
-                    (cast(bool function()[])scheduledTasks).assumeSafeAppend();
-                    // Add end back
-                    scheduledTasks ~= end;
-                }
+                executeTasks();
             }
 
             if ( updateFlags.updateScene )
@@ -162,33 +145,6 @@ public:
         stop();
     }
 
-    /**
-     * Schedule a task to be executed until it returns true.
-     *
-     * Params:
-     *  dg =                The task to execute
-     */
-    void scheduleTask( bool delegate() dg )
-    {
-        scheduledTasks ~= dg;
-    }
-
-    /**
-     * Schedule a task to be executed until the duration expires.
-     *
-     * Params:
-     *  dg =                The task to execute
-     *  duration =          The duration to execute the task for
-     */
-    void scheduleTimedTask( void delegate() dg, Duration duration )
-    {
-        auto startTime = Time.totalTime;
-        scheduleTask( {
-            dg();
-            return Time.totalTime >= startTime + duration.toSeconds;
-        } );
-    }
-
 protected:
     /**
      * To be overridden, logic for when the game is being initalized.
@@ -212,9 +168,6 @@ protected:
     void onSaveState() { }
 
 private:
-    /// The tasks that have been scheduled
-    bool delegate()[] scheduledTasks;
-
     /**
      * Function called to initialize controllers.
      */

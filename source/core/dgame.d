@@ -225,15 +225,8 @@ private:
     {
         void init( alias func )( string name )
         {
-            debug
-            {
-                auto result = cast(Duration)benchmark!func( 1 );
-                logDebug( name, " init time:\t\t\t", result );
-            }
-            else
-            {
-                func();
-            }
+            debug logDebug( name, " init time:\t\t\t", cast(Duration)benchmark!func( 1 ) );
+            else func();
         }
 
         currentState = EngineState.Run;
@@ -242,17 +235,14 @@ private:
         updateFlags.resumeAll();
 
         logDebug( "Initializing..." );
-
-        Config.initialize();
-        Input.initialize();
-        Output.initialize();
-
+        init!( { Config.initialize(); } )( "Config" );
+        init!( { Input.initialize(); } )( "Input" );
+        init!( { Output.initialize(); } )( "Output" );
         init!( { Graphics.initialize(); } )( "Graphics" );
         init!( { Assets.initialize(); } )( "Assets" );
         init!( { Prefabs.initialize(); } )( "Prefabs" );
         init!( { UserInterface.initializeAwesomium(); } )( "UI" );
-
-        onInitialize();
+        init!( { onInitialize(); } )( "Game" );
     }
 
     /**

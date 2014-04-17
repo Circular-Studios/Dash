@@ -18,7 +18,7 @@ We are a team of 6 students attending Rochester Institute of Technology's Game D
 
 ### Contact
 
-We'd love to hear from you, and we're currently setting up an avenue for you to get in touch with us. Check back soon!
+We'd love to hear from you, feel free to email us at dash [at] circularstudios [dot] com. We'll do our best to have the appropriate team member respond as quickly as we can.
 
 ### Copyright & License
 

@@ -2,7 +2,7 @@
  * Defines methods for scheduling tasks with different conditions for executing.
  *
  */
-module core.tasks;
+module utility.tasks;
 import utility.time;
 
 import core.time;
@@ -58,7 +58,6 @@ void scheduleDelayedTask( void delegate() dg, Duration delay )
     } );
 }
 
-package:
 /**
  * Executes all scheduled tasks.
  */

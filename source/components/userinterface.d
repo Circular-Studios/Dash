@@ -3,7 +3,7 @@
  */
 module components.userinterface;
 import core;
-import utility.awesomium, components, utility, graphics.graphics;
+import deimos.cef3.app, components, utility, graphics.graphics;
 import std.string, gl3n.linalg;
 
 shared class UserInterface
@@ -12,7 +12,7 @@ private:
     uint _height;
     uint _width;
     mat4 _scaleMat;
-    AwesomiumView _view;
+    WebView _view;
     // TODO: Handle JS
 
 public:
@@ -26,7 +26,7 @@ public:
         _scaleMat[1][1] = cast(float)h/2.0f;
         _height = h;
         _width = w;
-        _view = new shared AwesomiumView( w, h, filePath, null );
+        _view = new shared WebView( w, h, filePath, null );
         logInfo( "UI File: ", filePath );
     }
 
@@ -54,37 +54,41 @@ public:
 
     }
 
-    static void initializeAwesomium()
+    static void initializeCEF()
     {
         version( Windows )
         {
+            //_cef_main_args_t mainArgs = {};
+
             // Webcore setup
+            /*
             awe_webcore_initialize_default();
             string baseDir = FilePath.Resources.UI;
             awe_string* aweBaseDir = awe_string_create_from_ascii( baseDir.toStringz(), baseDir.length );
             awe_webcore_set_base_directory( aweBaseDir );
             awe_string_destroy( aweBaseDir );
+            */
         }
     }
 
-    static void updateAwesomium()
+    static void updateCEF()
     {
-        version( Windows )
-        awe_webcore_update();
+        //version( Windows )
+        //awe_webcore_update();
     }
 
-    static void shutdownAwesomium()
+    static void shutdownCEF()
     {
-        version( Windows )
-        awe_webcore_shutdown();
+        //version( Windows )
+        //awe_webcore_shutdown();
     }
 }
 
-shared class AwesomiumView : Texture, IComponent
+shared class WebView : Texture, IComponent
 {
 private:
-    version( Windows )
-    awe_webview* webView;
+    //version( Windows )
+    //awe_webview* webView;
     ubyte[] glBuffer;
 
 public:
@@ -96,7 +100,7 @@ public:
         this.owner = owner;
 
         super( cast(ubyte*)null );
-
+        /*
         version( Windows )
         {
             webView = cast(shared)awe_webcore_create_webview( _width, _height, false );
@@ -121,12 +125,13 @@ public:
         
             // Destroy our URL string
             awe_string_destroy( urlString );
-        }
+        }*/
     }
 
     override void update()
     {
         // No webview? No update.
+        /*
         version( Windows )
         if ( webView && awe_webview_is_dirty( cast(awe_webview*)webView ) )
         {
@@ -141,11 +146,12 @@ public:
             }
 
         }
+        */
     }
 
     override void shutdown()
     {
-        version( Windows ) 
-        awe_webview_destroy( cast(awe_webview*)webView );
+        //version( Windows ) 
+        //awe_webview_destroy( cast(awe_webview*)webView );
     }
 }

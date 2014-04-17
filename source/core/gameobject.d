@@ -190,6 +190,7 @@ public:
      */
     final void update()
     {
+        //logInfo(name, " ", parent ? parent.name : "no parent" );
         onUpdate();
 
         foreach( obj; children )

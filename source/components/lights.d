@@ -46,15 +46,25 @@ shared class DirectionalLight : Light
 {
 private:
     vec3 _direction;
+    uint _shadowMapFrameBuffer;
+    uint _shadowMapTexture;
+
 
 public:
-    /// TODO
+    /// The direction the light points in.
     mixin( Property!( _direction, AccessModifier.Public ) );
+    /// The FrameBuffer for the shadowmap.
+    mixin( Property!( _shadowMapFrameBuffer ) );
+    /// The shadow map's depth texture.
+    mixin( Property!( _shadowMapTexture ) );
 
     this( shared vec3 color, shared vec3 direction )
     {
         this.direction = direction;
         super( color );
+
+        // generate framebuffer/texture for shadow map
+
     }
 }
 
@@ -69,9 +79,9 @@ private:
     mat4 _matrix;
 
 public:
-    /// The area that lighting will be calculated for 
+    /// The area that lighting will be calculated for.
     mixin( Property!( _radius, AccessModifier.Public ) );
-    /// TODO
+    /// The light's exponential attenuation modifier.
     mixin( Property!( _falloffRate, AccessModifier.Public ) );
 
     this( shared vec3 color, float radius, float falloffRate )

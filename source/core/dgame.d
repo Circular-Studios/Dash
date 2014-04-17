@@ -4,9 +4,6 @@
 module core.dgame;
 import core, components, graphics, utility, utility.awesomium;
 
-import std.string, std.datetime, std.parallelism, std.algorithm, std.traits;
-public import core.time;
-
 /**
  * The states the game can be in.
  */
@@ -223,26 +220,20 @@ private:
      */
     final void start()
     {
-        void init( alias func )( string name )
-        {
-            debug logDebug( name, " init time:\t\t\t", cast(Duration)benchmark!func( 1 ) );
-            else func();
-        }
-
         currentState = EngineState.Run;
 
         updateFlags = new shared UpdateFlags;
         updateFlags.resumeAll();
 
         logDebug( "Initializing..." );
-        init!( { Config.initialize(); } )( "Config" );
-        init!( { Input.initialize(); } )( "Input" );
-        init!( { Output.initialize(); } )( "Output" );
-        init!( { Graphics.initialize(); } )( "Graphics" );
-        init!( { Assets.initialize(); } )( "Assets" );
-        init!( { Prefabs.initialize(); } )( "Prefabs" );
-        init!( { UserInterface.initializeAwesomium(); } )( "UI" );
-        init!( { DGame.instance.onInitialize(); } )( "Game" );
+        bench!( { Config.initialize(); } )( "Config init" );
+        bench!( { Input.initialize(); } )( "Input init" );
+        bench!( { Output.initialize(); } )( "Output init" );
+        bench!( { Graphics.initialize(); } )( "Graphics init" );
+        bench!( { Assets.initialize(); } )( "Assets init" );
+        bench!( { Prefabs.initialize(); } )( "Prefabs init" );
+        bench!( { UserInterface.initializeAwesomium(); } )( "UI init" );
+        bench!( { DGame.instance.onInitialize(); } )( "Game init" );
     }
 
     /**

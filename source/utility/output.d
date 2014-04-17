@@ -44,6 +44,19 @@ alias logWarning    = curry!( log, OutputType.Warning );
 alias logError      = curry!( log, OutputType.Error );
 alias logDebug      = curry!( log, OutputType.Debug );
 
+/**
+ * Benchmark the running of a function, and log the result to the debug buffer.
+ *
+ * Params:
+ *  func =              The function to benchmark
+ *  name =              The name to print in the log
+ */
+void bench( alias func )( lazy string name )
+{
+    import std.datetime, core.time;
+    logDebug( name, " time:\t\t\t", cast(Duration)benchmark!func( 1 ) );
+}
+
 shared OutputManager Output;
 
 shared static this()

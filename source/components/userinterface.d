@@ -32,7 +32,7 @@ public:
         _height = h;
         _width = w;
         _view = new shared AwesomiumView( w, h, filePath, null );
-        logInfo( "UI File: ", filePath );
+        logDebug( "UI File: ", filePath );
     }
 
     void update()

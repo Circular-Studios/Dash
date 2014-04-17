@@ -12,6 +12,37 @@ import std.conv, std.variant;
 enum AnonymousName = "__anonymous";
 
 /**
+ * Contains flags for all things that could be disabled.
+ */
+shared struct ObjectStateFlags
+{
+    bool update;
+    bool updateChildren;
+    bool drawMesh;
+    bool drawLight;
+
+    /**
+     * Set each member to false.
+     */
+    void pauseAll()
+    {
+        foreach( member; __traits(allMembers, ObjectStateFlags) )
+            static if( __traits(compiles, __traits(getMember, ObjectStateFlags, member) = false) )
+                __traits(getMember, ObjectStateFlags, member) = false;
+    }
+
+    /**
+     * Set each member to true.
+     */
+    void resumeAll()
+    {
+        foreach( member; __traits(allMembers, ObjectStateFlags) )
+            static if( __traits(compiles, __traits(getMember, ObjectStateFlags, member) = true) )
+                __traits(getMember, ObjectStateFlags, member) = true;
+    }
+}
+
+/**
  * Manages all components and transform in the world. Can be overridden.
  */
 shared class GameObject
@@ -27,6 +58,7 @@ private:
     GameObject[] _children;
     IComponent[TypeInfo] componentList;
     string _name;
+    ObjectStateFlags* _stateFlags;
     static uint nextId = 1;
 
 package:
@@ -51,6 +83,8 @@ public:
     mixin( Property!( _children, AccessModifier.Public ) );
     /// The name of the object.
     mixin( Property!( _name, AccessModifier.Public ) );
+    /// The current update settings
+    mixin( Property!( _stateFlags, AccessModifier.Public ) );
     /// The ID of the object
     immutable uint id;
 
@@ -178,6 +212,9 @@ public:
         // Create default material
         material = new shared Material();
         id = nextId++;
+
+        stateFlags = new ObjectStateFlags;
+        stateFlags.resumeAll();
     }
 
     ~this()
@@ -191,13 +228,18 @@ public:
     final void update()
     {
         //logInfo(name, " ", parent ? parent.name : "no parent" );
-        onUpdate();
 
-        foreach( obj; children )
-            obj.update();
+        if( stateFlags.update )
+        {
+            onUpdate();
 
-        foreach( ci, component; componentList )
-            component.update();
+            foreach( ci, component; componentList )
+                component.update();
+        }
+
+        if( stateFlags.updateChildren )
+            foreach( obj; children )
+                obj.update();
     }
 
     /**
@@ -259,7 +301,16 @@ public:
             return;
         // Remove from current parent
         else if( newChild.parent && cast()newChild.parent != cast()this )
-            newChild.parent.children = cast(shared)(cast(GameObject[])newChild.parent.children).remove( (cast(GameObject[])newChild.parent.children).countUntil( cast()newChild ) );
+        {
+            // Get index of object being removed
+            auto newChildIndex = (cast(GameObject[])newChild.parent.children).countUntil( cast()newChild );
+            // Get objects after one being removed
+            auto end = newChild.parent.children[ newChildIndex+1..$ ];
+            // Get objects before one being removed
+            newChild.parent.children = newChild.parent.children[ 0..newChildIndex ];
+            // Add end back
+            newChild.parent._children ~= end;
+        }
 
         _children ~= newChild;
         newChild.parent = this;
@@ -347,7 +398,10 @@ class GameObjectInit(T) : GameObject if( is( T == class ) )
 }
 
 /**
- * TODO
+ * Handles 3D Transformations for an object.
+ * Stores position, rotation, and scale
+ * and can generate a World matrix, worldPosition/Rotation (based on parents' transforms)
+ * as well as forward, up, and right axes based on rotation
  */
 final shared class Transform : IDirtyable
 {
@@ -424,6 +478,82 @@ public:
                       scale != _prevScale;
 
         return owner.parent ? (result || owner.parent.transform.isDirty()) : result;
+    }
+
+    /*
+     * Gets the forward axis of the current transform
+     *
+     * Returns: The forward axis of the current transform
+     */
+    final @property const shared(vec3) forward()
+    {
+        return shared vec3( 2 * (rotation.x * rotation.z + rotation.w * rotation.y),
+                            2 * (rotation.y * rotation.x - rotation.w * rotation.x),
+                            1 - 2 * (rotation.x * rotation.x + rotation.y * rotation.y ));
+    }
+    ///
+    unittest
+    {
+        import std.stdio;
+        import gl3n.math;
+        writeln( "Dash Transform forward unittest" );
+
+        auto trans = new shared Transform();
+
+        auto forward = shared vec3( 1.0f, 0.0f, 0.0f );
+        trans.rotation.rotatey( 90.radians );
+        assert( almost_equal( trans.forward, forward ) );
+    }
+
+    /*
+     * Gets the up axis of the current transform
+     *
+     * Returns: The up axis of the current transform
+     */
+    final  @property const shared(vec3) up()
+    {
+        return shared vec3( 2 * (rotation.x * rotation.y - rotation.w * rotation.z),
+                        1 - 2 * (rotation.x * rotation.x + rotation.z * rotation.z),
+                        2 * (rotation.y * rotation.z + rotation.w * rotation.x));
+    }
+    ///
+    unittest
+    {
+        import std.stdio;
+        import gl3n.math;
+        writeln( "Dash Transform up unittest" );
+
+        auto trans = new shared Transform();
+
+        auto up = shared vec3( 0.0f, 0.0f, 1.0f );
+        trans.rotation.rotatex( 90.radians );
+        writeln(trans.up );
+        assert( almost_equal( trans.up, up ) );
+    }
+ 
+    /*
+     * Gets the right axis of the current transform
+     *
+     * Returns: The right axis of the current transform
+     */
+    final  @property const shared(vec3) right()
+    {
+        return shared vec3( 1 - 2 * (rotation.y * rotation.y + rotation.z * rotation.z),
+                        2 * (rotation.x * rotation.y + rotation.w * rotation.z),
+                        2 * (rotation.x * rotation.z - rotation.w * rotation.y));
+    }
+    ///
+    unittest
+    {
+        import std.stdio;
+        import gl3n.math;
+        writeln( "Dash Transform right unittest" );
+
+        auto trans = new shared Transform();
+
+        auto right = shared vec3( 0.0f, 0.0f, -1.0f );
+        trans.rotation.rotatey( 90.radians );
+        assert( almost_equal( trans.right, right ) );
     }
 
     /**

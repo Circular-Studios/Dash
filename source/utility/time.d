@@ -65,12 +65,8 @@ TickDuration cur;
 TickDuration prev;
 Duration delta;
 Duration total;
-
-debug
-{
-    Duration second;
-    int frameCount;
-}
+Duration second;
+int frameCount;
 
 /**
  * Initialize the time controller with initial values.
@@ -78,13 +74,8 @@ debug
 static this()
 {
     cur = prev = TickDuration.min;
-    total = delta = Duration.zero;
-
-    debug
-    {
-        second = Duration.zero;    
-        frameCount = 0;
-    }
+    total = delta = second = Duration.zero;
+    frameCount = 0;
 
     Time.delta = Time.total = Duration.min;
 }
@@ -101,19 +92,17 @@ void updateTime()
     }
 
     delta = cast(Duration)( cur - prev );
-
-    debug
+    
+    // Update framerate
+    ++frameCount;
+    second += delta;
+    if( second >= 1.seconds )
     {
-        ++frameCount;
-        second += delta;
-        if( second >= 1.seconds )
-        {
-            logInfo( "Framerate: ", frameCount );
-            second = Duration.zero;
-            frameCount = 0;
-        }
+        logDebug( "Framerate: ", frameCount );
+        second = Duration.zero;
+        frameCount = 0;
     }
-
+    
     prev = cur;
     cur = sw.peek();
 

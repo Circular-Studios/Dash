@@ -1,14 +1,16 @@
 /**
- * TODO
+ * Contains the base class for all light types, Light, as well as
+ * AmbientLight, DirectionalLight, PointLight, SpotLight.
  */
 module components.lights;
 import core, components, graphics;
 import utility;
 
 import gl3n.linalg;
+import derelict.opengl3.gl3;
 
 /**
- * TODO
+ * Base class for lights.
  */
 shared class Light : IComponent
 {
@@ -16,7 +18,7 @@ private:
     vec3 _color;
 
 public:
-    /// TODO
+    /// The color the light gives off.
     mixin( Property!( _color, AccessModifier.Public ) );
 
     this( shared vec3 color )
@@ -29,7 +31,7 @@ public:
 }
 
 /**
- * TODO
+ * Ambient Light
  */
 shared class AmbientLight : Light 
 { 
@@ -40,7 +42,7 @@ shared class AmbientLight : Light
 }
 
 /* 
- * Directional Light data
+ * Directional Light
  */
 shared class DirectionalLight : Light
 {
@@ -63,13 +65,37 @@ public:
         this.direction = direction;
         super( color );
 
-        // generate framebuffer/texture for shadow map
+        // generate framebuffer for shadow map
+        shadowMapFrameBuffer = 0;
+        glGenFramebuffers( 1, cast(uint*)&_shadowMapFrameBuffer );
+        glBindFramebuffer( GL_FRAMEBUFFER, _shadowMapFrameBuffer );
+
+        // generate depth texture of shadow map
+        glGenTextures( 1, cast(uint*)&_shadowMapTexture );
+        glBindTexture( GL_TEXTURE_2D, _shadowMapTexture );
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, 1024, 1024, 0, GL_DEPTH_COMPONENT, GL_FLOAT, null );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+
+        glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shadowMapTexture, 0 );
+
+        // don't want any info besides depth
+        glDrawBuffer( GL_NONE );
+
+        // check for success
+        if( glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE )
+        {
+            log( OutputType.Error, "Shadow map frame buffer failure.");
+            assert(false);
+        }
 
     }
 }
 
 /*
- * Point Light data
+ * Point Light
  */
 shared class PointLight : Light
 {

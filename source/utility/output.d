@@ -100,7 +100,10 @@ private:
      */
     Verbosity verbosity;
 
-    this() { }
+    this()
+    {
+        verbosity = Verbosity.High;
+    }
 
     /**
      * Gets the header for the given output type.

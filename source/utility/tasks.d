@@ -75,9 +75,6 @@ void executeTasks()
         auto end = scheduledTasks[ i+1..$ ];
         // Get tasks before one being removed
         scheduledTasks = scheduledTasks[ 0..i ];
-
-        // Allow data stomping
-        (cast(bool function()[])scheduledTasks).assumeSafeAppend();
         // Add end back
         scheduledTasks ~= end;
     }

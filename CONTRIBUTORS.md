@@ -28,7 +28,7 @@ Dash contributors (sorted alphabetically)
 
   * Lead developer of [Speed](https://github.com/Circular-Studios/Speed), the networking library used in Dash.
 
-* **[Théo B.](https://github.com/Munrek)**
+* **[Théo Bueno](https://github.com/Munrek)**
 
   * Early contributor who helped with Linux builds.
 

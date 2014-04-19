@@ -140,9 +140,9 @@ public:
         GLenum[ 2 ] DrawBuffers = [ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 ];
         glDrawBuffers( 2, DrawBuffers.ptr );
 
-        if( glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE )
+        if( auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE )
         {
-            log( OutputType.Error, "Deffered rendering Frame Buffer was not initialized correctly.");
+            log( OutputType.Error, "Deffered rendering Frame Buffer was not initialized correctly. Error: ", status);
             assert(false);
         }
     }

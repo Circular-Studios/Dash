@@ -2,7 +2,7 @@
  * Defines the DGame class, the base class for all game logic.
  */
 module core.dgame;
-import core, components, graphics, utility, deimos.cef3.app;
+import core, components, graphics, utility, deimos.cef3.app, deimos.cef3.client, deimos.cef3.browser;
 
 import std.string, std.datetime, std.parallelism, std.algorithm, std.traits;
 public import core.time;
@@ -81,7 +81,7 @@ public:
     final void run()
     {
         import std.c.stdio;
-
+        
         cef_main_args_t mainArgs = {};
         mainArgs.instance = GetModuleHandle(NULL);
         
@@ -90,19 +90,62 @@ public:
         // reference counting. You cannot pass a structure 
         // initialized with zeroes.
         cef_app_t app = {};
-        initialize_app_handler(&app);
+
+        ///
+        //BEGIN initialize_app_handler(&app);
+        ///
+        printf("initialize_app_handler\n");
+        app.base.size = cef_app_t.sizeof;
+
+        ///
+        //BEGIN initialize_cef_base(cast(cef_base_t*)app);
+        ///
+        printf("initialize_cef_base\n");
+        // Check if "size" member was set.
+        size_t size = app.base.size;
+        // Let's print the size in case sizeof was used
+        // on a pointer instead of a structure. In such
+        // case the number will be very high.
+        printf("cef_base_t.size = %lu\n", cast(ulong)size);
+        if (size <= 0) {
+            printf("FATAL: initialize_cef_base failed, size member not set\n");
+            stop();
+        }
+        /*
+        app.base.add_ref = add_ref;
+        app.base.release = release;
+        app.base.get_refct = get_refct;
+        */
+        ///
+        //END initialize_cef_base(cast(cef_base_t*)app);
+        ///
+
+
+        // callbacks
+        /*
+        app.on_before_command_line_processing = on_before_command_line_processing;
+        app.on_register_custom_schemes = on_register_custom_schemes;
+        app.get_resource_bundle_handler = get_resource_bundle_handler;
+        app.get_browser_process_handler = get_browser_process_handler;
+        app.get_render_process_handler = get_render_process_handler;
+        */
+        ///
+        // END initialize_app_handler(&app)
+        ///
         
+
+
         // Execute subprocesses.
-        printf("cef_execute_process, argc=%d\n", argc);
+        //printf("cef_execute_process, argc=%d\n", argc);
         int code = cef_execute_process(&mainArgs, &app, NULL);
         if (code >= 0) {
-            _exit(code);
+            stop();
         }
         
         // Application settings.
         // It is mandatory to set the "size" member.
         cef_settings_t settings = {};
-        settings.size = sizeof(cef_settings_t);
+        settings.size = cef_settings_t.sizeof;
         settings.no_sandbox = 1;
 
         // Initialize CEF.
@@ -117,8 +160,7 @@ public:
         //windowInfo.parent_widget = hwnd;
 
         cef_window_info_t windowInfo = {};
-        windowInfo.style = WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN \
-                | WS_CLIPSIBLINGS | WS_VISIBLE;
+        windowInfo.style = WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE;
         windowInfo.parent_window = NULL;
         windowInfo.x = CW_USEDEFAULT;
         windowInfo.y = CW_USEDEFAULT;
@@ -127,26 +169,80 @@ public:
 
         // Initial url.
         char cwd[1024] = "";
-        if (getcwd(cwd, sizeof(cwd)) == '\0') {
+        /*
+        if (getcwd(cwd, cwd.sizeof) == '\0') {
             printf("ERROR: getcwd() failed\n");
         }
+        */
         char url[1024];
-        snprintf(url, sizeof(url), "file://%s/example.html", cwd);
+        //snprintf(url, url.sizeof, "file://%s/example.html", cwd);
         // There is no _cef_string_t type.
         cef_string_t cefUrl = {};
-        cef_string_utf8_to_utf16(url, strlen(url), &cefUrl);
+        //cef_string_utf8_to_utf16(url, strlen(url), &cefUrl);
         
         // Browser settings.
         // It is mandatory to set the "size" member.
         cef_browser_settings_t browserSettings = {};
-        browserSettings.size = sizeof(cef_browser_settings_t);
+        browserSettings.size = cef_browser_settings_t.sizeof;
         
         // Client handler and its callbacks.
         // cef_client_t structure must be filled. It must implement
         // reference counting. You cannot pass a structure 
         // initialized with zeroes.
         cef_client_t client = {};
-        initialize_client_handler(&client);
+        
+        ///
+        //BEGIN initialize_client_handler(&client);
+        ///
+        printf("initialize_client_handler\n");
+        client.base.size = cef_client_t.sizeof;
+        
+
+        ///
+        //BEGIN initialize_cef_base((cef_base_t*)client);
+        ///
+        printf("initialize_cef_base\n");
+        // Check if "size" member was set.
+        size_t size2 = client.base.size;
+        // Let's print the size in case sizeof was used
+        // on a pointer instead of a structure. In such
+        // case the number will be very high.
+        printf("cef_base_t.size = %lu\n", cast(ulong)size2);
+        if (size2 <= 0) {
+            printf("FATAL: initialize_cef_base failed, size member not set\n");
+            stop();
+        }
+        /*
+        client.base.add_ref = add_ref;
+        client.base.release = release;
+        client.base.get_refct = get_refct;
+        */
+        ///
+        //END initialize_cef_base((cef_base_t*)client);
+        ///
+
+        // callbacks
+        /*
+        client.get_context_menu_handler = get_context_menu_handler;
+        client.get_dialog_handler = get_dialog_handler;
+        client.get_display_handler = get_display_handler;
+        client.get_download_handler = get_download_handler;
+        client.get_drag_handler = get_drag_handler;
+        client.get_focus_handler = get_focus_handler;
+        client.get_geolocation_handler = get_geolocation_handler;
+        client.get_jsdialog_handler = get_jsdialog_handler;
+        client.get_keyboard_handler = get_keyboard_handler;
+        client.get_life_span_handler = get_life_span_handler;
+        client.get_load_handler = get_load_handler;
+        client.get_render_handler = get_render_handler;
+        client.get_request_handler = get_request_handler;
+        client.on_process_message_received = on_process_message_received;
+        */
+        ///
+        //END initialize_client_handler(&client);
+        ///
+
+
 
         // Create browser.
         printf("cef_browser_host_create_browser\n");
@@ -160,8 +256,6 @@ public:
         // Shutdown CEF.
         printf("cef_shutdown\n");
         cef_shutdown();
-
-
 
 
 

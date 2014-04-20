@@ -27,5 +27,7 @@ notifications:
 deploy:
   provider: releases
   file: dash-game-linux-x86_64.zip
+  on:
+    tags: true
   api-key:
     secure: kPjN6flnCCjJjRpPmrNnZNxUJ0AdGZIpsdwAAHribgdCteYWfDxznTi/RjHPul8pZMbaSIpBRKAFbsseyxvZEKYw/OjA9bHSvwadf218Mx5XiWHKi1mSBBsvXPdaizMyQViVc3UDa72wbecK3oAtErTZqH2QwYDSeEWRGs3rKuE=

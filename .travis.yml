@@ -4,11 +4,9 @@ install:
  - sudo apt-get update
  - sudo apt-get -y --allow-unauthenticated install --reinstall d-apt-keyring 
  - sudo apt-get update
- - sudo apt-get install dub
- - sudo apt-get install dmd-bin
+ - sudo apt-get install dmd-bin dub libfreeimage-dev libjpeg62-dev
  - sudo dub install x11
  - sudo dub add-local . ~master
- - sudo bash ./setup-ubuntu.sh
  - cd ../
  - sudo git clone https://github.com/Circular-Studios/Sample-Dash-Game.git
  - cd Sample-Dash-Game/

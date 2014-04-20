@@ -12,6 +12,37 @@ import std.conv, std.variant;
 enum AnonymousName = "__anonymous";
 
 /**
+ * Contains flags for all things that could be disabled.
+ */
+shared struct ObjectStateFlags
+{
+    bool update;
+    bool updateChildren;
+    bool drawMesh;
+    bool drawLight;
+
+    /**
+     * Set each member to false.
+     */
+    void pauseAll()
+    {
+        foreach( member; __traits(allMembers, ObjectStateFlags) )
+            static if( __traits(compiles, __traits(getMember, ObjectStateFlags, member) = false) )
+                __traits(getMember, ObjectStateFlags, member) = false;
+    }
+
+    /**
+     * Set each member to true.
+     */
+    void resumeAll()
+    {
+        foreach( member; __traits(allMembers, ObjectStateFlags) )
+            static if( __traits(compiles, __traits(getMember, ObjectStateFlags, member) = true) )
+                __traits(getMember, ObjectStateFlags, member) = true;
+    }
+}
+
+/**
  * Manages all components and transform in the world. Can be overridden.
  */
 shared class GameObject
@@ -27,6 +58,7 @@ private:
     GameObject[] _children;
     IComponent[TypeInfo] componentList;
     string _name;
+    ObjectStateFlags* _stateFlags;
     static uint nextId = 1;
 
 package:
@@ -51,6 +83,8 @@ public:
     mixin( Property!( _children, AccessModifier.Public ) );
     /// The name of the object.
     mixin( Property!( _name, AccessModifier.Public ) );
+    /// The current update settings
+    mixin( Property!( _stateFlags, AccessModifier.Public ) );
     /// The ID of the object
     immutable uint id;
 
@@ -178,6 +212,9 @@ public:
         // Create default material
         material = new shared Material();
         id = nextId++;
+
+        stateFlags = new ObjectStateFlags;
+        stateFlags.resumeAll();
     }
 
     ~this()
@@ -190,13 +227,17 @@ public:
      */
     final void update()
     {
-        onUpdate();
+        if( stateFlags.update )
+        {
+            onUpdate();
 
-        foreach( obj; children )
-            obj.update();
+            foreach( ci, component; componentList )
+                component.update();
+        }
 
-        foreach( ci, component; componentList )
-            component.update();
+        if( stateFlags.updateChildren )
+            foreach( obj; children )
+                obj.update();
     }
 
     /**
@@ -258,7 +299,16 @@ public:
             return;
         // Remove from current parent
         else if( newChild.parent && cast()newChild.parent != cast()this )
-            newChild.parent.children = cast(shared)(cast(GameObject[])newChild.parent.children).remove( (cast(GameObject[])newChild.parent.children).countUntil( cast()newChild ) );
+        {
+            // Get index of object being removed
+            auto newChildIndex = (cast(GameObject[])newChild.parent.children).countUntil( cast()newChild );
+            // Get objects after one being removed
+            auto end = newChild.parent.children[ newChildIndex+1..$ ];
+            // Get objects before one being removed
+            newChild.parent.children = newChild.parent.children[ 0..newChildIndex ];
+            // Add end back
+            newChild.parent._children ~= end;
+        }
 
         _children ~= newChild;
         newChild.parent = this;

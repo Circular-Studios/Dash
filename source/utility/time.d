@@ -16,7 +16,7 @@ import std.datetime;
  */
 float toSeconds( Duration dur )
 {
-    return cast(float)dur.fracSec.hnsecs / cast(float)1.convert!( "seconds", "hnsecs" );
+    return cast(float)dur.total!"hnsecs" / cast(float)1.convert!( "seconds", "hnsecs" );
 }
 
 shared TimeManager Time;
@@ -93,6 +93,13 @@ void updateTime()
 
     delta = cast(Duration)( cur - prev );
     
+    prev = cur;
+    cur = sw.peek();
+
+    // Pass to shared values
+    cast()Time.total = cast(Duration)cur;
+    cast()Time.delta = delta;
+    
     // Update framerate
     ++frameCount;
     second += delta;
@@ -102,11 +109,4 @@ void updateTime()
         second = Duration.zero;
         frameCount = 0;
     }
-    
-    prev = cur;
-    cur = sw.peek();
-
-    // Pass to shared values
-    cast()Time.delta = delta;
-    cast()Time.total += delta;
 }

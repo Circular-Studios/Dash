@@ -11,15 +11,9 @@ install:
 - cd ../
 - sudo git clone https://github.com/Circular-Studios/Sample-Dash-Game.git
 - cd Sample-Dash-Game/
-- git branch -r | grep -q $TRAVIS_BRANCH && sudo git checkout $TRAVIS_BRANCH || (exit
-  0)
+- git branch -r | grep -q $TRAVIS_BRANCH && sudo git checkout $TRAVIS_BRANCH || true
 - sudo cp libawesomium-1.6.5.so /usr/lib/libawesomium-1.6.5.so.0
 script: sudo dub test -q
-after_success:
-- sudo zip -r dash-game-linux-x86_64.zip Binaries/sample-dash-game Config
-  Materials Meshes Objects Prefabs Scripts Textures UI
-- sudo mv dash-game-linux-x86_64.zip ../Dash/
-- sudo cd ../Dash/
 notifications:
   webhooks:
     urls:
@@ -27,10 +21,3 @@ notifications:
     on_success: change
     on_failure: always
     on_start: never
-deploy:
-  provider: releases
-  file: dash-game-linux-x86_64.zip
-  on:
-    tags: true
-  api-key:
-    secure: kPjN6flnCCjJjRpPmrNnZNxUJ0AdGZIpsdwAAHribgdCteYWfDxznTi/RjHPul8pZMbaSIpBRKAFbsseyxvZEKYw/OjA9bHSvwadf218Mx5XiWHKi1mSBBsvXPdaizMyQViVc3UDa72wbecK3oAtErTZqH2QwYDSeEWRGs3rKuE=

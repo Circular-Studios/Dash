@@ -15,8 +15,11 @@ install:
   0)
 - sudo cp libawesomium-1.6.5.so /usr/lib/libawesomium-1.6.5.so.0
 script: sudo dub test -q
-after_success: sudo zip -r dash-game-linux-x86_64.zip Binaries/sample-dash-game Config
+after_success:
+- sudo zip -r dash-game-linux-x86_64.zip Binaries/sample-dash-game Config
   Materials Meshes Objects Prefabs Scripts Textures UI
+- sudo mv dash-game-linux-x86_64.zip ../Dash/
+- sudo cd ../Dash/
 notifications:
   webhooks:
     urls:

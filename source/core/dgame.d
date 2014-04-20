@@ -195,6 +195,7 @@ private:
     final void stop()
     {
         onShutdown();
+        resetTasks();
         UserInterface.shutdownAwesomium();
         Assets.shutdown();
         Graphics.shutdown();

@@ -80,6 +80,11 @@ void executeTasks()
     }
 }
 
+void resetTasks()
+{
+    scheduledTasks = [];
+}
+
 private:
 /// The tasks that have been scheduled
 bool delegate()[] scheduledTasks;

@@ -193,11 +193,11 @@ public:
         glGetShaderiv( vertexShaderID, GL_COMPILE_STATUS, &compileStatus );
         if( compileStatus != GL_TRUE )
         {
-            log( OutputType.Error, shaderName ~ " Vertex Shader compile error" );
+            log( LoggingLevel.Fatal, shaderName ~ " Vertex Shader compile error" );
             char[1000] errorLog;
             auto info = errorLog.ptr;
             glGetShaderInfoLog( vertexShaderID, 1000, null, info );
-            log( OutputType.Error, errorLog );
+            log( LoggingLevel.Fatal, errorLog );
             assert(false);
         }
 
@@ -205,11 +205,11 @@ public:
         glGetShaderiv( fragmentShaderID, GL_COMPILE_STATUS, &compileStatus );
         if( compileStatus != GL_TRUE )
         {
-            log( OutputType.Error, shaderName ~ " Fragment Shader compile error" );
+            log( LoggingLevel.Fatal, shaderName ~ " Fragment Shader compile error" );
             char[1000] errorLog;
             auto info = errorLog.ptr;
             glGetShaderInfoLog( fragmentShaderID, 1000, null, info );
-            log( OutputType.Error, errorLog );
+            log( LoggingLevel.Fatal, errorLog );
             assert(false);
         }
 
@@ -221,11 +221,11 @@ public:
         glGetProgramiv( programID, GL_LINK_STATUS, &compileStatus );
         if( compileStatus != GL_TRUE )
         {
-            log( OutputType.Error, shaderName ~ " Shader program linking error" );
+            log( LoggingLevel.Fatal, shaderName ~ " Shader program linking error" );
             char[1000] errorLog;
             auto info = errorLog.ptr;
             glGetProgramInfoLog( programID, 1000, null, info );
-            log( OutputType.Error, errorLog );
+            log( LoggingLevel.Fatal, errorLog );
             assert(false);
         }
     }

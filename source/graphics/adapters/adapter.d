@@ -158,7 +158,7 @@ public:
                 }
             }
 
-            log( OutputType.Error, "Deffered rendering Frame Buffer was not initialized correctly. Error: ", mapFramebufferError(status));
+            log( LoggingLevel.Fatal, "Deffered rendering Frame Buffer was not initialized correctly. Error: ", mapFramebufferError(status));
             assert(false);
         }
     }

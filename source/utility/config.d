@@ -148,18 +148,27 @@ public:
     unittest
     {
         import std.stdio;
+        import std.exception;
+        
         writeln( "Dash Config get unittest" );
 
         auto n1 = Node( [ "test1": 10 ] );
 
         assert( Config.get!int( "test1", n1 ) == 10, "Config.get error." );
 
-        try
-        {
-            Config.get!int( "dontexist", n1 );
-            assert( false, "Config.get didn't throw." );
-        }
-        catch { }
+        assertThrown!Exception(Config.get!int( "dontexist", n1 ));
+        
+        // nested test
+        auto n2 = Node( ["test2": n1] );
+        auto n3 = Node( ["test3": n2] );
+        
+        assert( Config.get!int( "test3.test2.test1", n3 ) == 10, "Config.get nested test failed");
+        
+        auto n4 = Loader.fromString(
+            "test3:\n"
+            "   test2:\n"
+            "       test1: 10").load;
+        assert( Config.get!int( "test3.test2.test1", n4 ) == 10, "Config.get nested test failed");
     }
 
     /**

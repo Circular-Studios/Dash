@@ -486,7 +486,7 @@ public:
     final @property const shared(vec3) forward()
     {
         return shared vec3( 2 * (rotation.x * rotation.z + rotation.w * rotation.y),
-                            2 * (rotation.y * rotation.x - rotation.w * rotation.x),
+                            -2 * (rotation.y * rotation.z - rotation.w * rotation.x),
                             1 - 2 * (rotation.x * rotation.x + rotation.y * rotation.y ));
     }
     ///
@@ -498,8 +498,8 @@ public:
 
         auto trans = new shared Transform();
 
-        auto forward = shared vec3( 1.0f, 0.0f, 0.0f );
-        trans.rotation.rotatey( 90.radians );
+        auto forward = shared vec3( 0.0f, 1.0f, 0.0f );
+        trans.rotation.rotatex( 90.radians );
         assert( almost_equal( trans.forward, forward ) );
     }
 

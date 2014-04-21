@@ -34,11 +34,18 @@ Node[] loadYamlDocuments( string folder )
         auto loader = Loader( file.fullPath );
         loader.constructor = Config.constructor;
 
-        // Iterate over all documents in a file
-        foreach( doc; loader )
-        {
-            nodes ~= doc;
-        }
+		try
+		{
+			// Iterate over all documents in a file
+			foreach( doc; loader )
+			{
+				nodes ~= doc;
+			}
+		}
+		catch( YAMLException e )
+		{
+			logError( "Error parsing file ", file.baseFileName, ": ", e.msg );
+		}
     }
 
     return nodes;
@@ -63,9 +70,18 @@ T[] loadYamlObjects( T )( string folder )
  */
 Node loadYamlFile( string filePath )
 {
+	scope(failure) logError( "Error parsing file ", filePath );
     auto loader = Loader( filePath );
     loader.constructor = Config.constructor;
-    return loader.load();
+	try
+	{
+		return loader.load();
+	}
+	catch( YAMLException e )
+	{
+		logError( "Error parsing file ", new FilePath( filePath ).baseFileName, ": ", e.msg );
+		return Node();
+	}
 }
 
 /**

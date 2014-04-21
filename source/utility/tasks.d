@@ -40,7 +40,7 @@ void scheduleTimedTask( Duration duration, void delegate( float ) dg )
 {
     auto startTime = Time.totalTime;
     scheduleTask( {
-        dg( Time.totalTime - startTime );
+        dg( min( Time.totalTime - startTime, dur.toSeconds ) );
         return Time.totalTime >= startTime + duration.toSeconds;
     } );
 }
@@ -50,7 +50,7 @@ void scheduleTimedTask( Duration duration, void delegate( float, float ) dg )
 {
     auto startTime = Time.totalTime;
     scheduleTask( {
-        dg( Time.totalTime - startTime, duration.toSeconds );
+        dg( min( Time.totalTime - startTime, dur.toSeconds ), duration.toSeconds );
         return Time.totalTime >= startTime + duration.toSeconds;
     } );
 }
@@ -72,7 +72,7 @@ void scheduleTimedTask( Duration duration, bool delegate( float ) dg )
 {
     auto startTime = Time.totalTime;
     scheduleTask( {
-        if( dg( Time.totalTime - startTime ) )
+        if( dg( min( Time.totalTime - startTime, dur.toSeconds ) ) )
             return true;
         else
             return Time.totalTime >= startTime + duration.toSeconds;
@@ -84,7 +84,7 @@ void scheduleTimedTask( Duration duration, bool delegate( float, float ) dg )
 {
     auto startTime = Time.totalTime;
     scheduleTask( {
-        if( dg( Time.totalTime - startTime, duration.toSeconds ) )
+        if( dg( min( Time.totalTime - startTime, dur.toSeconds ), duration.toSeconds ) )
             return true;
         else
             return Time.totalTime >= startTime + duration.toSeconds;

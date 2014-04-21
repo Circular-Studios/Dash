@@ -6,6 +6,7 @@ module utility.tasks;
 import utility.time;
 
 import core.time;
+import std.algorithm: min;
 
 public:
 /**
@@ -40,7 +41,7 @@ void scheduleTimedTask( Duration duration, void delegate( float ) dg )
 {
     auto startTime = Time.totalTime;
     scheduleTask( {
-        dg( min( Time.totalTime - startTime, dur.toSeconds ) );
+        dg( min( Time.totalTime - startTime, duration.toSeconds ) );
         return Time.totalTime >= startTime + duration.toSeconds;
     } );
 }
@@ -50,7 +51,7 @@ void scheduleTimedTask( Duration duration, void delegate( float, float ) dg )
 {
     auto startTime = Time.totalTime;
     scheduleTask( {
-        dg( min( Time.totalTime - startTime, dur.toSeconds ), duration.toSeconds );
+        dg( min( Time.totalTime - startTime, duration.toSeconds ), duration.toSeconds );
         return Time.totalTime >= startTime + duration.toSeconds;
     } );
 }
@@ -72,7 +73,7 @@ void scheduleTimedTask( Duration duration, bool delegate( float ) dg )
 {
     auto startTime = Time.totalTime;
     scheduleTask( {
-        if( dg( min( Time.totalTime - startTime, dur.toSeconds ) ) )
+        if( dg( min( Time.totalTime - startTime, duration.toSeconds ) ) )
             return true;
         else
             return Time.totalTime >= startTime + duration.toSeconds;
@@ -84,7 +85,7 @@ void scheduleTimedTask( Duration duration, bool delegate( float, float ) dg )
 {
     auto startTime = Time.totalTime;
     scheduleTask( {
-        if( dg( min( Time.totalTime - startTime, dur.toSeconds ), duration.toSeconds ) )
+        if( dg( min( Time.totalTime - startTime, duration.toSeconds ), duration.toSeconds ) )
             return true;
         else
             return Time.totalTime >= startTime + duration.toSeconds;

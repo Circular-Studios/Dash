@@ -70,7 +70,7 @@ T[] loadYamlObjects( T )( string folder )
  */
 Node loadYamlFile( string filePath )
 {
-    auto loader = Loader( filePath );
+    auto loader = Loader( filePath ~ ".yml" );
     loader.constructor = Config.constructor;
     try
     {

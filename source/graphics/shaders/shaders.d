@@ -69,6 +69,8 @@ public:
     Shader pointLight;
     /// TODO
     Shader userInterface;
+    /// Shader for getting a shadow map's depth values.
+    Shader shadowMap;
 
     /**
     * TODO
@@ -81,6 +83,7 @@ public:
         directionalLight = new Shader( "DirectionalLight", directionallightVS, directionallightFS, true );
         pointLight = new Shader( "PointLight", pointlightVS, pointlightFS, true );
         userInterface = new Shader( "UserInterface", userinterfaceVS, userinterfaceFS, true );
+        shadowMap = new Shader( "ShadowMap", shadowmapVS, shadowmapFS, true );
 
         foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders, "*.fs.glsl" ) )
         {
@@ -374,10 +377,10 @@ public:
     }
 
     /**
-     * TODO
+     * Clean up the shader
      */
     void shutdown()
     {
-        // please write me :(
+        glDeleteProgram( programID );
     }
 }

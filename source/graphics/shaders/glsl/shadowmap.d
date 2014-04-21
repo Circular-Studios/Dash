@@ -11,7 +11,7 @@ immutable string shadowmapVS = q{
 
     layout(location = 0) in vec3 vPosition_m;
 
-    uniform mat4 worldViewProjection;
+    uniform mat4 worldViewProj;
 
     void main()
     {

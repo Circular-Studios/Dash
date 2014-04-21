@@ -246,6 +246,39 @@ public:
         }
 
         /**
+         * Calculate all shadow maps for lights in the scene
+         */
+        void shadowPass()
+        {
+            auto shader = Shaders.shadowMap;
+            glUseProgram( shader.programID );
+
+
+            foreach( light; directionalLights )
+            {   
+                glBindFramebuffer( GL_FRAMEBUFFER, light.shadowMapFrameBuffer );
+                auto projView = mat4.orthographic(-300,300,-300,300,0.2f,300) * Camera.lookAt( vec3(0,0,0), light.direction );
+
+                foreach( object; scene.objects )
+                {
+                    if( object.mesh && object.stateFlags.drawMesh )
+                    {
+                        glBindVertexArray( object.mesh.glVertexArray );
+
+                        shader.bindUniformMatrix4fv( shader.WorldViewProjection, projView * object.transform.matrix );
+                        glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
+
+                        glBindVertexArray(0);
+                    }
+                }
+            }
+
+            foreach( light; pointLights ){}
+
+            foreach( light; spotLights ){}
+        }
+
+        /**
         * TODO
         */
         void lightPass()
@@ -379,7 +412,9 @@ public:
 
         geometryPass();
 
-        // settings for light pass
+        shadowPass();
+
+         // settings for light pass
         glDepthMask( GL_FALSE );
         glDisable( GL_DEPTH_TEST );
         glEnable( GL_BLEND );

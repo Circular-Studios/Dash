@@ -56,7 +56,7 @@ public:
 
         if( id != -1 )
         {
-            log( OutputType.Warning, "Animation Node ");
+            log( LoggingLevel.Warning, "Animation Node ");
             node = new shared Node( name );
             node.id = id;
             node.transform = convertAIMatrix( mesh.mBones[ node.id ].mOffsetMatrix );

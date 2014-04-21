@@ -124,7 +124,7 @@ public:
                 }
                 if( maxBonesAttached > 4 )
                 {
-                    log( OutputType.Warning, filePath, " has more than 4 bones for some vertex, data will be truncated. (has ", maxBonesAttached, ")" );
+                    log( LoggingLevel.Warning, filePath, " has more than 4 bones for some vertex, data will be truncated. (has ", maxBonesAttached, ")" );
                 }
 
                 // For each vertex on each face
@@ -213,7 +213,7 @@ public:
         else
         {
             // Did not load
-            log( OutputType.Error, "Mesh not loaded: ", filePath );
+            log( LoggingLevel.Fatal, "Mesh not loaded: ", filePath );
         }
         
         // make and bind the VAO

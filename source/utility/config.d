@@ -21,6 +21,9 @@ import std.array, std.conv, std.string, std.path,
 private Node contentNode;
 private string fileToYaml( string filePath ) { return filePath.replace( "\\", "/" ).replace( "../", "" ).replace( "/", "." ); }
 
+version( ImportContent )
+private enum ContentYML = import( "Content.yml" );
+
 /**
  * Process all yaml files in a directory.
  * 
@@ -55,8 +58,6 @@ Node[] loadYamlDocuments( string folder )
     }
     else
     {
-        logDebug( "Found nodes: ", folder.fileToYaml );
-
         auto fileNode = Config.get!Node( folder.fileToYaml, contentNode );
 
         foreach( string fileName, Node fileContent; fileNode )
@@ -144,14 +145,25 @@ public:
         //constructor.addConstructorScalar( "!Mesh", ( ref Node node ) => Assets.get!Mesh( node.get!string ) );
         //constructor.addConstructorScalar( "!Material", ( ref Node node ) => Assets.get!Material( node.get!string ) );
 
-        if( exists( FilePath.Resources.CompactContentFile ~ ".yml" ) )
+        version( ImportContent )
         {
-            logDebug( "Using Content.yml file." );
-            contentNode = loadYamlFile( FilePath.Resources.CompactContentFile );
+            logDebug( "Using imported Content.yml file." );
+            import std.stream;
+            auto loader = Loader( new MemoryStream( cast(char[])ContentYML ) );
+            loader.constructor = constructor;
+            contentNode = loader.load();
         }
         else
         {
-            logDebug( "Using normal content directory." );
+            if( exists( FilePath.Resources.CompactContentFile ~ ".yml" ) )
+            {
+                logDebug( "Using Content.yml file." );
+                contentNode = loadYamlFile( FilePath.Resources.CompactContentFile );
+            }
+            else
+            {
+                logDebug( "Using normal content directory." );
+            }
         }
 
         config = loadYamlFile( FilePath.Resources.ConfigFile );

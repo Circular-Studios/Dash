@@ -16,6 +16,7 @@
 		"derelict-fi": "~master",
 		"derelict-assimp3": "~master",
 		"dyaml": "~master",
+		"msgpack-d": "~master",
 		"gl3n-shared" : "~master",
 		"dlogg": ">=0.1.3"
 	},
@@ -24,6 +25,7 @@
 	"mainSourceFile": "source/app.d",
 	"sourcePaths": [ "source/" ],
 	"importPaths": [ "source/" ],
+	"stringImportPaths": [ "C:\\dev\\circular\\dash-game" ],
 	"libs-windows": [
 		"Awesomium"
 	],

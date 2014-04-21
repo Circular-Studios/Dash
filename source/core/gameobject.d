@@ -485,9 +485,9 @@ public:
      */
     final @property const shared(vec3) forward()
     {
-        return shared vec3( 2 * (rotation.x * rotation.z + rotation.w * rotation.y),
+        return shared vec3( -2 * (rotation.x * rotation.z + rotation.w * rotation.y),
                             -2 * (rotation.y * rotation.z - rotation.w * rotation.x),
-                            1 - 2 * (rotation.x * rotation.x + rotation.y * rotation.y ));
+                            -1 + 2 * (rotation.x * rotation.x + rotation.y * rotation.y ));
     }
     ///
     unittest
@@ -497,7 +497,6 @@ public:
         writeln( "Dash Transform forward unittest" );
 
         auto trans = new shared Transform();
-
         auto forward = shared vec3( 0.0f, 1.0f, 0.0f );
         trans.rotation.rotatex( 90.radians );
         assert( almost_equal( trans.forward, forward ) );
@@ -525,7 +524,6 @@ public:
 
         auto up = shared vec3( 0.0f, 0.0f, 1.0f );
         trans.rotation.rotatex( 90.radians );
-        writeln(trans.up );
         assert( almost_equal( trans.up, up ) );
     }
  

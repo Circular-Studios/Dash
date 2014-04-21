@@ -5,6 +5,9 @@
 module utility.tasks;
 import utility.time;
 
+import gl3n.util: is_vector, is_matrix;
+import gl3n.interpolate: lerp;
+
 import core.time;
 import std.algorithm: min;
 
@@ -18,6 +21,29 @@ public:
 void scheduleTask( bool delegate() dg )
 {
     scheduledTasks ~= dg;
+}
+
+/**
+ * Schedule a task to interpolate a value over a period of time.
+ *
+ * Params:
+ *  val =               [ref] The value to interpolate
+ *  start =             The starting value for interpolation
+ *  end =               The target value for interpolation
+ *  interpFunc =        [default=lerp] The function to use for interpolation
+ *
+ * Example:
+ * ---
+ * scheduleInterpolateTask( transform.position, startNode, endNode, 100.msecs );
+ * ---
+ */
+void scheduleInterpolateTask(T)( ref T val, T start, T end, Duration duration, void function( T, T, float ) interpFunc = &lerp ) if( is_vector!T || is_matrix!T )
+{
+    auto startTime = Time.totalTime;
+    scheduleTimedTask( time, ( elapsed )
+    {
+        val = interpFunc( start, end, elapsed / duration.toSeconds );
+    } );
 }
 
 /**

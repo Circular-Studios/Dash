@@ -44,7 +44,7 @@ Node[] loadYamlDocuments( string folder )
         }
         catch( YAMLException e )
         {
-            logError( "Error parsing file ", file.baseFileName, ": ", e.msg );
+            logFatal( "Error parsing file ", file.baseFileName, ": ", e.msg );
         }
     }
 
@@ -70,7 +70,6 @@ T[] loadYamlObjects( T )( string folder )
  */
 Node loadYamlFile( string filePath )
 {
-    scope(failure) logError( "Error parsing file ", filePath );
     auto loader = Loader( filePath );
     loader.constructor = Config.constructor;
     try
@@ -79,7 +78,7 @@ Node loadYamlFile( string filePath )
     }
     catch( YAMLException e )
     {
-        logError( "Error parsing file ", new FilePath( filePath ).baseFileName, ": ", e.msg );
+        logFatal( "Error parsing file ", new FilePath( filePath ).baseFileName, ": ", e.msg );
         return Node();
     }
 }

@@ -241,11 +241,11 @@ static this()
 
         //float fromYaml;
         if( !Config.tryGet( "FOV", obj.camera._fov, yml ) )
-            logError( obj.name, " is missing FOV value for its camera. ");
+            logFatal( obj.name, " is missing FOV value for its camera. ");
         if( !Config.tryGet( "Near", obj.camera._near, yml ) )
-            logError( obj.name, " is missing near plane value for its camera. ");
+            logFatal( obj.name, " is missing near plane value for its camera. ");
         if( !Config.tryGet( "Far", obj.camera._far, yml ) )
-            logError( obj.name, " is missing Far plane value for its camera. ");
+            logFatal( obj.name, " is missing Far plane value for its camera. ");
 
         obj.camera.updatePerspective();
         obj.camera.updateOrthogonal();

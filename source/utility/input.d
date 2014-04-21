@@ -52,7 +52,7 @@ public:
                     }
                     catch
                     {
-                        log( OutputType.Error, "Failed to parse keybinding for input ", name );
+                        logFatal( "Failed to parse keybinding for input ", name );
                     }
                 }
             }
@@ -75,7 +75,7 @@ public:
                                 }
                                 catch
                                 {
-                                    log( OutputType.Error, "Failed to parse keybinding for input ", name );
+                                    logFatal( "Failed to parse keybinding for input ", name );
                                 }
                             }
 
@@ -316,7 +316,7 @@ public:
                 i.y -= GetSystemMetrics( SM_CYBORDER );
             }
 
-            return shared vec2( cast(float)i.x, cast(float)i.y );
+            return shared vec2( cast(float)i.x, Graphics.height - cast(float)i.y );
         }
         else version( linux )
         {
@@ -354,7 +354,7 @@ public:
         {
             glBindFramebuffer( GL_FRAMEBUFFER, Graphics.deferredFrameBuffer );
             glReadBuffer( GL_DEPTH_ATTACHMENT );
-            glReadPixels( x, Graphics.height - y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+            glReadPixels( x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
 
             auto linearDepth = scene.camera.projectionConstants.x / ( scene.camera.projectionConstants.y - depth );
             //Convert x and y to normalized device coords
@@ -411,7 +411,7 @@ public:
         {
             glBindFramebuffer( GL_FRAMEBUFFER, Graphics.deferredFrameBuffer );
             glReadBuffer( GL_COLOR_ATTACHMENT1 );
-            glReadPixels( x, Graphics.height - y, 1, 1, GL_BLUE, GL_FLOAT, &fId);
+            glReadPixels( x, y, 1, 1, GL_BLUE, GL_FLOAT, &fId);
 
             uint id = cast(int)(fId);
             glBindFramebuffer( GL_FRAMEBUFFER, 0 );

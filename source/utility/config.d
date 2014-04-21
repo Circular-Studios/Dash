@@ -34,10 +34,17 @@ Node[] loadYamlDocuments( string folder )
         auto loader = Loader( file.fullPath );
         loader.constructor = Config.constructor;
 
-        // Iterate over all documents in a file
-        foreach( doc; loader )
+        try
         {
-            nodes ~= doc;
+            // Iterate over all documents in a file
+            foreach( doc; loader )
+            {
+                nodes ~= doc;
+            }
+        }
+        catch( YAMLException e )
+        {
+            logFatal( "Error parsing file ", file.baseFileName, ": ", e.msg );
         }
     }
 
@@ -65,7 +72,15 @@ Node loadYamlFile( string filePath )
 {
     auto loader = Loader( filePath );
     loader.constructor = Config.constructor;
-    return loader.load();
+    try
+    {
+        return loader.load();
+    }
+    catch( YAMLException e )
+    {
+        logFatal( "Error parsing file ", new FilePath( filePath ).baseFileName, ": ", e.msg );
+        return Node();
+    }
 }
 
 /**
@@ -132,18 +147,27 @@ public:
     unittest
     {
         import std.stdio;
+        import std.exception;
+        
         writeln( "Dash Config get unittest" );
 
         auto n1 = Node( [ "test1": 10 ] );
 
         assert( Config.get!int( "test1", n1 ) == 10, "Config.get error." );
 
-        try
-        {
-            Config.get!int( "dontexist", n1 );
-            assert( false, "Config.get didn't throw." );
-        }
-        catch { }
+        assertThrown!Exception(Config.get!int( "dontexist", n1 ));
+        
+        // nested test
+        auto n2 = Node( ["test2": n1] );
+        auto n3 = Node( ["test3": n2] );
+        
+        assert( Config.get!int( "test3.test2.test1", n3 ) == 10, "Config.get nested test failed");
+        
+        auto n4 = Loader.fromString(
+            "test3:\n"
+            "   test2:\n"
+            "       test1: 10").load;
+        assert( Config.get!int( "test3.test2.test1", n4 ) == 10, "Config.get nested test failed");
     }
 
     /**

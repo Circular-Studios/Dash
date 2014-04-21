@@ -126,7 +126,7 @@ public:
         
         if( DerelictGL3.loadedVersion < GLVersion.GL40 )
         {
-            log( OutputType.Error, "Your version of OpenGL is unsupported. Required: GL40 Yours: ", DerelictGL3.loadedVersion );
+            logFatal( "Your version of OpenGL is unsupported. Required: GL40 Yours: ", DerelictGL3.loadedVersion );
             //throw new Exception( "Unsupported version of OpenGL." );
             return;
         }

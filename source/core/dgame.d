@@ -180,6 +180,7 @@ private:
 
         logDebug( "Initializing..." );
         bench!( { Config.initialize(); } )( "Config init" );
+        bench!( { Logger.initialize(); } )( "Logger init" );
         bench!( { Input.initialize(); } )( "Input init" );
         bench!( { Output.initialize(); } )( "Output init" );
         bench!( { Graphics.initialize(); } )( "Graphics init" );
@@ -195,6 +196,7 @@ private:
     final void stop()
     {
         onShutdown();
+        resetTasks();
         UserInterface.shutdownAwesomium();
         Assets.shutdown();
         Graphics.shutdown();

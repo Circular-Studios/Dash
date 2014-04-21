@@ -19,6 +19,7 @@ import std.array, std.conv, std.string, std.path,
     std.traits, std.algorithm, std.file;
 
 private Node contentNode;
+private string fileToYaml( string filePath ) { return filePath.replace( "\\", "/" ).replace( "../", "" ).replace( "/", "." ); }
 
 /**
  * Process all yaml files in a directory.
@@ -30,24 +31,40 @@ Node[] loadYamlDocuments( string folder )
 {
     Node[] nodes;
 
-    // Actually scan directories
-    foreach( file; FilePath.scanDirectory( folder, "*.yml" ) )
+    if( contentNode.isNull )
     {
-        auto loader = Loader( file.fullPath );
-        loader.constructor = Config.constructor;
-
-        try
+        // Actually scan directories
+        foreach( file; FilePath.scanDirectory( folder, "*.yml" ) )
         {
-            // Iterate over all documents in a file
-            foreach( doc; loader )
+            auto loader = Loader( file.fullPath );
+            loader.constructor = Config.constructor;
+
+            try
             {
-                nodes ~= doc;
+                // Iterate over all documents in a file
+                foreach( doc; loader )
+                {
+                    nodes ~= doc;
+                }
+            }
+            catch( YAMLException e )
+            {
+                logFatal( "Error parsing file ", file.baseFileName, ": ", e.msg );
             }
         }
-        catch( YAMLException e )
-        {
-            logFatal( "Error parsing file ", file.baseFileName, ": ", e.msg );
-        }
+    }
+    else
+    {
+        logDebug( "Found nodes: ", folder.fileToYaml );
+
+        auto fileNode = Config.get!Node( folder.fileToYaml, contentNode );
+
+        foreach( string fileName, Node fileContent; fileNode )
+            if( fileContent.isSequence )
+                foreach( Node childChild; fileContent )
+                    nodes ~= childChild;
+            else
+                nodes ~= fileContent;
     }
 
     return nodes;
@@ -88,7 +105,7 @@ Node loadYamlFile( string filePath )
     }
     else
     {
-        return Config.get!Node( filePath.replace( "../", "" ).replace( "/", "." ) );
+        return Config.get!Node( filePath.fileToYaml, contentNode );
     }
 }
 
@@ -109,6 +126,7 @@ public:
     final void initialize()
     {
         constructor = new Constructor;
+        contentNode = Node( YAMLNull() );
 
         constructor.addConstructorScalar( "!Vector2", &constructVector2 );
         constructor.addConstructorMapping( "!Vector2-Map", &constructVector2 );
@@ -126,13 +144,14 @@ public:
         //constructor.addConstructorScalar( "!Mesh", ( ref Node node ) => Assets.get!Mesh( node.get!string ) );
         //constructor.addConstructorScalar( "!Material", ( ref Node node ) => Assets.get!Material( node.get!string ) );
 
-        if( exists( FilePath.Resources.CompactContentFile ) )
+        if( exists( FilePath.Resources.CompactContentFile ~ ".yml" ) )
         {
+            logDebug( "Using Content.yml file." );
             contentNode = loadYamlFile( FilePath.Resources.CompactContentFile );
         }
         else
         {
-            contentNode = Node( YAMLNull() );
+            logDebug( "Using normal content directory." );
         }
 
         config = loadYamlFile( FilePath.Resources.ConfigFile );
@@ -152,7 +171,10 @@ public:
             auto split = right.countUntil( '.' );
             if( split == -1 )
             {
-                return current[ right ].get!T;
+                static if( is( T == Node ) )
+                    return current[ right ];
+                else
+                    return current[ right ].get!T;
             }
             else
             {

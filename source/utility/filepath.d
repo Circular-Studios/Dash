@@ -43,6 +43,7 @@ public:
         ConfigDir = ResourceHome ~ "/Config",
         ConfigFile = ConfigDir ~ "/Config",
         InputBindings = ConfigDir ~ "/Input", 
+        CompactContentFile = ResourceHome ~ "/Content",
     }
 
     /**

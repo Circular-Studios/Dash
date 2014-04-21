@@ -16,7 +16,9 @@ import yaml;
 
 import std.array, std.conv, std.string, std.path,
     std.typecons, std.variant, std.parallelism,
-    std.traits, std.algorithm;
+    std.traits, std.algorithm, std.file;
+
+private Node contentNode;
 
 /**
  * Process all yaml files in a directory.
@@ -70,16 +72,23 @@ T[] loadYamlObjects( T )( string folder )
  */
 Node loadYamlFile( string filePath )
 {
-    auto loader = Loader( filePath ~ ".yml" );
-    loader.constructor = Config.constructor;
-    try
+    if( contentNode.isNull )
     {
-        return loader.load();
+        auto loader = Loader( filePath ~ ".yml" );
+        loader.constructor = Config.constructor;
+        try
+        {
+            return loader.load();
+        }
+        catch( YAMLException e )
+        {
+            logFatal( "Error parsing file ", new FilePath( filePath ).baseFileName, ": ", e.msg );
+            return Node();
+        }  
     }
-    catch( YAMLException e )
+    else
     {
-        logFatal( "Error parsing file ", new FilePath( filePath ).baseFileName, ": ", e.msg );
-        return Node();
+        return Config.get!Node( filePath.replace( "../", "" ).replace( "/", "." ) );
     }
 }
 
@@ -116,6 +125,15 @@ public:
         //constructor.addConstructorScalar( "!Texture", ( ref Node node ) => Assets.get!Texture( node.get!string ) );
         //constructor.addConstructorScalar( "!Mesh", ( ref Node node ) => Assets.get!Mesh( node.get!string ) );
         //constructor.addConstructorScalar( "!Material", ( ref Node node ) => Assets.get!Material( node.get!string ) );
+
+        if( exists( FilePath.Resources.CompactContentFile ) )
+        {
+            contentNode = loadYamlFile( FilePath.Resources.CompactContentFile );
+        }
+        else
+        {
+            contentNode = Node( YAMLNull() );
+        }
 
         config = loadYamlFile( FilePath.Resources.ConfigFile );
     }

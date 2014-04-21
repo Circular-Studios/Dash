@@ -16,7 +16,6 @@
 		"derelict-fi": "~master",
 		"derelict-assimp3": "~master",
 		"dyaml": "~master",
-		"msgpack-d": "~master",
 		"gl3n-shared" : "~master",
 		"dlogg": ">=0.1.3"
 	},

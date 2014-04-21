@@ -22,7 +22,20 @@ private Node contentNode;
 private string fileToYaml( string filePath ) { return filePath.replace( "\\", "/" ).replace( "../", "" ).replace( "/", "." ); }
 
 version( ImportContent )
-private enum ContentYML = import( "Content.yml" );
+string contentYML;
+
+mixin template ContentImport()
+{
+    version( ImportContent )
+    {
+        static this()
+        {
+            import utility.config;
+            contentYML = import( "Content.yml" );
+        }
+        
+    }
+}
 
 /**
  * Process all yaml files in a directory.
@@ -148,8 +161,9 @@ public:
         version( ImportContent )
         {
             logDebug( "Using imported Content.yml file." );
+            assert( contentYML, "ImportContent version set, mixin not used." );
             import std.stream;
-            auto loader = Loader( new MemoryStream( cast(char[])ContentYML ) );
+            auto loader = Loader( new MemoryStream( cast(char[])contentYML ) );
             loader.constructor = constructor;
             contentNode = loader.load();
         }

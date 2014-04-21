@@ -25,7 +25,6 @@
 	"mainSourceFile": "source/app.d",
 	"sourcePaths": [ "source/" ],
 	"importPaths": [ "source/" ],
-	"stringImportPaths": [ "C:\\dev\\circular\\dash-game" ],
 	"libs-windows": [
 		"Awesomium"
 	],

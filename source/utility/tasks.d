@@ -5,7 +5,7 @@
 module utility.tasks;
 import utility.time;
 
-import gl3n.util: is_vector, is_matrix;
+import gl3n.util: is_vector, is_matrix, is_quaternion;
 import gl3n.interpolate: lerp;
 
 import core.time;
@@ -37,7 +37,7 @@ void scheduleTask( bool delegate() dg )
  * scheduleInterpolateTask( transform.position, startNode, endNode, 100.msecs );
  * ---
  */
-void scheduleInterpolateTask(T)( ref T val, T start, T end, Duration duration, void function( T, T, float ) interpFunc = &lerp ) if( is_vector!T || is_matrix!T )
+void scheduleInterpolateTask(T)( ref T val, T start, T end, Duration duration, void function( T, T, float ) interpFunc = &lerp ) if( is_vector!T || is_matrix!T || is_quaternion!T )
 {
     auto startTime = Time.totalTime;
     scheduleTimedTask( time, ( elapsed )

@@ -24,6 +24,11 @@ private string fileToYaml( string filePath ) { return filePath.replace( "\\", "/
 version( ImportContent )
 string contentYML;
 
+/**
+ * Place this mixin anywhere in your game code to allow the Content.yml file
+ * to be imported at compile time. Note that this will only actually import
+ * the file when ImportContent is listed as a defined version.
+ */
 mixin template ContentImport()
 {
     version( ImportContent )

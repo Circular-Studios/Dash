@@ -4,7 +4,7 @@
 
 If you're reading this page, chances are you fall into one of the following categories:
 
-#### I am a game devloper interested in making games with Dash:
+#### I am a game developer interested in making games with Dash:
 
 Our [readme.io page](http://dash.circularstudios.com/) has all the info you could ever want for building a game with Dash. Pro tip: you'll want to read up on [YAML](http://www.yaml.org/) and [D](http://dlang.org) before getting started.
 
@@ -18,4 +18,4 @@ The easiest way to get Dash running (on Windows) is to head over to our [Release
 
 ### Contact Us
 
-We'd love to hear from you, feel free to hit us up in [gitter](https://gitter.im/Circular-Studios/Dash) or email us at dash [at] circularstudios [dot] com. We'll do our best to have the appropriate team member respond as quickly as we can.
+We'd love to hear from you, feel free to get in touch using [gitter](https://gitter.im/Circular-Studios/Dash) (our public chat room) or email us at dash [at] circularstudios [dot] com. We'll do our best to have the appropriate team member respond as quickly as we can.

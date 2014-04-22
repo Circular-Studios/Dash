@@ -55,7 +55,7 @@ public:
 
         if( !std.file.exists( safePath ) )
         {
-            logNotice( path, " does not exist." );
+            logDebug( path, " does not exist." );
             return [];
         }
 

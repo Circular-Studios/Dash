@@ -97,6 +97,8 @@ unittest
 
     auto testClass = new TestPropertyInterpolate;
     testClass.vector = shared vec3( 0, 0, 0 );
+    shared vec3 start = shared vec3( 0, 1, 0 );
+    shared vec3 end = shared vec3( 0, 1, 1 );
     scheduleInterpolateTask!q{vector}( testClass, start, end, 100.msecs );
 
     while( scheduledTasks.length )

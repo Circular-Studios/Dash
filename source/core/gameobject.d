@@ -150,7 +150,7 @@ public:
             if( Config.tryGet( "Position", transVec, innerNode ) )
                 obj.transform.position = shared vec3( transVec );
             if( Config.tryGet( "Rotation", transVec, innerNode ) )
-                obj.transform.rotation = quat.identity.rotatey( transVec.y.radians ).rotatez( transVec.z.radians ).rotatex( transVec.x.radians );
+                obj.transform.rotation = quat.identity.rotatex( transVec.x.radians ).rotatey( transVec.y.radians ).rotatez( transVec.z.radians );
         }
 
         if( foundClassName && Config.tryGet( "Script.Fields", innerNode, yamlObj ) )

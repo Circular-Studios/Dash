@@ -21,17 +21,17 @@ import std.array, std.conv, std.string, std.path,
 private Node contentNode;
 private string fileToYaml( string filePath ) { return filePath.replace( "\\", "/" ).replace( "../", "" ).replace( "/", "." ); }
 
-version( ImportContent )
+version( EmbedContent )
 string contentYML;
 
 /**
  * Place this mixin anywhere in your game code to allow the Content.yml file
  * to be imported at compile time. Note that this will only actually import
- * the file when ImportContent is listed as a defined version.
+ * the file when EmbedContent is listed as a defined version.
  */
 mixin template ContentImport()
 {
-    version( ImportContent )
+    version( EmbedContent )
     {
         static this()
         {
@@ -169,10 +169,10 @@ public:
         //constructor.addConstructorScalar( "!Mesh", ( ref Node node ) => Assets.get!Mesh( node.get!string ) );
         //constructor.addConstructorScalar( "!Material", ( ref Node node ) => Assets.get!Material( node.get!string ) );
 
-        version( ImportContent )
+        version( EmbedContent )
         {
             logDebug( "Using imported Content.yml file." );
-            assert( contentYML, "ImportContent version set, mixin not used." );
+            assert( contentYML, "EmbedContent version set, mixin not used." );
             import std.stream;
             auto loader = Loader( new MemoryStream( cast(char[])contentYML ) );
             loader.constructor = constructor;

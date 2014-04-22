@@ -37,13 +37,32 @@ void scheduleTask( bool delegate() dg )
  * scheduleInterpolateTask( transform.position, startNode, endNode, 100.msecs );
  * ---
  */
-void scheduleInterpolateTask(T)( ref T val, T start, T end, Duration duration, void function( T, T, float ) interpFunc = &lerp ) if( is_vector!T || is_matrix!T || is_quaternion!T )
+void scheduleInterpolateTask(T)( ref T val, T start, T end, Duration duration, T function( T, T, float ) interpFunc = &lerp!T ) if( is_vector!T || is_matrix!T || is_quaternion!T )
 {
     auto startTime = Time.totalTime;
-    scheduleTimedTask( time, ( elapsed )
+    scheduleTimedTask( duration, ( elapsed )
     {
         val = interpFunc( start, end, elapsed / duration.toSeconds );
     } );
+}
+///
+unittest
+{
+    import std.stdio;
+    import gl3n.linalg;
+
+    writeln( "Dash tasks scheduleInterpolateTask unittest" );
+
+    shared vec3 interpVec = shared vec3( 0, 0, 0 );
+    shared vec3 start = shared vec3( 0, 1, 0 );
+    shared vec3 end = shared vec3( 0, 1, 1 );
+
+    scheduleInterpolateTask( interpVec, start, end, 100.msecs );
+
+    while( scheduledTasks.length )
+        executeTasks();
+
+    assert( interpVec == end );
 }
 
 /**

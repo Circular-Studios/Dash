@@ -74,11 +74,17 @@ Node[] loadYamlDocuments( string folder )
         auto fileNode = Config.get!Node( folder.fileToYaml, contentNode );
 
         foreach( string fileName, Node fileContent; fileNode )
+        {
             if( fileContent.isSequence )
+            {
                 foreach( Node childChild; fileContent )
                     nodes ~= childChild;
+            }
             else
+            {
                 nodes ~= fileContent;
+            }
+        }
     }
 
     return nodes;

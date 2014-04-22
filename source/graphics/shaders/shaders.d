@@ -21,6 +21,9 @@ private enum ShaderUniform
     WorldView = "worldView",
     WorldViewProjection = "worldViewProj",
     InverseProjection = "invProj",
+    LightView = "lightView",
+    LightProjection = "lightProj",
+    CameraView = "cameraView",
     /// Floats
     ProjectionConstants = "projectionConstants",
     /// Textures
@@ -29,6 +32,7 @@ private enum ShaderUniform
     NormalTexture = "normalTexture",
     SpecularTexture = "specularTexture",
     DepthTexture = "depthTexture",
+    ShadowMap = "shadowMap",
     /// Lights
     LightDirection = "light.direction",
     LightColor = "light.color",

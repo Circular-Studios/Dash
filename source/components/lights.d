@@ -50,7 +50,8 @@ private:
     vec3 _direction;
     uint _shadowMapFrameBuffer;
     uint _shadowMapTexture;
-
+    mat4 _view;
+    mat4 _proj;
 
 public:
     /// The direction the light points in.
@@ -59,6 +60,8 @@ public:
     mixin( Property!( _shadowMapFrameBuffer ) );
     /// The shadow map's depth texture.
     mixin( Property!( _shadowMapTexture ) );
+    mixin( Property!( _view, AccessModifier.Public ) );
+    mixin( Property!( _proj, AccessModifier.Public ) );
 
     this( shared vec3 color, shared vec3 direction )
     {

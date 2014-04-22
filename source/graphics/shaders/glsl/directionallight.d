@@ -30,7 +30,7 @@ immutable string directionallightVS = q{
     }
 };
 
-/// TODO
+/// Calculate directional lighting
 immutable string directionallightFS = q{
     #version 400
 
@@ -40,21 +40,29 @@ immutable string directionallightFS = q{
         vec3 direction;
     };
 
-    in vec4 fPosition;
+    in vec4 fPosition_s;
     in vec2 fUV;
     in vec3 fViewRay;
 
-    // this diffuse should be set to the geometry output
+    // g-buffer outputs
     uniform sampler2D diffuseTexture;
     uniform sampler2D normalTexture;
     uniform sampler2D depthTexture;
+
+    // shadow map values
+    uniform sampler2D shadowMap;
+    uniform mat4 lightView;
+    uniform mat4 lightProj;
+    uniform mat4 cameraView;
+
     uniform DirectionalLight light;
+
     // A pair of constants for reconstructing the linear Z
     // [ (-Far * Near ) / ( Far - Near ),  Far / ( Far - Near )  ]
     uniform vec2 projectionConstants;
 
     // https://stackoverflow.com/questions/9222217/how-does-the-fragment-shader-know-what-variable-to-use-for-the-color-of-a-pixel
-    out vec4 color;
+    layout( location = 0 ) out vec4 color;
 
     // Function for decoding normals
     vec3 decode( vec2 enc )
@@ -62,6 +70,22 @@ immutable string directionallightFS = q{
         float t = ( ( enc.x * enc.x ) + ( enc.y * enc.y ) ) / 4;
         float ti = sqrt( 1 - t );
         return vec3( ti * enc.x, ti * enc.y, -1 + t * 2 );
+    }
+
+    float shadowValue()
+    {
+        //mat4 inverseCameraView = inverse(cameraView);
+        mat4 toShadowMap_s = lightProj * lightView * inverse(cameraView);
+        vec4 projectedEyeDir = toShadowMap_s * vec4( fViewRay, 1 );
+        projectedEyeDir = projectedEyeDir / projectedEyeDir.w;
+
+        vec2 shadowCoords = (projectedEyeDir.xy * 0.5) + vec2( 0.5, 0.5 );
+
+        const float bias = 0.0001;
+
+        float depthValue = texture( shadowMap, shadowCoords ) - bias;
+
+        return float( ( projectedEyeDir.z * 0.5 + 0.5 ) < depthValue );
     }
 
     void main( void )
@@ -89,6 +113,6 @@ immutable string directionallightFS = q{
         // textureColor.w is the shininess
         // specularIntensity is the light's contribution
         vec3 specular = ( pow( specularScale, 8 ) * light.color * specularIntensity);
-        color = vec4( ( diffuse + specular ), 1.0f );
+        color = shadowValue() * vec4( ( diffuse + specular ), 1.0f );
     }
 };

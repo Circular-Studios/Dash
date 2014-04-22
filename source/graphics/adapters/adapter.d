@@ -191,27 +191,29 @@ public:
             return;
         }
 
-        auto objsWithLights = scene.objects
+        auto lights = scene.objects
                                 .filter!(obj => obj.stateFlags.drawLight && obj.light)
                                 .map!(obj => obj.light);
 
-        auto getOfType( Type )()
+        auto getLightsByType( Type )()
         {
-            return objsWithLights
+            return lights
                     .filter!(obj => typeid(obj) == typeid(Type))
                     .map!(obj => cast(shared Type)obj);
         }
 
-        auto ambientLights = getOfType!AmbientLight;
-        auto directionalLights = getOfType!DirectionalLight;
-        auto pointLights = getOfType!PointLight;
-        auto spotLights = getOfType!SpotLight;
+        auto ambientLights = getLightsByType!AmbientLight;
+        auto directionalLights = getLightsByType!DirectionalLight;
+        auto pointLights = getLightsByType!PointLight;
+        auto spotLights = getLightsByType!SpotLight;
 
         shared mat4 projection = scene.camera.perspectiveMatrix;
         shared mat4 invProj = scene.camera.inversePerspectiveMatrix;
 
         /**
-        * TODO
+        * Geometry Pass
+        * Writes color(24) and specular(8)
+        * normal(32) and depth(32).
         */
         void geometryPass()
         {
@@ -227,7 +229,7 @@ public:
                     glUseProgram( shader.programID );
                     glBindVertexArray( object.mesh.glVertexArray );
 
-                    shared mat4 worldView =  scene.camera.viewMatrix * object.transform.matrix;
+                    shared mat4 worldView = scene.camera.viewMatrix * object.transform.matrix;
                     shader.bindUniformMatrix4fv( shader.WorldView, worldView );
                     shader.bindUniformMatrix4fv( shader.WorldViewProjection,
                                                  projection * worldView );
@@ -246,7 +248,7 @@ public:
         }
 
         /**
-         * Calculate all shadow maps for lights in the scene
+         * Calculate shadow maps for lights in the scene.
          */
         void shadowPass()
         {
@@ -257,7 +259,11 @@ public:
             foreach( light; directionalLights )
             {   
                 glBindFramebuffer( GL_FRAMEBUFFER, light.shadowMapFrameBuffer );
-                auto projView = mat4.orthographic(-300,300,-300,300,0.2f,300) * Camera.lookAt( vec3(0,0,0), light.direction );
+
+                light.view = Camera.lookAt( vec3(0,0,0), -light.direction );
+                light.proj = mat4.orthographic( -300, 300, -300, 300, 0.2f, 300 ); // hardcoded values to change later
+
+                glClear( GL_DEPTH_BUFFER_BIT );
 
                 foreach( object; scene.objects )
                 {
@@ -265,7 +271,8 @@ public:
                     {
                         glBindVertexArray( object.mesh.glVertexArray );
 
-                        shader.bindUniformMatrix4fv( shader.WorldViewProjection, projView * object.transform.matrix );
+                        shader.bindUniformMatrix4fv( shader.WorldViewProjection, 
+                                                    light.proj * light.view * object.transform.matrix);
                         glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
 
                         glBindVertexArray(0);
@@ -279,12 +286,12 @@ public:
         }
 
         /**
-        * TODO
+        * Makes the GL class for all active lights to be drawn
         */
         void lightPass()
         {
             /**
-            * TODO
+            * Binds the g-buffer textures for sampling.
             */
             void bindGeometryOutputs( Shader shader )
             {
@@ -344,7 +351,15 @@ public:
                 // bind and draw directional lights
                 foreach( light; directionalLights )
                 {
+                    glUniform1i( shader.ShadowMap, 3 );
+                    glActiveTexture( GL_TEXTURE3 );
+                    glBindTexture( GL_TEXTURE_2D, light.shadowMapTexture );
+
+                    shader.bindUniformMatrix4fv( shader.LightView, light.view );
+                    shader.bindUniformMatrix4fv( shader.LightProjection, light.proj );
+                    shader.bindUniformMatrix4fv( shader.CameraView, scene.camera.viewMatrix);
                     shader.bindDirectionalLight( light, scene.camera.viewMatrix );
+
                     glDrawElements( GL_TRIANGLES, Assets.unitSquare.numVertices, GL_UNSIGNED_INT, null );
                 }
             }
@@ -360,7 +375,7 @@ public:
                 // bind WorldView for creating the View rays for reconstruction position
                 shader.bindUniform2f( shader.ProjectionConstants, scene.camera.projectionConstants );
 
-                // bind the sphere mesh for point lights
+                // bind the mesh for point lights
                 glBindVertexArray( Assets.unitSquare.glVertexArray );
 
                 // bind and draw point lights
@@ -427,7 +442,6 @@ public:
         lightPass();
 
         glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-        //glBlendEquation( GL_FUNC_ADD );
 
         uiPass();
 

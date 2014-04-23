@@ -75,7 +75,7 @@ public:
 
         if( display is null )
         {
-            logError( "Cannot connect to X server." );
+            logFatal( "Cannot connect to X server." );
             return;
         }
 
@@ -88,7 +88,7 @@ public:
 
         if( xvi is null )
         {
-            logError( "No appropriate visual found." );
+            logFatal( "No appropriate visual found." );
             return;
         }
 

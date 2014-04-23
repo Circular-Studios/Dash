@@ -52,7 +52,7 @@ public:
                     }
                     catch
                     {
-                        log( OutputType.Error, "Failed to parse keybinding for input ", name );
+                        logFatal( "Failed to parse keybinding for input ", name );
                     }
                 }
             }
@@ -75,7 +75,7 @@ public:
                                 }
                                 catch
                                 {
-                                    log( OutputType.Error, "Failed to parse keybinding for input ", name );
+                                    logFatal( "Failed to parse keybinding for input ", name );
                                 }
                             }
 

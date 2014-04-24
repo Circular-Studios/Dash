@@ -86,6 +86,8 @@ public:
 
         // don't want any info besides depth
         glDrawBuffer( GL_NONE );
+        // don't want to read from gpu
+        glReadBuffer( GL_NONE );
 
         // check for success
         if( glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE )

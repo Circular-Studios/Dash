@@ -72,20 +72,17 @@ immutable string directionallightFS = q{
         return vec3( ti * enc.x, ti * enc.y, -1 + t * 2 );
     }
 
-    float shadowValue()
+    float shadowValue(vec3 pos)
     {
-        //mat4 inverseCameraView = inverse(cameraView);
         mat4 toShadowMap_s = lightProj * lightView * inverse(cameraView);
-        vec4 projectedEyeDir = toShadowMap_s * vec4( fViewRay, 1 );
-        projectedEyeDir = projectedEyeDir / projectedEyeDir.w;
+        vec4 lightSpacePos = toShadowMap_s * vec4( pos, 1 );
+        lightSpacePos = lightSpacePos / lightSpacePos.w;
 
-        vec2 shadowCoords = (projectedEyeDir.xy * 0.5) + vec2( 0.5, 0.5 );
+        vec2 shadowCoords = (lightSpacePos.xy * 0.5) + vec2( 0.5, 0.5 );
 
-        const float bias = 0.0001;
+        float depthValue = texture( shadowMap, shadowCoords ).x -  0.0001;
 
-        float depthValue = texture( shadowMap, shadowCoords ) - bias;
-
-        return float( ( projectedEyeDir.z * 0.5 + 0.5 ) < depthValue );
+        return float( (lightSpacePos.z * .5 + .5 ) < depthValue );
     }
 
     void main( void )
@@ -113,6 +110,7 @@ immutable string directionallightFS = q{
         // textureColor.w is the shininess
         // specularIntensity is the light's contribution
         vec3 specular = ( pow( specularScale, 8 ) * light.color * specularIntensity);
-        color = shadowValue() * vec4( ( diffuse + specular ), 1.0f );
+
+        color = shadowValue(position_v) * vec4( ( diffuse + specular ), 1.0f );
     }
 };

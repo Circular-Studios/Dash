@@ -11,7 +11,7 @@ import std.variant, std.conv, std.string;
 /**
  * A collection of textures that serve different purposes in the rendering pipeline.
  */
-shared final class Material : IComponent
+shared final class Material
 {
 private:
     Texture _diffuse, _normal, _specular;
@@ -56,11 +56,6 @@ public:
 
         return obj;
     }
-
-    /// Empty method overload to make materials components.
-    override void update() { }
-    /// ditto
-    override void shutdown() { }
 }
 
 /**
@@ -168,6 +163,6 @@ static this()
     IComponent.initializers[ "Material" ] = ( Node yml, shared GameObject obj )
     {
         obj.material = Assets.get!Material( yml.get!string );
-        return obj.material;
+        return null;
     };
 }

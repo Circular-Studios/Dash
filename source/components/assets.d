@@ -141,7 +141,6 @@ public:
         foreach_reverse( index; 0 .. materials.length )
         {
             auto name = materials.keys[ index ];
-            materials[ name ].shutdown();
             materials.remove( name );
         }
         foreach_reverse( index; 0 .. animations.length )

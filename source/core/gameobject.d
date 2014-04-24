@@ -273,7 +273,8 @@ public:
      */
     final void addComponent( T )( shared T newComponent ) if( is( T : IComponent ) )
     {
-        componentList[ typeid(T) ] = newComponent;
+        if( newComponent )
+            componentList[ typeid(T) ] = newComponent;
     }
 
     /**

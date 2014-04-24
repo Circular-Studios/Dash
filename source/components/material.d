@@ -1,5 +1,5 @@
 /**
- * TODO
+ * Defines the Material and Texture classes.
  */
 module components.material;
 import core, components, graphics, utility;
@@ -9,7 +9,7 @@ import derelict.opengl3.gl3, derelict.freeimage.freeimage;
 import std.variant, std.conv, std.string;
 
 /**
- * TODO
+ * A collection of textures that serve different purposes in the rendering pipeline.
  */
 shared final class Material : IComponent
 {
@@ -17,19 +17,15 @@ private:
     Texture _diffuse, _normal, _specular;
 
 public:
-    /// TODO
+    /// The diffuse (or color) map.
     mixin( Property!(_diffuse, AccessModifier.Public) );
-    /// TODO
+    /// The normal map, which specifies which way a face is pointing at a given pixel.
     mixin( Property!(_normal, AccessModifier.Public) );
-    /// TODO
+    /// The specular map, which specifies how shiny a given point is.
     mixin( Property!(_specular, AccessModifier.Public) );
 
     /**
-     * TODO
-     *
-     * Params:
-     *
-     * Returns:
+     * Default constructor, makes sure everything is initialized to default.
      */
     this()
     {
@@ -39,9 +35,10 @@ public:
     /**
      * Create a Material from a Yaml node.
      *
-     * Params: TODO
+     * Params:
+     *  yamlObj =           The YAML object to pull the data from.
      *
-     * Returns:
+     * Returns: A new material with specified maps.
      */
     static shared(Material) createFromYaml( Node yamlObj )
     {
@@ -60,7 +57,9 @@ public:
         return obj;
     }
 
+    /// Empty method overload to make materials components.
     override void update() { }
+    /// ditto
     override void shutdown() { }
 }
 

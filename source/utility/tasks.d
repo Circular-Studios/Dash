@@ -3,13 +3,14 @@
  *
  */
 module utility.tasks;
-import utility.time;
+import utility.time, utility.output;
 
 import gl3n.util: is_vector, is_matrix, is_quaternion;
 import gl3n.interpolate: lerp;
 
 import core.time;
 import std.algorithm: min;
+import std.parallelism: parallel;
 
 public:
 /**
@@ -258,12 +259,12 @@ void scheduleDelayedTask( void delegate() dg, Duration delay )
 void executeTasks()
 {
     size_t[] toRemove;    // Indicies of tasks which are done
-    foreach( i, task; scheduledTasks )
+    foreach( i, task; parallel( scheduledTasks ) )
     {
         if( task() )
-            toRemove ~= i;
+            synchronized toRemove ~= i;
     }
-    foreach( i; toRemove )
+    foreach_reverse( i; toRemove )
     {
         // Get tasks after one being removed
         auto end = scheduledTasks[ i+1..$ ];

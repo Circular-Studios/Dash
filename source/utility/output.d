@@ -77,13 +77,6 @@ void logDebug( A... )( A messages )
     Logger.logDebug( messages );
 }
 
-/// Alias for Output.printMessage
-deprecated("Use dlogg.log.LoggingLevel instead") 
-void log( A... )( OutputType type, A messages ) 
-{ 
-    Output.log( type, messages ); 
-}
-
 /**
  * Benchmark the running of a function, and log the result to the debug buffer.
  *
@@ -100,13 +93,9 @@ void bench( alias func )( lazy string name )
 /// Global instance of logger
 shared GlobalLogger Logger;
 
-// Deprecated manager for console output
-shared OutputManager Output;
-
 shared static this()
 {
     Logger = new shared GlobalLogger;
-    Output = new shared OutputManager;
 }
 
 /**
@@ -150,7 +139,7 @@ shared final class GlobalLogger : StrictLogger
         
         // Try to get new path for logging
         string newFileName;
-        if( config.tryFind!string( LognameSection, newFileName ) )
+        if( Config.tryGet!string( LognameSection, newFileName ) )
         {
             string oldFileName = this.name; 
             try
@@ -171,7 +160,7 @@ shared final class GlobalLogger : StrictLogger
         
         // Try to get output verbosity from config
         Verbosity outputVerbosity;
-        if( config.tryFind!Verbosity( OutputVerbositySection, outputVerbosity ) )
+        if( Config.tryGet!Verbosity( OutputVerbositySection, outputVerbosity ) )
         {
             minOutputLevel = mapVerbosity( outputVerbosity ); 
         } 
@@ -183,7 +172,7 @@ shared final class GlobalLogger : StrictLogger
         
         // Try to get logging verbosity from config
         Verbosity loggingVerbosity;
-        if( config.tryFind!Verbosity( LoggingVerbositySection, loggingVerbosity ) )
+        if( Config.tryGet!Verbosity( LoggingVerbositySection, loggingVerbosity ) )
         {
             minLoggingLevel = mapVerbosity( loggingVerbosity );
         } 
@@ -192,78 +181,5 @@ shared final class GlobalLogger : StrictLogger
             debug minLoggingLevel = LoggingLevel.Notice;
             else minLoggingLevel = LoggingLevel.Warning; 
         }
-    }
-}
-
-/**
- *  Static class for handling interactions with the console.
- *  Deprecated: use GlobalLogger instead
- */
-shared final class OutputManager
-{
-public:
-    /**
-     * Initialize the controller.
-     */
-    final void initialize()
-    {
-        verbosity = Verbosity.High;
-        config.tryFind!Verbosity( "Game.Verbosity", verbosity );
-    }
-
-    /**
-     * Print a message to the console.
-     */
-    synchronized final void log( A... )( OutputType type, A messages ) if( A.length > 0 )
-    {
-        if( shouldPrint( type ) )
-        {
-            write( getHeader( type ) );
-            
-            foreach( msg; messages )
-                write( msg );
-            
-            writeln();
-        }
-    }
-
-private:
-    /**
-     * Caches the verbosity set in the config.
-     */
-    Verbosity verbosity;
-
-    this()
-    {
-        verbosity = Verbosity.High;
-    }
-
-    /**
-     * Gets the header for the given output type.
-     */
-    final string getHeader( OutputType type )
-    {
-        final switch( type ) with( OutputType )
-        {
-            case Info:
-                //SetConsoleTextAttribute( hConsole, 15 );
-                return "[INFO]    ";
-            case Warning:
-                //SetConsoleTextAttribute( hConsole, 14 );
-                return "[WARNING] ";
-            case Error:
-                //SetConsoleTextAttribute( hConsole, 12 );
-                return "[ERROR]   ";
-            case Debug:
-                return "[DEBUG]   ";
-        }
-    }
-
-    /**
-     * TODO
-     */
-    final bool shouldPrint( OutputType type )
-    {
-        return type >= verbosity;
     }
 }

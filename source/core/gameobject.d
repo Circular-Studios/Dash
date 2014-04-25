@@ -507,7 +507,7 @@ public:
         import gl3n.math;
         writeln( "Dash Transform forward unittest" );
 
-        auto trans = new shared Transform();
+        auto trans = new shared Transform( null );
         auto forward = shared vec3( 0.0f, 1.0f, 0.0f );
         trans.rotation.rotatex( 90.radians );
         assert( almost_equal( trans.forward, forward ) );
@@ -531,7 +531,7 @@ public:
         import gl3n.math;
         writeln( "Dash Transform up unittest" );
 
-        auto trans = new shared Transform();
+        auto trans = new shared Transform( null );
 
         auto up = shared vec3( 0.0f, 0.0f, 1.0f );
         trans.rotation.rotatex( 90.radians );
@@ -556,7 +556,7 @@ public:
         import gl3n.math;
         writeln( "Dash Transform right unittest" );
 
-        auto trans = new shared Transform();
+        auto trans = new shared Transform( null );
 
         auto right = shared vec3( 0.0f, 0.0f, -1.0f );
         trans.rotation.rotatey( 90.radians );

@@ -227,25 +227,25 @@ unittest
     import std.stdio;
     import std.exception;
     
-    writeln( "Dash Config get unittest" );
+    writeln( "Dash Config find unittest" );
 
     auto n1 = Node( [ "test1": 10 ] );
 
-    assert( Config.get!int( "test1", n1 ) == 10, "Config.get error." );
+    assert( n1.find!int( "test1" ) == 10, "Config.find error." );
 
-    assertThrown!Exception(Config.get!int( "dontexist", n1 ));
+    assertThrown!YAMLException(n1.find!int( "dontexist" ));
     
     // nested test
     auto n2 = Node( ["test2": n1] );
     auto n3 = Node( ["test3": n2] );
     
-    assert( Config.get!int( "test3.test2.test1", n3 ) == 10, "Config.get nested test failed");
+    assert( n3.find!int( "test3.test2.test1" ) == 10, "Config.find nested test failed");
     
     auto n4 = Loader.fromString(
         "test3:\n"
         "   test2:\n"
         "       test1: 10").load;
-    assert( Config.get!int( "test3.test2.test1", n4 ) == 10, "Config.get nested test failed");
+    assert( n4.find!int( "test3.test2.test1" ) == 10, "Config.find nested test failed");
 }
 
 /**
@@ -348,8 +348,8 @@ unittest
     auto n1 = Node( [ "test1": 10 ] );
 
     int val;
-    assert( Config.tryFind( "test1", val, n1 ), "Config.tryFind failed." );
-    assert( !Config.tryFind( "dontexist", val, n1 ), "Config.tryFind returned true." );
+    assert( n1.tryFind( "test1", val ), "Config.tryFind failed." );
+    assert( !n1.tryFind( "dontexist", val ), "Config.tryFind returned true." );
 }
 
 /**
@@ -397,7 +397,7 @@ final T getObject( T )( Node node )
                 // Make sure member is mutable
                 static if( isMutable!( typeof( __traits( getMember, toReturn, memberName ) ) ) )
                 {
-                    tryGet( memberName, __traits( getMember, toReturn, memberName ), node );
+                    node.tryFind( memberName, __traits( getMember, toReturn, memberName ) );
                 }
             }
             else
@@ -425,7 +425,7 @@ final T getObject( T )( Node node )
                                 auto tempValue = cast()otherTempValue;
                             }
 
-                            if( tryGet( memberName, tempValue, node ) )
+                            if( node.tryFind( memberName, tempValue ) )
                                 mixin( "toReturn." ~ memberName ~ " = tempValue.to!(params[0]);" );
                         }
                     }
@@ -441,7 +441,7 @@ unittest
     import std.stdio;
     writeln( "Dash Config getObject unittest" );
 
-    auto t = getObject!Test( Node( ["x": 5, "y": 7, "z": 9] ) );
+    auto t = Node( ["x": 5, "y": 7, "z": 9] ).getObject!Test();
 
     assert( t.x == 5 );
     assert( t.y == 7 );

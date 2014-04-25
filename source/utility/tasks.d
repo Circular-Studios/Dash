@@ -80,7 +80,8 @@ unittest
  * scheduleInterpolateTask( transform.position, startNode, endNode, 100.msecs );
  * ---
  */
-void scheduleInterpolateTask( string prop, T, Owner )( ref Owner own, T start, T end, Duration duration, T function( T, T, float ) interpFunc = &lerp!T ) if( is_vector!T || is_quaternion!T )
+void scheduleInterpolateTask( string prop, T, Owner )( ref Owner own, T start, T end, Duration duration, T function( T, T, float ) interpFunc = &lerp!T )
+    if( ( is_vector!T || is_quaternion!T ) && __traits( compiles, mixin( "own." ~ prop ) ) )
 {
     auto startTime = Time.totalTime;
     scheduleTimedTask( duration, ( elapsed )

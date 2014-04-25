@@ -255,13 +255,12 @@ public:
             auto shader = Shaders.shadowMap;
             glUseProgram( shader.programID );
 
-
             foreach( light; directionalLights )
             {   
                 glBindFramebuffer( GL_FRAMEBUFFER, light.shadowMapFrameBuffer );
 
-                light.view = Camera.lookAt( vec3(0,0,0), vec3(0,40,0), vec3(0,0,-1) );
-                light.proj = mat4.orthographic( -40, 40, -40, 40, -40, 40 ); // hardcoded values to change later
+                light.view = Camera.lookAt( light.direction, vec3(0,0,0), vec3(0,1,0) );
+                light.proj = mat4.orthographic( -50, 50, -50, 50, -50, 50 ); // hardcoded values to change later
 
                 glClear( GL_DEPTH_BUFFER_BIT );
 
@@ -281,6 +280,7 @@ public:
                         glBindVertexArray(0);
                     }
                 }
+                glBindFramebuffer( GL_FRAMEBUFFER, 0 );
             }
 
             foreach( light; pointLights ){}

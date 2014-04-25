@@ -346,20 +346,7 @@ public:
      */
     final void removeChild( shared GameObject oldChild )
     {
-        import std.algorithm;
-        // Get index of object being removed
-        auto oldChildIndex = (cast(GameObject[])children).countUntil( cast()oldChild );
-
-        // Return if not actually a child
-        if( oldChildIndex == -1 )
-            return;
-
-        // Get objects after one being removed
-        auto end = children[ oldChildIndex+1..$ ];
-        // Get objects before one being removed
-        children = children[ 0..oldChildIndex ];
-        // Add end back
-        _children ~= end;
+        children = children.remove( oldChild );
 
         oldChild.canChangeName = true;
         oldChild.parent = null;

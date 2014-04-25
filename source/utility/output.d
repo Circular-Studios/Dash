@@ -150,7 +150,7 @@ shared final class GlobalLogger : StrictLogger
         
         // Try to get new path for logging
         string newFileName;
-        if( Config.tryGet!string( LognameSection, newFileName ) )
+        if( config.tryFind!string( LognameSection, newFileName ) )
         {
             string oldFileName = this.name; 
             try
@@ -171,7 +171,7 @@ shared final class GlobalLogger : StrictLogger
         
         // Try to get output verbosity from config
         Verbosity outputVerbosity;
-        if( Config.tryGet!Verbosity( OutputVerbositySection, outputVerbosity ) )
+        if( config.tryFind!Verbosity( OutputVerbositySection, outputVerbosity ) )
         {
             minOutputLevel = mapVerbosity( outputVerbosity ); 
         } 
@@ -183,7 +183,7 @@ shared final class GlobalLogger : StrictLogger
         
         // Try to get logging verbosity from config
         Verbosity loggingVerbosity;
-        if( Config.tryGet!Verbosity( LoggingVerbositySection, loggingVerbosity ) )
+        if( config.tryFind!Verbosity( LoggingVerbositySection, loggingVerbosity ) )
         {
             minLoggingLevel = mapVerbosity( loggingVerbosity );
         } 
@@ -208,7 +208,7 @@ public:
     final void initialize()
     {
         verbosity = Verbosity.High;
-        Config.tryGet!Verbosity( "Game.Verbosity", verbosity );
+        config.tryFind!Verbosity( "Game.Verbosity", verbosity );
     }
 
     /**

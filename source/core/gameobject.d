@@ -117,7 +117,7 @@ public:
         }
         else
         {
-            foundClassName = Config.tryGet( "Script.ClassName", className, yamlObj );
+            foundClassName = yamlObj.tryFind( "Script.ClassName", className );
             // Get class to create script from
             const ClassInfo scriptClass = foundClassName
                     ? ClassInfo.find( className )
@@ -129,7 +129,7 @@ public:
                 logWarning( objName, ": Unable to find Script ClassName: ", className );
             }
 
-            if( Config.tryGet( "InstanceOf", prop, yamlObj ) )
+            if( yamlObj.tryFind( "InstanceOf", prop ) )
             {
                 obj = Prefabs[ prop ].createInstance( scriptClass );
             }
@@ -145,28 +145,28 @@ public:
         obj.name = objName;
 
         // Init transform
-        if( Config.tryGet( "Transform", innerNode, yamlObj ) )
+        if( yamlObj.tryFind( "Transform", innerNode ) )
         {
             shared vec3 transVec;
-            if( Config.tryGet( "Scale", transVec, innerNode ) )
+            if( innerNode.tryFind( "Scale", transVec ) )
                 obj.transform.scale = shared vec3( transVec );
-            if( Config.tryGet( "Position", transVec, innerNode ) )
+            if( innerNode.tryFind( "Position", transVec ) )
                 obj.transform.position = shared vec3( transVec );
-            if( Config.tryGet( "Rotation", transVec, innerNode ) )
+            if( innerNode.tryFind( "Rotation", transVec ) )
                 obj.transform.rotation = quat.identity.rotatex( transVec.x.radians ).rotatey( transVec.y.radians ).rotatez( transVec.z.radians );
         }
 
-        if( foundClassName && Config.tryGet( "Script.Fields", innerNode, yamlObj ) )
+        if( foundClassName && yamlObj.tryFind( "Script.Fields", innerNode ) )
         {
             if( auto initParams = className in getInitParams )
                 obj.initialize( (*initParams)( innerNode ) );
         }
 
         // If parent is specified, add it to the map
-        if( Config.tryGet( "Parent", prop, yamlObj ) )
+        if( yamlObj.tryFind( "Parent", prop ) )
             logWarning( "Specifying parent objects by name is deprecated. Please add this as an inline child to ", prop, "." );
 
-        if( Config.tryGet( "Children", innerNode, yamlObj ) )
+        if( yamlObj.tryFind( "Children", innerNode ) )
         {
             if( innerNode.isSequence )
             {

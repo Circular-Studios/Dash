@@ -42,6 +42,9 @@ mixin template ContentImport()
     }
 }
 
+/// The node config values are stored.
+Node config;
+
 /**
  * Process all yaml files in a directory.
  * 
@@ -190,7 +193,7 @@ final bool tryFind( T )( Node node, string path, ref T result ) nothrow @safe
 {
     // If anything goes wrong, it means the node wasn't found.
     scope( failure ) return false;
-    
+
     Node res;
     bool found = node.tryFind( path, res );
 
@@ -392,7 +395,6 @@ final abstract class Config
 {
 static:
 private:
-    Node config;
     Constructor constructor;
 
 public:
@@ -763,7 +765,7 @@ shared(quat) constructQuaternion( ref Node node )
 Light constructAmbientLight( ref Node node )
 {
     shared vec3 color;
-    Config.tryGet( "Color", color, node );
+    node.tryFind( "Color", color );
     
     return cast()new shared AmbientLight( color );
 }
@@ -776,8 +778,8 @@ Light constructDirectionalLight( ref Node node )
     shared vec3 color;
     shared vec3 dir;
 
-    Config.tryGet( "Color", color, node );
-    Config.tryGet( "Direction", dir, node );
+    node.tryFind( "Color", color );
+    node.tryFind( "Direction", dir );
 
     return cast()new shared DirectionalLight( color, dir );
 }
@@ -790,9 +792,9 @@ Light constructPointLight( ref Node node )
     shared vec3 color;
     float radius, falloffRate;
 
-    Config.tryGet( "Color", color, node );
-    Config.tryGet( "Radius", radius, node );
-    Config.tryGet( "FalloffRate", falloffRate, node );
+    node.tryFind( "Color", color );
+    node.tryFind( "Radius", radius );
+    node.tryFind( "FalloffRate", falloffRate );
 
     return cast()new shared PointLight( color, radius, falloffRate );
 }

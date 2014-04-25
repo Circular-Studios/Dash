@@ -50,6 +50,26 @@ template Getter( alias field, AccessModifier access = AccessModifier.Public, str
 }
 
 /**
+ * Generates a getter for a field that returns a reference to it.
+ * 
+ * Params:
+ *  field =                 The field to generate the property for.
+ *  access =                The access modifier for the getter function.
+ *  name =                  The name of the property functions. Defaults to the field name minus the first character. Meant for fields that start with underscores.
+ */
+template RefGetter( alias field, AccessModifier access = AccessModifier.Public, string name = field.stringof[ 1..$ ] )
+{
+    enum Getter = q{
+        final $access @property auto ref $name() @safe pure nothrow
+        {
+            return $field;
+        }}
+        .replaceMap( [
+            "$field": field.stringof, "$name": name,
+            "$access": cast(string)access ] );
+}
+
+/**
  * Generates a getter for a field that can be marked as dirty. Calls updateFunc if is dirty.
  * 
  * Params:

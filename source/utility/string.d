@@ -7,11 +7,14 @@ import std.array;
 
 /// fromStringz
 /**
-*   Returns new string formed from C-style (null-terminated) string $(D msg). Usefull
-*   when interfacing with C libraries. For D-style to C-style convertion use std.string.toStringz.
-*   
-*   Authors: NCrashed
-*/
+ * Returns new string formed from C-style (null-terminated) string $(D msg). Usefull
+ * when interfacing with C libraries. For D-style to C-style convertion use std.string.toStringz.
+ *
+ * Params:
+ *  msg =                 The C string to convert.
+ *
+ * Authors: NCrashed
+ */
 string fromStringz(const char* msg) nothrow
 {
     scope(failure) return "";
@@ -23,7 +26,7 @@ string fromStringz(const char* msg) nothrow
     {
         buff.put(msg[i++]);
     }
-        
+
     return buff.data.idup;
 }
 /// Example

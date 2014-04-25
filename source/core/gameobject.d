@@ -310,7 +310,7 @@ public:
         _children ~= newChild;
         newChild.parent = this;
         newChild.canChangeName = false;
-        
+
         // Get root object
         shared GameObject par;
         for( par = this; par.parent; par = par.parent ) { }
@@ -338,14 +338,14 @@ public:
             {
                 par.scene.objectById[ child.id ] = child;
                 par.scene.idByName[ child.name ] = child.id;
-            }   
+            }
         }
-        
+
     }
 
     /**
      * Removes the given object as a child from this object.
-     * 
+     *
      * Params:
      *  oldChild =            The object to remove.
      */
@@ -437,24 +437,23 @@ private:
 
 public:
     // these should remain public fields, properties return copies not references
-    /// TODO
+    /// The position of the object in local space.
     vec3 position;
-    /// TODO
+    /// The rotation of the object in local space.
     quat rotation;
-    /// TODO
+    /// The absolute scale of the object. Ignores parent scale.
     vec3 scale;
 
-    /// TODO
+    /// The object which this belongs to.
     mixin( Property!( _owner, AccessModifier.Public ) );
-    /// TODO
+    /// The world matrix of the transform.
     mixin( ThisDirtyGetter!( _matrix, updateMatrix ) );
 
     /**
-     * TODO
+     * Default constructor, most often created by GameObjects.
      *
      * Params:
-     *
-     * Returns:
+     *  obj =            The object the transform belongs to.
      */
     this( shared GameObject obj = null )
     {
@@ -464,13 +463,11 @@ public:
         rotation = quat.identity;
     }
 
-    ~this()
-    {
-    }
-
     /**
-    * This returns the object's position relative to the world origin, not the parent
-    */
+     * This returns the object's position relative to the world origin, not the parent.
+     *
+     * Returns: The object's position relative to the world origin, not the parent.
+     */
     final @property shared(vec3) worldPosition() @safe pure nothrow
     {
         if( owner.parent is null )
@@ -480,8 +477,10 @@ public:
     }
 
     /**
-    * This returns the object's rotation relative to the world origin, not the parent
-    */
+     * This returns the object's rotation relative to the world origin, not the parent.
+     *
+     * Returns: The object's rotation relative to the world origin, not the parent.
+     */
     final @property shared(quat) worldRotation() @safe pure nothrow
     {
         if( owner.parent is null )
@@ -493,6 +492,8 @@ public:
     /*
      * Check if current or a parent's matrix needs to be updated.
      * Called automatically when getting matrix.
+     *
+     * Returns: Whether or not the object is dirty.
      */
     final override @property bool isDirty() @safe pure nothrow
     {
@@ -504,9 +505,9 @@ public:
     }
 
     /*
-     * Gets the forward axis of the current transform
+     * Gets the forward axis of the current transform.
      *
-     * Returns: The forward axis of the current transform
+     * Returns: The forward axis of the current transform.
      */
     final @property const shared(vec3) forward()
     {
@@ -528,9 +529,9 @@ public:
     }
 
     /*
-     * Gets the up axis of the current transform
+     * Gets the up axis of the current transform.
      *
-     * Returns: The up axis of the current transform
+     * Returns: The up axis of the current transform.
      */
     final  @property const shared(vec3) up()
     {
@@ -551,11 +552,11 @@ public:
         trans.rotation.rotatex( 90.radians );
         assert( almost_equal( trans.up, up ) );
     }
- 
+
     /*
-     * Gets the right axis of the current transform
+     * Gets the right axis of the current transform.
      *
-     * Returns: The right axis of the current transform
+     * Returns: The right axis of the current transform.
      */
     final  @property const shared(vec3) right()
     {
@@ -578,7 +579,7 @@ public:
     }
 
     /**
-     * Rebuilds the object's matrix
+     * Rebuilds the object's matrix.
      */
     final void updateMatrix() @safe pure nothrow
     {

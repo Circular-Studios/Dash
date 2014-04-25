@@ -1,6 +1,6 @@
 /**
  * This module defines the Scene class, TODO
- * 
+ *
  */
 module core.scene;
 import core, components, graphics, utility;
@@ -10,13 +10,13 @@ import std.path;
 enum SceneName = "[scene]";
 
 /**
- * TODO
+ * The Scene contains a list of all objects that should be drawn at a given time.
  */
 shared final class Scene
 {
 private:
     GameObject root;
-    
+
 package:
     GameObject[uint] objectById;
     uint[string] idByName;
@@ -34,7 +34,7 @@ public:
 
     /**
      * Load all objects inside the specified folder in FilePath.Objects.
-     * 
+     *
      * Params:
      *  objectPath =            The folder location inside of /Objects to look for objects in.
      */
@@ -56,24 +56,29 @@ public:
     }
 
     /**
-    * TODO
-    */
+     * Updates all objects in the scene.
+     */
     final void update()
     {
         root.update();
     }
 
     /**
-    * TODO
-    */
+     * Draws all objects in the scene.
+     */
     final void draw()
     {
         root.draw();
     }
 
     /**
-    * TODO
-    */
+     * Gets the object in the scene with the given name.
+     *
+     * Params:
+     *  name =            The name of the object to look for.
+     *
+     * Returns: The object with the given name.
+     */
     final shared(GameObject) opIndex( string name )
     {
         if( auto id = name in idByName )
@@ -83,8 +88,13 @@ public:
     }
 
     /**
-    * TODO
-    */
+     * Gets the object in the scene with the given id.
+     *
+     * Params:
+     *  index =           The id of the object to look for.
+     *
+     * Returns: The object with the given id.
+     */
     final shared(GameObject) opIndex( uint index )
     {
         if( auto obj = index in objectById )
@@ -116,8 +126,10 @@ public:
     }
 
     /**
-    * TODO
-    */
+     * Gets all objects in the scene.
+     *
+     * Returns: All objects belonging to this scene.
+     */
     final @property shared(GameObject[]) objects()
     {
         return objectById.values;

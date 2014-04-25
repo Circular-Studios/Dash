@@ -16,6 +16,9 @@ shared static this()
     Input = new shared InputManager;
 }
 
+/**
+ * Manages all input events.
+ */
 shared final class InputManager
 {
 public:
@@ -111,7 +114,7 @@ public:
 
     /**
      * Add an event to be fired when the given key changes.
-     * 
+     *
      * Params:
      *      keyCode =   The code of the key to add the event to.
      *      func =      The function to call when the key state changes.
@@ -145,7 +148,7 @@ public:
 
     /**
      * Add an event to be fired when the given key changes.
-     * 
+     *
      * Params:
      *      inputName = The name of the input to add the event to.
      *      func =      The function to call when the key state changes.
@@ -195,7 +198,7 @@ public:
 
     /**
      * Check if a given key is down.
-     * 
+     *
      * Params:
      *      keyCode =       The code of the key to check.
      *      checkPrevious = Whether or not to make sure the key was down last frame.
@@ -224,7 +227,7 @@ public:
 
     /**
      * Check if a given key is up.
-     * 
+     *
      * Params:
      *      keyCode =       The code of the key to check.
      *      checkPrevious = Whether or not to make sure the key was up last frame.

@@ -18,11 +18,7 @@ import std.array, std.conv, std.string, std.path,
     std.typecons, std.variant, std.parallelism,
     std.traits, std.algorithm, std.file;
 
-private Node contentNode;
 private string fileToYaml( string filePath ) { return filePath.replace( "\\", "/" ).replace( "../", "" ).replace( "/", "." ); }
-
-version( EmbedContent )
-string contentYML;
 
 /**
  * Place this mixin anywhere in your game code to allow the Content.yml file
@@ -46,6 +42,32 @@ mixin template ContentImport()
 Node config;
 /// The constructor used to load load new yaml files.
 Constructor constructor;
+/// The string to store imported yaml content in.
+version( EmbedContent ) string contentYML;
+private Node contentNode;
+
+/// Initializes contentNode and constructor.
+static this()
+{
+    constructor = new Constructor;
+    contentNode = Node( YAMLNull() );
+
+    constructor.addConstructorScalar( "!Vector2", &constructVector2 );
+    constructor.addConstructorMapping( "!Vector2-Map", &constructVector2 );
+    constructor.addConstructorScalar( "!Vector3", &constructVector3 );
+    constructor.addConstructorMapping( "!Vector3-Map", &constructVector3 );
+    constructor.addConstructorScalar( "!Quaternion", &constructQuaternion );
+    constructor.addConstructorMapping( "!Quaternion-Map", &constructQuaternion );
+    constructor.addConstructorScalar( "!Verbosity", &constructConv!Verbosity );
+    constructor.addConstructorScalar( "!Keyboard", &constructConv!Keyboard );
+    constructor.addConstructorScalar( "!Shader", ( ref Node node ) => Shaders.get( node.get!string ) );
+    constructor.addConstructorMapping( "!Light-Directional", &constructDirectionalLight );
+    constructor.addConstructorMapping( "!Light-Ambient", &constructAmbientLight );
+    constructor.addConstructorMapping( "!Light-Point", &constructPointLight );
+    //constructor.addConstructorScalar( "!Texture", ( ref Node node ) => Assets.get!Texture( node.get!string ) );
+    //constructor.addConstructorScalar( "!Mesh", ( ref Node node ) => Assets.get!Mesh( node.get!string ) );
+    //constructor.addConstructorScalar( "!Material", ( ref Node node ) => Assets.get!Material( node.get!string ) );
+}
 
 /**
  * Process all yaml files in a directory.
@@ -63,7 +85,7 @@ Node[] loadYamlDocuments( string folder )
         foreach( file; FilePath.scanDirectory( folder, "*.yml" ) )
         {
             auto loader = Loader( file.fullPath );
-            loader.constructor = Config.constructor;
+            loader.constructor = constructor;
 
             try
             {
@@ -81,7 +103,7 @@ Node[] loadYamlDocuments( string folder )
     }
     else
     {
-        auto fileNode = Config.get!Node( folder.fileToYaml, contentNode );
+        auto fileNode = contentNode.find( folder.fileToYaml );
 
         foreach( string fileName, Node fileContent; fileNode )
         {
@@ -108,7 +130,7 @@ Node[] loadYamlDocuments( string folder )
  */
 T[] loadYamlObjects( T )( string folder )
 {
-    return folder.loadYamlDocuments.map!(yml => Config.toObject!T( yml ) );
+    return folder.loadYamlDocuments.map!(yml => yml.toObject!T() );
 }
 
 /**
@@ -122,7 +144,7 @@ Node loadYamlFile( string filePath )
     if( contentNode.isNull )
     {
         auto loader = Loader( filePath ~ ".yml" );
-        loader.constructor = Config.constructor;
+        loader.constructor = constructor;
         try
         {
             return loader.load();
@@ -401,33 +423,15 @@ public static:
      */
     final void initialize()
     {
-        constructor = new Constructor;
-        contentNode = Node( YAMLNull() );
-
-        constructor.addConstructorScalar( "!Vector2", &constructVector2 );
-        constructor.addConstructorMapping( "!Vector2-Map", &constructVector2 );
-        constructor.addConstructorScalar( "!Vector3", &constructVector3 );
-        constructor.addConstructorMapping( "!Vector3-Map", &constructVector3 );
-        constructor.addConstructorScalar( "!Quaternion", &constructQuaternion );
-        constructor.addConstructorMapping( "!Quaternion-Map", &constructQuaternion );
-        constructor.addConstructorScalar( "!Verbosity", &constructConv!Verbosity );
-        constructor.addConstructorScalar( "!Keyboard", &constructConv!Keyboard );
-        constructor.addConstructorScalar( "!Shader", ( ref Node node ) => Shaders.get( node.get!string ) );
-        constructor.addConstructorMapping( "!Light-Directional", &constructDirectionalLight );
-        constructor.addConstructorMapping( "!Light-Ambient", &constructAmbientLight );
-        constructor.addConstructorMapping( "!Light-Point", &constructPointLight );
-        //constructor.addConstructorScalar( "!Texture", ( ref Node node ) => Assets.get!Texture( node.get!string ) );
-        //constructor.addConstructorScalar( "!Mesh", ( ref Node node ) => Assets.get!Mesh( node.get!string ) );
-        //constructor.addConstructorScalar( "!Material", ( ref Node node ) => Assets.get!Material( node.get!string ) );
-
         version( EmbedContent )
         {
             logDebug( "Using imported Content.yml file." );
             assert( contentYML, "EmbedContent version set, mixin not used." );
-            import std.stream;
             auto loader = Loader.fromString( contentYML );
             loader.constructor = constructor;
             contentNode = loader.load();
+            // Null content yml so it can be collected.
+            contentYML = null;
         }
         else
         {

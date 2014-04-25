@@ -61,27 +61,15 @@ public:
         }
 
         // Start array
-        auto files = new FilePath[ 1 ];
-        uint filesFound = 0;
-
-        // Add file to array
-        void handleFile( string name )
-        {
-            if( filesFound == files.length )
-                files.length *= 2;
-
-            files[ filesFound++ ] = new FilePath( name );
-        }
+        FilePath[] files;
 
         // Find files
         if( pattern.length )
             foreach( name; std.file.dirEntries( safePath, pattern, std.file.SpanMode.breadth ) )
-                handleFile( name );
+                files ~= new FilePath( name );
         else
             foreach( name; std.file.dirEntries( safePath, std.file.SpanMode.breadth ) )
-                handleFile( name );
-
-        files.length = filesFound;
+                files ~= new FilePath( name );
 
         return files;
     }

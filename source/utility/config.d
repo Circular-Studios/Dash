@@ -53,11 +53,8 @@ static this()
     contentNode = Node( YAMLNull() );
 
     constructor.addConstructorScalar( "!Vector2", &constructVector2 );
-    constructor.addConstructorMapping( "!Vector2-Map", &constructVector2 );
     constructor.addConstructorScalar( "!Vector3", &constructVector3 );
-    constructor.addConstructorMapping( "!Vector3-Map", &constructVector3 );
     constructor.addConstructorScalar( "!Quaternion", &constructQuaternion );
-    constructor.addConstructorMapping( "!Quaternion-Map", &constructQuaternion );
     constructor.addConstructorScalar( "!Verbosity", &constructConv!Verbosity );
     constructor.addConstructorScalar( "!Keyboard", &constructConv!Keyboard );
     constructor.addConstructorScalar( "!Shader", ( ref Node node ) => Shaders.get( node.get!string ) );
@@ -706,25 +703,16 @@ shared(vec3) constructVector3( ref Node node )
 {
     shared vec3 result;
 
-    if( node.isMapping )
-    {
-        result.x = node[ "x" ].as!float;
-        result.y = node[ "y" ].as!float;
-        result.z = node[ "z" ].as!float;
-    }
-    else if( node.isScalar )
-    {
-        string[] vals = node.as!string.split();
+    string[] vals = node.as!string.split();
 
-        if( vals.length != 3 )
-        {
-            throw new Exception( "Invalid number of values: " ~ node.as!string );
-        }
-
-        result.x = vals[ 0 ].to!float;
-        result.y = vals[ 1 ].to!float;
-        result.z = vals[ 2 ].to!float;
+    if( vals.length != 3 )
+    {
+        throw new Exception( "Invalid number of values: " ~ node.as!string );
     }
+
+    result.x = vals[ 0 ].to!float;
+    result.y = vals[ 1 ].to!float;
+    result.z = vals[ 2 ].to!float;
 
     return result;
 }
@@ -736,27 +724,17 @@ shared(quat) constructQuaternion( ref Node node )
 {
     shared quat result;
 
-    if( node.isMapping )
-    {
-        result.x = node[ "x" ].as!float;
-        result.y = node[ "y" ].as!float;
-        result.z = node[ "z" ].as!float;
-        result.w = node[ "w" ].as!float;
-    }
-    else if( node.isScalar )
-    {
-        string[] vals = node.as!string.split();
+    string[] vals = node.as!string.split();
 
-        if( vals.length != 3 )
-        {
-            throw new Exception( "Invalid number of values: " ~ node.as!string );
-        }
-
-        result.x = vals[ 0 ].to!float;
-        result.y = vals[ 1 ].to!float;
-        result.z = vals[ 2 ].to!float;
-        result.w = vals[ 3 ].to!float;
+    if( vals.length != 3 )
+    {
+        throw new Exception( "Invalid number of values: " ~ node.as!string );
     }
+
+    result.x = vals[ 0 ].to!float;
+    result.y = vals[ 1 ].to!float;
+    result.z = vals[ 2 ].to!float;
+    result.w = vals[ 3 ].to!float;
 
     return result;
 }

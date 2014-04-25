@@ -182,7 +182,6 @@ private:
         bench!( { Config.initialize(); } )( "Config init" );
         bench!( { Logger.initialize(); } )( "Logger init" );
         bench!( { Input.initialize(); } )( "Input init" );
-        bench!( { Output.initialize(); } )( "Output init" );
         bench!( { Graphics.initialize(); } )( "Graphics init" );
         bench!( { Assets.initialize(); } )( "Assets init" );
         bench!( { Prefabs.initialize(); } )( "Prefabs init" );

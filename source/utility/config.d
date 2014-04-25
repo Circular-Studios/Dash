@@ -2,21 +2,12 @@
  * Defines the static class Config, which handles all configuration options.
  */
 module utility.config;
-import utility.filepath;
+import utility.filepath, utility.output;
 
-// Imports for conversions
-import components.assets, components.lights;
-import graphics.shaders;
-import utility.output : Verbosity;
-import utility.input : Keyboard;
-import utility;
+public import yaml;
 
-import gl3n.linalg;
-import yaml;
-
-import std.array, std.conv, std.string, std.path,
-    std.typecons, std.variant, std.parallelism,
-    std.traits, std.algorithm, std.file;
+import std.variant, std.algorithm, std.traits,
+       std.array, std.conv, std.file;
 
 private string fileToYaml( string filePath ) { return filePath.replace( "\\", "/" ).replace( "../", "" ).replace( "/", "." ); }
 
@@ -34,7 +25,6 @@ mixin template ContentImport()
             import utility.config;
             contentYML = import( "Content.yml" );
         }
-        
     }
 }
 
@@ -52,15 +42,73 @@ static this()
     constructor = new Constructor;
     contentNode = Node( YAMLNull() );
 
-    constructor.addConstructorScalar( "!Vector2", &constructVector2 );
-    constructor.addConstructorScalar( "!Vector3", &constructVector3 );
-    constructor.addConstructorScalar( "!Quaternion", &constructQuaternion );
+    import components.lights;
+    import graphics.shaders.shaders;
+    import utility.input, utility.output;
+    import gl3n.linalg;
+
+    constructor.addConstructorScalar( "!Vector2", ( ref Node node )
+    {
+        shared vec2 result;
+        string[] vals = node.as!string.split();
+        if( vals.length != 2 )
+            throw new Exception( "Invalid number of values: " ~ node.as!string );
+
+        result.x = vals[ 0 ].to!float;
+        result.y = vals[ 1 ].to!float;
+        return result;
+    } );
+    constructor.addConstructorScalar( "!Vector3", ( ref Node node )
+    {
+        shared vec3 result;
+        string[] vals = node.as!string.split();
+        if( vals.length != 3 )
+            throw new Exception( "Invalid number of values: " ~ node.as!string );
+
+        result.x = vals[ 0 ].to!float;
+        result.y = vals[ 1 ].to!float;
+        result.z = vals[ 2 ].to!float;
+        return result;
+    } );
+    constructor.addConstructorScalar( "!Quaternion", ( ref Node node )
+    {
+        shared quat result;
+        string[] vals = node.as!string.split();
+        if( vals.length != 3 )
+            throw new Exception( "Invalid number of values: " ~ node.as!string );
+
+        result.x = vals[ 0 ].to!float;
+        result.y = vals[ 1 ].to!float;
+        result.z = vals[ 2 ].to!float;
+        result.w = vals[ 3 ].to!float;
+        return result;
+    } );
+    constructor.addConstructorMapping( "!Light-Directional", ( ref Node node )
+    {
+        shared vec3 color;
+        shared vec3 dir;
+        node.tryFind( "Color", color );
+        node.tryFind( "Direction", dir );
+        return cast(Light)new shared DirectionalLight( color, dir );
+    } );
+    constructor.addConstructorMapping( "!Light-Ambient", ( ref Node node )
+    {
+        shared vec3 color;
+        node.tryFind( "Color", color );
+        return cast(Light)new shared AmbientLight( color );
+    } );
+    constructor.addConstructorMapping( "!Light-Point", ( ref Node node )
+    {
+        shared vec3 color;
+        float radius, falloffRate;
+        node.tryFind( "Color", color );
+        node.tryFind( "Radius", radius );
+        node.tryFind( "FalloffRate", falloffRate );
+        return cast(Light)new shared PointLight( color, radius, falloffRate );
+    } );
     constructor.addConstructorScalar( "!Verbosity", &constructConv!Verbosity );
     constructor.addConstructorScalar( "!Keyboard", &constructConv!Keyboard );
     constructor.addConstructorScalar( "!Shader", ( ref Node node ) => Shaders.get( node.get!string ) );
-    constructor.addConstructorMapping( "!Light-Directional", &constructDirectionalLight );
-    constructor.addConstructorMapping( "!Light-Ambient", &constructAmbientLight );
-    constructor.addConstructorMapping( "!Light-Point", &constructPointLight );
     //constructor.addConstructorScalar( "!Texture", ( ref Node node ) => Assets.get!Texture( node.get!string ) );
     //constructor.addConstructorScalar( "!Mesh", ( ref Node node ) => Assets.get!Mesh( node.get!string ) );
     //constructor.addConstructorScalar( "!Material", ( ref Node node ) => Assets.get!Material( node.get!string ) );
@@ -666,117 +714,6 @@ public static:
         @property void z( int newZ ) { _z = newZ; }
     }
     }
-}
-
-/**
- * TODO
- */
-shared(vec2) constructVector2( ref Node node )
-{
-    shared vec2 result;
-
-    if( node.isMapping )
-    {
-        result.x = node[ "x" ].as!float;
-        result.y = node[ "y" ].as!float;
-    }
-    else if( node.isScalar )
-    {
-        string[] vals = node.as!string.split();
-
-        if( vals.length != 2 )
-        {
-            throw new Exception( "Invalid number of values: " ~ node.as!string );
-        }
-
-        result.x = vals[ 0 ].to!float;
-        result.y = vals[ 1 ].to!float;
-    }
-
-    return result;
-}
-
-/**
- * TODO
- */
-shared(vec3) constructVector3( ref Node node )
-{
-    shared vec3 result;
-
-    string[] vals = node.as!string.split();
-
-    if( vals.length != 3 )
-    {
-        throw new Exception( "Invalid number of values: " ~ node.as!string );
-    }
-
-    result.x = vals[ 0 ].to!float;
-    result.y = vals[ 1 ].to!float;
-    result.z = vals[ 2 ].to!float;
-
-    return result;
-}
-
-/**
- * TODO
- */
-shared(quat) constructQuaternion( ref Node node )
-{
-    shared quat result;
-
-    string[] vals = node.as!string.split();
-
-    if( vals.length != 3 )
-    {
-        throw new Exception( "Invalid number of values: " ~ node.as!string );
-    }
-
-    result.x = vals[ 0 ].to!float;
-    result.y = vals[ 1 ].to!float;
-    result.z = vals[ 2 ].to!float;
-    result.w = vals[ 3 ].to!float;
-
-    return result;
-}
-
-/**
- * TODO
- */
-Light constructAmbientLight( ref Node node )
-{
-    shared vec3 color;
-    node.tryFind( "Color", color );
-    
-    return cast()new shared AmbientLight( color );
-}
-
-/**
- * TODO
- */
-Light constructDirectionalLight( ref Node node )
-{
-    shared vec3 color;
-    shared vec3 dir;
-
-    node.tryFind( "Color", color );
-    node.tryFind( "Direction", dir );
-
-    return cast()new shared DirectionalLight( color, dir );
-}
-
-/**
- * TODO
- */
-Light constructPointLight( ref Node node )
-{
-    shared vec3 color;
-    float radius, falloffRate;
-
-    node.tryFind( "Color", color );
-    node.tryFind( "Radius", radius );
-    node.tryFind( "FalloffRate", falloffRate );
-
-    return cast()new shared PointLight( color, radius, falloffRate );
 }
 
 /**

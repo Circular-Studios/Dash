@@ -44,6 +44,8 @@ mixin template ContentImport()
 
 /// The node config values are stored.
 Node config;
+/// The constructor used to load load new yaml files.
+Constructor constructor;
 
 /**
  * Process all yaml files in a directory.
@@ -393,11 +395,7 @@ version(unittest) class Test
  */
 final abstract class Config
 {
-static:
-private:
-    Constructor constructor;
-
-public:
+public static:
     /**
      * TODO
      */
@@ -447,6 +445,8 @@ public:
         config = loadYamlFile( FilePath.Resources.ConfigFile );
     }
 
+    deprecated( "Use global versions instead." )
+    {
     /**
      * Get the element, cast to the given type, at the given path, in the given node.
      */
@@ -500,8 +500,6 @@ public:
         assert( Config.get!int( "test3.test2.test1", n4 ) == 10, "Config.get nested test failed");
     }
 
-    deprecated( "Use global versions instead." )
-    {
     /**
     * Try to get the value at path, assign to result, and return success.
     */

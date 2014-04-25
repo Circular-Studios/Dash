@@ -300,22 +300,12 @@ public:
      */
     final void addChild( shared GameObject newChild )
     {
-        import std.algorithm;
         // Nothing to see here.
         if( cast()newChild.parent == cast()this )
             return;
         // Remove from current parent
         else if( newChild.parent && cast()newChild.parent != cast()this )
-        {
-            // Get index of object being removed
-            auto newChildIndex = (cast(GameObject[])newChild.parent.children).countUntil( cast()newChild );
-            // Get objects after one being removed
-            auto end = newChild.parent.children[ newChildIndex+1..$ ];
-            // Get objects before one being removed
-            newChild.parent.children = newChild.parent.children[ 0..newChildIndex ];
-            // Add end back
-            newChild.parent._children ~= end;
-        }
+            newChild.parent.removeChild( newChild );
 
         _children ~= newChild;
         newChild.parent = this;
@@ -351,6 +341,32 @@ public:
             }   
         }
         
+    }
+
+    /**
+     * Removes the given object as a child from this object.
+     * 
+     * Params:
+     *  oldChild =            The object to remove.
+     */
+    final void removeChild( shared GameObject oldChild )
+    {
+        import std.algorithm;
+        // Get index of object being removed
+        auto oldChildIndex = (cast(GameObject[])children).countUntil( cast()oldChild );
+
+        // Return if not actually a child
+        if( oldChildIndex == -1 )
+            return;
+
+        // Get objects after one being removed
+        auto end = children[ oldChildIndex+1..$ ];
+        // Get objects before one being removed
+        children = children[ 0..oldChildIndex ];
+        // Add end back
+        _children ~= end;
+
+        oldChild.canChangeName = true;
     }
 
     /// Called on the update cycle.

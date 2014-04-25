@@ -105,6 +105,17 @@ public:
     }
 
     /**
+     * Removes the given object as a child from this scene.
+     *
+     * Params:
+     *  oldChild =            The object to remove.
+     */
+    final void removechild( shared GameObject oldChild )
+    {
+        root.removeChild( oldChild );
+    }
+
+    /**
     * TODO
     */
     final @property shared(GameObject[]) objects()

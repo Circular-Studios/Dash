@@ -447,7 +447,8 @@ public:
     /// The object which this belongs to.
     mixin( Property!( _owner, AccessModifier.Public ) );
     /// The world matrix of the transform.
-    mixin( ThisDirtyGetter!( _matrix, updateMatrix ) );
+    mixin( Getter!_matrix );
+    //mixin( ThisDirtyGetter!( _matrix, updateMatrix ) );
 
     /**
      * Default constructor, most often created by GameObjects.

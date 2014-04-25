@@ -130,8 +130,259 @@ Node loadYamlFile( string filePath )
     }
     else
     {
-        return Config.get!Node( filePath.fileToYaml, contentNode );
+        return contentNode.find( filePath.fileToYaml );
     }
+}
+
+/**
+ * Get the element, cast to the given type, at the given path, in the given node.
+ *
+ * Params:
+ *  node =          The node to search.
+ *  path =          The path to find the item at.
+ */
+final T find( T = Node )( Node node, string path )
+{
+    T temp;
+    if( node.tryFind( path, temp ) )
+        return temp;
+    else
+        throw new YAMLException( "Path " ~ path ~ " not found in the given node." );
+}
+///
+unittest
+{
+    import std.stdio;
+    import std.exception;
+    
+    writeln( "Dash Config get unittest" );
+
+    auto n1 = Node( [ "test1": 10 ] );
+
+    assert( Config.get!int( "test1", n1 ) == 10, "Config.get error." );
+
+    assertThrown!Exception(Config.get!int( "dontexist", n1 ));
+    
+    // nested test
+    auto n2 = Node( ["test2": n1] );
+    auto n3 = Node( ["test3": n2] );
+    
+    assert( Config.get!int( "test3.test2.test1", n3 ) == 10, "Config.get nested test failed");
+    
+    auto n4 = Loader.fromString(
+        "test3:\n"
+        "   test2:\n"
+        "       test1: 10").load;
+    assert( Config.get!int( "test3.test2.test1", n4 ) == 10, "Config.get nested test failed");
+}
+
+/**
+ * Try to get the value at path, assign to result, and return success.
+ *
+ * Params:
+ *  node =          The node to search.
+ *  path =          The path to look for in the node.
+ *  result =        [ref] The value to assign the result to.
+ *
+ * Returns: Whether or not the path was found.
+ */
+final bool tryFind( T )( Node node, string path, ref T result ) nothrow @safe
+{
+    // If anything goes wrong, it means the node wasn't found.
+    scope( failure ) return false;
+    
+    Node res;
+    bool found = node.tryFind( path, res );
+
+    if( found )
+    {
+        static if( !isSomeString!T && is( T U : U[] ) )
+        {
+            assert( res.isSequence, "Trying to access non-sequence node " ~ path ~ " as an array." );
+
+            foreach( Node element; res )
+                result ~= element.get!U;
+        }
+        else
+        {
+            result = res.get!T;
+        }
+    }
+
+    return found;
+}
+
+/// ditto
+final bool tryFind( T: Node )( Node node, string path, ref T result ) nothrow @safe
+{
+    // If anything goes wrong, it means the node wasn't found.
+    scope( failure ) return false;
+
+    Node current;
+    string left;
+    string right = path;
+
+    for( current = node; right.length; )
+    {
+        auto split = right.countUntil( '.' );
+
+        if( split == -1 )
+        {
+            left = right;
+            right.length = 0;
+        }
+        else
+        {
+            left = right[ 0..split ];
+            right = right[ split + 1..$ ];
+        }
+
+        if( !current.isMapping || !current.containsKey( left ) )
+            return false;
+
+        current = current[ left ];
+    }
+
+    result = current;
+
+    return true;
+}
+
+/// ditto
+final bool tryFind( T = Node )( Node node, string path, ref Variant result ) nothrow @safe
+{
+    // Get the value
+    T temp;
+    bool found = tryFind( path, temp, node );
+
+    // Assign and return results
+    if( found )
+        result = temp;
+
+    return found;
+}
+
+/**
+ * You may not get a variant from a node. You may assign to one,
+ * but you must specify a type to search for.
+ */
+@disable bool tryFind( T: Variant )( Node node, string path, ref Variant result );
+
+unittest
+{
+    import std.stdio;
+    writeln( "Dash Config tryFind unittest" );
+
+    auto n1 = Node( [ "test1": 10 ] );
+
+    int val;
+    assert( Config.tryFind( "test1", val, n1 ), "Config.tryFind failed." );
+    assert( !Config.tryFind( "dontexist", val, n1 ), "Config.tryFind returned true." );
+}
+
+/**
+ * Get element as a file path relative to the content home.
+ *
+ * Params:
+ *  node =          The node to search for the path in.
+ *  path =          The path to search the node for.
+ *
+ * Returns: The value at path relative to FilePath.ResourceHome.
+ */
+final string findPath( Node node, string path )
+{
+    return FilePath.ResourceHome ~ node.find!string( path );//buildNormalizedPath( FilePath.ResourceHome, get!string( path ) );;
+}
+
+/**
+ * Get a YAML map as a D object of type T.
+ *
+ * Params:
+ *  T =             The type to get from the node.
+ *  node =          The node to turn into the object.
+ *
+ * Returns: An object of type T that has all fields from the YAML node assigned to it.
+ */
+final T getObject( T )( Node node )
+{
+    T toReturn;
+
+    static if( is( T == class ) )
+        toReturn = new T;
+
+    // Get each member of the type
+    foreach( memberName; __traits(derivedMembers, T) )
+    {
+        // Make sure member is accessable
+        enum protection = __traits( getProtection, __traits( getMember, toReturn, memberName ) );
+        static if( protection == "public" || protection == "export" &&
+                   __traits( compiles, isMutable!( __traits( getMember, toReturn, memberName ) ) ) )
+        {
+            // If it is a field and not a function, tryGet it's value
+            static if( !__traits( compiles, ParameterTypeTuple!( __traits( getMember, toReturn, memberName ) ) ) &&
+                       !__traits( compiles, isBasicType!( __traits( getMember, toReturn, memberName ) ) ) )
+            {
+                // Make sure member is mutable
+                static if( isMutable!( typeof( __traits( getMember, toReturn, memberName ) ) ) )
+                {
+                    tryGet( memberName, __traits( getMember, toReturn, memberName ), node );
+                }
+            }
+            else
+            {
+                // Iterate over each overload of the function (common to have getter and setter)
+                foreach( func; __traits( getOverloads, T, memberName ) )
+                {
+                    enum funcProtection = __traits( getProtection, func );
+                    static if( funcProtection == "public" || funcProtection == "export" )
+                    {
+                        // Get the param types of the function
+                        alias params = ParameterTypeTuple!func;
+
+                        // If it can be a setter and is a property
+                        static if( params.length == 1 && ( functionAttributes!func & FunctionAttribute.property ) )
+                        {
+                            // Else, set as temp
+                            static if( is( params[ 0 ] == enum ) )
+                            {
+                                string tempValue;
+                            }
+                            else
+                            {
+                                params[ 0 ] otherTempValue;
+                                auto tempValue = cast()otherTempValue;
+                            }
+
+                            if( tryGet( memberName, tempValue, node ) )
+                                mixin( "toReturn." ~ memberName ~ " = tempValue.to!(params[0]);" );
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    return toReturn;
+}
+unittest
+{
+    import std.stdio;
+    writeln( "Dash Config getObject unittest" );
+
+    auto t = getObject!Test( Node( ["x": 5, "y": 7, "z": 9] ) );
+
+    assert( t.x == 5 );
+    assert( t.y == 7 );
+    assert( t.z == 9 );
+}
+version(unittest) class Test
+{
+    int x;
+    int y;
+    private int _z;
+
+    @property int z() { return _z; }
+    @property void z( int newZ ) { _z = newZ; }
 }
 
 /**
@@ -174,7 +425,7 @@ public:
             logDebug( "Using imported Content.yml file." );
             assert( contentYML, "EmbedContent version set, mixin not used." );
             import std.stream;
-            auto loader = Loader( new MemoryStream( cast(char[])contentYML ) );
+            auto loader = Loader.fromString( contentYML );
             loader.constructor = constructor;
             contentNode = loader.load();
         }
@@ -247,6 +498,8 @@ public:
         assert( Config.get!int( "test3.test2.test1", n4 ) == 10, "Config.get nested test failed");
     }
 
+    deprecated( "Use global versions instead." )
+    {
     /**
     * Try to get the value at path, assign to result, and return success.
     */
@@ -321,18 +574,6 @@ public:
     }
 
     @disable bool tryGet( T: Variant )( string path, ref T result, Node node = config );
-
-    unittest
-    {
-        import std.stdio;
-        writeln( "Dash Config tryGet unittest" );
-
-        auto n1 = Node( [ "test1": 10 ] );
-
-        int val;
-        assert( Config.tryGet( "test1", val, n1 ), "Config.tryGet failed." );
-        assert( !Config.tryGet( "dontexist", val, n1 ), "Config.tryGet returned true." );
-    }
 
     /**
      * Get element as a file path.
@@ -422,6 +663,7 @@ public:
 
         @property int z() { return _z; }
         @property void z( int newZ ) { _z = newZ; }
+    }
     }
 }
 

@@ -367,6 +367,7 @@ public:
         _children ~= end;
 
         oldChild.canChangeName = true;
+        oldChild.parent = null;
     }
 
     /// Called on the update cycle.

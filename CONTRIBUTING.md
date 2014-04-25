@@ -1,6 +1,6 @@
 # Contributing to Dash
 
-First of all, thanks for choosing Dash! We really hope you enjoy your time working with our engine. To get setup with the engine, see our page on [setting up your environment](https://github.com/Circular-Studios/Dash/wiki/Setting-Up-Your-Environment-(Engine\)).
+First of all, thanks for choosing Dash! We really hope you enjoy your time working with our engine. To get setup with the engine, see our page on [setting up your environment](https://github.com/Circular-Studios/Dash/wiki/Setting-Up-Your-Environment).
 
 ## Communication
 
@@ -18,12 +18,14 @@ We use [semantic versioning](http://semver.org/). Each minor version gets a mile
 
 All major features or enhancements being added are done on feature branches, then merged to develop through Pull Requests. Pull requests should be named as `Type: Name`, where `Type` could be `Feature`, `Refactor`, `Cleanup`, etc.
 
-Issues should be created for all tasks and bugs. Issues should be assigned to a milestone, and then claimed by a developer.
+## Issue Tracking
 
-## What to Work On
+Now that you know how to contribute, you may be wondering what to work on.  In order to help all of our contributors work effectively on tasks, we will maintain a straightforward issue tracking strategy through Dash's [waffle.io page](https://waffle.io/circular-studios/dash).
 
-Now that you know how to contribute, you may be wondering what to work on.
+If you are looking for something to work on, your first step should be to go to the **Ready** column, however here is an overview of the tracking strategy we've adopted:
 
-If you're looking for a large task, the first place to look would be on the [Planned Features](https://github.com/Circular-Studios/Dash/wiki/Planned-Features) page. This is where the list of all of the big things we want lives.
-
-If you're looking for an intro to the code base, or only really have time for little things, check out the "Ready" column of our [waffle.io board](https://waffle.io/Circular-Studios/Dash). Things here could range from adding support for loading YAML arrays to fixing a bug in the linux build.
+* **New**: if you find a bug, want to suggest a feature, or see a need for optimization, feel free to create a new issue.  These issues will be tracked in the New column until we have had time to review them.
+* **Accepted**: tracks issues that we have approved as relevant to the project.  For bugs, this means that we've reporduced the bug and accept that it's not as-intended. For features, this means we have reviewed that the feature fits with our vision of the Dash engine and is something we actually plan to support.
+* **Ready**: tracks issues which we have determined are ready for implementation.  Sometimes features will be accepted, but the current state of the engine is not at a place where the issue is worth working on.  Once we feel the engine is ready to support a given issue, we will transition the issue to ready.
+* **In Progress**: tracks issues which are currently being developed.  If you are beginning work on an issue, please comment on the issue with a relevant fork branch, and we will move the issue to this column.
+* **Done**: closed issues end up here.

@@ -3,13 +3,14 @@
  *
  */
 module utility.tasks;
-import utility.time;
+import utility.time, utility.output;
 
 import gl3n.util: is_vector, is_matrix, is_quaternion;
 import gl3n.interpolate: lerp;
 
 import core.time;
 import std.algorithm: min;
+import std.parallelism: parallel;
 
 public:
 /**
@@ -37,13 +38,84 @@ void scheduleTask( bool delegate() dg )
  * scheduleInterpolateTask( transform.position, startNode, endNode, 100.msecs );
  * ---
  */
-void scheduleInterpolateTask(T)( ref T val, T start, T end, Duration duration, void function( T, T, float ) interpFunc = &lerp ) if( is_vector!T || is_matrix!T || is_quaternion!T )
+void scheduleInterpolateTask(T)( ref T val, T start, T end, Duration duration, T function( T, T, float ) interpFunc = &lerp!T ) if( is_vector!T || is_quaternion!T )
 {
     auto startTime = Time.totalTime;
-    scheduleTimedTask( time, ( elapsed )
+    scheduleTimedTask( duration, ( elapsed )
     {
         val = interpFunc( start, end, elapsed / duration.toSeconds );
     } );
+}
+///
+unittest
+{
+    import std.stdio;
+    import gl3n.linalg;
+
+    writeln( "Dash Tasks scheduleInterpolateTask unittest 1" );
+
+    shared vec3 interpVec = shared vec3( 0, 0, 0 );
+    shared vec3 start = shared vec3( 0, 1, 0 );
+    shared vec3 end = shared vec3( 0, 1, 1 );
+    scheduleInterpolateTask( interpVec, start, end, 100.msecs );
+
+    while( scheduledTasks.length )
+        executeTasks();
+
+    assert( interpVec == end );
+}
+
+/**
+ * Schedule a task to interpolate a property over a period of time.
+ *
+ * Params:
+ *  prop =              The name of the property being interpolated
+ *  own =               [ref] The owner of the property
+ *  start =             The starting value for interpolation
+ *  end =               The target value for interpolation
+ *  interpFunc =        [default=lerp] The function to use for interpolation
+ *
+ * Example:
+ * ---
+ * scheduleInterpolateTask( transform.position, startNode, endNode, 100.msecs );
+ * ---
+ */
+void scheduleInterpolateTask( string prop, T, Owner )( ref Owner own, T start, T end, Duration duration, T function( T, T, float ) interpFunc = &lerp!T )
+    if( ( is_vector!T || is_quaternion!T ) && __traits( compiles, mixin( "own." ~ prop ) ) )
+{
+    auto startTime = Time.totalTime;
+    scheduleTimedTask( duration, ( elapsed )
+    {
+        mixin( "own." ~ prop ~ " = interpFunc( start, end, elapsed / duration.toSeconds );" );
+    } );
+}
+///
+unittest
+{
+    import std.stdio;
+    import gl3n.linalg;
+
+    writeln( "Dash Tasks scheduleInterpolateTask unittest 2" );
+
+    auto testClass = new TestPropertyInterpolate;
+    testClass.vector = shared vec3( 0, 0, 0 );
+    shared vec3 start = shared vec3( 0, 1, 0 );
+    shared vec3 end = shared vec3( 0, 1, 1 );
+    scheduleInterpolateTask!q{vector}( testClass, start, end, 100.msecs );
+
+    while( scheduledTasks.length )
+        executeTasks();
+
+    assert( testClass.vector == end );
+}
+version( unittest )
+class TestPropertyInterpolate
+{
+    import gl3n.linalg;
+
+    private shared vec3 _vector;
+    public @property shared(vec3) vector() { return _vector; }
+    public @property void vector( shared vec3 newVal ) { _vector = newVal; }
 }
 
 /**
@@ -188,12 +260,12 @@ void scheduleDelayedTask( void delegate() dg, Duration delay )
 void executeTasks()
 {
     size_t[] toRemove;    // Indicies of tasks which are done
-    foreach( i, task; scheduledTasks )
+    foreach( i, task; parallel( scheduledTasks ) )
     {
         if( task() )
-            toRemove ~= i;
+            synchronized toRemove ~= i;
     }
-    foreach( i; toRemove )
+    foreach_reverse( i; toRemove )
     {
         // Get tasks after one being removed
         auto end = scheduledTasks[ i+1..$ ];

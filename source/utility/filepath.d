@@ -20,7 +20,7 @@ private:
     string _directory;
     string _extension;
     File* file;
-    
+
 public:
     /**
      * The path to the resources home folder.
@@ -42,7 +42,7 @@ public:
         UI = ResourceHome ~ "/UI",
         ConfigDir = ResourceHome ~ "/Config",
         ConfigFile = ConfigDir ~ "/Config",
-        InputBindings = ConfigDir ~ "/Input", 
+        InputBindings = ConfigDir ~ "/Input",
         CompactContentFile = ResourceHome ~ "/Content",
     }
 
@@ -138,7 +138,9 @@ public:
     }
 
     /**
-     * TODO
+     * Read the contents of the file.
+     *
+     * Returns: The contents of a file as a string.
      */
     final string getContents()
     {
@@ -147,6 +149,9 @@ public:
 
     /**
      * Create an instance based on a given file path.
+     *
+     * Params:
+     *  path =            The path of the file created.
      */
     this( string path )
     {

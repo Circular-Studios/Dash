@@ -7,7 +7,7 @@ import core, components, graphics, utility;
 import yaml;
 import gl3n.linalg, gl3n.math;
 
-import std.conv, std.variant;
+import std.conv, std.variant, std.array;
 
 enum AnonymousName = "__anonymous";
 
@@ -59,6 +59,7 @@ private:
     IComponent[TypeInfo] componentList;
     string _name;
     ObjectStateFlags* _stateFlags;
+    bool canChangeName;
     static uint nextId = 1;
 
 package:
@@ -81,10 +82,12 @@ public:
     mixin( Property!( _parent, AccessModifier.Public ) );
     /// All of the objects which list this as parent
     mixin( Property!( _children, AccessModifier.Public ) );
-    /// The name of the object.
-    mixin( Property!( _name, AccessModifier.Public ) );
     /// The current update settings
     mixin( Property!( _stateFlags, AccessModifier.Public ) );
+    /// The name of the object.
+    mixin( Getter!_name );
+    /// ditto
+    mixin( ConditionalSetter!( _name, q{canChangeName}, AccessModifier.Public ) );
     /// The ID of the object
     immutable uint id;
 
@@ -98,7 +101,7 @@ public:
      * Returns:
      *  A new game object with components and info pulled from yaml.
      */
-    static shared(GameObject) createFromYaml( Node yamlObj, ref string[shared GameObject] parents, ref string[][shared GameObject] children, const ClassInfo scriptOverride = null )
+    static shared(GameObject) createFromYaml( Node yamlObj, const ClassInfo scriptOverride = null )
     {
         shared GameObject obj;
         bool foundClassName;
@@ -128,7 +131,7 @@ public:
 
             if( Config.tryGet( "InstanceOf", prop, yamlObj ) )
             {
-                obj = Prefabs[ prop ].createInstance( parents, children, scriptClass );
+                obj = Prefabs[ prop ].createInstance( scriptClass );
             }
             else
             {
@@ -161,7 +164,7 @@ public:
 
         // If parent is specified, add it to the map
         if( Config.tryGet( "Parent", prop, yamlObj ) )
-            parents[ obj ] = prop;
+            logWarning( "Specifying parent objects by name is deprecated. Please add this as an inline child to ", prop, "." );
 
         if( Config.tryGet( "Children", innerNode, yamlObj ) )
         {
@@ -172,12 +175,12 @@ public:
                     if( child.isScalar )
                     {
                         // Add child name to map.
-                        children[ obj ] ~= child.get!string;
+                        logWarning( "Specifing child objects by name is deprecated. Please add ", child.get!string, " as an inline child of ", objName, "." );
                     }
                     else
                     {
                         // If inline object, create it and add it as a child.
-                        obj.addChild( GameObject.createFromYaml( child, parents, children ) );
+                        obj.addChild( GameObject.createFromYaml( child ) );
                     }
                 }
             }
@@ -215,6 +218,9 @@ public:
 
         stateFlags = new ObjectStateFlags;
         stateFlags.resumeAll();
+
+        name = typeid(this).name.split( '.' )[ $-1 ] ~ id.to!string;
+        canChangeName = true;
     }
 
     ~this()
@@ -275,7 +281,8 @@ public:
      */
     final void addComponent( T )( shared T newComponent ) if( is( T : IComponent ) )
     {
-        componentList[ typeid(T) ] = newComponent;
+        if( newComponent )
+            componentList[ typeid(T) ] = newComponent;
     }
 
     /**
@@ -295,26 +302,17 @@ public:
      */
     final void addChild( shared GameObject newChild )
     {
-        import std.algorithm;
         // Nothing to see here.
         if( cast()newChild.parent == cast()this )
             return;
         // Remove from current parent
         else if( newChild.parent && cast()newChild.parent != cast()this )
-        {
-            // Get index of object being removed
-            auto newChildIndex = (cast(GameObject[])newChild.parent.children).countUntil( cast()newChild );
-            // Get objects after one being removed
-            auto end = newChild.parent.children[ newChildIndex+1..$ ];
-            // Get objects before one being removed
-            newChild.parent.children = newChild.parent.children[ 0..newChildIndex ];
-            // Add end back
-            newChild.parent._children ~= end;
-        }
+            newChild.parent.removeChild( newChild );
 
         _children ~= newChild;
         newChild.parent = this;
-        
+        newChild.canChangeName = false;
+
         // Get root object
         shared GameObject par;
         for( par = this; par.parent; par = par.parent ) { }
@@ -342,9 +340,36 @@ public:
             {
                 par.scene.objectById[ child.id ] = child;
                 par.scene.idByName[ child.name ] = child.id;
-            }   
+            }
         }
-        
+
+    }
+
+    /**
+     * Removes the given object as a child from this object.
+     *
+     * Params:
+     *  oldChild =            The object to remove.
+     */
+    final void removeChild( shared GameObject oldChild )
+    {
+        import std.algorithm;
+        // Get index of object being removed
+        auto oldChildIndex = (cast(GameObject[])children).countUntil( cast()oldChild );
+
+        // Return if not actually a child
+        if( oldChildIndex == -1 )
+            return;
+
+        // Get objects after one being removed
+        auto end = children[ oldChildIndex+1..$ ];
+        // Get objects before one being removed
+        children = children[ 0..oldChildIndex ];
+        // Add end back
+        _children ~= end;
+
+        oldChild.canChangeName = true;
+        oldChild.parent = null;
     }
 
     /// Called on the update cycle.
@@ -414,24 +439,23 @@ private:
 
 public:
     // these should remain public fields, properties return copies not references
-    /// TODO
+    /// The position of the object in local space.
     vec3 position;
-    /// TODO
+    /// The rotation of the object in local space.
     quat rotation;
-    /// TODO
+    /// The absolute scale of the object. Ignores parent scale.
     vec3 scale;
 
-    /// TODO
+    /// The object which this belongs to.
     mixin( Property!( _owner, AccessModifier.Public ) );
-    /// TODO
+    /// The world matrix of the transform.
     mixin( ThisDirtyGetter!( _matrix, updateMatrix ) );
 
     /**
-     * TODO
+     * Default constructor, most often created by GameObjects.
      *
      * Params:
-     *
-     * Returns:
+     *  obj =            The object the transform belongs to.
      */
     this( shared GameObject obj = null )
     {
@@ -441,13 +465,11 @@ public:
         rotation = quat.identity;
     }
 
-    ~this()
-    {
-    }
-
     /**
-    * This returns the object's position relative to the world origin, not the parent
-    */
+     * This returns the object's position relative to the world origin, not the parent.
+     *
+     * Returns: The object's position relative to the world origin, not the parent.
+     */
     final @property shared(vec3) worldPosition() @safe pure nothrow
     {
         if( owner.parent is null )
@@ -457,8 +479,10 @@ public:
     }
 
     /**
-    * This returns the object's rotation relative to the world origin, not the parent
-    */
+     * This returns the object's rotation relative to the world origin, not the parent.
+     *
+     * Returns: The object's rotation relative to the world origin, not the parent.
+     */
     final @property shared(quat) worldRotation() @safe pure nothrow
     {
         if( owner.parent is null )
@@ -470,6 +494,8 @@ public:
     /*
      * Check if current or a parent's matrix needs to be updated.
      * Called automatically when getting matrix.
+     *
+     * Returns: Whether or not the object is dirty.
      */
     final override @property bool isDirty() @safe pure nothrow
     {
@@ -481,9 +507,9 @@ public:
     }
 
     /*
-     * Gets the forward axis of the current transform
+     * Gets the forward axis of the current transform.
      *
-     * Returns: The forward axis of the current transform
+     * Returns: The forward axis of the current transform.
      */
     final @property const shared(vec3) forward()
     {
@@ -505,9 +531,9 @@ public:
     }
 
     /*
-     * Gets the up axis of the current transform
+     * Gets the up axis of the current transform.
      *
-     * Returns: The up axis of the current transform
+     * Returns: The up axis of the current transform.
      */
     final  @property const shared(vec3) up()
     {
@@ -528,11 +554,11 @@ public:
         trans.rotation.rotatex( 90.radians );
         assert( almost_equal( trans.up, up ) );
     }
- 
+
     /*
-     * Gets the right axis of the current transform
+     * Gets the right axis of the current transform.
      *
-     * Returns: The right axis of the current transform
+     * Returns: The right axis of the current transform.
      */
     final  @property const shared(vec3) right()
     {
@@ -555,7 +581,7 @@ public:
     }
 
     /**
-     * Rebuilds the object's matrix
+     * Rebuilds the object's matrix.
      */
     final void updateMatrix() @safe pure nothrow
     {

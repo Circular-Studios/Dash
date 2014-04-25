@@ -7,7 +7,7 @@ import core, components, graphics, utility;
 import yaml;
 import gl3n.linalg, gl3n.math;
 
-import std.conv, std.variant;
+import std.conv, std.variant, std.array;
 
 enum AnonymousName = "__anonymous";
 
@@ -215,6 +215,8 @@ public:
 
         stateFlags = new ObjectStateFlags;
         stateFlags.resumeAll();
+
+        name = typeid(this).name.split( '.' )[ $-1 ] ~ id.to!string;
     }
 
     ~this()

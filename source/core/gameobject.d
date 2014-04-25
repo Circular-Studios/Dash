@@ -98,7 +98,7 @@ public:
      * Returns:
      *  A new game object with components and info pulled from yaml.
      */
-    static shared(GameObject) createFromYaml( Node yamlObj, ref string[shared GameObject] parents, ref string[][shared GameObject] children, const ClassInfo scriptOverride = null )
+    static shared(GameObject) createFromYaml( Node yamlObj, const ClassInfo scriptOverride = null )
     {
         shared GameObject obj;
         bool foundClassName;
@@ -128,7 +128,7 @@ public:
 
             if( Config.tryGet( "InstanceOf", prop, yamlObj ) )
             {
-                obj = Prefabs[ prop ].createInstance( parents, children, scriptClass );
+                obj = Prefabs[ prop ].createInstance( scriptClass );
             }
             else
             {
@@ -161,7 +161,7 @@ public:
 
         // If parent is specified, add it to the map
         if( Config.tryGet( "Parent", prop, yamlObj ) )
-            parents[ obj ] = prop;
+            logWarning( "Specifying parent objects by name is deprecated. Please add this as an inline child to ", prop, "." );
 
         if( Config.tryGet( "Children", innerNode, yamlObj ) )
         {
@@ -172,12 +172,12 @@ public:
                     if( child.isScalar )
                     {
                         // Add child name to map.
-                        children[ obj ] ~= child.get!string;
+                        logWarning( "Specifing child objects by name is deprecated. Please add ", child.get!string, " as an inline child of ", objName, "." );
                     }
                     else
                     {
                         // If inline object, create it and add it as a child.
-                        obj.addChild( GameObject.createFromYaml( child, parents, children ) );
+                        obj.addChild( GameObject.createFromYaml( child ) );
                     }
                 }
             }
@@ -273,7 +273,8 @@ public:
      */
     final void addComponent( T )( shared T newComponent ) if( is( T : IComponent ) )
     {
-        componentList[ typeid(T) ] = newComponent;
+        if( newComponent )
+            componentList[ typeid(T) ] = newComponent;
     }
 
     /**

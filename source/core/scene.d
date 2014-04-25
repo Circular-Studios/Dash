@@ -40,21 +40,11 @@ public:
      */
     final void loadObjects( string objectPath = "" )
     {
-        string[shared GameObject] parents;
-        string[][shared GameObject] children;
-
         foreach( yml; loadYamlDocuments( buildNormalizedPath( FilePath.Resources.Objects, objectPath ) ) )
         {
             // Create the object
-            root.addChild( GameObject.createFromYaml( yml, parents, children ) );
+            root.addChild( GameObject.createFromYaml( yml ) );
         }
-        
-        // Make sure the child graph is complete.
-        foreach( object, parentName; parents )
-            this[ parentName ].addChild( object );
-        foreach( object, childNames; children )
-            foreach( child; childNames )
-                object.addChild( this[ child ] );
     }
 
     /**

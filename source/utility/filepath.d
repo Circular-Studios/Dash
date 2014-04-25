@@ -41,8 +41,9 @@ public:
         Shaders = ResourceHome ~ "/Shaders",
         UI = ResourceHome ~ "/UI",
         ConfigDir = ResourceHome ~ "/Config",
-        ConfigFile = ConfigDir ~ "/Config.yml",
-        InputBindings = ConfigDir ~ "/Input.yml", 
+        ConfigFile = ConfigDir ~ "/Config",
+        InputBindings = ConfigDir ~ "/Input", 
+        CompactContentFile = ResourceHome ~ "/Content",
     }
 
     /**
@@ -55,7 +56,7 @@ public:
 
         if( !std.file.exists( safePath ) )
         {
-            logNotice( path, " does not exist." );
+            logDebug( path, " does not exist." );
             return [];
         }
 

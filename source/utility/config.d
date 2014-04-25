@@ -16,7 +16,31 @@ import yaml;
 
 import std.array, std.conv, std.string, std.path,
     std.typecons, std.variant, std.parallelism,
-    std.traits, std.algorithm;
+    std.traits, std.algorithm, std.file;
+
+private Node contentNode;
+private string fileToYaml( string filePath ) { return filePath.replace( "\\", "/" ).replace( "../", "" ).replace( "/", "." ); }
+
+version( EmbedContent )
+string contentYML;
+
+/**
+ * Place this mixin anywhere in your game code to allow the Content.yml file
+ * to be imported at compile time. Note that this will only actually import
+ * the file when EmbedContent is listed as a defined version.
+ */
+mixin template ContentImport()
+{
+    version( EmbedContent )
+    {
+        static this()
+        {
+            import utility.config;
+            contentYML = import( "Content.yml" );
+        }
+        
+    }
+}
 
 /**
  * Process all yaml files in a directory.
@@ -28,23 +52,43 @@ Node[] loadYamlDocuments( string folder )
 {
     Node[] nodes;
 
-    // Actually scan directories
-    foreach( file; FilePath.scanDirectory( folder, "*.yml" ) )
+    if( contentNode.isNull )
     {
-        auto loader = Loader( file.fullPath );
-        loader.constructor = Config.constructor;
-
-        try
+        // Actually scan directories
+        foreach( file; FilePath.scanDirectory( folder, "*.yml" ) )
         {
-            // Iterate over all documents in a file
-            foreach( doc; loader )
+            auto loader = Loader( file.fullPath );
+            loader.constructor = Config.constructor;
+
+            try
             {
-                nodes ~= doc;
+                // Iterate over all documents in a file
+                foreach( doc; loader )
+                {
+                    nodes ~= doc;
+                }
+            }
+            catch( YAMLException e )
+            {
+                logFatal( "Error parsing file ", file.baseFileName, ": ", e.msg );
             }
         }
-        catch( YAMLException e )
+    }
+    else
+    {
+        auto fileNode = Config.get!Node( folder.fileToYaml, contentNode );
+
+        foreach( string fileName, Node fileContent; fileNode )
         {
-            logFatal( "Error parsing file ", file.baseFileName, ": ", e.msg );
+            if( fileContent.isSequence )
+            {
+                foreach( Node childChild; fileContent )
+                    nodes ~= childChild;
+            }
+            else
+            {
+                nodes ~= fileContent;
+            }
         }
     }
 
@@ -70,16 +114,23 @@ T[] loadYamlObjects( T )( string folder )
  */
 Node loadYamlFile( string filePath )
 {
-    auto loader = Loader( filePath );
-    loader.constructor = Config.constructor;
-    try
+    if( contentNode.isNull )
     {
-        return loader.load();
+        auto loader = Loader( filePath ~ ".yml" );
+        loader.constructor = Config.constructor;
+        try
+        {
+            return loader.load();
+        }
+        catch( YAMLException e )
+        {
+            logFatal( "Error parsing file ", new FilePath( filePath ).baseFileName, ": ", e.msg );
+            return Node();
+        }  
     }
-    catch( YAMLException e )
+    else
     {
-        logFatal( "Error parsing file ", new FilePath( filePath ).baseFileName, ": ", e.msg );
-        return Node();
+        return Config.get!Node( filePath.fileToYaml, contentNode );
     }
 }
 
@@ -100,6 +151,7 @@ public:
     final void initialize()
     {
         constructor = new Constructor;
+        contentNode = Node( YAMLNull() );
 
         constructor.addConstructorScalar( "!Vector2", &constructVector2 );
         constructor.addConstructorMapping( "!Vector2-Map", &constructVector2 );
@@ -116,6 +168,28 @@ public:
         //constructor.addConstructorScalar( "!Texture", ( ref Node node ) => Assets.get!Texture( node.get!string ) );
         //constructor.addConstructorScalar( "!Mesh", ( ref Node node ) => Assets.get!Mesh( node.get!string ) );
         //constructor.addConstructorScalar( "!Material", ( ref Node node ) => Assets.get!Material( node.get!string ) );
+
+        version( EmbedContent )
+        {
+            logDebug( "Using imported Content.yml file." );
+            assert( contentYML, "EmbedContent version set, mixin not used." );
+            import std.stream;
+            auto loader = Loader( new MemoryStream( cast(char[])contentYML ) );
+            loader.constructor = constructor;
+            contentNode = loader.load();
+        }
+        else
+        {
+            if( exists( FilePath.Resources.CompactContentFile ~ ".yml" ) )
+            {
+                logDebug( "Using Content.yml file." );
+                contentNode = loadYamlFile( FilePath.Resources.CompactContentFile );
+            }
+            else
+            {
+                logDebug( "Using normal content directory." );
+            }
+        }
 
         config = loadYamlFile( FilePath.Resources.ConfigFile );
     }
@@ -134,7 +208,10 @@ public:
             auto split = right.countUntil( '.' );
             if( split == -1 )
             {
-                return current[ right ].get!T;
+                static if( is( T == Node ) )
+                    return current[ right ];
+                else
+                    return current[ right ].get!T;
             }
             else
             {

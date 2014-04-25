@@ -36,6 +36,9 @@ public:
         foreach( key; keyBindings.keys )
             keyBindings.remove( key );
 
+        foreach( key; keyEvents.keys )
+            keyEvents.remove( key );
+
         foreach( string name, Node bind; bindings )
         {
             if( bind.isScalar )

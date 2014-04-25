@@ -15,7 +15,7 @@ enum SceneName = "[scene]";
 shared final class Scene
 {
 private:
-    GameObject root;
+    GameObject _root;
 
 package:
     GameObject[uint] objectById;
@@ -24,12 +24,14 @@ package:
 public:
     /// The camera to render with.
     Camera camera;
+    /// The root object of the scene.
+    mixin( Getter!_root );
 
     this()
     {
-        root = new shared GameObject;
-        root.name = SceneName;
-        root.scene = this;
+        _root = new shared GameObject;
+        _root.name = SceneName;
+        _root.scene = this;
     }
 
     /**
@@ -43,7 +45,7 @@ public:
         foreach( yml; loadYamlDocuments( buildNormalizedPath( FilePath.Resources.Objects, objectPath ) ) )
         {
             // Create the object
-            root.addChild( GameObject.createFromYaml( yml ) );
+            _root.addChild( GameObject.createFromYaml( yml ) );
         }
     }
 
@@ -52,7 +54,7 @@ public:
      */
     final void clear()
     {
-        root = new shared GameObject;
+        _root = new shared GameObject;
     }
 
     /**
@@ -60,7 +62,7 @@ public:
      */
     final void update()
     {
-        root.update();
+        _root.update();
     }
 
     /**
@@ -68,7 +70,7 @@ public:
      */
     final void draw()
     {
-        root.draw();
+        _root.draw();
     }
 
     /**
@@ -111,7 +113,7 @@ public:
      */
     final void addChild( shared GameObject newChild )
     {
-        root.addChild( newChild );
+        _root.addChild( newChild );
     }
 
     /**
@@ -122,7 +124,7 @@ public:
      */
     final void removechild( shared GameObject oldChild )
     {
-        root.removeChild( oldChild );
+        _root.removeChild( oldChild );
     }
 
     /**

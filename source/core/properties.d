@@ -128,14 +128,30 @@ template ThisDirtyGetter( alias field, alias updateFunc, AccessModifier access =
  */
 template Setter( alias field, AccessModifier access = AccessModifier.Protected, string name = field.stringof[ 1..$ ] )
 {
-    enum Setter = q{
+    enum Setter = ConditionalSetter!( field, q{true}, access, name );
+}
+
+/**
+ * Generates a setter for a field, that only sets if a condition is met.
+ * 
+ * Params:
+ *  field =                 The field to generate the property for.
+ *  condition =             The condition to evaluate when assigning.
+ *  access =                The access modifier for the setter function.
+ *  name =                  The name of the property functions. Defaults to the field name minus the first character. Meant for fields that start with underscores.
+ */
+template ConditionalSetter( alias field, string condition, AccessModifier access = AccessModifier.Protected, string name = field.stringof[ 1..$ ] )
+{
+    enum ConditionalSetter = q{
         final $access @property void $name( $type newVal ) @safe pure nothrow
         {
-            $field = newVal;
+            if( $condition )
+                $field = newVal;
         }}
         .replaceMap( [
             "$field": field.stringof, "$access": cast(string)access,
-            "$name": name, "$type": typeof(field).stringof ] );
+            "$name": name, "$type": typeof(field).stringof,
+            "$condition": condition ] );
 }
 
 /**

@@ -59,6 +59,7 @@ private:
     IComponent[TypeInfo] componentList;
     string _name;
     ObjectStateFlags* _stateFlags;
+    bool canChangeName;
     static uint nextId = 1;
 
 package:
@@ -81,10 +82,12 @@ public:
     mixin( Property!( _parent, AccessModifier.Public ) );
     /// All of the objects which list this as parent
     mixin( Property!( _children, AccessModifier.Public ) );
-    /// The name of the object.
-    mixin( Property!( _name, AccessModifier.Public ) );
     /// The current update settings
     mixin( Property!( _stateFlags, AccessModifier.Public ) );
+    /// The name of the object.
+    mixin( Getter!_name );
+    /// ditto
+    mixin( ConditionalSetter!( _name, q{canChangeName}, AccessModifier.Public ) );
     /// The ID of the object
     immutable uint id;
 
@@ -217,6 +220,7 @@ public:
         stateFlags.resumeAll();
 
         name = typeid(this).name.split( '.' )[ $-1 ] ~ id.to!string;
+        canChangeName = true;
     }
 
     ~this()
@@ -315,6 +319,7 @@ public:
 
         _children ~= newChild;
         newChild.parent = this;
+        newChild.canChangeName = false;
         
         // Get root object
         shared GameObject par;

@@ -119,7 +119,7 @@ public:
         foreach( file; FilePath.scanDirectory( FilePath.Resources.Textures ) )
         {
             if( file.baseFileName in textures )
-               //logWarning( "Texture ", file.baseFileName, " exsists more than once." );
+               logWarning( "Texture ", file.baseFileName, " exists more than once." );
 
             textures[ file.baseFileName ] = new shared Texture( file.fullPath );
         }
@@ -129,7 +129,7 @@ public:
             auto name = object[ "Name" ].as!string;
 
             if( name in materials )
-                logWarning( "Material ", name, " exsists more than once." );
+                logWarning( "Material ", name, " exists more than once." );
             
             materials[ name ] = Material.createFromYaml( object );
         }

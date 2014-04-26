@@ -1,47 +1,52 @@
 /**
- * This module defines the Scene class, 
- * 
+ * This module defines the Scene class, TODO
+ *
  */
 module core.scene;
 import core, components, graphics, utility;
 
 import std.path;
 
+enum SceneName = "[scene]";
+
+/**
+ * The Scene contains a list of all objects that should be drawn at a given time.
+ */
 shared final class Scene
 {
+private:
+    GameObject _root;
+
+package:
+    GameObject[uint] objectById;
+    uint[string] idByName;
+
 public:
     /// The camera to render with.
     Camera camera;
+    /// The root object of the scene.
+    mixin( Getter!_root );
 
     this()
     {
-        root = new shared GameObject;
-        root.name = "[scene]";
+        _root = new shared GameObject;
+        _root.name = SceneName;
+        _root.scene = this;
     }
 
     /**
      * Load all objects inside the specified folder in FilePath.Objects.
-     * 
+     *
      * Params:
      *  objectPath =            The folder location inside of /Objects to look for objects in.
      */
     final void loadObjects( string objectPath = "" )
     {
-        string[shared GameObject] parents;
-        string[][shared GameObject] children;
-
         foreach( yml; loadYamlDocuments( buildNormalizedPath( FilePath.Resources.Objects, objectPath ) ) )
         {
             // Create the object
-            root.addChild( GameObject.createFromYaml( yml, parents, children ) );
+            _root.addChild( GameObject.createFromYaml( yml ) );
         }
-        
-        // Make sure the child graph is complete.
-        foreach( object, parentName; parents )
-            this[ parentName ].addChild( object );
-        foreach( object, childNames; children )
-            foreach( child; childNames )
-                object.addChild( this[ child ] );
     }
 
     /**
@@ -49,82 +54,86 @@ public:
      */
     final void clear()
     {
-        root = new shared GameObject;
+        _root = new shared GameObject;
     }
 
+    /**
+     * Updates all objects in the scene.
+     */
     final void update()
     {
-        root.update();
+        _root.update();
     }
 
+    /**
+     * Draws all objects in the scene.
+     */
     final void draw()
     {
-        root.draw();
+        _root.draw();
     }
 
+    /**
+     * Gets the object in the scene with the given name.
+     *
+     * Params:
+     *  name =            The name of the object to look for.
+     *
+     * Returns: The object with the given name.
+     */
     final shared(GameObject) opIndex( string name )
     {
-        shared GameObject[] objs;
-
-        objs ~= root;
-
-        while( objs.length )
-        {
-            auto curObj = objs[ 0 ];
-            objs = objs[ 1..$ ];
-
-            if( curObj.name == name )
-                return curObj;
-            else
-                foreach( obj; curObj.children )
-                    objs ~= obj;
-        }
-
-        return null;
+        if( auto id = name in idByName )
+            return this[ *id ];
+        else
+            return null;
     }
 
+    /**
+     * Gets the object in the scene with the given id.
+     *
+     * Params:
+     *  index =           The id of the object to look for.
+     *
+     * Returns: The object with the given id.
+     */
     final shared(GameObject) opIndex( uint index )
     {
-        shared GameObject[] objs;
-
-        objs ~= root;
-
-        while( objs.length )
-        {
-            auto curObj = objs[ 0 ];
-            objs = objs[ 1..$ ];
-
-            if( curObj.id == index )
-                return curObj;
-            else
-                foreach( obj; curObj.children )
-                    objs ~= obj;
-        }
-
-        return null;
+        if( auto obj = index in objectById )
+            return *obj;
+        else
+            return null;
     }
 
+    /**
+     * Adds object to the children, adds it to the scene graph.
+     *
+     * Params:
+     *  newChild =            The object to add.
+     */
+    final void addChild( shared GameObject newChild )
+    {
+        _root.addChild( newChild );
+    }
+
+    /**
+     * Removes the given object as a child from this scene.
+     *
+     * Params:
+     *  oldChild =            The object to remove.
+     */
+    final void removechild( shared GameObject oldChild )
+    {
+        _root.removeChild( oldChild );
+    }
+
+    /**
+     * Gets all objects in the scene.
+     *
+     * Returns: All objects belonging to this scene.
+     */
     final @property shared(GameObject[]) objects()
     {
-        shared GameObject[] objs, toReturn;
-
-        objs ~= root;
-
-        while( objs.length )
-        {
-            auto temp = objs[ 0 ];
-            objs = objs[ 1..$ ];
-            toReturn ~= temp.children;
-            objs ~= temp.children;
-        }
-
-        return toReturn;
+        return objectById.values;
     }
-
-package:
-    GameObject[uint] objectById;
-    uint[string] idByName;
-
-private:
-    GameObject root;
 }

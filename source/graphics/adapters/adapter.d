@@ -1,3 +1,6 @@
+/**
+* TODO
+*/
 module graphics.adapters.adapter;
 import core, components, graphics, utility;
 
@@ -6,6 +9,9 @@ import derelict.opengl3.gl3;
 
 import std.algorithm, std.array;
 
+/**
+* TODO
+*/
 abstract class Adapter
 {
 private:
@@ -24,33 +30,72 @@ private:
     shared UserInterface[] uis;
 
 public:
+    /// TODO
     mixin( Property!_deviceContext );
+    /// TODO
     mixin( Property!_renderContext );
 
+    /// TODO
     mixin( Property!_width );
+    /// TODO
     mixin( Property!_screenWidth );
+    /// TODO
     mixin( Property!_height );
+    /// TODO
     mixin( Property!_screenHeight );
+    /// TODO
     mixin( Property!_fullscreen );
+    /// TODO
     mixin( Property!_backfaceCulling );
+    /// TODO
     mixin( Property!_vsync );
+    /// TODO
     mixin( Property!_deferredFrameBuffer );
+    /// TODO
     mixin( Property!_diffuseRenderTexture );
+    /// TODO
     mixin( Property!_normalRenderTexture );
+    /// TODO
     mixin( Property!_depthRenderTexture );
 
+    /**
+    * TODO
+    */
     abstract void initialize();
+    /**
+    * TODO
+    */
     abstract void shutdown();
+    /**
+    * TODO
+    */
     abstract void resize();
+    /**
+    * TODO
+    */
     abstract void reload();
+    /**
+    * TODO
+    */
     abstract void swapBuffers();
 
+    /**
+    * TODO
+    */
     abstract void openWindow();
+    /**
+    * TODO
+    */
     abstract void closeWindow();
 
+    /**
+    * TODO
+    */
     abstract void messageLoop();
 
-
+    /**
+    * TODO
+    */
     final void initializeDeferredRendering()
     {
         //http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
@@ -95,9 +140,25 @@ public:
         GLenum[ 2 ] DrawBuffers = [ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 ];
         glDrawBuffers( 2, DrawBuffers.ptr );
 
-        if( glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE )
+        auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if(status != GL_FRAMEBUFFER_COMPLETE )
         {
-            log( OutputType.Error, "Deffered rendering Frame Buffer was not initialized correctly.");
+            string mapFramebufferError(int code)
+            {
+                switch(code)
+                {
+                    case(GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT): return "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT";
+                    case(GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT): return "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT";
+                    case(GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER): return "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER";
+                    case(GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER): return "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER";
+                    case(GL_FRAMEBUFFER_UNSUPPORTED): return "GL_FRAMEBUFFER_UNSUPPORTED";
+                    case(GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE): return "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE";
+                    case(GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS): return "GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS";
+                    default: return "UNKNOWN";
+                }
+            }
+
+            logFatal( "Deffered rendering Frame Buffer was not initialized correctly. Error: ", mapFramebufferError(status) );
             assert(false);
         }
     }
@@ -131,7 +192,7 @@ public:
         }
 
         auto objsWithLights = scene.objects
-                                .filter!(obj => obj.light)
+                                .filter!(obj => obj.stateFlags.drawLight && obj.light)
                                 .map!(obj => obj.light);
 
         auto getOfType( Type )()
@@ -149,11 +210,22 @@ public:
         shared mat4 projection = scene.camera.perspectiveMatrix;
         shared mat4 invProj = scene.camera.inversePerspectiveMatrix;
 
+        /**
+        * TODO
+        */
         void geometryPass()
         {
+            void updateMatricies( shared GameObject current )
+            {
+                current.transform.updateMatrix();
+                foreach( child; current.children )
+                    updateMatricies( child );
+            }
+            updateMatricies( scene.root );
+
             foreach( object; scene.objects )
             {
-                if( object.mesh )
+                if( object.mesh && object.stateFlags.drawMesh )
                 {
                     // set the shader
                     Shader shader = object.mesh.animated
@@ -181,8 +253,14 @@ public:
             }
         }
 
+        /**
+        * TODO
+        */
         void lightPass()
         {
+            /**
+            * TODO
+            */
             void bindGeometryOutputs( Shader shader )
             {
                 // diffuse
@@ -258,17 +336,18 @@ public:
                 shader.bindUniform2f( shader.ProjectionConstants, scene.camera.projectionConstants );
 
                 // bind the sphere mesh for point lights
-                glBindVertexArray( Assets.unitSphere.glVertexArray );
+                glBindVertexArray( Assets.unitSquare.glVertexArray );
 
                 // bind and draw point lights
                 foreach( light; pointLights )
                 {
                 //  logInfo(light.owner.name);
-                    shader.bindUniformMatrix4fv( shader.WorldView, scene.camera.viewMatrix * light.getTransform() );
+                    shader.bindUniformMatrix4fv( shader.WorldView, 
+                                                 scene.camera.viewMatrix * light.getTransform() );
                     shader.bindUniformMatrix4fv( shader.WorldViewProjection,
                                                  projection * scene.camera.viewMatrix * light.getTransform() );
                     shader.bindPointLight( light, scene.camera.viewMatrix );
-                    glDrawElements( GL_TRIANGLES, Assets.unitSphere.numVertices, GL_UNSIGNED_INT, null );
+                    glDrawElements( GL_TRIANGLES, Assets.unitSquare.numVertices, GL_UNSIGNED_INT, null );
                 }
             }
 
@@ -279,6 +358,9 @@ public:
             }
         }
 
+        /**
+        * TODO
+        */
         void uiPass()
         {
             Shader shader = Shaders.userInterface;
@@ -341,6 +423,9 @@ public:
     }
 
 protected:
+    /**
+    * TODO
+    */
     final void loadProperties()
     {
         fullscreen = Config.get!bool( "Display.Fullscreen" );

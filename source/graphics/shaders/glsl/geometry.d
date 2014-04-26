@@ -1,7 +1,11 @@
+/**
+* TODO
+*/
 module graphics.shaders.glsl.geometry;
 
 package:
 
+/// TODO
 immutable string geometryVS = q{
     #version 400
 
@@ -33,6 +37,7 @@ immutable string geometryVS = q{
     }
 };
 
+/// TODO
 immutable string geometryFS = q{
     #version 400
 

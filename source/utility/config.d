@@ -16,7 +16,31 @@ import yaml;
 
 import std.array, std.conv, std.string, std.path,
     std.typecons, std.variant, std.parallelism,
-    std.traits, std.algorithm;
+    std.traits, std.algorithm, std.file;
+
+private Node contentNode;
+private string fileToYaml( string filePath ) { return filePath.replace( "\\", "/" ).replace( "../", "" ).replace( "/", "." ); }
+
+version( EmbedContent )
+string contentYML;
+
+/**
+ * Place this mixin anywhere in your game code to allow the Content.yml file
+ * to be imported at compile time. Note that this will only actually import
+ * the file when EmbedContent is listed as a defined version.
+ */
+mixin template ContentImport()
+{
+    version( EmbedContent )
+    {
+        static this()
+        {
+            import utility.config;
+            contentYML = import( "Content.yml" );
+        }
+        
+    }
+}
 
 /**
  * Process all yaml files in a directory.
@@ -28,16 +52,43 @@ Node[] loadYamlDocuments( string folder )
 {
     Node[] nodes;
 
-    // Actually scan directories
-    foreach( file; FilePath.scanDirectory( folder, "*.yml" ) )
+    if( contentNode.isNull )
     {
-        auto loader = Loader( file.fullPath );
-        loader.constructor = Config.constructor;
-
-        // Iterate over all documents in a file
-        foreach( doc; loader )
+        // Actually scan directories
+        foreach( file; FilePath.scanDirectory( folder, "*.yml" ) )
         {
-            nodes ~= doc;
+            auto loader = Loader( file.fullPath );
+            loader.constructor = Config.constructor;
+
+            try
+            {
+                // Iterate over all documents in a file
+                foreach( doc; loader )
+                {
+                    nodes ~= doc;
+                }
+            }
+            catch( YAMLException e )
+            {
+                logFatal( "Error parsing file ", file.baseFileName, ": ", e.msg );
+            }
+        }
+    }
+    else
+    {
+        auto fileNode = Config.get!Node( folder.fileToYaml, contentNode );
+
+        foreach( string fileName, Node fileContent; fileNode )
+        {
+            if( fileContent.isSequence )
+            {
+                foreach( Node childChild; fileContent )
+                    nodes ~= childChild;
+            }
+            else
+            {
+                nodes ~= fileContent;
+            }
         }
     }
 
@@ -63,9 +114,24 @@ T[] loadYamlObjects( T )( string folder )
  */
 Node loadYamlFile( string filePath )
 {
-    auto loader = Loader( filePath );
-    loader.constructor = Config.constructor;
-    return loader.load();
+    if( contentNode.isNull )
+    {
+        auto loader = Loader( filePath ~ ".yml" );
+        loader.constructor = Config.constructor;
+        try
+        {
+            return loader.load();
+        }
+        catch( YAMLException e )
+        {
+            logFatal( "Error parsing file ", new FilePath( filePath ).baseFileName, ": ", e.msg );
+            return Node();
+        }  
+    }
+    else
+    {
+        return Config.get!Node( filePath.fileToYaml, contentNode );
+    }
 }
 
 /**
@@ -73,10 +139,19 @@ Node loadYamlFile( string filePath )
  */
 final abstract class Config
 {
-public static:
+static:
+private:
+    Node config;
+    Constructor constructor;
+
+public:
+    /**
+     * TODO
+     */
     final void initialize()
     {
         constructor = new Constructor;
+        contentNode = Node( YAMLNull() );
 
         constructor.addConstructorScalar( "!Vector2", &constructVector2 );
         constructor.addConstructorMapping( "!Vector2-Map", &constructVector2 );
@@ -93,6 +168,28 @@ public static:
         //constructor.addConstructorScalar( "!Texture", ( ref Node node ) => Assets.get!Texture( node.get!string ) );
         //constructor.addConstructorScalar( "!Mesh", ( ref Node node ) => Assets.get!Mesh( node.get!string ) );
         //constructor.addConstructorScalar( "!Material", ( ref Node node ) => Assets.get!Material( node.get!string ) );
+
+        version( EmbedContent )
+        {
+            logDebug( "Using imported Content.yml file." );
+            assert( contentYML, "EmbedContent version set, mixin not used." );
+            import std.stream;
+            auto loader = Loader( new MemoryStream( cast(char[])contentYML ) );
+            loader.constructor = constructor;
+            contentNode = loader.load();
+        }
+        else
+        {
+            if( exists( FilePath.Resources.CompactContentFile ~ ".yml" ) )
+            {
+                logDebug( "Using Content.yml file." );
+                contentNode = loadYamlFile( FilePath.Resources.CompactContentFile );
+            }
+            else
+            {
+                logDebug( "Using normal content directory." );
+            }
+        }
 
         config = loadYamlFile( FilePath.Resources.ConfigFile );
     }
@@ -111,7 +208,10 @@ public static:
             auto split = right.countUntil( '.' );
             if( split == -1 )
             {
-                return current[ right ].get!T;
+                static if( is( T == Node ) )
+                    return current[ right ];
+                else
+                    return current[ right ].get!T;
             }
             else
             {
@@ -124,18 +224,27 @@ public static:
     unittest
     {
         import std.stdio;
+        import std.exception;
+        
         writeln( "Dash Config get unittest" );
 
         auto n1 = Node( [ "test1": 10 ] );
 
         assert( Config.get!int( "test1", n1 ) == 10, "Config.get error." );
 
-        try
-        {
-            Config.get!int( "dontexist", n1 );
-            assert( false, "Config.get didn't throw." );
-        }
-        catch { }
+        assertThrown!Exception(Config.get!int( "dontexist", n1 ));
+        
+        // nested test
+        auto n2 = Node( ["test2": n1] );
+        auto n3 = Node( ["test3": n2] );
+        
+        assert( Config.get!int( "test3.test2.test1", n3 ) == 10, "Config.get nested test failed");
+        
+        auto n4 = Loader.fromString(
+            "test3:\n"
+            "   test2:\n"
+            "       test1: 10").load;
+        assert( Config.get!int( "test3.test2.test1", n4 ) == 10, "Config.get nested test failed");
     }
 
     /**
@@ -314,12 +423,11 @@ public static:
         @property int z() { return _z; }
         @property void z( int newZ ) { _z = newZ; }
     }
-
-private:
-    Node config;
-    Constructor constructor;
 }
 
+/**
+ * TODO
+ */
 shared(vec2) constructVector2( ref Node node )
 {
     shared vec2 result;
@@ -345,6 +453,9 @@ shared(vec2) constructVector2( ref Node node )
     return result;
 }
 
+/**
+ * TODO
+ */
 shared(vec3) constructVector3( ref Node node )
 {
     shared vec3 result;
@@ -372,6 +483,9 @@ shared(vec3) constructVector3( ref Node node )
     return result;
 }
 
+/**
+ * TODO
+ */
 shared(quat) constructQuaternion( ref Node node )
 {
     shared quat result;
@@ -401,6 +515,9 @@ shared(quat) constructQuaternion( ref Node node )
     return result;
 }
 
+/**
+ * TODO
+ */
 Light constructAmbientLight( ref Node node )
 {
     shared vec3 color;
@@ -409,6 +526,9 @@ Light constructAmbientLight( ref Node node )
     return cast()new shared AmbientLight( color );
 }
 
+/**
+ * TODO
+ */
 Light constructDirectionalLight( ref Node node )
 {
     shared vec3 color;
@@ -420,18 +540,24 @@ Light constructDirectionalLight( ref Node node )
     return cast()new shared DirectionalLight( color, dir );
 }
 
+/**
+ * TODO
+ */
 Light constructPointLight( ref Node node )
 {
     shared vec3 color;
-    float radius;
+    float radius, falloffRate;
 
     Config.tryGet( "Color", color, node );
     Config.tryGet( "Radius", radius, node );
+    Config.tryGet( "FalloffRate", falloffRate, node );
 
-    return cast()new shared PointLight( color, radius );
+    return cast()new shared PointLight( color, radius, falloffRate );
 }
 
-
+/**
+ * TODO
+ */
 T constructConv( T )( ref Node node ) if( is( T == enum ) )
 {
     if( node.isScalar )

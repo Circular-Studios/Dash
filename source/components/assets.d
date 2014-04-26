@@ -21,9 +21,15 @@ shared static this()
  */
 shared final class AssetManager
 {
+private:
+    Mesh[string] meshes;
+    Texture[string] textures;
+    Material[string] materials;
+    AssetAnimation[string] animations;
+
 public:
+    /// TODO
     Mesh unitSquare;
-    Mesh unitSphere;
 
     /**
      * Get the asset with the given type and name.
@@ -62,6 +68,12 @@ public:
         // Make sure fbxs are supported.
         assert(aiIsExtensionSupported(".fbx".toStringz), "fbx format isn't supported by assimp instance!");
 
+        // Load the unitSquare
+        unitSquare = new shared Mesh( "", aiImportFileFromMemory(unitSquareMesh.toStringz, unitSquareMesh.length,
+                                                aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
+                                                aiProcess_JoinIdenticalVertices | aiProcess_SortByPType,
+                                                "obj" ).mMeshes[0] );
+
         foreach( file; FilePath.scanDirectory( FilePath.Resources.Meshes ) )
         {
             // Load mesh
@@ -74,6 +86,9 @@ public:
             // If animation data, add animation
 
 
+            //if( file.baseFileName in meshes )
+                //logWarning( "Mesh ", file.baseFileName, " exsists more than once." );
+
             // Add mesh
 			if( scene.mNumMeshes > 0 )
 			{
@@ -84,7 +99,7 @@ public:
 			}
 			else
 			{
-				log( OutputType.Error, "Assimp did not contain mesh data, ensure you are loading a valid mesh." );
+				//logWarning( "Assimp did not contain mesh data, ensure you are loading a valid mesh." );
 			}
 
             // Release mesh
@@ -93,12 +108,18 @@ public:
 
         foreach( file; FilePath.scanDirectory( FilePath.Resources.Textures ) )
         {
+            if( file.baseFileName in textures )
+               //logWarning( "Texture ", file.baseFileName, " exsists more than once." );
+
             textures[ file.baseFileName ] = new shared Texture( file.fullPath );
         }
 
         foreach( object; loadYamlDocuments( FilePath.Resources.Materials ) )
         {
             auto name = object[ "Name" ].as!string;
+
+            if( name in materials )
+                logWarning( "Material ", name, " exsists more than once." );
             
             materials[ name ] = Material.createFromYaml( object );
         }
@@ -107,9 +128,6 @@ public:
         textures.rehash();
         materials.rehash();
         animations.rehash();
-
-        unitSquare = meshes[ "unitsquare" ];
-        unitSphere = meshes[ "unitsphere" ];
     }
 
     /**
@@ -132,7 +150,6 @@ public:
         foreach_reverse( index; 0 .. materials.length )
         {
             auto name = materials.keys[ index ];
-            materials[ name ].shutdown();
             materials.remove( name );
         }
         foreach_reverse( index; 0 .. animations.length )
@@ -142,10 +159,22 @@ public:
             animations.remove( name );
         }
     }
-
-private:
-    Mesh[string] meshes;
-    Texture[string] textures;
-    Material[string] materials;
-    AssetAnimation[string] animations;
 }
+
+/// TODO
+immutable string unitSquareMesh = q{
+v -1.0 1.0 0.0
+v -1.0 -1.0 0.0
+v 1.0 1.0 0.0
+v 1.0 -1.0 0.0
+
+vt 0.0 0.0
+vt 0.0 1.0
+vt 1.0 0.0
+vt 1.0 1.0
+
+vn 0.0 0.0 1.0
+
+f 4/3/1 3/4/1 1/2/1
+f 2/1/1 4/3/1 1/2/1
+};

@@ -1,3 +1,6 @@
+/**
+ * Defines some useful helpers for running the engine concurrently.
+ */
 module utility.concurrency;
 
 public import core.thread, std.concurrency, std.parallelism;

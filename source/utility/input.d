@@ -16,6 +16,9 @@ shared static this()
     Input = new shared InputManager;
 }
 
+/**
+ * Manages all input events.
+ */
 shared final class InputManager
 {
 public:
@@ -36,11 +39,14 @@ public:
         foreach( key; keyBindings.keys )
             keyBindings.remove( key );
 
+        foreach( key; keyEvents.keys )
+            keyEvents.remove( key );
+
         foreach( string name, Node bind; bindings )
         {
             if( bind.isScalar )
             {
-                keyBindings[ name ] = bind.get!Keyboard;
+                keyBindings[ name ] ~= bind.get!Keyboard;
             }
             else if( bind.isSequence )
             {
@@ -48,11 +54,11 @@ public:
                 {
                     try
                     {
-                        keyBindings[ name ] = child.get!Keyboard;
+                        keyBindings[ name ] ~= child.get!Keyboard;
                     }
                     catch
                     {
-                        log( OutputType.Error, "Failed to parse keybinding for input ", name );
+                        logFatal( "Failed to parse keybinding for input ", name );
                     }
                 }
             }
@@ -65,17 +71,17 @@ public:
                         case "Keyboard":
                             try
                             {
-                                keyBindings[ name ] = value.get!Keyboard;
+                                keyBindings[ name ] ~= value.get!Keyboard;
                             }
                             catch
                             {
                                 try
                                 {
-                                    keyBindings[ name ] = value.get!string.to!Keyboard;
+                                    keyBindings[ name ] ~= value.get!string.to!Keyboard;
                                 }
                                 catch
                                 {
-                                    log( OutputType.Error, "Failed to parse keybinding for input ", name );
+                                    logFatal( "Failed to parse keybinding for input ", name );
                                 }
                             }
 
@@ -108,7 +114,7 @@ public:
 
     /**
      * Add an event to be fired when the given key changes.
-     * 
+     *
      * Params:
      *      keyCode =   The code of the key to add the event to.
      *      func =      The function to call when the key state changes.
@@ -141,11 +147,35 @@ public:
     }
 
     /**
+     * Add an event to be fired when the given key changes.
+     *
+     * Params:
+     *      inputName = The name of the input to add the event to.
+     *      func =      The function to call when the key state changes.
+     */
+    final void addKeyEvent( string inputName, KeyEvent func )
+    {
+        if( auto keys = inputName in keyBindings )
+            foreach( key; *keys )
+                addKeyEvent( key, func );
+    }
+
+    /**
      * Add a key event only when the key is down.
      */
     final void addKeyDownEvent( uint keyCode, KeyStateEvent func )
     {
-        keyEvents[ keyCode ] ~= ( uint keyCode, bool newState ) { if( newState ) func( newState ); };
+        addKeyEvent( keyCode, ( uint keyCode, bool newState ) { if( newState ) func( newState ); } );
+    }
+
+    /**
+     * Add a key event only when the key is down.
+     */
+    final void addKeyDownEvent( string inputName, KeyStateEvent func )
+    {
+        if( auto keys = inputName in keyBindings )
+            foreach( key; *keys )
+                addKeyEvent( key, ( uint keyCode, bool newState ) { if( newState ) func( keyCode ); } );
     }
 
     /**
@@ -153,12 +183,22 @@ public:
      */
     final void addKeyUpEvent( uint keyCode, KeyStateEvent func )
     {
-        keyEvents[ keyCode ] ~= ( uint keyCode, bool newState ) { if( !newState ) func( keyCode ); };
+        addKeyEvent( keyCode, ( uint keyCode, bool newState ) { if( !newState ) func( keyCode ); } );
+    }
+
+    /**
+     * Add a key event only when the key is up.
+     */
+    final void addKeyUpEvent( string inputName, KeyStateEvent func )
+    {
+        if( auto keys = inputName in keyBindings )
+            foreach( key; *keys )
+                addKeyEvent( key, ( uint keyCode, bool newState ) { if( !newState ) func( keyCode ); } );
     }
 
     /**
      * Check if a given key is down.
-     * 
+     *
      * Params:
      *      keyCode =       The code of the key to check.
      *      checkPrevious = Whether or not to make sure the key was down last frame.
@@ -187,7 +227,7 @@ public:
 
     /**
      * Check if a given key is up.
-     * 
+     *
      * Params:
      *      keyCode =       The code of the key to check.
      *      checkPrevious = Whether or not to make sure the key was up last frame.
@@ -240,9 +280,14 @@ public:
     {
         static if( is( T == bool ) )
         {
-            if( input in keyBindings )
+            bool result = false;
+
+            if( auto keys = input in keyBindings )
             {
-                return isKeyDown( keyBindings[ input ], checkPrevious );
+                foreach( key; *keys )
+                    result = result || isKeyDown( key, checkPrevious );
+
+                return result;
             }
             else
             {
@@ -277,7 +322,7 @@ public:
                 i.y -= GetSystemMetrics( SM_CYBORDER );
             }
 
-            return shared vec2( cast(float)i.x, cast(float)i.y );
+            return shared vec2( cast(float)i.x, Graphics.height - cast(float)i.y );
         }
         else version( linux )
         {
@@ -315,7 +360,7 @@ public:
         {
             glBindFramebuffer( GL_FRAMEBUFFER, Graphics.deferredFrameBuffer );
             glReadBuffer( GL_DEPTH_ATTACHMENT );
-            glReadPixels( x, Graphics.height - y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+            glReadPixels( x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
 
             auto linearDepth = scene.camera.projectionConstants.x / ( scene.camera.projectionConstants.y - depth );
             //Convert x and y to normalized device coords
@@ -372,7 +417,7 @@ public:
         {
             glBindFramebuffer( GL_FRAMEBUFFER, Graphics.deferredFrameBuffer );
             glReadBuffer( GL_COLOR_ATTACHMENT1 );
-            glReadPixels( x, Graphics.height - y, 1, 1, GL_BLUE, GL_FLOAT, &fId);
+            glReadPixels( x, y, 1, 1, GL_BLUE, GL_FLOAT, &fId);
 
             uint id = cast(int)(fId);
             glBindFramebuffer( GL_FRAMEBUFFER, 0 );
@@ -385,7 +430,7 @@ public:
     }
 
 private:
-    Keyboard[ string ] keyBindings;
+    Keyboard[][ string ] keyBindings;
 
     KeyEvent[][ uint ] keyEvents;
 

@@ -12,6 +12,15 @@ import std.stdio;
  */
 final class FilePath
 {
+private:
+    string _fullPath;
+    string _relativePath;
+    string _fileName;
+    string _baseFileName;
+    string _directory;
+    string _extension;
+    File* file;
+
 public:
     /**
      * The path to the resources home folder.
@@ -32,8 +41,9 @@ public:
         Shaders = ResourceHome ~ "/Shaders",
         UI = ResourceHome ~ "/UI",
         ConfigDir = ResourceHome ~ "/Config",
-        ConfigFile = ConfigDir ~ "/Config.yml",
-        InputBindings = ConfigDir ~ "/Input.yml", 
+        ConfigFile = ConfigDir ~ "/Config",
+        InputBindings = ConfigDir ~ "/Input",
+        CompactContentFile = ResourceHome ~ "/Content",
     }
 
     /**
@@ -46,7 +56,7 @@ public:
 
         if( !std.file.exists( safePath ) )
         {
-            log( OutputType.Info, path, " does not exist." );
+            logDebug( path, " does not exist." );
             return [];
         }
 
@@ -127,6 +137,11 @@ public:
         return file;
     }
 
+    /**
+     * Read the contents of the file.
+     *
+     * Returns: The contents of a file as a string.
+     */
     final string getContents()
     {
         return cast(string)std.file.read(_fullPath);
@@ -134,6 +149,9 @@ public:
 
     /**
      * Create an instance based on a given file path.
+     *
+     * Params:
+     *  path =            The path of the file created.
      */
     this( string path )
     {
@@ -151,17 +169,7 @@ public:
         if( file && file.isOpen )
             file.close();
     }
-
-private:
-    string _fullPath;
-    string _relativePath;
-    string _fileName;
-    string _baseFileName;
-    string _directory;
-    string _extension;
-    File* file;
 }
-
 unittest
 {
     import std.stdio;

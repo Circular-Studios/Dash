@@ -55,11 +55,17 @@ private:
     bool _animated;
 
 public:
+    /// TODO
     mixin( Property!_glVertexArray );
+    /// TODO
     mixin( Property!_numVertices );
+    /// TODO
     mixin( Property!_numIndices );
+    /// TODO
     mixin( Property!_glIndexBuffer );
+    /// TODO
     mixin( Property!_glVertexBuffer );
+    /// TODO
     mixin( Property!_animated );
 
     /**
@@ -118,7 +124,7 @@ public:
                 }
                 if( maxBonesAttached > 4 )
                 {
-                    log( OutputType.Warning, filePath, " has more than 4 bones for some vertex, data will be truncated. (has ", maxBonesAttached, ")" );
+                    logWarning( filePath, " has more than 4 bones for some vertex, data will be truncated. (has ", maxBonesAttached, ")" );
                 }
 
                 // For each vertex on each face
@@ -207,7 +213,7 @@ public:
         else
         {
             // Did not load
-            log( OutputType.Error, "Mesh not loaded: ", filePath );
+            logFatal( "Mesh not loaded: ", filePath );
         }
         
         // make and bind the VAO
@@ -277,9 +283,14 @@ public:
     }
 }
 
+
 /**
  * Helper function that calculates a modifier for the reconstructed bitangent based on regenerating them
  * May be needed elsewhere
+ *
+ * Params: TODO
+ *
+ * Returns:
  */
 private float calcTangentHandedness( aiVector3D nor, aiVector3D tan, aiVector3D bit )
 {

@@ -1,3 +1,6 @@
+/**
+ * Defines the Material and Texture classes.
+ */
 module components.material;
 import core, components, graphics, utility;
 
@@ -5,24 +8,38 @@ import yaml;
 import derelict.opengl3.gl3, derelict.freeimage.freeimage;
 import std.variant, std.conv, std.string;
 
-shared final class Material : IComponent
+/**
+ * A collection of textures that serve different purposes in the rendering pipeline.
+ */
+shared final class Material
 {
 private:
     Texture _diffuse, _normal, _specular;
 
 public:
+    /// The diffuse (or color) map.
     mixin( Property!(_diffuse, AccessModifier.Public) );
+    /// The normal map, which specifies which way a face is pointing at a given pixel.
     mixin( Property!(_normal, AccessModifier.Public) );
+    /// The specular map, which specifies how shiny a given point is.
     mixin( Property!(_specular, AccessModifier.Public) );
 
+    /**
+     * Default constructor, makes sure everything is initialized to default.
+     */
     this()
     {
         _diffuse = _normal = _specular = defaultTex;
     }
 
     /**
-    * Create a Material from a Yaml node.
-    */
+     * Create a Material from a Yaml node.
+     *
+     * Params:
+     *  yamlObj =           The YAML object to pull the data from.
+     *
+     * Returns: A new material with specified maps.
+     */
     static shared(Material) createFromYaml( Node yamlObj )
     {
         auto obj = new shared Material;
@@ -39,16 +56,23 @@ public:
 
         return obj;
     }
-
-    override void update() { }
-    override void shutdown() { }
 }
 
+/**
+ * TODO
+ */
 shared class Texture
 {
 protected:
     uint _width, _height, _glID;
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     this( ubyte* buffer )
     {
         glGenTextures( 1, cast(uint*)&_glID );
@@ -56,6 +80,13 @@ protected:
         updateBuffer( buffer );
     }
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     void updateBuffer( const ubyte* buffer )
     {
         // Set texture to update
@@ -69,10 +100,20 @@ protected:
     }
 
 public:
+    /// TODO
     mixin( Property!_width );
+    /// TODO
     mixin( Property!_height );
+    /// TODO
     mixin( Property!_glID );
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     this( string filePath )
     {
         filePath ~= "\0";
@@ -86,6 +127,13 @@ public:
         FreeImage_Unload( imageData );
     }
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     void shutdown()
     {
         glBindTexture( GL_TEXTURE_2D, 0 );
@@ -93,7 +141,13 @@ public:
     }
 }
 
-
+/**
+ * TODO
+ *
+ * Params:
+ *
+ * Returns:
+ */
 @property shared(Texture) defaultTex()
 {
     static shared Texture def;
@@ -109,6 +163,6 @@ static this()
     IComponent.initializers[ "Material" ] = ( Node yml, shared GameObject obj )
     {
         obj.material = Assets.get!Material( yml.get!string );
-        return obj.material;
+        return null;
     };
 }

@@ -16,15 +16,26 @@ import std.datetime;
  */
 float toSeconds( Duration dur )
 {
-    return cast(float)dur.fracSec.hnsecs / cast(float)1.convert!( "seconds", "hnsecs" );
+    return cast(float)dur.total!"hnsecs" / cast(float)1.convert!( "seconds", "hnsecs" );
+}
+
+shared TimeManager Time;
+
+shared static this()
+{
+    Time = new shared TimeManager;
 }
 
 /**
  * Manages time and delta time.
  */
-shared final struct Time
+shared final class TimeManager
 {
-public static:
+private:
+    Duration delta;
+    Duration total;
+    
+public:
     /**
      * Time since last frame in seconds.
      */
@@ -45,8 +56,7 @@ public static:
     }
 
 private:
-    Duration delta;
-    Duration total;
+    this() { }
 }
 
 private:
@@ -55,12 +65,8 @@ TickDuration cur;
 TickDuration prev;
 Duration delta;
 Duration total;
-
-debug
-{
-    Duration second;
-    int frameCount;
-}
+Duration second;
+int frameCount;
 
 /**
  * Initialize the time controller with initial values.
@@ -68,7 +74,7 @@ debug
 static this()
 {
     cur = prev = TickDuration.min;
-    second = total = delta = Duration.zero;
+    total = delta = second = Duration.zero;
     frameCount = 0;
 
     Time.delta = Time.total = Duration.min;
@@ -86,23 +92,21 @@ void updateTime()
     }
 
     delta = cast(Duration)( cur - prev );
-
-    debug
-    {
-        ++frameCount;
-        second += delta;
-        if( second >= 1.seconds )
-        {
-            logInfo( "Framerate: ", frameCount );
-            second = Duration.zero;
-            frameCount = 0;
-        }
-    }
-
+    
     prev = cur;
     cur = sw.peek();
 
     // Pass to shared values
-    Time.delta = delta;
-    Time.total += delta;
+    cast()Time.total = cast(Duration)cur;
+    cast()Time.delta = delta;
+    
+    // Update framerate
+    ++frameCount;
+    second += delta;
+    if( second >= 1.seconds )
+    {
+        logDebug( "Framerate: ", frameCount );
+        second = Duration.zero;
+        frameCount = 0;
+    }
 }

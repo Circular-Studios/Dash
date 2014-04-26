@@ -1,5 +1,5 @@
 /**
- * Defines the Component abstract class, which is the base for all components.
+ * Defines the IComponent interface, which is the base for all components.
  */
 module components.icomponent;
 import core, graphics;
@@ -41,6 +41,7 @@ public:
      * Function called on update.
      */
     void update();
+    
     /**
      * Function called on shutdown.
      */

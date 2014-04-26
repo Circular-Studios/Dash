@@ -215,6 +215,14 @@ public:
         */
         void geometryPass()
         {
+            void updateMatricies( shared GameObject current )
+            {
+                current.transform.updateMatrix();
+                foreach( child; current.children )
+                    updateMatricies( child );
+            }
+            updateMatricies( scene.root );
+
             foreach( object; scene.objects )
             {
                 if( object.mesh && object.stateFlags.drawMesh )

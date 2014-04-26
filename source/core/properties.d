@@ -59,7 +59,7 @@ template Getter( alias field, AccessModifier access = AccessModifier.Public, str
  */
 template RefGetter( alias field, AccessModifier access = AccessModifier.Public, string name = field.stringof[ 1..$ ] )
 {
-    enum Getter = q{
+    enum RefGetter = q{
         final $access @property auto ref $name() @safe pure nothrow
         {
             return $field;

@@ -67,7 +67,7 @@ package:
 
 public:
     /// The current transform of the object.
-    mixin( Property!( _transform, AccessModifier.Public ) );
+    mixin( RefGetter!( _transform, AccessModifier.Public ) );
     /// The Material belonging to the object.
     mixin( Property!( _material, AccessModifier.Public ) );
     /// The Mesh belonging to the object.
@@ -210,7 +210,7 @@ public:
      */
     this()
     {
-        transform = new shared Transform( this );
+        _transform = shared Transform( this );
 
         // Create default material
         material = new shared Material();
@@ -221,11 +221,6 @@ public:
 
         name = typeid(this).name.split( '.' )[ $-1 ] ~ id.to!string;
         canChangeName = true;
-    }
-
-    ~this()
-    {
-        destroy( transform );
     }
 
     /**
@@ -351,20 +346,7 @@ public:
      */
     final void removeChild( shared GameObject oldChild )
     {
-        import std.algorithm;
-        // Get index of object being removed
-        auto oldChildIndex = (cast(GameObject[])children).countUntil( cast()oldChild );
-
-        // Return if not actually a child
-        if( oldChildIndex == -1 )
-            return;
-
-        // Get objects after one being removed
-        auto end = children[ oldChildIndex+1..$ ];
-        // Get objects before one being removed
-        children = children[ 0..oldChildIndex ];
-        // Add end back
-        _children ~= end;
+        children = children.remove( oldChild );
 
         oldChild.canChangeName = true;
         oldChild.parent = null;
@@ -426,7 +408,7 @@ class GameObjectInit(T) : GameObject if( is( T == class ) )
  * and can generate a World matrix, worldPosition/Rotation (based on parents' transforms)
  * as well as forward, up, and right axes based on rotation
  */
-final shared class Transform : IDirtyable
+private shared struct Transform
 {
 private:
     GameObject _owner;
@@ -434,6 +416,20 @@ private:
     quat _prevRot;
     vec3 _prevScale;
     mat4 _matrix;
+
+    /**
+     * Default constructor, most often created by GameObjects.
+     *
+     * Params:
+     *  obj =            The object the transform belongs to.
+     */
+    this( shared GameObject obj )
+    {
+        owner = obj;
+        position = vec3(0,0,0);
+        scale = vec3(1,1,1);
+        rotation = quat.identity;
+    }
 
 public:
     // these should remain public fields, properties return copies not references
@@ -447,21 +443,10 @@ public:
     /// The object which this belongs to.
     mixin( Property!( _owner, AccessModifier.Public ) );
     /// The world matrix of the transform.
-    mixin( ThisDirtyGetter!( _matrix, updateMatrix ) );
+    mixin( Getter!_matrix );
+    //mixin( ThisDirtyGetter!( _matrix, updateMatrix ) );
 
-    /**
-     * Default constructor, most often created by GameObjects.
-     *
-     * Params:
-     *  obj =            The object the transform belongs to.
-     */
-    this( shared GameObject obj = null )
-    {
-        owner = obj;
-        position = vec3(0,0,0);
-        scale = vec3(1,1,1);
-        rotation = quat.identity;
-    }
+    @disable this();
 
     /**
      * This returns the object's position relative to the world origin, not the parent.
@@ -495,7 +480,7 @@ public:
      *
      * Returns: Whether or not the object is dirty.
      */
-    final override @property bool isDirty() @safe pure nothrow
+    final @property bool isDirty() @safe pure nothrow
     {
         bool result = position != _prevPos ||
                       rotation != _prevRot ||
@@ -522,7 +507,7 @@ public:
         import gl3n.math;
         writeln( "Dash Transform forward unittest" );
 
-        auto trans = new shared Transform();
+        auto trans = new shared Transform( null );
         auto forward = shared vec3( 0.0f, 1.0f, 0.0f );
         trans.rotation.rotatex( 90.radians );
         assert( almost_equal( trans.forward, forward ) );
@@ -546,7 +531,7 @@ public:
         import gl3n.math;
         writeln( "Dash Transform up unittest" );
 
-        auto trans = new shared Transform();
+        auto trans = new shared Transform( null );
 
         auto up = shared vec3( 0.0f, 0.0f, 1.0f );
         trans.rotation.rotatex( 90.radians );
@@ -571,7 +556,7 @@ public:
         import gl3n.math;
         writeln( "Dash Transform right unittest" );
 
-        auto trans = new shared Transform();
+        auto trans = new shared Transform( null );
 
         auto right = shared vec3( 0.0f, 0.0f, -1.0f );
         trans.rotation.rotatey( 90.radians );

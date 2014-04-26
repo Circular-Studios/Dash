@@ -97,8 +97,8 @@ public:
 }
 
 /**
-* TODO
-*/
+ * TODO
+ */
 shared class AssetAnimation
 {
 private:
@@ -106,18 +106,18 @@ private:
     shared int _numberOfBones;
 
 public:
-	/// TODO
+    /// TODO
     mixin( Property!_animationSet );
-	/// TODO
+    /// TODO
     mixin( Property!_numberOfBones );
 
-	/**
-	* TODO
-	*
-	* Params:
-	*
-	* Returns:
-	*/
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     this( const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) boneHierarchy )
     {
         _animationSet.duration = cast(float)animation.mDuration;
@@ -127,15 +127,15 @@ public:
 		_animationSet.animNodes = makeNodesFromNode( animation, mesh, boneHierarchy.mChildren[ 1 ], null );
     }
 
-	/**
-	* Each bone has one of two setups:
-	* Split up into five seperate nodes (translation -> preRotation -> Rotation -> Scale -> Bone)
-	* Or the bone is one node in the hierarchy
-	*
-	* Params: TODO
-	*
-	* Returns: TODO
-	*/
+    /**
+     * Each bone has one of two setups:
+     * Split up into five seperate nodes (translation -> preRotation -> Rotation -> Scale -> Bone)
+     * Or the bone is one node in the hierarchy
+     *
+     * Params: TODO
+     *
+     * Returns: TODO
+     */
     shared(Node) makeNodesFromNode( const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) currNode, shared Node returnNode )
     { 
         string name = cast(string)currNode.mName.data[ 0 .. currNode.mName.length ];
@@ -171,13 +171,13 @@ public:
         return node;
     }
 
-	/**
-	* TODO
-	*
-	* Params:
-	*
-	* Returns:
-	*/
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     void assignAnimationData( const(aiAnimation*) animation, shared Node nodeToAssign )
     {
         // For each bone animation data
@@ -217,12 +217,12 @@ public:
     }
 
     /**
-	* Converts a aiVectorKey[] to vec3[].
-	*
-	* Params:
-	*
-	* Returns:
-	*/ 
+     * Converts a aiVectorKey[] to vec3[].
+     *
+     * Params:
+     *
+     * Returns:
+     */ 
     shared( vec3[] ) convertVectorArray( const(aiVectorKey*) vectors, int numKeys )
     {
         shared vec3[] keys;
@@ -235,12 +235,12 @@ public:
         return keys;
     }
     /**
-	* Converts a aiQuatKey[] to quat[].
-	*
-	* Params:
-	*
-	* Returns:
-	*/
+     * Converts a aiQuatKey[] to quat[].
+     *
+     * Params:
+     *
+     * Returns:
+     */
     shared( quat[] ) convertQuat( const(aiQuatKey*) quaternions, int numKeys )
     {
         shared quat[] keys;
@@ -255,12 +255,12 @@ public:
     }
 
     /**
-	* Find bone with name in our structure.
-	*
-	* Params:
-	*
-	* Returns:
-	*/
+     * Find bone with name in our structure.
+     *
+     * Params:
+     *
+     * Returns:
+     */
     int findNodeWithName( string name, const(aiMesh*) mesh )
     {
         for( int i = 0; i < mesh.mNumBones; i++ )
@@ -274,12 +274,12 @@ public:
         return -1;
     }
     /**
-	* Check if string stringToTest ends with string end
-	*
-	* Params:
-	*
-	* Returns:
-	*/
+     * Check if string stringToTest ends with string end
+     *
+     * Params:
+     *
+     * Returns:
+     */
     bool checkEnd( string stringToTest, string end )
     {
         if( stringToTest.length > end.length )
@@ -295,13 +295,13 @@ public:
         return false;
     }
 
-	/**
-	* TODO
-	*
-	* Params:
-	*
-	* Returns:
-	*/
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     shared( mat4[] ) getTransformsAtTime( shared float time )
     {
         shared mat4[] boneTransforms = new shared mat4[ _numberOfBones ];
@@ -316,13 +316,13 @@ public:
         return boneTransforms;
     }
 
-	/**
-	* TODO
-	*
-	* Params:
-	*
-	* Returns:
-	*/
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     void fillTransforms( shared mat4[] transforms, shared Node node, shared float time, shared mat4 parentTransform, int boneNum)
     {
         // Calculate matrix based on node.bone data and time
@@ -368,13 +368,13 @@ public:
         }
     }
 
-	/**
-	* TODO
-	*
-	* Params:
-	*
-	* Returns:
-	*/
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     mat4 convertAIMatrix( aiMatrix4x4 aiMatrix )
     {
         mat4 matrix = mat4.identity;
@@ -399,21 +399,21 @@ public:
         return matrix;
     }
 
-	/**
-	* TODO
-	*
-	* Params:
-	*
-	* Returns:
-	*/
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     void shutdown()
     {
 
     }
 
-	/**
-	* TODO
-	*/
+    /**
+     * TODO
+     */
     shared struct AnimationSet
     {
         shared float duration;
@@ -421,8 +421,8 @@ public:
         shared Node animNodes;
     }
 	/**
-	* TODO
-	*/
+     * TODO
+     */
     shared class Node
     {
         this( shared string nodeName )

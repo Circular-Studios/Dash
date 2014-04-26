@@ -21,33 +21,58 @@ public:
         _animationSet.duration = cast(float)animation.mDuration;
         _animationSet.fps = cast(float)animation.mTicksPerSecond;
         
-		_animationSet.animNodes = makeNodesFromNode( animation, mesh, boneHierarchy.mChildren[ 1 ], null );
+		//printBoneList(mesh);
+		_animationSet.animNodes = makeNodesFromNode( animation, mesh, boneHierarchy.mChildren[ 1 ], null, mat4.identity );
     }
 
     // Each bone has one of two setups:
     // Split up into five seperate nodes (translation -> preRotation -> Rotation -> Scale -> Bone)
     // Or the bone is one node in the hierarchy
-    shared(Node) makeNodesFromNode( const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) currNode, shared Node returnNode )
+    shared(Node) makeNodesFromNode( const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) currNode, shared Node returnNode, shared mat4 parentTransform )
     { 
         string name = cast(string)currNode.mName.data[ 0 .. currNode.mName.length ];
         int id = findNodeWithName( name, mesh );
         shared Node node;
+		
+		//log(OutputType.Info, "Bonetransform: ", name);
+		//log(OutputType.Info, "Transform: ", currNode.mTransformation.a1, " ", currNode.mTransformation.a2, " ", currNode.mTransformation.a3, " ", currNode.mTransformation.a4 );
+		//log(OutputType.Info, "Transform: ", currNode.mTransformation.b1, " ", currNode.mTransformation.b2, " ", currNode.mTransformation.b3, " ", currNode.mTransformation.b4 );
+		///log(OutputType.Info, "Transform: ", currNode.mTransformation.c1, " ", currNode.mTransformation.c2, " ", currNode.mTransformation.c3, " ", currNode.mTransformation.c4 );
+		//log(OutputType.Info, "Transform: ", currNode.mTransformation.d1, " ", currNode.mTransformation.d2, " ", currNode.mTransformation.d3, " ", currNode.mTransformation.d4 );
 
         if( id != -1 )
         {
-			log( OutputType.Warning, "Animation Node ");
             node = new shared Node( name );
+			//log( OutputType.Info, "Node: ", node.name );
             node.id = id;
             node.transform = convertAIMatrix( mesh.mBones[ node.id ].mOffsetMatrix );
+			//node.transform = parentTransform * node.transform;
 			
             assignAnimationData( animation, node );
 
             returnNode = node;
             _numberOfBones++;
+
+			// Reset the parent transform for the next bone
+			parentTransform = mat4.identity;
+
+			log(OutputType.Info, "BoneFinalTransform: ", name);
+			log(OutputType.Info, "Transform: ", node.transform[0][0], " ", node.transform[0][1], " ", node.transform[0][2], " ", node.transform[0][3] );
+			log(OutputType.Info, "Transform: ", node.transform[1][0], " ", node.transform[1][1], " ", node.transform[1][2], " ", node.transform[1][3] );
+			log(OutputType.Info, "Transform: ", node.transform[2][0], " ", node.transform[2][1], " ", node.transform[2][2], " ", node.transform[2][3] );
+			log(OutputType.Info, "Transform: ", node.transform[3][0], " ", node.transform[3][1], " ", node.transform[3][2], " ", node.transform[3][3] );
         }
         else
         {
+			shared mat4 transform = convertAIMatrix( currNode.mTransformation );
+			parentTransform = parentTransform * transform;
             node = returnNode;
+
+			log(OutputType.Info, "BoneFinalTransform: ", name);
+			log(OutputType.Info, "Transform: ", parentTransform[0][0], " ", parentTransform[0][1], " ", parentTransform[0][2], " ", parentTransform[0][3] );
+			log(OutputType.Info, "Transform: ", parentTransform[1][0], " ", parentTransform[1][1], " ", parentTransform[1][2], " ", parentTransform[1][3] );
+			log(OutputType.Info, "Transform: ", parentTransform[2][0], " ", parentTransform[2][1], " ", parentTransform[2][2], " ", parentTransform[2][3] );
+			log(OutputType.Info, "Transform: ", parentTransform[3][0], " ", parentTransform[3][1], " ", parentTransform[3][2], " ", parentTransform[3][3] );
         }
 
         // For each child node
@@ -55,13 +80,21 @@ public:
         {
             // Create it and assign to this node as a child
             if( id != -1 )
-                node.children ~= makeNodesFromNode( animation, mesh, currNode.mChildren[ i ], node );
+                node.children ~= makeNodesFromNode( animation, mesh, currNode.mChildren[ i ], node, parentTransform );
             else
-                return makeNodesFromNode( animation, mesh, currNode.mChildren[ i ], node );
+                return makeNodesFromNode( animation, mesh, currNode.mChildren[ i ], node, parentTransform );
         }
 
         return node;
     }
+
+	void printBoneList(const(aiMesh*) mesh)
+	{
+		for(int i = 0; i < mesh.mNumBones; i++)
+		{
+			log(OutputType.Info, cast(string)mesh.mBones[ i ].mName.data[0 .. mesh.mBones[ i ].mName.length] );
+		}
+	}
 
     void assignAnimationData( const(aiAnimation*) animation, shared Node nodeToAssign )
     {
@@ -166,7 +199,6 @@ public:
         }
 
         fillTransforms( boneTransforms, _animationSet.animNodes, time, mat4.identity, 0 );
-
         return boneTransforms;
     }
 
@@ -176,20 +208,29 @@ public:
         shared mat4 finalTransform;
         shared mat4 boneTransform = mat4.identity;
 		// Data in the transform/scale partial nodes
-		shared mat4 test = mat4(0.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 32.7f, 0.0f, 0.0f, 1.0f, 0.02f, 0.0f, 0.0f, 0.0f, 1.0f);
-		shared mat4 test2 = mat4(0.978468f, 0.0f, -0.2064f, 12.2843f, 0.0f, 1.0f, 0.0f, 0.0f, 0.2064f, 0.0f, 0.978468f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+
+		// old values
+		//shared mat4 test = mat4(0.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 32.7f, 0.0f, 0.0f, 1.0f, 0.02f, 0.0f, 0.0f, 0.0f, 1.0f);
+		//shared mat4 test2 = mat4(0.978468f, 0.0f, -0.2064f, 12.2843f, 0.0f, 1.0f, 0.0f, 0.0f, 0.2064f, 0.0f, 0.978468f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+		//shared mat4 test3 = mat4(0.0f, -0.977f,  0.212f, 16.632f, 1.0f,  0.0f,  0.0f,  0.0f, 0.0f,  0.212f,  0.977f,  0.0f, 0.0f,  0.0f,  0.0f,  1.0f);
+
+		shared mat4 test1 = mat4(0.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 32.7f, 0.0f, 0.0f, 1.0f, 0.025f, 0.0f, 0.0f, 0.0f, 1.0f);
+		shared mat4 test2 = mat4(1.0f, 0.0f, 0.0f, -32.7f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 		shared mat4 test3 = mat4(0.0f, -0.977f,  0.212f, 16.632f, 1.0f,  0.0f,  0.0f,  0.0f, 0.0f,  0.212f,  0.977f,  0.0f, 0.0f,  0.0f,  0.0f,  1.0f);
+		shared mat4 test4 = mat4(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, -10.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 		
 		if( node.positionKeys.length > cast(int)time )
             boneTransform = boneTransform * boneTransform.translation( node.positionKeys[ cast(int)time ].vector[ 0 ], node.positionKeys[ cast(int)time ].vector[ 1 ], node.positionKeys[ cast(int)time ].vector[ 2 ] );
 		if( node.rotationKeys.length > cast(int)time )
 			boneTransform = boneTransform * node.rotationKeys[ cast(int)time ].to_matrix!( 4, 4 );
 		if( node.scaleKeys.length > cast(int)time )
-            boneTransform.scale( node.scaleKeys[ cast(int)time ].vector[ 0 ], node.scaleKeys[ cast(int)time ].vector[ 1 ], node.scaleKeys[ cast(int)time ].vector[ 2 ] );
+            boneTransform.scale( node.scaleKeys[ cast(int)time ].vector[ 0 ], node.scaleKeys[ cast(int)time ].vector[ 1 ], node.scaleKeys[ cast(int)time ].vector[ 2 ] ); //cast(int)time
         
-		if(boneNum == 0)
+		finalTransform = parentTransform * boneTransform;
+		transforms[ node.id ] = finalTransform * node.transform;
+		/*if(boneNum == 0)
 		{
-			finalTransform = (parentTransform * test) * boneTransform;
+			finalTransform = parentTransform * (boneTransform);
 			transforms[ node.id ] = finalTransform * node.transform;
 		}
 		if(boneNum == 1)
@@ -199,14 +240,16 @@ public:
 		}
 		if(boneNum == 2)
 		{
-			finalTransform = (parentTransform) * boneTransform;
+			finalTransform = parentTransform * (boneTransform);
 			transforms[ node.id ] = finalTransform * node.transform;
 		}
-		boneNum++;
+		boneNum++;*/
 
         // Store the transform in the correct place and check children
+		//log( OutputType.Info, "Check for children (", node.children.length, ")" );
         for( int i = 0; i < node.children.length; i++ )
         {
+			//log( OutputType.Info, "New Child" );
             fillTransforms( transforms, node.children[ i ], time, finalTransform, boneNum );
         }
     }

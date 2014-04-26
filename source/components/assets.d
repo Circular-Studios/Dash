@@ -72,11 +72,20 @@ public:
             enforce(scene, "Failed to load scene file '" ~ file.fullPath ~ "' Error: " ~ aiGetErrorString().fromStringz);
             
             // If animation data, add animation
-            if(scene.mNumAnimations > 0)
-                animations[ file.baseFileName ] = new shared AssetAnimation( scene.mAnimations[0], scene.mMeshes[0], scene.mRootNode );
+
 
             // Add mesh
-            meshes[ file.baseFileName ] = new shared Mesh( file.fullPath, scene.mMeshes[0] );
+			if( scene.mNumMeshes > 0 )
+			{
+				if( scene.mNumAnimations > 0 )
+					animations[ file.baseFileName ] = new shared AssetAnimation( scene.mAnimations[ 0 ], scene.mMeshes[ 0 ], scene.mRootNode );
+
+				meshes[ file.baseFileName ] = new shared Mesh( file.fullPath, scene.mMeshes[ 0 ] );
+			}
+			else
+			{
+				log( OutputType.Error, "Assimp did not contain mesh data, ensure you are loading a valid mesh." );
+			}
 
             // Release mesh
             aiReleaseImport( scene );

@@ -4,8 +4,7 @@
 module components.assets;
 import components, utility;
 
-import std.string;
-import std.exception;
+import std.string, std.array;
 
 import yaml;
 import derelict.freeimage.freeimage, derelict.assimp3.assimp;
@@ -36,21 +35,32 @@ public:
      */
     final shared(T) get( T )( string name ) if( is( T == Mesh ) || is( T == Texture ) || is( T == Material ) || is( T == AssetAnimation ))
     {
+        enum get( string array ) = q{
+            if( auto result = name in $array )
+            {
+                return *result;
+            }
+            else
+            {
+                logFatal( "Unable to find ", name, " in $array." );
+                return null;
+            }
+        }.replace( "$array", array );
         static if( is( T == Mesh ) )
         {
-            return meshes[ name ];
+            mixin( get!q{meshes} );
         }
         else static if( is( T == Texture ) )
         {
-            return textures[ name ];
+            mixin( get!q{textures} );
         }
         else static if( is( T == Material ) )
         {
-            return materials[ name ];
+            mixin( get!q{materials} );
         }
         else static if( is( T == AssetAnimation ) )
         {
-            return animations[ name ];
+            mixin( get!q{animations} );
         }
         else static assert( false, "Material of type " ~ T.stringof ~ " is not maintained by Assets." );
     }
@@ -81,7 +91,7 @@ public:
                                                 aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
                                                 aiProcess_JoinIdenticalVertices | aiProcess_SortByPType );
                                                 //| aiProcess_FlipWindingOrder );
-            enforce(scene, "Failed to load scene file '" ~ file.fullPath ~ "' Error: " ~ aiGetErrorString().fromStringz);
+            assert(scene, "Failed to load scene file '" ~ file.fullPath ~ "' Error: " ~ aiGetErrorString().fromStringz);
             
             // If animation data, add animation
 

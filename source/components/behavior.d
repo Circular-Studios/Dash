@@ -16,7 +16,7 @@ private abstract shared class ABehavior
     private GameObject _owner;
     /// Function called by Behaviors to init the object.
     /// Should not be touched by anything outside this module.
-    protected void initializeBehavior( Object param ) {  }
+    protected void initializeBehavior( Object param ) { }
     /// The function called on initialization of the object.
     void onInitialize() { }
     /// Called on the update cycle.
@@ -42,10 +42,6 @@ abstract shared class Behavior( InitType = void ) : ABehavior
         {
             initArgs = cast(shared InitType)param;
         }
-    }
-    else
-    {
-        protected final override void initializeBehavior( Object param ) { onInitialize(); }
     }
 
     /// Returns the GameObject which owns this behavior.
@@ -115,10 +111,6 @@ public:
         if( !fields.isNull && className in getInitParams )
         {
             newBehavior.initializeBehavior( getInitParams[ className ]( fields ) );
-        }
-        else
-        {
-            newBehavior.initializeBehavior( null );
         }
 
         behaviors ~= newBehavior;

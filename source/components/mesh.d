@@ -83,8 +83,8 @@ public:
         int floatsPerVertex, vertexSize;
         float[] outputData;
         uint[] indices;
-        shared vec3[] verts;
         animated = false;
+        boundingBox = AABB.from_points( [] );
         if( mesh )
         {
             // If there is animation data
@@ -165,7 +165,7 @@ public:
                         outputData ~= vertWeights[ face.mIndices[ j ] ][0..4];
 
                         // Save the position in verts
-                        verts ~= shared vec3( pos.x, pos.y, pos.z );
+                        boundingBox.expand( shared vec3( pos.x, pos.y, pos.z ) );
                     }
                 }
             }
@@ -208,7 +208,7 @@ public:
                         //outputData ~= bitangent.z;
 
                         // Save the position in verts
-                        verts ~= shared vec3( pos.x, pos.y, pos.z );
+                        boundingBox.expand( shared vec3( pos.x, pos.y, pos.z ) );
                     }
                 }
             }
@@ -279,9 +279,6 @@ public:
 
         // unbind the VBO and VAO
         glBindVertexArray( 0 );
-
-        // Calculate bounding box
-        boundingBox = AABB.from_points( verts );
     }
 
     override void update() { }

@@ -27,8 +27,16 @@ private:
     shared bool _animating;
 
 public:
+	/// Asset animation that the gameobject is animating based off of
+	mixin( Property!_animationData );
+	/// Current animation out of all the animations in the asset animation
+	mixin( Property!_currentAnim );
+	/// Current time of the animation
+	mixin( Property!_currentAnimTime );
     /// Bone transforms for the current pose (Passed to the shader)
     mixin( Property!_currBoneTransforms );
+	/// If the gameobject should be animating
+	mixin( Property!_animating );
 
     /**
      * Create animation object based on asset animation
@@ -48,8 +56,8 @@ public:
     {
         if( _animating )
         {
-            // Update currentanimtime based on deltaintime
-            _currentAnimTime += Time.deltaTime;
+            // Update currentanimtime based on deltaintime and animations fps
+            _currentAnimTime += Time.deltaTime * 24.0f;
 
             if( _currentAnimTime >= 96.0f )
             {
@@ -122,6 +130,8 @@ public:
     {
         _animationSet.duration = cast(float)animation.mDuration;
         _animationSet.fps = cast(float)animation.mTicksPerSecond;
+
+		// NOTE: Node hierarchy must currently be the first child or it crashes
 		_animationSet.animBones = makeBonesFromHierarchy( animation, mesh, boneHierarchy );
     }
 
@@ -131,13 +141,13 @@ public:
 	 * Params:
 	 *      animation = Assimp animation/poses object
 	 *      mesh =      Assimp mesh/bone object
-	 *      currNode =  The current node checking in the hierarchya
+	 *      currNode =  The current node checking in the hierarchy
      *
      * Returns: The bone based off of the currNode data
      */
     shared(Bone) makeBonesFromHierarchy( const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) currNode )
     { 
-	    //NOTE: Currently only works if each node is a Bone, only works with bones without animation b/c of storing nodeOffset
+	    //NOTE: Currently only works if each node is a Bone, works with bones without animation b/c of storing nodeOffset
 		//NOTE: Needs to be reworked to support this in the future
         string name = cast(string)currNode.mName.data[ 0 .. currNode.mName.length ];
         int boneNumber = findBoneWithName( name, mesh );

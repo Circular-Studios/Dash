@@ -494,7 +494,7 @@ public static:
         config = loadYamlFile( FilePath.Resources.ConfigFile );
     }
 
-    deprecated( "Use global versions instead." )
+    deprecated( "Use global find functions instead." )
     {
     /**
      * Get the element, cast to the given type, at the given path, in the given node.

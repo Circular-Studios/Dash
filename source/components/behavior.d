@@ -86,7 +86,7 @@ private shared Object function( Node )[string] getInitParams;
 /**
  * Defines a collection of Behaviors to allow for multiple scripts to be added to an object.
  */
-final shared class Behaviors
+shared struct Behaviors
 {
 private:
     ABehavior[] behaviors;

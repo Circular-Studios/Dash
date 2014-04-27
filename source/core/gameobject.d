@@ -60,6 +60,7 @@ private:
     string _name;
     ObjectStateFlags* _stateFlags;
     bool canChangeName;
+    Behaviors _behaviors;
     static uint nextId = 1;
 
 package:
@@ -86,6 +87,8 @@ public:
     mixin( Property!( _stateFlags, AccessModifier.Public ) );
     /// The name of the object.
     mixin( Getter!_name );
+    /// The scripts this object owns.
+    mixin( RefGetter!_behaviors );
     /// ditto
     mixin( ConditionalSetter!( _name, q{canChangeName}, AccessModifier.Public ) );
     /// The ID of the object
@@ -156,12 +159,6 @@ public:
                 obj.transform.rotation = quat.identity.rotatex( transVec.x.radians ).rotatey( transVec.y.radians ).rotatez( transVec.z.radians );
         }
 
-        if( foundClassName && Config.tryGet( "Script.Fields", innerNode, yamlObj ) )
-        {
-            if( auto initParams = className in getInitParams )
-                obj.initialize( (*initParams)( innerNode ) );
-        }
-
         // If parent is specified, add it to the map
         if( Config.tryGet( "Parent", prop, yamlObj ) )
             logWarning( "Specifying parent objects by name is deprecated. Please add this as an inline child to ", prop, "." );
@@ -230,7 +227,7 @@ public:
     {
         if( stateFlags.update )
         {
-            onUpdate();
+            behaviors.onUpdate();
 
             foreach( ci, component; componentList )
                 component.update();
@@ -246,7 +243,7 @@ public:
      */
     final void draw()
     {
-        onDraw();
+        behaviors.onDraw();
 
         foreach( obj; children )
             obj.draw();
@@ -257,7 +254,7 @@ public:
      */
     final void shutdown()
     {
-        onShutdown();
+        behaviors.onShutdown();
 
         foreach( obj; children )
             obj.shutdown();
@@ -299,7 +296,7 @@ public:
         if( cast()newChild.parent == cast()this )
             return;
         // Remove from current parent
-        else if( newChild.parent && cast()newChild.parent != cast()this )
+        else if( newChild.parent )
             newChild.parent.removeChild( newChild );
 
         _children ~= newChild;
@@ -350,55 +347,6 @@ public:
 
         oldChild.canChangeName = true;
         oldChild.parent = null;
-    }
-
-    /// Called on the update cycle.
-    void onUpdate() { }
-    /// Called on the draw cycle.
-    void onDraw() { }
-    /// Called on shutdown.
-    void onShutdown() { }
-    /// Called when the object collides with another object.
-    void onCollision( GameObject other ) { }
-
-    /// Allows for GameObjectInit to pass o to typed func.
-    void initialize( Object o ) { }
-}
-
-private shared Object function( Node )[string] getInitParams;
-
-/**
- * Class to extend when looking to use the onInitialize function.
- *
- * Type Params:
- *  T =             The type onInitialize will recieve.
- */
-class GameObjectInit(T) : GameObject if( is( T == class ) )
-{
-    /// Function to override to get args from Fields field in YAML.
-    abstract void onInitialize( T args );
-
-    /// Overridden to give params to child class.
-    final override void initialize( Object o )
-    {
-        onInitialize( cast(T)o );
-    }
-
-    /**
-     * Registers subclasses with onInit function pointers.
-     */
-    shared static this()
-    {
-        foreach( mod; ModuleInfo )
-        {
-            foreach( klass; mod.localClasses )
-            {
-                if( klass.base == typeid(GameObjectInit!T) )
-                {
-                    getInitParams[ klass.name ] = &Config.getObject!T;
-                }
-            }
-        }
     }
 }
 

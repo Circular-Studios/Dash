@@ -196,6 +196,8 @@ public:
                 logWarning( "Unknown key: ", key );
         }
 
+        obj.behaviors.onInitialize();
+
         return obj;
     }
 

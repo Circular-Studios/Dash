@@ -385,7 +385,7 @@ class GameObjectInit(T) : GameObject if( is( T == class ) )
     }
 
     /**
-     * Registers subclasses with onInit function pointers/
+     * Registers subclasses with onInit function pointers.
      */
     shared static this()
     {

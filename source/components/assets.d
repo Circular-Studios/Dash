@@ -94,10 +94,8 @@ public:
             assert(scene, "Failed to load scene file '" ~ file.fullPath ~ "' Error: " ~ aiGetErrorString().fromStringz);
             
             // If animation data, add animation
-
-
-            //if( file.baseFileName in meshes )
-                //logWarning( "Mesh ", file.baseFileName, " exsists more than once." );
+            if( file.baseFileName in meshes )
+                logWarning( "Mesh ", file.baseFileName, " exsists more than once." );
 
             // Add mesh
 			if( scene.mNumMeshes > 0 )
@@ -109,7 +107,7 @@ public:
 			}
 			else
 			{
-				//logWarning( "Assimp did not contain mesh data, ensure you are loading a valid mesh." );
+				logWarning( "Assimp did not contain mesh data, ensure you are loading a valid mesh." );
 			}
 
             // Release mesh

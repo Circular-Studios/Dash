@@ -4,7 +4,7 @@
 module components.animation;
 import core.properties;
 import components.icomponent;
-import utility.output;
+import utility.output, utility.time;
 
 import derelict.assimp3.assimp;
 import gl3n.linalg;
@@ -50,7 +50,7 @@ public:
         if( _animating )
         {
             // Update currentanimtime based on changeintime
-            _currentAnimTime += 0.002;
+            _currentAnimTime += 0.02f;
 
             if( _currentAnimTime > 96.0f )
             {
@@ -123,39 +123,40 @@ public:
         _animationSet.duration = cast(float)animation.mDuration;
         _animationSet.fps = cast(float)animation.mTicksPerSecond;
 
-		//printBoneList(mesh);
-		_animationSet.animNodes = makeNodesFromNode( animation, mesh, boneHierarchy.mChildren[ 1 ], null );
+		_animationSet.animBones = makeBonesFromHierarchy( animation, mesh, boneHierarchy, null, "Head" );
     }
 
     /**
-     * Each bone has one of two setups:
-     * Split up into five seperate nodes (translation -> preRotation -> Rotation -> Scale -> Bone)
-     * Or the bone is one node in the hierarchy
+     * 
      *
      * Params: TODO
      *
      * Returns: TODO
      */
-    shared(Node) makeNodesFromNode( const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) currNode, shared Node returnNode )
+    shared(Bone) makeBonesFromHierarchy( const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) currNode, shared Bone returnBone, string parentName )
     { 
+		// NOTE: Currently only works if each node is a Bone, only works with bones without animation b/c of storing nodeOffset
+		// NOTE: Needs to be reworked to support this in the future
+
         string name = cast(string)currNode.mName.data[ 0 .. currNode.mName.length ];
-        int id = findNodeWithName( name, mesh );
-        shared Node node;
+        int id = findBoneWithName( name, mesh );
+        shared Bone bone;
 
-        if( id != -1 )
+        if( id != -1 && name )
         {
-            node = new shared Node( name );
-            node.id = id;
-            node.transform = convertAIMatrix( mesh.mBones[ node.id ].mOffsetMatrix );
+            bone = new shared Bone( name, id );
+			
+			bone.offset = convertAIMatrix( mesh.mBones[ bone.id ].mOffsetMatrix );
+			bone.nodeOffset = convertAIMatrix( currNode.mTransformation );
 
-            assignAnimationData( animation, node );
+            assignAnimationData( animation, bone );
 
-            returnNode = node;
+            returnBone = bone;
             _numberOfBones++;
         }
         else
         {
-            node = returnNode;
+            bone = returnBone;
         }
 
         // For each child node
@@ -163,12 +164,12 @@ public:
         {
             // Create it and assign to this node as a child
             if( id != -1 )
-                node.children ~= makeNodesFromNode( animation, mesh, currNode.mChildren[ i ], node );
+                bone.children ~= makeBonesFromHierarchy( animation, mesh, currNode.mChildren[ i ], bone, name );
             else
-                return makeNodesFromNode( animation, mesh, currNode.mChildren[ i ], node );
+                return makeBonesFromHierarchy( animation, mesh, currNode.mChildren[ i ], bone, name );
         }
 
-        return node;
+        return bone;
     }
 
     /**
@@ -178,40 +179,24 @@ public:
      *
      * Returns:
      */
-    void assignAnimationData( const(aiAnimation*) animation, shared Node nodeToAssign )
+    void assignAnimationData( const(aiAnimation*) animation, shared Bone boneToAssign )
     {
         // For each bone animation data
         for( int i = 0; i < animation.mNumChannels; i++)
         {
-            const(aiNodeAnim*) temp = animation.mChannels[ i ];
             string name = cast(string)animation.mChannels[ i ].mNodeName.data[ 0 .. animation.mChannels[ i ].mNodeName.length ];
-            // If the names match
-            if( checkEnd(name, "_$AssimpFbx$_Translation" ) && name[ 0 .. (animation.mChannels[ i ].mNodeName.length - 24) ] == nodeToAssign.name )
-            {
-                nodeToAssign.positionKeys = convertVectorArray( animation.mChannels[ i ].mPositionKeys,
-                                                                animation.mChannels[ i ].mNumPositionKeys );
-            }
-            else if( checkEnd(name, "_$AssimpFbx$_Rotation" ) && name[ 0 .. animation.mChannels[ i ].mNodeName.length - 21 ] == nodeToAssign.name )
-            {
-                nodeToAssign.rotationKeys = convertQuat( animation.mChannels[ i ].mRotationKeys,
-                                                         animation.mChannels[ i ].mNumRotationKeys );
-            }
-            else if( checkEnd(name, "_$AssimpFbx$_Scaling" ) && name[ 0 .. animation.mChannels[ i ].mNodeName.length - 20 ] == nodeToAssign.name )
-            {
-                nodeToAssign.scaleKeys = convertVectorArray( animation.mChannels[ i ].mScalingKeys,
-                                                             animation.mChannels[ i ].mNumScalingKeys );
-            }
-            else if( name == nodeToAssign.name )
+
+			if( name == boneToAssign.name )
             {
                 // Assign the bone animation data to the bone
-                nodeToAssign.positionKeys = convertVectorArray( animation.mChannels[ i ].mPositionKeys,
+                boneToAssign.positionKeys = convertVectorArray( animation.mChannels[ i ].mPositionKeys,
                                                                 animation.mChannels[ i ].mNumPositionKeys );
 
-                nodeToAssign.scaleKeys = convertVectorArray( animation.mChannels[ i ].mScalingKeys,
+                boneToAssign.scaleKeys = convertVectorArray( animation.mChannels[ i ].mScalingKeys,
                                                              animation.mChannels[ i ].mNumScalingKeys );
 
-                nodeToAssign.rotationKeys = convertQuat( animation.mChannels[ i ].mRotationKeys,
-                                                         animation.mChannels[ i ].mNumRotationKeys );               
+                boneToAssign.rotationKeys = convertQuat( animation.mChannels[ i ].mRotationKeys,
+                                                         animation.mChannels[ i ].mNumRotationKeys );
             }
         }
     }
@@ -261,7 +246,7 @@ public:
      *
      * Returns:
      */
-    int findNodeWithName( string name, const(aiMesh*) mesh )
+    int findBoneWithName( string name, const(aiMesh*) mesh )
     {
         for( int i = 0; i < mesh.mNumBones; i++ )
         {
@@ -311,8 +296,9 @@ public:
         {
             boneTransforms[ i ] = mat4.identity;
         }
+		
+        fillTransforms( boneTransforms, _animationSet.animBones, time, mat4.identity );
 
-        fillTransforms( boneTransforms, _animationSet.animNodes, time, mat4.identity, 0 );
         return boneTransforms;
     }
 
@@ -323,48 +309,41 @@ public:
      *
      * Returns:
      */
-    void fillTransforms( shared mat4[] transforms, shared Node node, shared float time, shared mat4 parentTransform, int boneNum)
+    void fillTransforms( shared mat4[] transforms, shared Bone bone, shared float time, shared mat4 parentTransform )
     {
-        // Calculate matrix based on node.bone data and time
+        // Calculate matrix based on bone data and time
         shared mat4 finalTransform;
         shared mat4 boneTransform = mat4.identity;
-		// Data in the transform/scale partial nodes
 
-		// old values
-		//shared mat4 test = mat4(0.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 32.7f, 0.0f, 0.0f, 1.0f, 0.02f, 0.0f, 0.0f, 0.0f, 1.0f);
-		//shared mat4 test2 = mat4(0.978468f, 0.0f, -0.2064f, 12.2843f, 0.0f, 1.0f, 0.0f, 0.0f, 0.2064f, 0.0f, 0.978468f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-		//shared mat4 test3 = mat4(0.0f, -0.977f,  0.212f, 16.632f, 1.0f,  0.0f,  0.0f,  0.0f, 0.0f,  0.212f,  0.977f,  0.0f, 0.0f,  0.0f,  0.0f,  1.0f);
-
-		if( node.positionKeys.length > cast(int)time )
-            boneTransform = boneTransform * boneTransform.translation( node.positionKeys[ cast(int)time ].vector[ 0 ], node.positionKeys[ cast(int)time ].vector[ 1 ], node.positionKeys[ cast(int)time ].vector[ 2 ] );
-		if( node.rotationKeys.length > cast(int)time )
-			boneTransform = boneTransform * node.rotationKeys[ cast(int)time ].to_matrix!( 4, 4 );
-		if( node.scaleKeys.length > cast(int)time )
-            boneTransform.scale( node.scaleKeys[ cast(int)time ].vector[ 0 ], node.scaleKeys[ cast(int)time ].vector[ 1 ], node.scaleKeys[ cast(int)time ].vector[ 2 ] ); //cast(int)time
-
-		finalTransform = parentTransform * boneTransform;
-		transforms[ node.id ] = finalTransform * node.transform;
-		/*if(boneNum == 0)
+		if( bone.positionKeys.length > cast(int)time )
 		{
-		finalTransform = parentTransform * (boneTransform);
-		transforms[ node.id ] = finalTransform * node.transform;
+            boneTransform = boneTransform.translation( bone.positionKeys[ cast(int)time ].vector[ 0 ], bone.positionKeys[ cast(int)time ].vector[ 1 ], 
+																	   bone.positionKeys[ cast(int)time ].vector[ 2 ] );
 		}
-		if(boneNum == 1)
+		if( bone.rotationKeys.length > cast(int)time )
 		{
-		finalTransform = parentTransform * boneTransform;
-		transforms[ node.id ] = finalTransform * node.transform;
+			boneTransform = boneTransform * bone.rotationKeys[ cast(int)time ].to_matrix!( 4, 4 );
 		}
-		if(boneNum == 2)
+		if( bone.scaleKeys.length > cast(int)time )
 		{
-		finalTransform = parentTransform * (boneTransform);
-		transforms[ node.id ] = finalTransform * node.transform;
+            boneTransform = boneTransform.scale( bone.scaleKeys[ cast(int)time ].vector[ 0 ], bone.scaleKeys[ cast(int)time ].vector[ 1 ], bone.scaleKeys[ cast(int)time ].vector[ 2 ] );
 		}
-		boneNum++;*/
+	
+		if( bone.positionKeys.length == 0 && bone.rotationKeys.length == 0 && bone.scaleKeys.length  == 0 )
+		{
+			finalTransform = parentTransform * boneTransform * bone.nodeOffset;
+			transforms[ bone.id ] = finalTransform * bone.offset;
+		}
+		else
+		{
+			finalTransform = parentTransform * boneTransform;
+			transforms[ bone.id ] = finalTransform * bone.offset;
+		}
 
         // Store the transform in the correct place and check children
-        for( int i = 0; i < node.children.length; i++ )
+        for( int i = 0; i < bone.children.length; i++ )
         {
-            fillTransforms( transforms, node.children[ i ], time, finalTransform, boneNum );
+            fillTransforms( transforms, bone.children[ i ], time, finalTransform );
         }
     }
 
@@ -418,26 +397,29 @@ public:
     {
         shared float duration;
         shared float fps;
-        shared Node animNodes;
+        shared Bone animBones;
     }
 	/**
      * TODO
      */
-    shared class Node
+    shared class Bone
     {
-        this( shared string nodeName )
+        this( string boneName, int boneId) // , mat4 boneOffset, mat4 boneNodeOffset 
         {
-            name = nodeName;
+            name = boneName;
+			id = boneId;
+			//offset = boneOffset;
+			//nodeOffset = boneNodeOffset;
         }
 
-        shared string name;
+        string name;
         shared int id;
-        shared Node parent;
-        shared Node[] children;
+        shared Bone[] children;
 
         shared vec3[] positionKeys;
         shared quat[] rotationKeys;
         shared vec3[] scaleKeys;
-        shared mat4 transform;
+        shared mat4 offset;
+		shared mat4 nodeOffset;
     }
 }

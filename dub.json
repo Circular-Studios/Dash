@@ -17,7 +17,7 @@
 		"derelict-assimp3": "~master",
 		"dyaml": "~master",
 		"gl3n-shared" : "~master",
-		"dlogg": ">=0.2.2",
+		"dlogg": "~>0.2.2",
 		"x11": { "version": "==1.0.0", "optional": true }
 	},
 	"targetName": "dash",

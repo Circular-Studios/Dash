@@ -52,7 +52,7 @@ public:
             // Update currentanimtime based on changeintime
             _currentAnimTime += 0.02f;
 
-            if( _currentAnimTime > 96.0f )
+            if( _currentAnimTime >= 96.0f )
             {
                 _currentAnimTime = 0.0f;
             }
@@ -139,14 +139,14 @@ public:
 		// NOTE: Needs to be reworked to support this in the future
 
         string name = cast(string)currNode.mName.data[ 0 .. currNode.mName.length ];
-        int id = findBoneWithName( name, mesh );
+        int boneNumber = findBoneWithName( name, mesh );
         shared Bone bone;
 
-        if( id != -1 && name )
+        if( boneNumber != -1 && name )
         {
-            bone = new shared Bone( name, id );
+            bone = new shared Bone( name, boneNumber );
 			
-			bone.offset = convertAIMatrix( mesh.mBones[ bone.id ].mOffsetMatrix );
+			bone.offset = convertAIMatrix( mesh.mBones[ bone.boneNumber ].mOffsetMatrix );
 			bone.nodeOffset = convertAIMatrix( currNode.mTransformation );
 
             assignAnimationData( animation, bone );
@@ -163,7 +163,7 @@ public:
         for( int i = 0; i < currNode.mNumChildren; i++ )
         {
             // Create it and assign to this node as a child
-            if( id != -1 )
+            if( boneNumber != -1 )
                 bone.children ~= makeBonesFromHierarchy( animation, mesh, currNode.mChildren[ i ], bone, name );
             else
                 return makeBonesFromHierarchy( animation, mesh, currNode.mChildren[ i ], bone, name );
@@ -240,11 +240,14 @@ public:
     }
 
     /**
-     * Find bone with name in our structure.
+     * Get a bone number by matching name bones in mesh
      *
      * Params:
+     *      name =              Name searching for
+     *      mesh =              Mesh containing bones to check
      *
-     * Returns:
+     * Returns: 
+	 *      Bone number of desired bone
      */
     int findBoneWithName( string name, const(aiMesh*) mesh )
     {
@@ -257,27 +260,6 @@ public:
         }
 
         return -1;
-    }
-    /**
-     * Check if string stringToTest ends with string end
-     *
-     * Params:
-     *
-     * Returns:
-     */
-    bool checkEnd( string stringToTest, string end )
-    {
-        if( stringToTest.length > end.length )
-        {
-            string temp = stringToTest[ (stringToTest.length - end.length) .. stringToTest.length ];
-
-            if( stringToTest[ (stringToTest.length - end.length) .. stringToTest.length ] == end )
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -313,31 +295,32 @@ public:
     {
         // Calculate matrix based on bone data and time
         shared mat4 finalTransform;
-        shared mat4 boneTransform = mat4.identity;
 
-		if( bone.positionKeys.length > cast(int)time )
-		{
-            boneTransform = boneTransform.translation( bone.positionKeys[ cast(int)time ].vector[ 0 ], bone.positionKeys[ cast(int)time ].vector[ 1 ], 
-																	   bone.positionKeys[ cast(int)time ].vector[ 2 ] );
-		}
-		if( bone.rotationKeys.length > cast(int)time )
-		{
-			boneTransform = boneTransform * bone.rotationKeys[ cast(int)time ].to_matrix!( 4, 4 );
-		}
-		if( bone.scaleKeys.length > cast(int)time )
-		{
-            boneTransform = boneTransform.scale( bone.scaleKeys[ cast(int)time ].vector[ 0 ], bone.scaleKeys[ cast(int)time ].vector[ 1 ], bone.scaleKeys[ cast(int)time ].vector[ 2 ] );
-		}
-	
 		if( bone.positionKeys.length == 0 && bone.rotationKeys.length == 0 && bone.scaleKeys.length  == 0 )
 		{
-			finalTransform = parentTransform * boneTransform * bone.nodeOffset;
-			transforms[ bone.id ] = finalTransform * bone.offset;
+			finalTransform = parentTransform * bone.nodeOffset;
+			transforms[ bone.boneNumber ] = finalTransform * bone.offset;
 		}
 		else
 		{
+            shared mat4 boneTransform = mat4.identity;
+
+			if( bone.positionKeys.length > cast(int)time )
+			{
+				boneTransform = boneTransform.translation( bone.positionKeys[ cast(int)time ].vector[ 0 ], bone.positionKeys[ cast(int)time ].vector[ 1 ], 
+														   bone.positionKeys[ cast(int)time ].vector[ 2 ] );
+			}
+			if( bone.rotationKeys.length > cast(int)time )
+			{
+				boneTransform = boneTransform * bone.rotationKeys[ cast(int)time ].to_matrix!( 4, 4 );
+			}
+			if( bone.scaleKeys.length > cast(int)time )
+			{
+				boneTransform = boneTransform.scale( bone.scaleKeys[ cast(int)time ].vector[ 0 ], bone.scaleKeys[ cast(int)time ].vector[ 1 ], bone.scaleKeys[ cast(int)time ].vector[ 2 ] );
+			}
+
 			finalTransform = parentTransform * boneTransform;
-			transforms[ bone.id ] = finalTransform * bone.offset;
+			transforms[ bone.boneNumber ] = finalTransform * bone.offset;
 		}
 
         // Store the transform in the correct place and check children
@@ -404,16 +387,14 @@ public:
      */
     shared class Bone
     {
-        this( string boneName, int boneId) // , mat4 boneOffset, mat4 boneNodeOffset 
+        this( string boneName, int boneNum )
         {
             name = boneName;
-			id = boneId;
-			//offset = boneOffset;
-			//nodeOffset = boneNodeOffset;
+			boneNumber = boneNum;
         }
 
         string name;
-        shared int id;
+        shared int boneNumber;
         shared Bone[] children;
 
         shared vec3[] positionKeys;

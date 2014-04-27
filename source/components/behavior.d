@@ -82,18 +82,30 @@ shared struct Behaviors
 {
 private:
     ABehavior[] behaviors;
+    shared GameObject _owner;
 
 public:
+    /**
+     * Constructor for Behaviors which assigns its owner.
+     *
+     * Params:
+     *  owner =         The owner of this behavior set.
+     */
+    this( shared GameObject owner )
+    {
+        _owner = owner;
+    }
+
     /**
      * Adds a new behavior to the collection.
      *
      * Params:
      *  newBehavior =   The behavior to add to the object.
      */
-    void createBehavior( shared GameObject owner, string className, Node fields = Node( YAMLNull() ) )
+    void createBehavior( string className, Node fields = Node( YAMLNull() ) )
     {
         auto newBehavior = cast(shared ABehavior)Object.factory( className );
-        newBehavior._owner = owner;
+        newBehavior._owner = _owner;
 
         if( !newBehavior )
         {
@@ -118,10 +130,10 @@ public:
 
 enum callBehaviors = "".reduce!( ( a, func ) => a ~
     q{
-        void $func()
+        static if( __traits( compiles, ParameterTypeTuple!( __traits( getMember, ABehavior, "$func") ) ) &&
+                    ParameterTypeTuple!( __traits( getMember, ABehavior, "$func") ).length == 0 )
         {
-            static if( __traits( compiles, ParameterTypeTuple!( __traits( getMember, "$func") ) ) &&
-                        ParameterTypeTuple!( __traits( getMember, "$func") ).length == 0 )
+            void $func()
             {
                 foreach( script; behaviors )
                 {

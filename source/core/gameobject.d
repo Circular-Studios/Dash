@@ -104,48 +104,24 @@ public:
      * Returns:
      *  A new game object with components and info pulled from yaml.
      */
-    static shared(GameObject) createFromYaml( Node yamlObj, const ClassInfo scriptOverride = null )
+    static shared(GameObject) createFromYaml( Node yamlObj )
     {
         shared GameObject obj;
         bool foundClassName;
         string prop, className;
         Node innerNode;
 
-        string objName = yamlObj[ "Name" ].as!string;
-
-        // Try to get from script
-        if( scriptOverride !is null )
+        if( Config.tryGet( "InstanceOf", prop, yamlObj ) )
         {
-            obj = cast(shared GameObject)scriptOverride.create();
+            obj = Prefabs[ prop ].createInstance();
         }
         else
         {
-            foundClassName = Config.tryGet( "Script.ClassName", className, yamlObj );
-            // Get class to create script from
-            const ClassInfo scriptClass = foundClassName
-                    ? ClassInfo.find( className )
-                    : null;
-
-            // Check that if a Script.ClassName was provided that it was valid
-            if( foundClassName && scriptClass is null )
-            {
-                logWarning( objName, ": Unable to find Script ClassName: ", className );
-            }
-
-            if( Config.tryGet( "InstanceOf", prop, yamlObj ) )
-            {
-                obj = Prefabs[ prop ].createInstance( scriptClass );
-            }
-            else
-            {
-                obj = scriptClass
-                        ? cast(shared GameObject)scriptClass.create()
-                        : new shared GameObject;
-            }
+            obj = new shared GameObject;
         }
 
-        // set object name
-        obj.name = objName;
+        // Set object name
+        obj.name = yamlObj[ "Name" ].as!string;
 
         // Init transform
         if( Config.tryGet( "Transform", innerNode, yamlObj ) )
@@ -157,6 +133,27 @@ public:
                 obj.transform.position = shared vec3( transVec );
             if( Config.tryGet( "Rotation", transVec, innerNode ) )
                 obj.transform.rotation = quat.identity.rotatex( transVec.x.radians ).rotatey( transVec.y.radians ).rotatez( transVec.z.radians );
+        }
+
+        if( Config.tryGet( "Behaviors", innerNode, yamlObj ) )
+        {
+            if( !innerNode.isSequence )
+            {
+                logWarning( "Behaviors tag of ", obj.name, " must be a sequence." );
+            }
+            else
+            {
+                foreach( Node behavior; innerNode )
+                {
+                    string className;
+                    Node fields;
+                    if( !Config.tryGet( "Class", className, behavior ) )
+                        logFatal( "Behavior element in ", obj.name, " must have a Class value." );
+                    if( !Config.tryGet( "Fields", fields, behavior ) )
+                        fields = Node( YAMLNull() );
+                    obj.behaviors.createBehavior( className, fields );
+                }
+            }
         }
 
         // If parent is specified, add it to the map
@@ -172,7 +169,7 @@ public:
                     if( child.isScalar )
                     {
                         // Add child name to map.
-                        logWarning( "Specifing child objects by name is deprecated. Please add ", child.get!string, " as an inline child of ", objName, "." );
+                        logWarning( "Specifing child objects by name is deprecated. Please add ", child.get!string, " as an inline child of ", obj.name, "." );
                     }
                     else
                     {
@@ -208,6 +205,7 @@ public:
     this()
     {
         _transform = shared Transform( this );
+        _behaviors = shared Behaviors( this );
 
         // Create default material
         material = new shared Material();

@@ -17,6 +17,8 @@ private abstract shared class ABehavior
     /// Function called by Behaviors to init the object.
     /// Should not be touched by anything outside this module.
     protected void initializeBehavior( Object param ) {  }
+    /// The function called on initialization of the object.
+    void onInitialize() { }
     /// Called on the update cycle.
     void onUpdate() { }
     /// Called on the draw cycle.
@@ -33,27 +35,17 @@ private abstract shared class ABehavior
  */
 abstract shared class Behavior( InitType = void ) : ABehavior
 {
-    static if( is( InitType == void ) )
+    static if( !is( InitType == void ) )
     {
-        /**
-         * The function called on initialization of the object.
-         */
-        void onInitialize() { }
-        protected final override void initializeBehavior( Object param ) { onInitialize(); }
+        InitType initArgs;
+        protected final override void initializeBehavior( Object param )
+        {
+            initArgs = cast(shared InitType)param;
+        }
     }
     else
     {
-        /**
-         * The function called on initialization of the object.
-         *
-         * Params:
-         *  arg =       The args defined by the object.
-         */
-        void onInitialize( InitType arg ) { }
-        protected final override void initializeBehavior( Object param )
-        {
-            onInitialize( cast(InitType)param );
-        }
+        protected final override void initializeBehavior( Object param ) { onInitialize(); }
     }
 
     /// Returns the GameObject which owns this behavior.

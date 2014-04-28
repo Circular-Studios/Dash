@@ -56,12 +56,9 @@ public:
     {
         if( _animating )
         {
-			logInfo( "PRE DeltaTime: ", Time.deltaTime, "curAnimTime: ", _currentAnimTime );
-
             // Update currentanimtime based on deltatime and animations fps
             _currentAnimTime += Time.deltaTime * 24.0f;
 
-			logInfo( "POST DeltaTime: ", Time.deltaTime, "curAnimTime: ", _currentAnimTime );
             if( _currentAnimTime >= 96.0f )
             {
                 _currentAnimTime = 0.0f;
@@ -134,7 +131,15 @@ public:
         _animationSet.duration = cast(float)animation.mDuration;
         _animationSet.fps = cast(float)animation.mTicksPerSecond;
 
-		_animationSet.animBones = makeBonesFromHierarchy( animation, mesh, boneHierarchy.mChildren[ 1 ] );
+		for( int i = 0; i < boneHierarchy.mNumChildren; i++)
+		{
+			string name = boneHierarchy.mChildren[ i ].mName.data.ptr.fromStringz;
+
+			if( findBoneWithName( name, mesh ) != -1 )
+			{
+				_animationSet.animBones = makeBonesFromHierarchy( animation, mesh, boneHierarchy.mChildren[ i ] );
+			}
+		}
     }
 
     /**
@@ -152,8 +157,6 @@ public:
 	    //NOTE: Currently only works if each node is a Bone, works with bones without animation b/c of storing nodeOffset
 		//NOTE: Needs to be reworked to support this in the future
 		string name = currNode.mName.data.ptr.fromStringz;
-
-		logInfo( "Name: ", name );
 
 		int boneNumber = findBoneWithName( name, mesh );
         shared Bone bone;

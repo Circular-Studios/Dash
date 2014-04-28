@@ -144,39 +144,31 @@ public:
      */
     final void shutdown()
     {
-        foreach_reverse( index; 0 .. meshes.length )
+        foreach_reverse( name; meshes.keys )
         {
-            auto name = meshes.keys[ index ];
-
             if( !meshes[ name ].isUsed )
                 logWarning( "Mesh ", name, " not used during this run." );
 
             meshes[ name ].shutdown();
             meshes.remove( name );
         }
-        foreach_reverse( index; 0 .. textures.length )
+        foreach_reverse( name; textures.keys )
         {
-            auto name = textures.keys[ index ];
-
             if( !textures[ name ].isUsed )
                 logWarning( "Texture ", name, " not used during this run." );
 
             textures[ name ].shutdown();
             textures.remove( name );
         }
-        foreach_reverse( index; 0 .. materials.length )
+        foreach_reverse( name; materials.keys )
         {
-            auto name = materials.keys[ index ];
-
             if( !materials[ name ].isUsed )
                 logWarning( "Material ", name, " not used during this run." );
 
             materials.remove( name );
         }
-        foreach_reverse( index; 0 .. animations.length )
+        foreach_reverse( name; animations.keys )
         {
-            auto name = animations.keys[ index ];
-
             if( !animations[ name ].isUsed )
                 logWarning( "Animation ", name, " not used during this run." );
 

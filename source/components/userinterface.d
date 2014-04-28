@@ -1,5 +1,5 @@
 ﻿/**
- * Handles the creation and life cycle of a web view
+ * Handles the creation and life cycle of UI objects and webview textures
  */
 module components.userinterface;
 import core;
@@ -7,7 +7,7 @@ import utility.awesomium, components, utility, graphics.graphics;
 import std.string, gl3n.linalg;
 
 /**
- * TODO
+ * User interface objects handle drawing/updating an AwesomiumView over the screen 
  */
 shared class UserInterface
 {
@@ -19,11 +19,19 @@ private:
     // TODO: Handle JS
 
 public:
-    /// TODO
+    /// WebView to be drawn
     mixin( Property!(_view, AccessModifier.Public) );
-    /// TODO
+    /// Scale of the UI
     mixin( Property!(_scaleMat, AccessModifier.Public) );
 
+    /**
+     * Create UI object
+     *
+     * Params:
+     *  w =         Width (in pixels) of UI
+     *  h =         Height (in pixels) of UI
+     *  filePath =  Absolute file path to UI file
+     */
     this( uint w, uint h, string filePath ) 
     {
         _scaleMat = mat4.identity;
@@ -35,30 +43,46 @@ public:
         logDebug( "UI File: ", filePath );
     }
 
+    /**
+     * Update UI view
+     */
     void update()
     {
-        // Check for mouse & keyboard input
+        /// TODO: Check for mouse & keyboard input
 
         _view.update();
 
         return;
     }
 
+    /**
+     * Draw UI view
+     */
     void draw()
     {
         Graphics.addUI( this );
     }
 
+    /**
+     * Cleanup UI memory
+     */
     void shutdown()
     {
+        // Try to clean up gl buffers
+        _view.shutdown();
         // Clean up mesh, material, and view
     }
 
+    /*
     void keyPress(int key)
     {
 
     }
+    */
 
+    /**
+     * Initializes Awesomium singleton
+     */
     static void initializeAwesomium()
     {
         version( Windows )
@@ -72,12 +96,18 @@ public:
         }
     }
 
+    /**
+     * Updates Awesomium singleton
+     */
     static void updateAwesomium()
     {
         version( Windows )
         awe_webcore_update();
     }
 
+    /**
+     * Shutdowns Awesomium singleton
+     */
     static void shutdownAwesomium()
     {
         version( Windows )
@@ -85,6 +115,10 @@ public:
     }
 }
 
+
+/**
+ * Creates an Awesomium web view texture
+ */
 shared class AwesomiumView : Texture, IComponent
 {
 private:
@@ -150,6 +184,7 @@ public:
 
     override void shutdown()
     {
+        destroy( glBuffer );
         version( Windows ) 
         awe_webview_destroy( cast(awe_webview*)webView );
     }

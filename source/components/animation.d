@@ -56,7 +56,7 @@ public:
     {
         if( _animating )
         {
-            // Update currentanimtime based on deltaintime and animations fps
+            // Update currentanimtime based on deltatime and animations fps
             _currentAnimTime += Time.deltaTime * 24.0f;
 
             if( _currentAnimTime >= 96.0f )
@@ -131,8 +131,7 @@ public:
         _animationSet.duration = cast(float)animation.mDuration;
         _animationSet.fps = cast(float)animation.mTicksPerSecond;
 
-		// NOTE: Node hierarchy must currently be the first child or it crashes
-		_animationSet.animBones = makeBonesFromHierarchy( animation, mesh, boneHierarchy );
+		_animationSet.animBones = makeBonesFromHierarchy( animation, mesh, boneHierarchy.mChildren[ 1 ] );
     }
 
     /**
@@ -258,7 +257,7 @@ public:
     void fillTransforms( shared mat4[] transforms, shared Bone bone, shared float time, shared mat4 parentTransform )
     {
         shared mat4 finalTransform;
-		if( bone.positionKeys.length == 0 && bone.rotationKeys.length == 0 && bone.scaleKeys.length  == 0 )
+		if( bone.positionKeys.length == 0 && bone.rotationKeys.length == 0 && bone.scaleKeys.length == 0 )
 		{
 			finalTransform = parentTransform * bone.nodeOffset;
 			transforms[ bone.boneNumber ] = finalTransform * bone.offset;

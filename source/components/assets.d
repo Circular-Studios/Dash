@@ -98,17 +98,17 @@ public:
                 logWarning( "Mesh ", file.baseFileName, " exsists more than once." );
 
             // Add mesh
-			if( scene.mNumMeshes > 0 )
-			{
-				if( scene.mNumAnimations > 0 )
-					animations[ file.baseFileName ] = new shared AssetAnimation( scene.mAnimations[ 0 ], scene.mMeshes[ 0 ], scene.mRootNode );
+            if( scene.mNumMeshes > 0 )
+            {
+                if( scene.mNumAnimations > 0 )
+                    animations[ file.baseFileName ] = new shared AssetAnimation( scene.mAnimations[ 0 ], scene.mMeshes[ 0 ], scene.mRootNode );
 
-				meshes[ file.baseFileName ] = new shared Mesh( file.fullPath, scene.mMeshes[ 0 ] );
-			}
-			else
-			{
-				logWarning( "Assimp did not contain mesh data, ensure you are loading a valid mesh." );
-			}
+                meshes[ file.baseFileName ] = new shared Mesh( file.fullPath, scene.mMeshes[ 0 ] );
+            }
+            else
+            {
+                logWarning( "Assimp did not contain mesh data, ensure you are loading a valid mesh." );
+            }
 
             // Release mesh
             aiReleaseImport( scene );

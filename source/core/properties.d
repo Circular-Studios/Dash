@@ -13,6 +13,7 @@ enum AccessModifier : string
     Public = "public",
     Protected = "protected",
     Private = "private",
+    Package = "package",
 }
 
 /**

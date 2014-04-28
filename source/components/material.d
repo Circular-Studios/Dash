@@ -15,6 +15,7 @@ shared final class Material
 {
 private:
     Texture _diffuse, _normal, _specular;
+    bool _isUsed;
 
 public:
     /// The diffuse (or color) map.
@@ -23,13 +24,16 @@ public:
     mixin( Property!(_normal, AccessModifier.Public) );
     /// The specular map, which specifies how shiny a given point is.
     mixin( Property!(_specular, AccessModifier.Public) );
+    /// Whether or not the material is actually used.
+    mixin( Property!( _isUsed, AccessModifier.Package ) );
 
     /**
      * Default constructor, makes sure everything is initialized to default.
      */
     this()
     {
-        _diffuse = _normal = _specular = defaultTex;
+        _diffuse = _specular = defaultTex;
+        _normal = defaultNormal;
     }
 
     /**
@@ -65,6 +69,7 @@ shared class Texture
 {
 protected:
     uint _width, _height, _glID;
+    bool _isUsed;
 
     /**
      * TODO
@@ -106,6 +111,8 @@ public:
     mixin( Property!_height );
     /// TODO
     mixin( Property!_glID );
+    /// Whether or not the texture is actually used.
+    mixin( Property!( _isUsed, AccessModifier.Package ) );
 
     /**
      * TODO
@@ -142,11 +149,7 @@ public:
 }
 
 /**
- * TODO
- *
- * Params:
- *
- * Returns:
+ * A default black texture.
  */
 @property shared(Texture) defaultTex()
 {
@@ -154,6 +157,19 @@ public:
 
     if( !def )
         def = new shared Texture( [0, 0, 0, 255] );
+
+    return def;
+}
+
+/**
+ * A default gray texture
+ */
+@property shared(Texture) defaultNormal()
+{
+    static shared Texture def;
+
+    if( !def )
+        def = new shared Texture( [127, 127, 255, 255] );
 
     return def;
 }

@@ -111,12 +111,15 @@ private:
     shared AnimationSet _animationSet;
     /// Amount of bones
     shared int _numberOfBones;
+    bool _isUsed;
 
 public:
     /// List of animations, containing all of the information specific to each
     mixin( Property!_animationSet );
     /// Amount of bones
     mixin( Property!_numberOfBones );
+    /// Whether or not the material is actually used.
+    mixin( Property!( _isUsed, AccessModifier.Package ) );
 
     /**
      * Create the assetanimation, parsing all of the animation data

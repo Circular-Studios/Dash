@@ -38,6 +38,7 @@ public:
         enum get( string array ) = q{
             if( auto result = name in $array )
             {
+                result.isUsed = true;
                 return *result;
             }
             else
@@ -146,23 +147,39 @@ public:
         foreach_reverse( index; 0 .. meshes.length )
         {
             auto name = meshes.keys[ index ];
+
+            if( !meshes[ name ].isUsed )
+                logWarning( "Mesh ", name, " not used during this run." );
+
             meshes[ name ].shutdown();
             meshes.remove( name );
         }
         foreach_reverse( index; 0 .. textures.length )
         {
             auto name = textures.keys[ index ];
+
+            if( !textures[ name ].isUsed )
+                logWarning( "Texture ", name, " not used during this run." );
+
             textures[ name ].shutdown();
             textures.remove( name );
         }
         foreach_reverse( index; 0 .. materials.length )
         {
             auto name = materials.keys[ index ];
+
+            if( !materials[ name ].isUsed )
+                logWarning( "Material ", name, " not used during this run." );
+
             materials.remove( name );
         }
         foreach_reverse( index; 0 .. animations.length )
         {
             auto name = animations.keys[ index ];
+
+            if( !animations[ name ].isUsed )
+                logWarning( "Animation ", name, " not used during this run." );
+
             animations[ name ].shutdown();
             animations.remove( name );
         }

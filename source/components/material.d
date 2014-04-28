@@ -45,13 +45,13 @@ public:
         auto obj = new shared Material;
         string prop;
 
-        if( Config.tryGet( "Diffuse", prop, yamlObj ) )
+        if( yamlObj.tryFind( "Diffuse", prop ) )
             obj.diffuse = Assets.get!Texture( prop );
 
-        if( Config.tryGet( "Normal", prop, yamlObj ) )
+        if( yamlObj.tryFind( "Normal", prop ) )
             obj.normal = Assets.get!Texture( prop );
 
-        if( Config.tryGet( "Specular", prop, yamlObj ) )
+        if( yamlObj.tryFind( "Specular", prop ) )
             obj.specular = Assets.get!Texture( prop );
 
         return obj;

@@ -259,8 +259,8 @@ public:
             {   
                 glBindFramebuffer( GL_FRAMEBUFFER, light.shadowMapFrameBuffer );
 
-                light.view = Camera.lookAt( light.direction, vec3(0,0,0), vec3(0,1,0) );
-                light.proj = mat4.orthographic( -50, 50, -50, 50, -50, 50 ); // hardcoded values to change later
+                light.view = Camera.lookAt( light.direction * 50, vec3(0,0,0), vec3(0,1,0) );
+                light.proj = mat4.orthographic( -50, 50, -10, 50, 50, -50 ); // hardcoded values to change later
 
                 glClear( GL_DEPTH_BUFFER_BIT );
 
@@ -268,7 +268,6 @@ public:
                 {
                     if( object.mesh && object.stateFlags.drawMesh )
                     {
-
                         // TODO: handle animated objects
 
                         glBindVertexArray( object.mesh.glVertexArray );

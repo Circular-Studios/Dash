@@ -191,13 +191,13 @@ public:
         result[0][1] = yaxis.x;
         result[1][1] = yaxis.y;
         result[2][1] = yaxis.z;
-        result[3][0] = -dot( yaxis, cameraPos );
+        result[3][1] = -dot( yaxis, cameraPos );
         result[0][2] = zaxis.x;
         result[1][2] = zaxis.y;
         result[2][2] = zaxis.z;
         result[3][2] = -dot( zaxis, cameraPos );
 
-        return result;
+        return result.transposed;
     }
 
 

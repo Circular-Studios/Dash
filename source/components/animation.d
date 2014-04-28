@@ -63,10 +63,10 @@ public:
             {
                 _currentAnimTime = 0.0f;
             }
-
-            // Calculate and store array of bonetransforms to pass to the shader
-            currBoneTransforms = _animationData.getTransformsAtTime( _currentAnimTime );
         }
+
+		// Calculate and store array of bonetransforms to pass to the shader
+		currBoneTransforms = _animationData.getTransformsAtTime( _currentAnimTime );
     }
 
 	/**
@@ -149,7 +149,8 @@ public:
 	    //NOTE: Currently only works if each node is a Bone, works with bones without animation b/c of storing nodeOffset
 		//NOTE: Needs to be reworked to support this in the future
         string name = cast(string)currNode.mName.data[ 0 .. currNode.mName.length ];
-        int boneNumber = findBoneWithName( name, mesh );
+		//string name = toStringz(to!string( currNode.mName ));
+		int boneNumber = findBoneWithName( name, mesh );
         shared Bone bone;
 
         if( boneNumber != -1 && name )

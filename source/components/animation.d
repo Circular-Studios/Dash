@@ -4,7 +4,7 @@
 module components.animation;
 import core.properties;
 import components.icomponent;
-import utility.output, utility.time;
+import utility;
 
 import derelict.assimp3.assimp;
 import gl3n.linalg;
@@ -16,15 +16,15 @@ shared class Animation : IComponent
 {
 private:
 	/// Asset animation that the gameobject is animating based off of
-    shared AssetAnimation _animationData;
+    AssetAnimation _animationData;
 	/// Current animation out of all the animations in the asset animation
-    shared int _currentAnim;
+    int _currentAnim;
 	/// Current time of the animation
-    shared float _currentAnimTime;
+    float _currentAnimTime;
 	/// Bone transforms for the current pose
-    shared mat4[] _currBoneTransforms;
+    mat4[] _currBoneTransforms;
 	/// If the gameobject should be animating
-    shared bool _animating;
+    bool _animating;
 
 public:
 	/// Asset animation that the gameobject is animating based off of
@@ -56,9 +56,12 @@ public:
     {
         if( _animating )
         {
+			logInfo( "PRE DeltaTime: ", Time.deltaTime, "curAnimTime: ", _currentAnimTime );
+
             // Update currentanimtime based on deltatime and animations fps
             _currentAnimTime += Time.deltaTime * 24.0f;
 
+			logInfo( "POST DeltaTime: ", Time.deltaTime, "curAnimTime: ", _currentAnimTime );
             if( _currentAnimTime >= 96.0f )
             {
                 _currentAnimTime = 0.0f;
@@ -148,8 +151,10 @@ public:
     { 
 	    //NOTE: Currently only works if each node is a Bone, works with bones without animation b/c of storing nodeOffset
 		//NOTE: Needs to be reworked to support this in the future
-        string name = cast(string)currNode.mName.data[ 0 .. currNode.mName.length ];
-		//string name = toStringz(to!string( currNode.mName ));
+		string name = currNode.mName.data.ptr.fromStringz;
+
+		logInfo( "Name: ", name );
+
 		int boneNumber = findBoneWithName( name, mesh );
         shared Bone bone;
 
@@ -188,7 +193,7 @@ public:
     {
         for( int i = 0; i < mesh.mNumBones; i++ )
         {
-            if( name == cast(string)mesh.mBones[ i ].mName.data[ 0 .. mesh.mBones[ i ].mName.length ] )
+            if( name == mesh.mBones[ i ].mName.data.ptr.fromStringz )
             {
                 return i;
             }
@@ -207,7 +212,7 @@ public:
     {
         for( int i = 0; i < animation.mNumChannels; i++)
         {
-            string name = cast(string)animation.mChannels[ i ].mNodeName.data[ 0 .. animation.mChannels[ i ].mNodeName.length ];
+            string name = animation.mChannels[ i ].mNodeName.data.ptr.fromStringz;
 
 			if( name == boneToAssign.name )
             {

@@ -33,6 +33,26 @@ immutable string edgedetectionFS = q{
 
     out float color;
 
+    const vec2 offsets[9] = vec2[](
+        vec2( 0.0, 0.0 ), //Center        0
+        vec2( -1.0, 1.0 ), //Top Left     1
+        vec2( 0.0, 1.0 ), //Top           2
+        vec2( 1.0, 1.0 ), //Top Right     3
+        vec2( 1.0, 0.0 ), //right         4
+        vec2( 1.0, -1.0 ), //Bottom right 5
+        vec2( 0.0, -1.0 ), //Bottom       6
+        vec2( -1.0, -1.0 ), //Bottom left 7
+        vec2( -1.0, 0.0 ) //left          8
+    );
+
+    // Function for decoding normals
+    vec3 decode( vec2 enc )
+    {
+        float t = ( ( enc.x * enc.x ) + ( enc.y * enc.y ) ) / 4;
+        float ti = sqrt( 1 - t );
+        return vec3( ti * enc.x, ti * enc.y, -1 + t * 2 );
+    }
+
     void main( void )
     {
         float depths[9];
@@ -90,26 +110,5 @@ immutable string edgedetectionFS = q{
         vec4 normalResults = step( 0.4, deltas1 );
         normalResults = max( normalResults, depthResults );
         color = ( normalResults.x + normalResults.y + normalResults.z + normalResults.w ) * .25;
-    }
-
-    const vec2 offsets[9] = 
-    {
-        vec2( 0.0, 0.0 ), //Center        0
-        vec2( -1.0, 1.0 ), //Top Left    1
-        vec2( 0.0, 1.0 ), //Top          2
-        vec2( 1.0, 1.0 ), //Top Right    3
-        vec2( 1.0, 0.0 ), //right         4
-        vec2( 1.0, -1.0 ), //Bottom right  5
-        vec2( 0.0, -1.0 ), //Bottom        6
-        vec2( -1.0, -1.0 ), //Bottom left  7
-        vec2( -1.0, 0.0 ) //left          8
-    };
-
-    // Function for decoding normals
-    vec3 decode( vec2 enc )
-    {
-        float t = ( ( enc.x * enc.x ) + ( enc.y * enc.y ) ) / 4;
-        float ti = sqrt( 1 - t );
-        return vec3( ti * enc.x, ti * enc.y, -1 + t * 2 );
     }
 };

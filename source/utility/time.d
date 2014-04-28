@@ -56,7 +56,10 @@ public:
     }
 
 private:
-    this() { }
+    this()
+	{
+		delta = total = Duration.zero;
+	}
 }
 
 private:
@@ -76,8 +79,6 @@ static this()
     cur = prev = TickDuration.min;
     total = delta = second = Duration.zero;
     frameCount = 0;
-
-    Time.delta = Time.total = Duration.min;
 }
 
 /**

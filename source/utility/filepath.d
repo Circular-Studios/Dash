@@ -5,7 +5,7 @@ module utility.filepath;
 import utility.output;
 
 static import std.file, std.path;
-import std.stdio;
+import std.stdio, std.array;
 
 /**
  * A class which stores default resource paths, and handles path manipulation.
@@ -61,27 +61,16 @@ public:
         }
 
         // Start array
-        auto files = new FilePath[ 1 ];
-        uint filesFound = 0;
+        FilePath[] files;
 
-        // Add file to array
-        void handleFile( string name )
-        {
-            if( filesFound == files.length )
-                files.length *= 2;
-
-            files[ filesFound++ ] = new FilePath( name );
-        }
+        auto dirs = pattern.length
+                    ? std.file.dirEntries( safePath, pattern, std.file.SpanMode.breadth ).array
+                    : std.file.dirEntries( safePath, std.file.SpanMode.breadth ).array;
 
         // Find files
-        if( pattern.length )
-            foreach( name; std.file.dirEntries( safePath, pattern, std.file.SpanMode.breadth ) )
-                handleFile( name );
-        else
-            foreach( name; std.file.dirEntries( safePath, std.file.SpanMode.breadth ) )
-                handleFile( name );
-
-        files.length = filesFound;
+        foreach( entry; dirs )
+            if( entry.isFile )
+                files ~= new FilePath( entry.name );
 
         return files;
     }

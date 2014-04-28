@@ -255,6 +255,86 @@ void scheduleDelayedTask( void delegate() dg, Duration delay )
 }
 
 /**
+ * Schedule a task to be executed on an interval, until the task returns true.
+ *
+ * Params:
+ *  interval =          The interval on which to call this task.
+ *  dg =                The task to execute.
+ */
+void scheduleIntervaledTask( Duration interval, bool delegate() dg )
+{
+    auto startTime = Time.totalTime;
+    auto timeTilExe = interval.toSeconds;
+    scheduleTask( {
+        timeTilExe -= Time.deltaTime;
+        if( timeTilExe <= 0 )
+        {
+            if( dg() )
+                return true;
+
+            timeTilExe = interval.toSeconds;
+        }
+
+        return false;
+    } );
+}
+
+/**
+ * Schedule a task to be executed on an interval a given number of times.
+ *
+ * Params:
+ *  interval =          The interval on which to call this task.
+ *  numExecutions =     The number of time to execute the task.
+ *  dg =                The task to execute.
+ */
+void scheduleIntervaledTask( Duration interval, uint numExecutions, void delegate() dg )
+{
+    auto startTime = Time.totalTime;
+    auto timeTilExe = interval.toSeconds;
+    uint executedTimes = 0;
+    scheduleTask( {
+        timeTilExe -= Time.deltaTime;
+        if( timeTilExe <= 0 )
+        {
+            dg();
+
+            ++executedTimes;
+            timeTilExe = interval.toSeconds;
+        }
+
+        return executedTimes == numExecutions;
+    } );
+}
+
+/**
+ * Schedule a task to be executed on an interval a given number of times, or until the event returns true.
+ *
+ * Params:
+ *  interval =          The interval on which to call this task.
+ *  numExecutions =     The number of time to execute the task.
+ *  dg =                The task to execute.
+ */
+void scheduleIntervaledTask( Duration interval, uint numExecutions, bool delegate() dg )
+{
+    auto startTime = Time.totalTime;
+    auto timeTilExe = interval.toSeconds;
+    uint executedTimes = 0;
+    scheduleTask( {
+        timeTilExe -= Time.deltaTime;
+        if( timeTilExe <= 0 )
+        {
+            if( dg() )
+                return true;
+
+            ++executedTimes;
+            timeTilExe = interval.toSeconds;
+        }
+
+        return executedTimes == numExecutions;
+    } );
+}
+
+/**
  * Executes all scheduled tasks.
  */
 void executeTasks()

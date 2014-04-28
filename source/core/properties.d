@@ -4,6 +4,7 @@
  * Authors: Colden Cullen, ColdenCullen@gmail.com
  */
 module core.properties;
+import utility.string;
 
 public import std.traits;
 import std.array;
@@ -13,6 +14,7 @@ enum AccessModifier : string
     Public = "public",
     Protected = "protected",
     Private = "private",
+    Package = "package",
 }
 
 /**
@@ -59,7 +61,7 @@ template Getter( alias field, AccessModifier access = AccessModifier.Public, str
  */
 template RefGetter( alias field, AccessModifier access = AccessModifier.Public, string name = field.stringof[ 1..$ ] )
 {
-    enum Getter = q{
+    enum RefGetter = q{
         final $access @property auto ref $name() @safe pure nothrow
         {
             return $field;
@@ -183,18 +185,6 @@ shared interface IDirtyable
 }
 
 private:
-T replaceMap( T, TKey, TValue )( T base, TKey[TValue] replaceMap ) if( isSomeString!T && isSomeString!TKey && isSomeString!TValue )
-{
-    auto result = base;
-
-    foreach( key, value; replaceMap )
-    {
-        result = result.replace( key, value );
-    }
-
-    return result;
-}
-
 string functionTraitsString( alias func )()
 {
     string result = "";

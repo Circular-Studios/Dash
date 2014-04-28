@@ -4,7 +4,7 @@
 module graphics.adapters.adapter;
 import core, components, graphics, utility;
 
-import gl3n.linalg;
+import gl3n.linalg, gl3n.frustum;
 import derelict.opengl3.gl3;
 
 import std.algorithm, std.array;
@@ -217,10 +217,27 @@ public:
         */
         void geometryPass()
         {
+            void updateMatricies( shared GameObject current )
+            {
+                current.transform.updateMatrix();
+                foreach( child; current.children )
+                    updateMatricies( child );
+            }
+            updateMatricies( scene.root );
+
             foreach( object; scene.objects )
             {
                 if( object.mesh && object.stateFlags.drawMesh )
                 {
+                    shared mat4 worldView = scene.camera.viewMatrix * object.transform.matrix;
+                    shared mat4 worldViewProj = projection * worldView;
+
+                    if( !( object.mesh.boundingBox in shared Frustum( worldViewProj ) ) )
+                    {
+                        // If we can't see an object, don't draw it.
+                        continue;
+                    }
+
                     // set the shader
                     Shader shader = object.mesh.animated
                                     ? Shaders.animatedGeometry
@@ -228,11 +245,9 @@ public:
 
                     glUseProgram( shader.programID );
                     glBindVertexArray( object.mesh.glVertexArray );
-
-                    shared mat4 worldView = scene.camera.viewMatrix * object.transform.matrix;
+                    
                     shader.bindUniformMatrix4fv( shader.WorldView, worldView );
-                    shader.bindUniformMatrix4fv( shader.WorldViewProjection,
-                                                 projection * worldView );
+                    shader.bindUniformMatrix4fv( shader.WorldViewProjection, worldViewProj );
                     shader.bindUniform1ui( shader.ObjectId, object.id );
 
                     if( object.mesh.animated )
@@ -471,7 +486,7 @@ protected:
     */
     final void loadProperties()
     {
-        fullscreen = Config.get!bool( "Display.Fullscreen" );
+        fullscreen = config.find!bool( "Display.Fullscreen" );
         if( fullscreen )
         {
             width = screenWidth;
@@ -479,11 +494,11 @@ protected:
         }
         else
         {
-            width = Config.get!uint( "Display.Width" );
-            height = Config.get!uint( "Display.Height" );
+            width = config.find!uint( "Display.Width" );
+            height = config.find!uint( "Display.Height" );
         }
 
-        backfaceCulling = Config.get!bool( "Graphics.BackfaceCulling" );
-        vsync = Config.get!bool( "Graphics.VSync" );
+        backfaceCulling = config.find!bool( "Graphics.BackfaceCulling" );
+        vsync = config.find!bool( "Graphics.VSync" );
     }
 }

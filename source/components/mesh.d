@@ -5,7 +5,7 @@ module components.mesh;
 import core, components, graphics, utility;
 
 import derelict.opengl3.gl3, derelict.assimp3.assimp;
-import gl3n.linalg;
+import gl3n.linalg, gl3n.aabb;
 
 import std.stdio, std.stream, std.format, std.math;
 
@@ -53,6 +53,7 @@ shared class Mesh : IComponent
 private:
     uint _glVertexArray, _numVertices, _numIndices, _glIndexBuffer, _glVertexBuffer;
     bool _animated;
+    AABB _boundingBox;
 
 public:
     /// TODO
@@ -67,6 +68,8 @@ public:
     mixin( Property!_glVertexBuffer );
     /// TODO
     mixin( Property!_animated );
+    /// The bounding box of the mesh.
+    mixin( RefGetter!_boundingBox );
 
     /**
      * Creates a mesh.
@@ -81,6 +84,7 @@ public:
         float[] outputData;
         uint[] indices;
         animated = false;
+        boundingBox = AABB.from_points( [] );
         if( mesh )
         {
             // If there is animation data
@@ -159,6 +163,9 @@ public:
                         //outputData ~= bitangent.z;
                         outputData ~= vertBones[ face.mIndices[ j ] ][0..4];
                         outputData ~= vertWeights[ face.mIndices[ j ] ][0..4];
+
+                        // Save the position in verts
+                        boundingBox.expand( shared vec3( pos.x, pos.y, pos.z ) );
                     }
                 }
             }
@@ -199,6 +206,9 @@ public:
                         //outputData ~= bitangent.x;
                         //outputData ~= bitangent.y;
                         //outputData ~= bitangent.z;
+
+                        // Save the position in verts
+                        boundingBox.expand( shared vec3( pos.x, pos.y, pos.z ) );
                     }
                 }
             }

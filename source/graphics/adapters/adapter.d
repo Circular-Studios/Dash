@@ -4,7 +4,7 @@
 module graphics.adapters.adapter;
 import core, components, graphics, utility;
 
-import gl3n.linalg;
+import gl3n.linalg, gl3n.frustum;
 import derelict.opengl3.gl3;
 
 import std.algorithm, std.array;
@@ -227,6 +227,15 @@ public:
             {
                 if( object.mesh && object.stateFlags.drawMesh )
                 {
+                    shared mat4 worldView = scene.camera.viewMatrix * object.transform.matrix;
+                    shared mat4 worldViewProj = projection * worldView;
+
+                    if( !( object.mesh.boundingBox in shared Frustum( worldViewProj ) ) )
+                    {
+                        // If we can't see an object, don't draw it.
+                        continue;
+                    }
+
                     // set the shader
                     Shader shader = object.mesh.animated
                                     ? Shaders.animatedGeometry
@@ -234,11 +243,8 @@ public:
 
                     glUseProgram( shader.programID );
                     glBindVertexArray( object.mesh.glVertexArray );
-
-                    shared mat4 worldView =  scene.camera.viewMatrix * object.transform.matrix;
                     shader.bindUniformMatrix4fv( shader.WorldView, worldView );
-                    shader.bindUniformMatrix4fv( shader.WorldViewProjection,
-                                                 projection * worldView );
+                    shader.bindUniformMatrix4fv( shader.WorldViewProjection, worldViewProj );
                     shader.bindUniform1ui( shader.ObjectId, object.id );
 
                     if( object.mesh.animated )

@@ -325,7 +325,7 @@ final bool tryFind( T = Node )( Node node, string path, ref Variant result ) not
 {
     // Get the value
     T temp;
-    bool found = tryFind( path, temp, node );
+    bool found = node.tryFind( path, temp );
 
     // Assign and return results
     if( found )

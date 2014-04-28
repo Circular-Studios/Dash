@@ -29,7 +29,7 @@ immutable string edgedetectionFS = q{
 
     uniform sampler2D normalTexture;
     uniform sampler2D depthTexture;
-    uniform float2 pixelOffsets; //x = 1 / Width, y = 1 / Height
+    uniform vec2 pixelOffsets; //x = 1 / Width, y = 1 / Height
 
     out float color;
 
@@ -40,7 +40,7 @@ immutable string edgedetectionFS = q{
 
         for( int i = 0; i < 9; i++ )
         {
-            float2 uv = fUV;
+            vec2 uv = fUV;
             uv.x += offsets[i].x * pixelOffsets.x;
             uv.y += offsets[i].y * pixelOffsets.y;
             depths[i] = texture( depthTexture, uv ).x;
@@ -92,18 +92,18 @@ immutable string edgedetectionFS = q{
         color = ( normalResults.x + normalResults.y + normalResults.z + normalResults.w ) * .25;
     }
 
-    const float2 offsets[9] = 
+    const vec2 offsets[9] = 
     {
-        float2( 0.0, 0.0 ), //Center        0
-        float2( -1.0, 1.0 ), //Top Left    1
-        float2( 0.0, 1.0 ), //Top          2
-        float2( 1.0, 1.0 ), //Top Right    3
-        float2( 1.0, 0.0 ), //right         4
-        float2( 1.0, -1.0 ), //Bottom right  5
-        float2( 0.0, -1.0 ), //Bottom        6
-        float2( -1.0, -1.0 ), //Bottom left  7
-        float2( -1.0, 0.0 ) //left          8
-    }
+        vec2( 0.0, 0.0 ), //Center        0
+        vec2( -1.0, 1.0 ), //Top Left    1
+        vec2( 0.0, 1.0 ), //Top          2
+        vec2( 1.0, 1.0 ), //Top Right    3
+        vec2( 1.0, 0.0 ), //right         4
+        vec2( 1.0, -1.0 ), //Bottom right  5
+        vec2( 0.0, -1.0 ), //Bottom        6
+        vec2( -1.0, -1.0 ), //Bottom left  7
+        vec2( -1.0, 0.0 ) //left          8
+    };
 
     // Function for decoding normals
     vec3 decode( vec2 enc )
@@ -112,4 +112,4 @@ immutable string edgedetectionFS = q{
         float ti = sqrt( 1 - t );
         return vec3( ti * enc.x, ti * enc.y, -1 + t * 2 );
     }
-}
+};

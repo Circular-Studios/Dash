@@ -3,7 +3,7 @@
 */
 module utility.string;
 
-import std.array;
+import std.array, std.traits;
 
 /// fromStringz
 /**
@@ -36,4 +36,25 @@ unittest
 
     assert(cstring.ptr.fromStringz == "some string");
     assert(null.fromStringz == "");
+}
+
+/**
+ * Replaces each key in replaceMap with it's value.
+ *
+ * Params:
+ *  base =              The string to replace on.
+ *  replaceMap =        The map to use to replace things.
+ *
+ * Returns: The updated string.
+ */
+T replaceMap( T, TKey, TValue )( T base, TKey[TValue] replaceMap ) if( isSomeString!T && isSomeString!TKey && isSomeString!TValue )
+{
+    auto result = base;
+
+    foreach( key, value; replaceMap )
+    {
+        result = result.replace( key, value );
+    }
+
+    return result;
 }

@@ -144,37 +144,20 @@ public:
      */
     final void shutdown()
     {
-        foreach_reverse( name; meshes.keys )
-        {
-            if( !meshes[ name ].isUsed )
-                logWarning( "Mesh ", name, " not used during this run." );
+        enum shutdownAA( string aaName, string friendlyName ) = q{
+            foreach_reverse( name; meshes.keys )
+            {
+                if( !$aaName[ name ].isUsed )
+                    logWarning( "$friendlyName ", name, " not used during this run." );
 
-            meshes[ name ].shutdown();
-            meshes.remove( name );
-        }
-        foreach_reverse( name; textures.keys )
-        {
-            if( !textures[ name ].isUsed )
-                logWarning( "Texture ", name, " not used during this run." );
-
-            textures[ name ].shutdown();
-            textures.remove( name );
-        }
-        foreach_reverse( name; materials.keys )
-        {
-            if( !materials[ name ].isUsed )
-                logWarning( "Material ", name, " not used during this run." );
-
-            materials.remove( name );
-        }
-        foreach_reverse( name; animations.keys )
-        {
-            if( !animations[ name ].isUsed )
-                logWarning( "Animation ", name, " not used during this run." );
-
-            animations[ name ].shutdown();
-            animations.remove( name );
-        }
+                $aaName[ name ].shutdown();
+                $aaName.remove( name );
+            }
+        }.replaceMap( [ "$aaName": aaName, "$friendlyName": friendlyName ] );
+        mixin( shutdownAA!( q{meshes}, "Mesh" ) );
+        mixin( shutdownAA!( q{textures}, "Texture" ) );
+        mixin( shutdownAA!( q{materials}, "Material" ) );
+        mixin( shutdownAA!( q{animations}, "Animation" ) );
     }
 }
 

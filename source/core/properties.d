@@ -4,6 +4,7 @@
  * Authors: Colden Cullen, ColdenCullen@gmail.com
  */
 module core.properties;
+import utility.string;
 
 public import std.traits;
 import std.array;
@@ -184,18 +185,6 @@ shared interface IDirtyable
 }
 
 private:
-T replaceMap( T, TKey, TValue )( T base, TKey[TValue] replaceMap ) if( isSomeString!T && isSomeString!TKey && isSomeString!TValue )
-{
-    auto result = base;
-
-    foreach( key, value; replaceMap )
-    {
-        result = result.replace( key, value );
-    }
-
-    return result;
-}
-
 string functionTraitsString( alias func )()
 {
     string result = "";

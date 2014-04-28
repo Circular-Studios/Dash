@@ -60,6 +60,14 @@ public:
 
         return obj;
     }
+
+    /**
+     * Shuts down the material, making sure all references are released.
+     */
+    void shutdown()
+    {
+        _diffuse = _specular = _normal = null;
+    }
 }
 
 /**

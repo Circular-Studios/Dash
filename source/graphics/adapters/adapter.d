@@ -434,7 +434,7 @@ protected:
     */
     final void loadProperties()
     {
-        fullscreen = Config.get!bool( "Display.Fullscreen" );
+        fullscreen = config.find!bool( "Display.Fullscreen" );
         if( fullscreen )
         {
             width = screenWidth;
@@ -442,11 +442,11 @@ protected:
         }
         else
         {
-            width = Config.get!uint( "Display.Width" );
-            height = Config.get!uint( "Display.Height" );
+            width = config.find!uint( "Display.Width" );
+            height = config.find!uint( "Display.Height" );
         }
 
-        backfaceCulling = Config.get!bool( "Graphics.BackfaceCulling" );
-        vsync = Config.get!bool( "Graphics.VSync" );
+        backfaceCulling = config.find!bool( "Graphics.BackfaceCulling" );
+        vsync = config.find!bool( "Graphics.VSync" );
     }
 }

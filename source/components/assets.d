@@ -94,14 +94,21 @@ public:
             assert(scene, "Failed to load scene file '" ~ file.fullPath ~ "' Error: " ~ aiGetErrorString().fromStringz);
             
             // If animation data, add animation
-            if(scene.mNumAnimations > 0)
-                animations[ file.baseFileName ] = new shared AssetAnimation( scene.mAnimations[0], scene.mMeshes[0], scene.mRootNode );
-
             if( file.baseFileName in meshes )
                 logWarning( "Mesh ", file.baseFileName, " exsists more than once." );
 
             // Add mesh
-            meshes[ file.baseFileName ] = new shared Mesh( file.fullPath, scene.mMeshes[0] );
+            if( scene.mNumMeshes > 0 )
+            {
+                if( scene.mNumAnimations > 0 )
+                    animations[ file.baseFileName ] = new shared AssetAnimation( scene.mAnimations[ 0 ], scene.mMeshes[ 0 ], scene.mRootNode );
+
+                meshes[ file.baseFileName ] = new shared Mesh( file.fullPath, scene.mMeshes[ 0 ] );
+            }
+            else
+            {
+                logWarning( "Assimp did not contain mesh data, ensure you are loading a valid mesh." );
+            }
 
             // Release mesh
             aiReleaseImport( scene );
@@ -110,7 +117,7 @@ public:
         foreach( file; FilePath.scanDirectory( FilePath.Resources.Textures ) )
         {
             if( file.baseFileName in textures )
-                logWarning( "Texture ", file.baseFileName, " exsists more than once." );
+               logWarning( "Texture ", file.baseFileName, " exists more than once." );
 
             textures[ file.baseFileName ] = new shared Texture( file.fullPath );
         }
@@ -120,7 +127,7 @@ public:
             auto name = object[ "Name" ].as!string;
 
             if( name in materials )
-                logWarning( "Material ", name, " exsists more than once." );
+                logWarning( "Material ", name, " exists more than once." );
             
             materials[ name ] = Material.createFromYaml( object );
         }

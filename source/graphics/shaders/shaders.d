@@ -23,6 +23,7 @@ private enum ShaderUniform
     InverseProjection = "invProj",
     /// Floats
     ProjectionConstants = "projectionConstants",
+    PixelOffsets = "PixelOffsets",
     /// Textures
     UITexture = "uiTexture",
     DiffuseTexture = "diffuseTexture",
@@ -69,9 +70,11 @@ public:
     Shader pointLight;
     /// TODO
     Shader userInterface;
+    /// Edge Detection shader program
+    Shader edgeDetection;
 
     /**
-    * TODO
+    * Loads all shaders, starting with Shaders fields, and then any shader files in the optional Shaders folder
     */
     final void initialize()
     {
@@ -81,6 +84,7 @@ public:
         directionalLight = new Shader( "DirectionalLight", directionallightVS, directionallightFS, true );
         pointLight = new Shader( "PointLight", pointlightVS, pointlightFS, true );
         userInterface = new Shader( "UserInterface", userinterfaceVS, userinterfaceFS, true );
+        edgeDetection = new Shader( "EdgeDetection", edgedetectionVS, edgedetectionFS, true );
 
         foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders, "*.fs.glsl" ) )
         {

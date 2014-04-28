@@ -5,7 +5,6 @@ module utility.string;
 
 import std.array, std.traits;
 
-/// fromStringz
 /**
  * Returns new string formed from C-style (null-terminated) string $(D msg). Usefull
  * when interfacing with C libraries. For D-style to C-style convertion use std.string.toStringz.
@@ -15,7 +14,7 @@ import std.array, std.traits;
  *
  * Authors: NCrashed
  */
-string fromStringz(const char* msg) nothrow
+string fromStringz( const char* msg ) pure nothrow
 {
     scope(failure) return "";
     if( msg is null ) return "";
@@ -47,8 +46,12 @@ unittest
  *
  * Returns: The updated string.
  */
-T replaceMap( T, TKey, TValue )( T base, TKey[TValue] replaceMap ) if( isSomeString!T && isSomeString!TKey && isSomeString!TValue )
+T replaceMap( T, TKey, TValue )( T base, TKey[TValue] replaceMap ) pure @safe nothrow
+    if( isSomeString!T && isSomeString!TKey && isSomeString!TValue )
 {
+    scope(failure) return "";
+    if( base is null ) return "";
+
     auto result = base;
 
     foreach( key, value; replaceMap )
@@ -57,4 +60,9 @@ T replaceMap( T, TKey, TValue )( T base, TKey[TValue] replaceMap ) if( isSomeStr
     }
 
     return result;
+}
+/// Example
+unittest
+{
+    assert( "$val1 $val2 val3".replaceMap( [ "$val1": "test1", "$val2": "test2", "$val3": "test3" ] ) == "test1 test2 val3" );
 }

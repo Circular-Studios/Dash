@@ -111,7 +111,7 @@ public:
         string prop, className;
         Node innerNode;
 
-        if( Config.tryGet( "InstanceOf", prop, yamlObj ) )
+        if( yamlObj.tryFind( "InstanceOf", prop ) )
         {
             obj = Prefabs[ prop ].createInstance();
         }
@@ -124,18 +124,18 @@ public:
         obj.name = yamlObj[ "Name" ].as!string;
 
         // Init transform
-        if( Config.tryGet( "Transform", innerNode, yamlObj ) )
+        if( yamlObj.tryFind( "Transform", innerNode ) )
         {
             shared vec3 transVec;
-            if( Config.tryGet( "Scale", transVec, innerNode ) )
+            if( innerNode.tryFind( "Scale", transVec ) )
                 obj.transform.scale = shared vec3( transVec );
-            if( Config.tryGet( "Position", transVec, innerNode ) )
+            if( innerNode.tryFind( "Position", transVec ) )
                 obj.transform.position = shared vec3( transVec );
-            if( Config.tryGet( "Rotation", transVec, innerNode ) )
+            if( innerNode.tryFind( "Rotation", transVec ) )
                 obj.transform.rotation = quat.identity.rotatex( transVec.x.radians ).rotatey( transVec.y.radians ).rotatez( transVec.z.radians );
         }
 
-        if( Config.tryGet( "Behaviors", innerNode, yamlObj ) )
+        if( yamlObj.tryFind( "Behaviors", innerNode ) )
         {
             if( !innerNode.isSequence )
             {
@@ -147,9 +147,9 @@ public:
                 {
                     string className;
                     Node fields;
-                    if( !Config.tryGet( "Class", className, behavior ) )
+                    if( !behavior.tryFind( "Class", className ) )
                         logFatal( "Behavior element in ", obj.name, " must have a Class value." );
-                    if( !Config.tryGet( "Fields", fields, behavior ) )
+                    if( !behavior.tryFind( "Fields", fields ) )
                         fields = Node( YAMLNull() );
                     obj.behaviors.createBehavior( className, fields );
                 }
@@ -157,10 +157,10 @@ public:
         }
 
         // If parent is specified, add it to the map
-        if( Config.tryGet( "Parent", prop, yamlObj ) )
+        if( yamlObj.tryFind( "Parent", prop ) )
             logWarning( "Specifying parent objects by name is deprecated. Please add this as an inline child to ", prop, "." );
 
-        if( Config.tryGet( "Children", innerNode, yamlObj ) )
+        if( yamlObj.tryFind( "Children", innerNode ) )
         {
             if( innerNode.isSequence )
             {

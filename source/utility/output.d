@@ -131,7 +131,7 @@ shared final class GlobalLogger : StyledStrictLogger!(OutputType
         
         // Try to get new path for logging
         string newFileName;
-        if( Config.tryGet!string( LognameSection, newFileName ) )
+        if( config.tryFind( LognameSection, newFileName ) )
         {
             string oldFileName = this.name; 
             try
@@ -152,7 +152,7 @@ shared final class GlobalLogger : StyledStrictLogger!(OutputType
         
         // Try to get output verbosity from config
         Verbosity outputVerbosity;
-        if( Config.tryGet!Verbosity( OutputVerbositySection, outputVerbosity ) )
+        if( config.tryFind( OutputVerbositySection, outputVerbosity ) )
         {
             minOutputLevel = cast(OutputType)( outputVerbosity ); 
         } 
@@ -164,7 +164,7 @@ shared final class GlobalLogger : StyledStrictLogger!(OutputType
         
         // Try to get logging verbosity from config
         Verbosity loggingVerbosity;
-        if( Config.tryGet!Verbosity( LoggingVerbositySection, loggingVerbosity ) )
+        if( config.tryFind( LoggingVerbositySection, loggingVerbosity ) )
         {
             minLoggingLevel = cast(OutputType)( loggingVerbosity );
         } 

@@ -8,23 +8,23 @@ import std.conv;
 import std.stdio;
 import std.functional;
 
-// to not import dlogg every time you call log function
-public import dlogg.log : LoggingLevel; 
-
 /**
- * The types of output.
- * Deprecated: use $(B LoggingLevel).
- */
+*   Custom logging level type for global logger.
+*/
 enum OutputType
 {
-    /// Info for developers.
+    /// Debug messages, aren't compiled in release version
     Debug,
-    /// Purely informational.
+    /// Diagnostic messages about program state
     Info,
-    /// Something went wrong, but it's recoverable.
+    /// Non fatal errors
     Warning,
-    /// The ship is sinking.
+    /// Fatal errors that usually stop application
     Error,
+    /// Messages of the level don't go to output.
+    /// That used with minLoggingLevel and minOutputLevel
+    /// to suppress any message. 
+    Muted
 }
 
 /**
@@ -33,8 +33,8 @@ enum OutputType
 enum Verbosity
 {
     /// Show me everything++.
-    /// Deprecated, debug msgs are cut off in release
-    /// version anyway. So equal High.
+    /// Debug msgs are cut off in release
+    /// version.
     Debug,
     /// Show me everything.
     High,
@@ -53,20 +53,18 @@ enum Verbosity
 *   messages - compile-time tuple of printable things
 *              to be written into the log.
 */
-void log( A... )( LoggingLevel type, lazy A messages )
+void log( A... )( OutputType type, lazy A messages )
 {
     Logger.log( messages.text, type );
 }
-/// Wrapper for logging with Notice level
-alias logNotice     = curry!( log, LoggingLevel.Notice );
-/// Alias for backward compatibility
-alias logInfo       = logNotice;
+/// Wrapper for logging with Info level
+alias logInfo     = curry!( log, OutputType.Info );
+alias logNotice   = logInfo;
 /// Wrapper for logging with Warning level
-alias logWarning    = curry!( log, LoggingLevel.Warning );
-/// Wrapper for logging with Fatal level
-alias logFatal      = curry!( log, LoggingLevel.Fatal );
-/// Alias for backward compatibility
-alias logError      = logFatal;
+alias logWarning    = curry!( log, OutputType.Warning );
+/// Wrapper for logging with Error level
+alias logError      = curry!( log, OutputType.Error );
+alias logFatal      = logError;
 
 /// Special case is debug logging
 /**
@@ -74,14 +72,7 @@ alias logError      = logFatal;
 */
 void logDebug( A... )( A messages )
 {
-    Logger.logDebug( messages );
-}
-
-/// Alias for Output.printMessage
-deprecated("Use dlogg.log.LoggingLevel instead") 
-void log( A... )( OutputType type, A messages ) 
-{ 
-    Output.log( type, messages ); 
+   debug Logger.log( messages.text, OutputType.Debug );
 }
 
 /**
@@ -100,20 +91,24 @@ void bench( alias func )( lazy string name )
 /// Global instance of logger
 shared GlobalLogger Logger;
 
-// Deprecated manager for console output
-shared OutputManager Output;
-
 shared static this()
 {
     Logger = new shared GlobalLogger;
-    Output = new shared OutputManager;
 }
 
 /**
-*   Children of StrictLogger with $(B initialize) method to
+*   Children of StyledStrictLogger with $(B initialize) method to
 *   handle loading verbosity from config.
+*
+*   Overwrites default style to use with local OutputType.
 */
-shared final class GlobalLogger : StrictLogger
+shared final class GlobalLogger : StyledStrictLogger!(OutputType
+                , OutputType.Debug,   "Debug: %1$s",   "[%2$s] Debug: %1$s"
+                , OutputType.Info,    "Info: %1$s",    "[%2$s] Info: %1$s"
+                , OutputType.Warning, "Warning: %1$s", "[%2$s] Warning: %1$s"
+                , OutputType.Error,   "Error: %1$s",   "[%2$s] Error: %1$s"
+                , OutputType.Muted,   "",              ""
+                )
 {
     enum DEFAULT_LOG_NAME = "dash-preinit.log";
     
@@ -127,20 +122,6 @@ shared final class GlobalLogger : StrictLogger
     */
     final void initialize()
     {
-        // Verbosity is more clearer for users than logging level
-        LoggingLevel mapVerbosity(Verbosity verbosity)
-        {
-            final switch(verbosity)
-            {
-                // Debug messages are cut off in release version any way
-                case(Verbosity.Debug):  return LoggingLevel.Notice;
-                case(Verbosity.High):   return LoggingLevel.Notice;
-                case(Verbosity.Medium): return LoggingLevel.Warning;
-                case(Verbosity.Low):    return LoggingLevel.Fatal;
-                case(Verbosity.Off):    return LoggingLevel.Muted;
-            }
-        }
-        
         debug enum section = "Debug";
         else  enum section = "Release";
         
@@ -150,7 +131,7 @@ shared final class GlobalLogger : StrictLogger
         
         // Try to get new path for logging
         string newFileName;
-        if( Config.tryGet!string( LognameSection, newFileName ) )
+        if( config.tryFind( LognameSection, newFileName ) )
         {
             string oldFileName = this.name; 
             try
@@ -171,99 +152,26 @@ shared final class GlobalLogger : StrictLogger
         
         // Try to get output verbosity from config
         Verbosity outputVerbosity;
-        if( Config.tryGet!Verbosity( OutputVerbositySection, outputVerbosity ) )
+        if( config.tryFind( OutputVerbositySection, outputVerbosity ) )
         {
-            minOutputLevel = mapVerbosity( outputVerbosity ); 
+            minOutputLevel = cast(OutputType)( outputVerbosity ); 
         } 
         else
         {
-            debug minOutputLevel = LoggingLevel.Notice;
-            else minOutputLevel = LoggingLevel.Warning; 
+            debug minOutputLevel = OutputType.Info;
+            else minOutputLevel = OutputType.Warning; 
         }
         
         // Try to get logging verbosity from config
         Verbosity loggingVerbosity;
-        if( Config.tryGet!Verbosity( LoggingVerbositySection, loggingVerbosity ) )
+        if( config.tryFind( LoggingVerbositySection, loggingVerbosity ) )
         {
-            minLoggingLevel = mapVerbosity( loggingVerbosity );
+            minLoggingLevel = cast(OutputType)( loggingVerbosity );
         } 
         else
         {
-            debug minLoggingLevel = LoggingLevel.Notice;
-            else minLoggingLevel = LoggingLevel.Warning; 
+            debug minLoggingLevel = OutputType.Info;
+            else minLoggingLevel = OutputType.Warning; 
         }
-    }
-}
-
-/**
- *  Static class for handling interactions with the console.
- *  Deprecated: use GlobalLogger instead
- */
-shared final class OutputManager
-{
-public:
-    /**
-     * Initialize the controller.
-     */
-    final void initialize()
-    {
-        verbosity = Verbosity.High;
-        Config.tryGet!Verbosity( "Game.Verbosity", verbosity );
-    }
-
-    /**
-     * Print a message to the console.
-     */
-    synchronized final void log( A... )( OutputType type, A messages ) if( A.length > 0 )
-    {
-        if( shouldPrint( type ) )
-        {
-            write( getHeader( type ) );
-            
-            foreach( msg; messages )
-                write( msg );
-            
-            writeln();
-        }
-    }
-
-private:
-    /**
-     * Caches the verbosity set in the config.
-     */
-    Verbosity verbosity;
-
-    this()
-    {
-        verbosity = Verbosity.High;
-    }
-
-    /**
-     * Gets the header for the given output type.
-     */
-    final string getHeader( OutputType type )
-    {
-        final switch( type ) with( OutputType )
-        {
-            case Info:
-                //SetConsoleTextAttribute( hConsole, 15 );
-                return "[INFO]    ";
-            case Warning:
-                //SetConsoleTextAttribute( hConsole, 14 );
-                return "[WARNING] ";
-            case Error:
-                //SetConsoleTextAttribute( hConsole, 12 );
-                return "[ERROR]   ";
-            case Debug:
-                return "[DEBUG]   ";
-        }
-    }
-
-    /**
-     * TODO
-     */
-    final bool shouldPrint( OutputType type )
-    {
-        return type >= verbosity;
     }
 }

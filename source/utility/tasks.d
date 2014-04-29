@@ -80,7 +80,8 @@ unittest
  * scheduleInterpolateTask( transform.position, startNode, endNode, 100.msecs );
  * ---
  */
-void scheduleInterpolateTask( string prop, T, Owner )( ref Owner own, T start, T end, Duration duration, T function( T, T, float ) interpFunc = &lerp!T ) if( is_vector!T || is_quaternion!T )
+void scheduleInterpolateTask( string prop, T, Owner )( ref Owner own, T start, T end, Duration duration, T function( T, T, float ) interpFunc = &lerp!T )
+    if( ( is_vector!T || is_quaternion!T ) && __traits( compiles, mixin( "own." ~ prop ) ) )
 {
     auto startTime = Time.totalTime;
     scheduleTimedTask( duration, ( elapsed )
@@ -250,6 +251,86 @@ void scheduleDelayedTask( void delegate() dg, Duration delay )
         {
             return false;
         }
+    } );
+}
+
+/**
+ * Schedule a task to be executed on an interval, until the task returns true.
+ *
+ * Params:
+ *  interval =          The interval on which to call this task.
+ *  dg =                The task to execute.
+ */
+void scheduleIntervaledTask( Duration interval, bool delegate() dg )
+{
+    auto startTime = Time.totalTime;
+    auto timeTilExe = interval.toSeconds;
+    scheduleTask( {
+        timeTilExe -= Time.deltaTime;
+        if( timeTilExe <= 0 )
+        {
+            if( dg() )
+                return true;
+
+            timeTilExe = interval.toSeconds;
+        }
+
+        return false;
+    } );
+}
+
+/**
+ * Schedule a task to be executed on an interval a given number of times.
+ *
+ * Params:
+ *  interval =          The interval on which to call this task.
+ *  numExecutions =     The number of time to execute the task.
+ *  dg =                The task to execute.
+ */
+void scheduleIntervaledTask( Duration interval, uint numExecutions, void delegate() dg )
+{
+    auto startTime = Time.totalTime;
+    auto timeTilExe = interval.toSeconds;
+    uint executedTimes = 0;
+    scheduleTask( {
+        timeTilExe -= Time.deltaTime;
+        if( timeTilExe <= 0 )
+        {
+            dg();
+
+            ++executedTimes;
+            timeTilExe = interval.toSeconds;
+        }
+
+        return executedTimes == numExecutions;
+    } );
+}
+
+/**
+ * Schedule a task to be executed on an interval a given number of times, or until the event returns true.
+ *
+ * Params:
+ *  interval =          The interval on which to call this task.
+ *  numExecutions =     The number of time to execute the task.
+ *  dg =                The task to execute.
+ */
+void scheduleIntervaledTask( Duration interval, uint numExecutions, bool delegate() dg )
+{
+    auto startTime = Time.totalTime;
+    auto timeTilExe = interval.toSeconds;
+    uint executedTimes = 0;
+    scheduleTask( {
+        timeTilExe -= Time.deltaTime;
+        if( timeTilExe <= 0 )
+        {
+            if( dg() )
+                return true;
+
+            ++executedTimes;
+            timeTilExe = interval.toSeconds;
+        }
+
+        return executedTimes == numExecutions;
     } );
 }
 

@@ -5,7 +5,7 @@ module utility.filepath;
 import utility.output;
 
 static import std.file, std.path;
-import std.stdio;
+import std.stdio, std.array;
 
 /**
  * A class which stores default resource paths, and handles path manipulation.
@@ -20,7 +20,7 @@ private:
     string _directory;
     string _extension;
     File* file;
-    
+
 public:
     /**
      * The path to the resources home folder.
@@ -42,7 +42,7 @@ public:
         UI = ResourceHome ~ "/UI",
         ConfigDir = ResourceHome ~ "/Config",
         ConfigFile = ConfigDir ~ "/Config",
-        InputBindings = ConfigDir ~ "/Input", 
+        InputBindings = ConfigDir ~ "/Input",
         CompactContentFile = ResourceHome ~ "/Content",
     }
 
@@ -61,27 +61,16 @@ public:
         }
 
         // Start array
-        auto files = new FilePath[ 1 ];
-        uint filesFound = 0;
+        FilePath[] files;
 
-        // Add file to array
-        void handleFile( string name )
-        {
-            if( filesFound == files.length )
-                files.length *= 2;
-
-            files[ filesFound++ ] = new FilePath( name );
-        }
+        auto dirs = pattern.length
+                    ? std.file.dirEntries( safePath, pattern, std.file.SpanMode.breadth ).array
+                    : std.file.dirEntries( safePath, std.file.SpanMode.breadth ).array;
 
         // Find files
-        if( pattern.length )
-            foreach( name; std.file.dirEntries( safePath, pattern, std.file.SpanMode.breadth ) )
-                handleFile( name );
-        else
-            foreach( name; std.file.dirEntries( safePath, std.file.SpanMode.breadth ) )
-                handleFile( name );
-
-        files.length = filesFound;
+        foreach( entry; dirs )
+            if( entry.isFile )
+                files ~= new FilePath( entry.name );
 
         return files;
     }
@@ -138,7 +127,9 @@ public:
     }
 
     /**
-     * TODO
+     * Read the contents of the file.
+     *
+     * Returns: The contents of a file as a string.
      */
     final string getContents()
     {
@@ -147,6 +138,9 @@ public:
 
     /**
      * Create an instance based on a given file path.
+     *
+     * Params:
+     *  path =            The path of the file created.
      */
     this( string path )
     {

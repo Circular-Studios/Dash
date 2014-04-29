@@ -15,6 +15,7 @@ shared final class Material
 {
 private:
     Texture _diffuse, _normal, _specular;
+    bool _isUsed;
 
 public:
     /// The diffuse (or color) map.
@@ -23,13 +24,16 @@ public:
     mixin( Property!(_normal, AccessModifier.Public) );
     /// The specular map, which specifies how shiny a given point is.
     mixin( Property!(_specular, AccessModifier.Public) );
+    /// Whether or not the material is actually used.
+    mixin( Property!( _isUsed, AccessModifier.Package ) );
 
     /**
      * Default constructor, makes sure everything is initialized to default.
      */
     this()
     {
-        _diffuse = _normal = _specular = defaultTex;
+        _diffuse = _specular = defaultTex;
+        _normal = defaultNormal;
     }
 
     /**
@@ -45,16 +49,24 @@ public:
         auto obj = new shared Material;
         string prop;
 
-        if( Config.tryGet( "Diffuse", prop, yamlObj ) )
+        if( yamlObj.tryFind( "Diffuse", prop ) )
             obj.diffuse = Assets.get!Texture( prop );
 
-        if( Config.tryGet( "Normal", prop, yamlObj ) )
+        if( yamlObj.tryFind( "Normal", prop ) )
             obj.normal = Assets.get!Texture( prop );
 
-        if( Config.tryGet( "Specular", prop, yamlObj ) )
+        if( yamlObj.tryFind( "Specular", prop ) )
             obj.specular = Assets.get!Texture( prop );
 
         return obj;
+    }
+
+    /**
+     * Shuts down the material, making sure all references are released.
+     */
+    void shutdown()
+    {
+        _diffuse = _specular = _normal = null;
     }
 }
 
@@ -64,7 +76,10 @@ public:
 shared class Texture
 {
 protected:
-    uint _width, _height, _glID;
+    uint _width = 1;
+    uint _height = 1;
+    uint _glID;
+    bool _isUsed;
 
     /**
      * TODO
@@ -106,6 +121,8 @@ public:
     mixin( Property!_height );
     /// TODO
     mixin( Property!_glID );
+    /// Whether or not the texture is actually used.
+    mixin( Property!( _isUsed, AccessModifier.Package ) );
 
     /**
      * TODO
@@ -142,18 +159,27 @@ public:
 }
 
 /**
- * TODO
- *
- * Params:
- *
- * Returns:
+ * A default black texture.
  */
 @property shared(Texture) defaultTex()
 {
     static shared Texture def;
 
     if( !def )
-        def = new shared Texture( [0, 0, 0, 255] );
+        def = new shared Texture( [cast(ubyte)0, cast(ubyte)0, cast(ubyte)0, cast(ubyte)255].ptr );
+
+    return def;
+}
+
+/**
+ * A default gray texture
+ */
+@property shared(Texture) defaultNormal()
+{
+    static shared Texture def;
+
+    if( !def )
+        def = new shared Texture( [cast(ubyte)255, cast(ubyte)127, cast(ubyte)127, cast(ubyte)255].ptr );
 
     return def;
 }

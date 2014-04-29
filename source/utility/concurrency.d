@@ -1,5 +1,5 @@
 /**
- * TODO
+ * Defines some useful helpers for running the engine concurrently.
  */
 module utility.concurrency;
 

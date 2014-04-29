@@ -70,9 +70,9 @@ public:
      * Returns:
      *  The new GameObject from the Prefab.
      */
-    final shared(GameObject) createInstance( const ClassInfo scriptOverride = null )
+    final shared(GameObject) createInstance()
     {
-        return GameObject.createFromYaml( yaml, scriptOverride );
+        return GameObject.createFromYaml( yaml );
     }
 
 private:

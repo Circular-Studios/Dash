@@ -7,7 +7,7 @@ import core, components, graphics, utility;
 import yaml;
 import gl3n.linalg, gl3n.math;
 
-import std.conv, std.variant, std.array, std.algorithm;
+import std.conv, std.variant, std.array, std.algorithm, std.typecons;
 
 enum AnonymousName = "__anonymous";
 
@@ -45,7 +45,7 @@ struct ObjectStateFlags
 /**
  * Manages all components and transform in the world. Can be overridden.
  */
-class GameObject
+final class GameObject
 {
 private:
     Transform _transform;
@@ -99,7 +99,6 @@ public:
      *
      * Params:
      *  yamlObj =           The YAML node to pull info from.
-     *  scriptOverride =    The ClassInfo to use to create the object. Overrides YAML setting.
      *
      * Returns:
      *  A new game object with components and info pulled from yaml.
@@ -199,6 +198,23 @@ public:
         obj.behaviors.onInitialize();
 
         return obj;
+    }
+    /**
+     * Create a GameObject from a Yaml node.
+     *
+     * Params:
+     *  fields =            The YAML node to pull info from.
+     *
+     * Returns:
+     *  A tuple of the object created at index 0, and the behavior at index 1.
+     */
+    static auto createWithBehavior( BehaviorT )( Node fields = Node( YAMLNull() ) )
+    {
+        auto newObj = new GameObject;
+
+        newObj.behaviors.createBehavior!BehaviorT( fields );
+
+        return tuple( newObj, newObj.behaviors.get!BehaviorT );
     }
 
     /**

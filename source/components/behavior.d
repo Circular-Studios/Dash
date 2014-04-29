@@ -95,9 +95,10 @@ public:
      * Adds a new behavior to the collection.
      *
      * Params:
-     *  newBehavior =   The behavior to add to the object.
+     *  className =     The behavior to add to the object.
+     *  fields =        Fields to convert give to behavior
      */
-    void createBehavior( string className, Node fields = Node( YAMLNull() ) )
+    ABehavior createBehavior( string className, Node fields = Node( YAMLNull() ) )
     {
         auto newBehavior = cast(ABehavior)Object.factory( className );
         newBehavior._owner = _owner;
@@ -105,8 +106,10 @@ public:
         if( !newBehavior )
         {
             logWarning( "Class ", className, " either not found or not child of Behavior." );
-            return;
+            return null;
         }
+
+        newBehavior._owner = _owner;
 
         if( !fields.isNull && className in getInitParams )
         {
@@ -114,6 +117,53 @@ public:
         }
 
         behaviors ~= newBehavior;
+
+        return newBehavior;
+    }
+
+    /**
+     * Adds a new behavior to the collection.
+     *
+     * Params:
+     *  T =             The behavior to add to the object.
+     *  fields =        Fields to convert give to behavior
+     */
+    T createBehavior( T )( Node fields = Node( YAMLNull() ) ) if( is( T : ABehavior ) )
+    {
+        auto newBehavior = new T;
+
+        if( !newBehavior )
+        {
+            logWarning( "Class ", T.stringof, " either not found or not child of Behavior." );
+            return null;
+        }
+
+        newBehavior._owner = _owner;
+
+        if( !fields.isNull && T.stringof in getInitParams )
+        {
+            newBehavior.initializeBehavior( getInitParams[ T.stringof ]( fields ) );
+        }
+
+        behaviors ~= newBehavior;
+
+        return newBehavior;
+    }
+
+    /**
+     * Gets the behavior of the given type.
+     *
+     * Returns: The bahavior
+     */
+    BehaviorType get( BehaviorType = ABehavior )()
+    {
+        foreach( behav; behaviors )
+        {
+            if( typeid(behav) == typeid(BehaviorType) )
+                return cast(BehaviorType)behav;
+        }
+
+        return null;
     }
 
     mixin( callBehaviors );

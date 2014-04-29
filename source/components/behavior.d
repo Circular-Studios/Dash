@@ -159,7 +159,7 @@ public:
         foreach( behav; behaviors )
         {
             if( typeid(behav) == typeid(BehaviorType) )
-                return cast(BehaviorType)behav;
+                return cast(shared BehaviorType)behav;
         }
 
         return null;

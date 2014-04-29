@@ -17,7 +17,7 @@ public:
  * Schedule a task to be executed until it returns true.
  *
  * Params:
- *  dg =                The task to execute
+ *  dg =                The task to execute.
  */
 void scheduleTask( bool delegate() dg )
 {
@@ -28,14 +28,15 @@ void scheduleTask( bool delegate() dg )
  * Schedule a task to interpolate a value over a period of time.
  *
  * Params:
- *  val =               [ref] The value to interpolate
- *  start =             The starting value for interpolation
- *  end =               The target value for interpolation
- *  interpFunc =        [default=lerp] The function to use for interpolation
+ *  T =                 The type to interpolate, either vector or quaternion.
+ *  val =               [ref] The value to interpolate.
+ *  start =             The starting value for interpolation.
+ *  end =               The target value for interpolation.
+ *  interpFunc =        [default=lerp] The function to use for interpolation.
  *
  * Example:
  * ---
- * scheduleInterpolateTask( transform.position, startNode, endNode, 100.msecs );
+ * scheduleInterpolateTask( position, startNode, endNode, 100.msecs );
  * ---
  */
 void scheduleInterpolateTask(T)( ref T val, T start, T end, Duration duration, T function( T, T, float ) interpFunc = &lerp!T ) if( is_vector!T || is_quaternion!T )
@@ -69,15 +70,17 @@ unittest
  * Schedule a task to interpolate a property over a period of time.
  *
  * Params:
- *  prop =              The name of the property being interpolated
- *  own =               [ref] The owner of the property
- *  start =             The starting value for interpolation
- *  end =               The target value for interpolation
- *  interpFunc =        [default=lerp] The function to use for interpolation
+ *  prop =              The name of the property being interpolated.
+ *  T =                 The type to interpolate, either vector or quaternion.
+ *  Owner =             The type that owns the property interpolating.
+ *  own =               [ref] The owner of the property.
+ *  start =             The starting value for interpolation.
+ *  end =               The target value for interpolation.
+ *  interpFunc =        [default=lerp] The function to use for interpolation.
  *
  * Example:
  * ---
- * scheduleInterpolateTask( transform.position, startNode, endNode, 100.msecs );
+ * scheduleInterpolateTask!q{position}( transform, startNode, endNode, 100.msecs );
  * ---
  */
 void scheduleInterpolateTask( string prop, T, Owner )( ref Owner own, T start, T end, Duration duration, T function( T, T, float ) interpFunc = &lerp!T )
@@ -122,8 +125,8 @@ class TestPropertyInterpolate
  * Schedule a task to be executed until the duration expires.
  *
  * Params:
- *  duration =          The duration to execute the task for
- *  dg =                The task to execute
+ *  duration =          The duration to execute the task for.
+ *  dg =                The task to execute.
  */
 void scheduleTimedTask( Duration duration, void delegate() dg )
 {
@@ -194,8 +197,8 @@ void scheduleTimedTask( Duration duration, bool delegate( float, float ) dg )
  * Schedule a task to be executed until the duration expires.
  *
  * Params:
- *  dg =                The task to execute
- *  duration =          The duration to execute the task for
+ *  dg =                The task to execute.
+ *  duration =          The duration to execute the task for.
  */
 deprecated( "Use version with duration as first parameter." )
 void scheduleTimedTask( void delegate() dg, Duration duration )
@@ -211,8 +214,8 @@ void scheduleTimedTask( void delegate() dg, Duration duration )
  * Schedule a task to be execuated after the specified amount of time.
  *
  * Params:
- *  delay =             The ammount of time to wait before executing
- *  dg =                The task to execute
+ *  delay =             The ammount of time to wait before executing.
+ *  dg =                The task to execute.
  */
 void scheduleDelayedTask( Duration delay, void delegate() dg )
 {
@@ -234,8 +237,8 @@ void scheduleDelayedTask( Duration delay, void delegate() dg )
  * Schedule a task to be execuated after the specified amount of time.
  *
  * Params:
- *  dg =                The task to execute
- *  delay =             The ammount of time to wait before executing
+ *  dg =                The task to execute.
+ *  delay =             The ammount of time to wait before executing.
  */
 deprecated( "Use version with delay as first parameter." )
 void scheduleDelayedTask( void delegate() dg, Duration delay )

@@ -76,7 +76,9 @@ public:
 shared class Texture
 {
 protected:
-    uint _width, _height, _glID;
+    uint _width = 1;
+    uint _height = 1;
+    uint _glID;
     bool _isUsed;
 
     /**
@@ -164,7 +166,7 @@ public:
     static shared Texture def;
 
     if( !def )
-        def = new shared Texture( [0, 0, 0, 255] );
+        def = new shared Texture( [cast(ubyte)0, cast(ubyte)0, cast(ubyte)0, cast(ubyte)255].ptr );
 
     return def;
 }
@@ -177,7 +179,7 @@ public:
     static shared Texture def;
 
     if( !def )
-        def = new shared Texture( [127, 127, 255, 255] );
+        def = new shared Texture( [cast(ubyte)255, cast(ubyte)127, cast(ubyte)127, cast(ubyte)255].ptr );
 
     return def;
 }

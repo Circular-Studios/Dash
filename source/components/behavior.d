@@ -127,14 +127,14 @@ public:
      *  T =             The behavior to add to the object.
      *  fields =        Fields to convert give to behavior
      */
-    T createBehavior( T )( Node fields = Node( YAMLNull() ) ) if( is( T : ABehavior ) )
+    shared(T) createBehavior( T )( Node fields = Node( YAMLNull() ) ) if( is( T : ABehavior ) )
     {
         auto newBehavior = new shared T;
 
         if( !newBehavior )
         {
             logWarning( "Class ", T.stringof, " either not found or not child of Behavior." );
-            return;
+            return null;
         }
 
         newBehavior._owner = _owner;

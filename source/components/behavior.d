@@ -100,13 +100,14 @@ public:
     void createBehavior( string className, Node fields = Node( YAMLNull() ) )
     {
         auto newBehavior = cast(shared ABehavior)Object.factory( className );
-        newBehavior._owner = _owner;
 
         if( !newBehavior )
         {
             logWarning( "Class ", className, " either not found or not child of Behavior." );
             return;
         }
+        
+        newBehavior._owner = _owner;
 
         if( !fields.isNull && className in getInitParams )
         {

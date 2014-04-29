@@ -1,75 +1,52 @@
 /**
- * This module defines the Scene class, 
- * 
+ * This module defines the Scene class, TODO
+ *
  */
 module core.scene;
 import core, components, graphics, utility;
 
 import std.path;
 
+enum SceneName = "[scene]";
+
+/**
+ * The Scene contains a list of all objects that should be drawn at a given time.
+ */
 shared final class Scene
 {
+private:
+    GameObject _root;
+
+package:
+    GameObject[uint] objectById;
+    uint[string] idByName;
+
 public:
-    /// The AA of game objects managed.
-    GameObject[string] objects;
-
-    /// Allows functions to be called on this as if it were the AA.
-    alias objects this;
-
     /// The camera to render with.
     Camera camera;
+    /// The root object of the scene.
+    mixin( Getter!_root );
+
+    this()
+    {
+        _root = new shared GameObject;
+        _root.name = SceneName;
+        _root.scene = this;
+    }
 
     /**
      * Load all objects inside the specified folder in FilePath.Objects.
-     * 
+     *
      * Params:
      *  objectPath =            The folder location inside of /Objects to look for objects in.
      */
     final void loadObjects( string objectPath = "" )
     {
-        string[shared GameObject] parents;
-        string[][shared GameObject] children;
-
         foreach( yml; loadYamlDocuments( buildNormalizedPath( FilePath.Resources.Objects, objectPath ) ) )
         {
             // Create the object
-            auto object = GameObject.createFromYaml( yml, parents, children );
-            
-            // If the object doesn't define a name, error.
-            if( object.name != AnonymousName )
-            {
-                if( object.name in objects )
-                    logWarning( "Duplicate object of name ", object.name, " detected." );
-
-                // Add to collection
-                objects[ object.name ] = object;
-            }
-            else
-            {
-                logError( "Anonymous objects at the top level are not supported." );
-                assert( false );
-            }
-            
-            // This goes through each child defined inline and adds it to the scene.
-            // An inline child may look like:
-            // Name: objParent
-            // Children:
-            //     - Name: objChild
-            //     - Mesh: myMesh
-            // In this case, objChild would be added to the scene.
-            foreach( child; object.children )
-            {
-                objects[ child.name ] = child;
-                logInfo( "Adding child ", child.name, " of ", object.name, " to collection." );
-            }
+            _root.addChild( GameObject.createFromYaml( yml ) );
         }
-        
-        // Make sure the child graph is complete.
-        foreach( object, parentName; parents )
-            objects[ parentName ].addChild( object );
-        foreach( object, childNames; children )
-            foreach( child; childNames )
-                object.addChild( objects[ child ] );
     }
 
     /**
@@ -77,7 +54,86 @@ public:
      */
     final void clear()
     {
-        foreach( key; objects.keys )
-            objects.remove( key );
+        _root = new shared GameObject;
+    }
+
+    /**
+     * Updates all objects in the scene.
+     */
+    final void update()
+    {
+        _root.update();
+    }
+
+    /**
+     * Draws all objects in the scene.
+     */
+    final void draw()
+    {
+        _root.draw();
+    }
+
+    /**
+     * Gets the object in the scene with the given name.
+     *
+     * Params:
+     *  name =            The name of the object to look for.
+     *
+     * Returns: The object with the given name.
+     */
+    final shared(GameObject) opIndex( string name )
+    {
+        if( auto id = name in idByName )
+            return this[ *id ];
+        else
+            return null;
+    }
+
+    /**
+     * Gets the object in the scene with the given id.
+     *
+     * Params:
+     *  index =           The id of the object to look for.
+     *
+     * Returns: The object with the given id.
+     */
+    final shared(GameObject) opIndex( uint index )
+    {
+        if( auto obj = index in objectById )
+            return *obj;
+        else
+            return null;
+    }
+
+    /**
+     * Adds object to the children, adds it to the scene graph.
+     *
+     * Params:
+     *  newChild =            The object to add.
+     */
+    final void addChild( shared GameObject newChild )
+    {
+        _root.addChild( newChild );
+    }
+
+    /**
+     * Removes the given object as a child from this scene.
+     *
+     * Params:
+     *  oldChild =            The object to remove.
+     */
+    final void removechild( shared GameObject oldChild )
+    {
+        _root.removeChild( oldChild );
+    }
+
+    /**
+     * Gets all objects in the scene.
+     *
+     * Returns: All objects belonging to this scene.
+     */
+    final @property shared(GameObject[]) objects()
+    {
+        return objectById.values;
     }
 }

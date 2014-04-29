@@ -21,7 +21,10 @@ enum EngineState
     Quit
 }
 
-shared struct UpdateFlags
+/**
+ * Contains flags for all things that could be disabled.
+ */
+shared struct GameStateFlags
 {
     bool updateScene;
     bool updateUI;
@@ -33,9 +36,9 @@ shared struct UpdateFlags
      */
     void pauseAll()
     {
-        foreach( member; __traits(allMembers, UpdateFlags) )
-            static if( __traits(compiles, __traits(getMember, UpdateFlags, member) = false) )
-                __traits(getMember, UpdateFlags, member) = false;
+        foreach( member; __traits(allMembers, GameStateFlags) )
+            static if( __traits(compiles, __traits(getMember, GameStateFlags, member) = false) )
+                __traits(getMember, GameStateFlags, member) = false;
     }
 
     /**
@@ -43,9 +46,9 @@ shared struct UpdateFlags
      */
     void resumeAll()
     {
-        foreach( member; __traits(allMembers, UpdateFlags) )
-            static if( __traits(compiles, __traits(getMember, UpdateFlags, member) = true) )
-                __traits(getMember, UpdateFlags, member) = true;
+        foreach( member; __traits(allMembers, GameStateFlags) )
+            static if( __traits(compiles, __traits(getMember, GameStateFlags, member) = true) )
+                __traits(getMember, GameStateFlags, member) = true;
     }
 }
 
@@ -61,8 +64,8 @@ public:
     /// Current state of the game
     EngineState currentState;
 
-    /// 
-    UpdateFlags* updateFlags;
+    /// The current update settings
+    GameStateFlags* stateFlags;
 
     /// The currently active scene
     Scene activeScene;
@@ -284,41 +287,23 @@ public:
             Input.update();
 
             // Update webcore
-            if ( updateFlags.updateUI )
+            if ( stateFlags.updateUI )
             {
                 UserInterface.updateAwesomium();
             }
 
             // Update physics
-            //if( updateFlags.updatePhysics )
+            //if( stateFlags.updatePhysics )
             //  PhysicsController.stepPhysics( Time.deltaTime );
 
-            if ( updateFlags.updateTasks )
+            if ( stateFlags.updateTasks )
             {
-                uint[] toRemove;    // Indicies of tasks which are done
-                foreach( i, task; scheduledTasks )
-                {
-                    if( task() )
-                        toRemove ~= cast(uint)i;
-                }
-                foreach( i; toRemove )
-                {
-                    // Get tasks after one being removed
-                    auto end = scheduledTasks[ i+1..$ ];
-                    // Get tasks before one being removed
-                    scheduledTasks = scheduledTasks[ 0..i ];
-
-                    // Allow data stomping
-                    (cast(bool function()[])scheduledTasks).assumeSafeAppend();
-                    // Add end back
-                    scheduledTasks ~= end;
-                }
+                executeTasks();
             }
 
-            if ( updateFlags.updateScene )
+            if ( stateFlags.updateScene )
             {
-                foreach( obj; activeScene )
-                    obj.update();
+                activeScene.update();
             }
 
             // Do the updating of the child class.
@@ -331,8 +316,7 @@ public:
             // Begin drawing
             Graphics.beginDraw();
 
-            foreach( obj; activeScene )
-                obj.draw();
+            activeScene.draw();
 
             // Draw in child class
             onDraw();
@@ -344,35 +328,6 @@ public:
         stop();
         */
     }
-
-    /**
-     * Schedule a task to be executed until it returns true.
-     * 
-     * Params:
-     *  dg =                The task to execute
-     */
-    void scheduleTask( bool delegate() dg )
-    {
-        scheduledTasks ~= dg;
-    }
-
-    /**
-     * Schedule a task to be executed until the duration expires.
-     * 
-     * Params:
-     *  dg =                The task to execute
-     *  duration =          The duration to execute the task for
-     */
-    void scheduleTimedTask( void delegate() dg, Duration duration )
-    {
-        auto startTime = Time.totalTime;
-        scheduleTask( {
-            dg();
-            return Time.totalTime >= startTime + duration;
-        } );
-    }
-
-    //static Camera camera;
 
 protected:
     /**
@@ -397,9 +352,6 @@ protected:
     void onSaveState() { }
 
 private:
-    /// The tasks that have been scheduled
-    bool delegate()[] scheduledTasks;
-
     /**
      * Function called to initialize controllers.
      */
@@ -407,36 +359,18 @@ private:
     {
         currentState = EngineState.Run;
 
-        updateFlags = new shared UpdateFlags;
-        updateFlags.resumeAll();
+        stateFlags = new shared GameStateFlags;
+        stateFlags.resumeAll();
 
-        logInfo( "Initializing..." );
-        auto start = Clock.currTime;
-        auto subStart = start;
-
-        Config.initialize();
-        Input.initialize();
-        Output.initialize();
-
-        logInfo( "Graphics initialization:" );
-        subStart = Clock.currTime;
-        Graphics.initialize();
-        logInfo( "Graphics init time: ", Clock.currTime - subStart );
-
-        logInfo( "Assets initialization:" );
-        subStart = Clock.currTime;
-        Assets.initialize();
-        logInfo( "Assets init time: ", Clock.currTime - subStart );
-
-        Prefabs.initialize();
-
-        UserInterface.initializeCEF();
-
-        //Physics.initialize();
-
-        onInitialize();
-
-        logInfo( "Total init time: ", Clock.currTime - start );
+        logDebug( "Initializing..." );
+        bench!( { Config.initialize(); } )( "Config init" );
+        bench!( { Logger.initialize(); } )( "Logger init" );
+        bench!( { Input.initialize(); } )( "Input init" );
+        bench!( { Graphics.initialize(); } )( "Graphics init" );
+        bench!( { Assets.initialize(); } )( "Assets init" );
+        bench!( { Prefabs.initialize(); } )( "Prefabs init" );
+        bench!( { UserInterface.initializeAwesomium(); } )( "UI init" );
+        bench!( { DGame.instance.onInitialize(); } )( "Game init" );
     }
 
     /**
@@ -445,6 +379,7 @@ private:
     final void stop()
     {
         onShutdown();
+		resetTasks();
         UserInterface.shutdownCEF();
         Assets.shutdown();
         Graphics.shutdown();
@@ -466,21 +401,5 @@ private:
     final void saveState()
     {
         onSaveState();
-    }
-}
-
-/**
- * Initializes reflection things.
- */
-shared static this()
-{
-    foreach( mod; ModuleInfo )
-    {
-        foreach( klass; mod.localClasses )
-        {
-            // Find the appropriate game loop.
-            if( klass.base == typeid(DGame) )
-                DGame.instance = cast(shared DGame)klass.create();
-        }
     }
 }

@@ -5,13 +5,22 @@ module utility.filepath;
 import utility.output;
 
 static import std.file, std.path;
-import std.stdio;
+import std.stdio, std.array;
 
 /**
  * A class which stores default resource paths, and handles path manipulation.
  */
 final class FilePath
 {
+private:
+    string _fullPath;
+    string _relativePath;
+    string _fileName;
+    string _baseFileName;
+    string _directory;
+    string _extension;
+    File* file;
+
 public:
     /**
      * The path to the resources home folder.
@@ -32,8 +41,9 @@ public:
         Shaders = ResourceHome ~ "/Shaders",
         UI = ResourceHome ~ "/UI",
         ConfigDir = ResourceHome ~ "/Config",
-        ConfigFile = ConfigDir ~ "/Config.yml",
-        InputBindings = ConfigDir ~ "/Input.yml", 
+        ConfigFile = ConfigDir ~ "/Config",
+        InputBindings = ConfigDir ~ "/Input",
+        CompactContentFile = ResourceHome ~ "/Content",
     }
 
     /**
@@ -46,32 +56,21 @@ public:
 
         if( !std.file.exists( safePath ) )
         {
-            log( OutputType.Info, path, " does not exist." );
+            logDebug( path, " does not exist." );
             return [];
         }
 
         // Start array
-        auto files = new FilePath[ 1 ];
-        uint filesFound = 0;
+        FilePath[] files;
 
-        // Add file to array
-        void handleFile( string name )
-        {
-            if( filesFound == files.length )
-                files.length *= 2;
-
-            files[ filesFound++ ] = new FilePath( name );
-        }
+        auto dirs = pattern.length
+                    ? std.file.dirEntries( safePath, pattern, std.file.SpanMode.breadth ).array
+                    : std.file.dirEntries( safePath, std.file.SpanMode.breadth ).array;
 
         // Find files
-        if( pattern.length )
-            foreach( name; std.file.dirEntries( safePath, pattern, std.file.SpanMode.breadth ) )
-                handleFile( name );
-        else
-            foreach( name; std.file.dirEntries( safePath, std.file.SpanMode.breadth ) )
-                handleFile( name );
-
-        files.length = filesFound;
+        foreach( entry; dirs )
+            if( entry.isFile )
+                files ~= new FilePath( entry.name );
 
         return files;
     }
@@ -127,6 +126,11 @@ public:
         return file;
     }
 
+    /**
+     * Read the contents of the file.
+     *
+     * Returns: The contents of a file as a string.
+     */
     final string getContents()
     {
         return cast(string)std.file.read(_fullPath);
@@ -134,6 +138,9 @@ public:
 
     /**
      * Create an instance based on a given file path.
+     *
+     * Params:
+     *  path =            The path of the file created.
      */
     this( string path )
     {
@@ -151,17 +158,7 @@ public:
         if( file && file.isOpen )
             file.close();
     }
-
-private:
-    string _fullPath;
-    string _relativePath;
-    string _fileName;
-    string _baseFileName;
-    string _directory;
-    string _extension;
-    File* file;
 }
-
 unittest
 {
     import std.stdio;

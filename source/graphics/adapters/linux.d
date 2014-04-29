@@ -1,4 +1,7 @@
-﻿module graphics.adapters.linux;
+﻿/**
+* TODO
+*/
+module graphics.adapters.linux;
 
 version( linux ):
 
@@ -13,11 +16,36 @@ import std.traits;
 public alias GLXContext GLRenderContext;
 public alias uint GLDeviceContext;
 
+/**
+* TODO
+*/
 final class Linux : Adapter
 {
+private:
+    // Because the XVisualStyle type returned from this function is
+    // seemingly not defined, we can get it with templates.
+    alias PointerTarget!(ReturnType!(glXChooseVisual)) GLXVisualInfo;
+
+    /// Events we want to listen for
+    enum EventMask = ExposureMask | KeyPressMask;
+
+    /// The display to render to.
+    Display* display;
+    Window root;
+    Window window;
+    GLXContext context;
+    XSetWindowAttributes windowAttributes;
+    XVisualInfo* xvi;
+    GLXVisualInfo* glvi;
+    Colormap cmap;
+
 public:
+    /// TODO
     static @property Linux get() { return cast(Linux)Graphics.adapter; }
 
+    /**
+    * TODO
+    */
     override void initialize()
     {
         // Load opengl functions
@@ -47,7 +75,7 @@ public:
 
         if( display is null )
         {
-            logError( "Cannot connect to X server." );
+            logFatal( "Cannot connect to X server." );
             return;
         }
 
@@ -60,7 +88,7 @@ public:
 
         if( xvi is null )
         {
-            logError( "No appropriate visual found." );
+            logFatal( "No appropriate visual found." );
             return;
         }
 
@@ -76,18 +104,27 @@ public:
         DerelictGL3.reload();
     }
     
+    /**
+    * TODO
+    */
     override void shutdown()
     {
         closeWindow();
         XCloseDisplay( display );
     }
     
+    /**
+    * TODO
+    */
     override void resize()
     {
         XResizeWindow( display, window, width, height );
         glViewport( 0, 0, width, height );
     }
     
+    /**
+    * TODO
+    */
     override void reload()
     {
         resize();
@@ -103,11 +140,17 @@ public:
         glXSwapIntervalEXT( display, glXGetCurrentDrawable(), vsync );
     }
     
+    /**
+    * TODO
+    */
     override void swapBuffers()
     {
         glXSwapBuffers( display, cast(uint)window );
     }
     
+    /**
+    * TODO
+    */
     override void openWindow()
     {
         window = XCreateWindow(
@@ -123,6 +166,9 @@ public:
         glXMakeCurrent( display, cast(uint)window, context );
     }
 
+    /**
+    * TODO
+    */
     override void closeWindow()
     {
         glXMakeCurrent( display, None, null );
@@ -130,6 +176,9 @@ public:
         XDestroyWindow( display, window );
     }
     
+    /**
+    * TODO
+    */
     override void messageLoop()
     {
         XEvent event;
@@ -146,23 +195,4 @@ public:
             }
         }
     }
-
-private:
-    // Because the XVisualStyle type returned from this function is
-    // seemingly not defined, we can get it with templates.
-    alias PointerTarget!(ReturnType!(glXChooseVisual)) GLXVisualInfo;
-
-    /// Events we want to listen for
-    enum EventMask = ExposureMask | KeyPressMask;
-
-    /// The display to render to.
-    Display* display;
-    ///
-    Window root;
-    Window window;
-    GLXContext context;
-    XSetWindowAttributes windowAttributes;
-    XVisualInfo* xvi;
-    GLXVisualInfo* glvi;
-    Colormap cmap;
 } 

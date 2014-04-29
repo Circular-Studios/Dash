@@ -2,9 +2,10 @@
  * Defines the static Input class, which is responsible for handling all keyboard/mouse/controller interactions.
  */
 module utility.input;
-import utility;
+import utility, core, graphics;
 
 import yaml, gl3n.linalg;
+import derelict.opengl3.gl3;
 import core.sync.mutex;
 import std.typecons, std.conv;
 
@@ -15,6 +16,9 @@ shared static this()
     Input = new shared InputManager;
 }
 
+/**
+ * Manages all input events.
+ */
 shared final class InputManager
 {
 public:
@@ -35,11 +39,14 @@ public:
         foreach( key; keyBindings.keys )
             keyBindings.remove( key );
 
+        foreach( key; keyEvents.keys )
+            keyEvents.remove( key );
+
         foreach( string name, Node bind; bindings )
         {
             if( bind.isScalar )
             {
-                keyBindings[ name ] = bind.get!Keyboard;
+                keyBindings[ name ] ~= bind.get!Keyboard;
             }
             else if( bind.isSequence )
             {
@@ -47,11 +54,11 @@ public:
                 {
                     try
                     {
-                        keyBindings[ name ] = child.get!Keyboard;
+                        keyBindings[ name ] ~= child.get!Keyboard;
                     }
                     catch
                     {
-                        log( OutputType.Error, "Failed to parse keybinding for input ", name );
+                        logFatal( "Failed to parse keybinding for input ", name );
                     }
                 }
             }
@@ -64,17 +71,17 @@ public:
                         case "Keyboard":
                             try
                             {
-                                keyBindings[ name ] = value.get!Keyboard;
+                                keyBindings[ name ] ~= value.get!Keyboard;
                             }
                             catch
                             {
                                 try
                                 {
-                                    keyBindings[ name ] = value.get!string.to!Keyboard;
+                                    keyBindings[ name ] ~= value.get!string.to!Keyboard;
                                 }
                                 catch
                                 {
-                                    log( OutputType.Error, "Failed to parse keybinding for input ", name );
+                                    logFatal( "Failed to parse keybinding for input ", name );
                                 }
                             }
 
@@ -107,7 +114,7 @@ public:
 
     /**
      * Add an event to be fired when the given key changes.
-     * 
+     *
      * Params:
      *      keyCode =   The code of the key to add the event to.
      *      func =      The function to call when the key state changes.
@@ -140,11 +147,35 @@ public:
     }
 
     /**
+     * Add an event to be fired when the given key changes.
+     *
+     * Params:
+     *      inputName = The name of the input to add the event to.
+     *      func =      The function to call when the key state changes.
+     */
+    final void addKeyEvent( string inputName, KeyEvent func )
+    {
+        if( auto keys = inputName in keyBindings )
+            foreach( key; *keys )
+                addKeyEvent( key, func );
+    }
+
+    /**
      * Add a key event only when the key is down.
      */
     final void addKeyDownEvent( uint keyCode, KeyStateEvent func )
     {
-        keyEvents[ keyCode ] ~= ( uint keyCode, bool newState ) { if( newState ) func( newState ); };
+        addKeyEvent( keyCode, ( uint keyCode, bool newState ) { if( newState ) func( newState ); } );
+    }
+
+    /**
+     * Add a key event only when the key is down.
+     */
+    final void addKeyDownEvent( string inputName, KeyStateEvent func )
+    {
+        if( auto keys = inputName in keyBindings )
+            foreach( key; *keys )
+                addKeyEvent( key, ( uint keyCode, bool newState ) { if( newState ) func( keyCode ); } );
     }
 
     /**
@@ -152,12 +183,22 @@ public:
      */
     final void addKeyUpEvent( uint keyCode, KeyStateEvent func )
     {
-        keyEvents[ keyCode ] ~= ( uint keyCode, bool newState ) { if( !newState ) func( keyCode ); };
+        addKeyEvent( keyCode, ( uint keyCode, bool newState ) { if( !newState ) func( keyCode ); } );
+    }
+
+    /**
+     * Add a key event only when the key is up.
+     */
+    final void addKeyUpEvent( string inputName, KeyStateEvent func )
+    {
+        if( auto keys = inputName in keyBindings )
+            foreach( key; *keys )
+                addKeyEvent( key, ( uint keyCode, bool newState ) { if( !newState ) func( keyCode ); } );
     }
 
     /**
      * Check if a given key is down.
-     * 
+     *
      * Params:
      *      keyCode =       The code of the key to check.
      *      checkPrevious = Whether or not to make sure the key was down last frame.
@@ -186,7 +227,7 @@ public:
 
     /**
      * Check if a given key is up.
-     * 
+     *
      * Params:
      *      keyCode =       The code of the key to check.
      *      checkPrevious = Whether or not to make sure the key was up last frame.
@@ -239,9 +280,14 @@ public:
     {
         static if( is( T == bool ) )
         {
-            if( input in keyBindings )
+            bool result = false;
+
+            if( auto keys = input in keyBindings )
             {
-                return isKeyDown( keyBindings[ input ], checkPrevious );
+                foreach( key; *keys )
+                    result = result || isKeyDown( key, checkPrevious );
+
+                return result;
             }
             else
             {
@@ -255,11 +301,11 @@ public:
     }
 
     /**
-     * Get's the position of the cursor.
+     * Gets the position of the cursor.
      *
      * Returns:     The position of the mouse cursor.
      */
-    final shared vec2 getMousePos()
+    final @property shared(vec2) mousePos()
     {
         version( Windows )
         {
@@ -276,7 +322,7 @@ public:
                 i.y -= GetSystemMetrics( SM_CYBORDER );
             }
 
-            return shared vec2( cast(float)i.x, cast(float)i.y );
+            return shared vec2( cast(float)i.x, Graphics.height - cast(float)i.y );
         }
         else version( linux )
         {
@@ -284,8 +330,107 @@ public:
         }
     }
 
+    /**
+     * Gets the world position of the cursor in the active scene.
+     *
+     * Returns:     The position of the mouse cursor in world space.
+     */
+    final @property shared(vec3) mousePosView()
+    {
+        if( !DGame.instance.activeScene )
+        {
+            logWarning( "No active scene." );
+            return shared vec3( 0.0f, 0.0f, 0.0f );
+        }
+
+        auto scene = DGame.instance.activeScene;
+
+        if( !scene.camera )
+        {
+            logWarning( "No camera on active scene." );
+            return shared vec3( 0.0f, 0.0f, 0.0f );
+        }
+        shared vec2 mouse = mousePos;
+        float depth;
+        int x = cast(int)mouse.x;
+        int y = cast(int)mouse.y;
+        auto view = shared vec3( 0, 0, 0 );
+
+        if( x >= 0 && x <= Graphics.width && y >= 0 && y <= Graphics.height )
+        {
+            glBindFramebuffer( GL_FRAMEBUFFER, Graphics.deferredFrameBuffer );
+            glReadBuffer( GL_DEPTH_ATTACHMENT );
+            glReadPixels( x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+
+            auto linearDepth = scene.camera.projectionConstants.x / ( scene.camera.projectionConstants.y - depth );
+            //Convert x and y to normalized device coords
+            shared float screenX = ( mouse.x / cast(shared float)Graphics.width ) * 2 - 1;
+            shared float screenY = -( ( mouse.y / cast(shared float)Graphics.height ) * 2 - 1 );
+
+            auto viewSpace = scene.camera.inversePerspectiveMatrix * shared vec4( screenX, screenY, 1.0f, 1.0f);
+            auto viewRay = shared vec3( viewSpace.xy * (1.0f / viewSpace.z), 1.0f);
+            view = viewRay * linearDepth;
+
+            glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+        }
+
+        return view;
+    }
+
+    /**
+     * Gets the world position of the cursor in the active scene.
+     *
+     * Returns:     The position of the mouse cursor in world space.
+     */
+    final @property shared(vec3) mousePosWorld()
+    {
+        return (cast(shared)DGame.instance.activeScene.camera.inverseViewMatrix * shared vec4( mousePosView(), 1.0f )).xyz;
+    }
+
+    /**
+     * Gets the world position of the cursor in the active scene.
+     *
+     * Returns:     The GameObject located at the current mouse Position
+     */
+    final @property shared(GameObject) mouseObject()
+    {
+        if( !DGame.instance.activeScene )
+        {
+            logWarning( "No active scene." );
+            return null;
+        }
+
+        auto scene = DGame.instance.activeScene;
+
+        if( !scene.camera )
+        {
+            logWarning( "No camera on active scene." );
+            return null;
+        }
+
+        shared vec2 mouse = mousePos();
+        float fId;
+        int x = cast(int)mouse.x;
+        int y = cast(int)mouse.y;
+
+        if( x >= 0 && x <= Graphics.width && y >= 0 && y <= Graphics.height )
+        {
+            glBindFramebuffer( GL_FRAMEBUFFER, Graphics.deferredFrameBuffer );
+            glReadBuffer( GL_COLOR_ATTACHMENT1 );
+            glReadPixels( x, y, 1, 1, GL_BLUE, GL_FLOAT, &fId);
+
+            uint id = cast(int)(fId);
+            glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+
+            if(id > 0)
+                return scene[id];
+        }
+
+        return null;
+    }
+
 private:
-    Keyboard[ string ] keyBindings;
+    Keyboard[][ string ] keyBindings;
 
     KeyEvent[][ uint ] keyEvents;
 

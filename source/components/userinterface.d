@@ -1,24 +1,37 @@
 ﻿/**
- * Handles the creation and life cycle of a web view
+ * Handles the creation and life cycle of UI objects and webview textures
  */
 module components.userinterface;
 import core;
 import deimos.cef3.app, components, utility, graphics.graphics;
 import std.string, gl3n.linalg;
 
+/**
+ * User interface objects handle drawing/updating an AwesomiumView over the screen 
+ */
 shared class UserInterface
 {
 private:
     uint _height;
     uint _width;
-    mat4 _scaleMat;
+    shared mat4 _scaleMat;
     WebView _view;
     // TODO: Handle JS
 
 public:
+    /// WebView to be drawn
     mixin( Property!(_view, AccessModifier.Public) );
+    /// Scale of the UI
     mixin( Property!(_scaleMat, AccessModifier.Public) );
 
+    /**
+     * Create UI object
+     *
+     * Params:
+     *  w =         Width (in pixels) of UI
+     *  h =         Height (in pixels) of UI
+     *  filePath =  Absolute file path to UI file
+     */
     this( uint w, uint h, string filePath ) 
     {
         _scaleMat = mat4.identity;
@@ -27,32 +40,45 @@ public:
         _height = h;
         _width = w;
         _view = new shared WebView( w, h, filePath, null );
-        logInfo( "UI File: ", filePath );
+        logDebug( "UI File: ", filePath );
     }
 
+    /**
+     * Update UI view
+     */
     void update()
     {
-        // Check for mouse & keyboard input
+        /// TODO: Check for mouse & keyboard input
 
         _view.update();
 
         return;
     }
 
+    /**
+     * Draw UI view
+     */
     void draw()
     {
         Graphics.addUI( this );
     }
 
+    /**
+     * Cleanup UI memory
+     */
     void shutdown()
     {
+        // Try to clean up gl buffers
+        _view.shutdown();
         // Clean up mesh, material, and view
     }
 
+    /*
     void keyPress(int key)
     {
 
     }
+    */
 
     static void initializeCEF()
     {

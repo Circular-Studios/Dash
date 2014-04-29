@@ -1,3 +1,6 @@
+/**
+ * Defines the Material and Texture classes.
+ */
 module components.material;
 import core, components, graphics, utility;
 
@@ -5,50 +8,84 @@ import yaml;
 import derelict.opengl3.gl3, derelict.freeimage.freeimage;
 import std.variant, std.conv, std.string;
 
-shared final class Material : IComponent
+/**
+ * A collection of textures that serve different purposes in the rendering pipeline.
+ */
+shared final class Material
 {
 private:
     Texture _diffuse, _normal, _specular;
+    bool _isUsed;
 
 public:
+    /// The diffuse (or color) map.
     mixin( Property!(_diffuse, AccessModifier.Public) );
+    /// The normal map, which specifies which way a face is pointing at a given pixel.
     mixin( Property!(_normal, AccessModifier.Public) );
+    /// The specular map, which specifies how shiny a given point is.
     mixin( Property!(_specular, AccessModifier.Public) );
+    /// Whether or not the material is actually used.
+    mixin( Property!( _isUsed, AccessModifier.Package ) );
 
+    /**
+     * Default constructor, makes sure everything is initialized to default.
+     */
     this()
     {
-        _diffuse = _normal = _specular = defaultTex;
+        _diffuse = _specular = defaultTex;
+        _normal = defaultNormal;
     }
 
     /**
-    * Create a Material from a Yaml node.
-    */
+     * Create a Material from a Yaml node.
+     *
+     * Params:
+     *  yamlObj =           The YAML object to pull the data from.
+     *
+     * Returns: A new material with specified maps.
+     */
     static shared(Material) createFromYaml( Node yamlObj )
     {
         auto obj = new shared Material;
-        Variant prop;
+        string prop;
 
-        if( Config.tryGet!string( "Diffuse", prop, yamlObj ) )
-            obj.diffuse = Assets.get!Texture( prop.get!string );
+        if( yamlObj.tryFind( "Diffuse", prop ) )
+            obj.diffuse = Assets.get!Texture( prop );
 
-        if( Config.tryGet!string( "Normal", prop, yamlObj ) )
-            obj.normal = Assets.get!Texture( prop.get!string );
+        if( yamlObj.tryFind( "Normal", prop ) )
+            obj.normal = Assets.get!Texture( prop );
 
-        if( Config.tryGet!string( "Specular", prop, yamlObj ) )
-            obj.specular = Assets.get!Texture( prop.get!string );
+        if( yamlObj.tryFind( "Specular", prop ) )
+            obj.specular = Assets.get!Texture( prop );
 
         return obj;
     }
 
-    override void update() { }
-    override void shutdown() { }
+    /**
+     * Shuts down the material, making sure all references are released.
+     */
+    void shutdown()
+    {
+        _diffuse = _specular = _normal = null;
+    }
 }
 
+/**
+ * TODO
+ */
 shared class Texture
 {
 protected:
     uint _width, _height, _glID;
+    bool _isUsed;
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     this( ubyte* buffer )
     {
         glGenTextures( 1, cast(uint*)&_glID );
@@ -56,6 +93,13 @@ protected:
         updateBuffer( buffer );
     }
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     void updateBuffer( const ubyte* buffer )
     {
         // Set texture to update
@@ -69,10 +113,22 @@ protected:
     }
 
 public:
+    /// TODO
     mixin( Property!_width );
+    /// TODO
     mixin( Property!_height );
+    /// TODO
     mixin( Property!_glID );
+    /// Whether or not the texture is actually used.
+    mixin( Property!( _isUsed, AccessModifier.Package ) );
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     this( string filePath )
     {
         filePath ~= "\0";
@@ -86,6 +142,13 @@ public:
         FreeImage_Unload( imageData );
     }
 
+    /**
+     * TODO
+     *
+     * Params:
+     *
+     * Returns:
+     */
     void shutdown()
     {
         glBindTexture( GL_TEXTURE_2D, 0 );
@@ -93,7 +156,9 @@ public:
     }
 }
 
-
+/**
+ * A default black texture.
+ */
 @property shared(Texture) defaultTex()
 {
     static shared Texture def;
@@ -104,11 +169,24 @@ public:
     return def;
 }
 
+/**
+ * A default gray texture
+ */
+@property shared(Texture) defaultNormal()
+{
+    static shared Texture def;
+
+    if( !def )
+        def = new shared Texture( [127, 127, 255, 255] );
+
+    return def;
+}
+
 static this()
 {
     IComponent.initializers[ "Material" ] = ( Node yml, shared GameObject obj )
     {
         obj.material = Assets.get!Material( yml.get!string );
-        return obj.material;
+        return null;
     };
 }

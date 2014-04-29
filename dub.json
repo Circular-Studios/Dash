@@ -16,7 +16,9 @@
 		"derelict-fi": "~master",
 		"derelict-assimp3": "~master",
 		"dyaml": "~master",
-		"gl3n-shared" : "~master"
+		"gl3n-shared" : "~master",
+		"dlogg": "~>0.2.2",
+		"x11": { "version": "==1.0.0", "optional": true }
 	},
 	"targetName": "dash",
 	"targetType": "library",
@@ -36,12 +38,5 @@
 	"libs-windows": [
 		"gdi32", "ole32", "kernel32",
 		"user32", "comctl32", "comdlg32"
-	],
-
-	"dependencies-linux": {
-		"x11": {
-			"version": "~master",
-			"optional": true
-		}
-	}
+	]
 }

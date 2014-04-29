@@ -1,10 +1,18 @@
+/**
+ * TODO
+ */
 module graphics.graphics;
 import graphics.adapters, graphics.shaders;
 
+/**
+ * TODO
+ */
 final abstract class Graphics
 {
 public static:
+    /// TODO
     Adapter adapter;
+    /// TODO
     alias adapter this;
 
     /**

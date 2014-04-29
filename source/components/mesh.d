@@ -5,6 +5,7 @@ module components.mesh;
 import core, components, graphics, utility;
 
 import derelict.opengl3.gl3, derelict.assimp3.assimp;
+import gl3n.linalg, gl3n.aabb;
 
 import std.stdio, std.stream, std.format, std.math;
 
@@ -52,14 +53,26 @@ shared class Mesh : IComponent
 private:
     uint _glVertexArray, _numVertices, _numIndices, _glIndexBuffer, _glVertexBuffer;
     bool _animated;
+    bool _isUsed;
+    AABB _boundingBox;
 
 public:
+    /// TODO
     mixin( Property!_glVertexArray );
+    /// TODO
     mixin( Property!_numVertices );
+    /// TODO
     mixin( Property!_numIndices );
+    /// TODO
     mixin( Property!_glIndexBuffer );
+    /// TODO
     mixin( Property!_glVertexBuffer );
+    /// TODO
     mixin( Property!_animated );
+    /// The bounding box of the mesh.
+    mixin( RefGetter!_boundingBox );
+    /// Whether or not the material is actually used.
+    mixin( Property!( _isUsed, AccessModifier.Package ) );
 
     /**
      * Creates a mesh.
@@ -74,6 +87,7 @@ public:
         float[] outputData;
         uint[] indices;
         animated = false;
+        boundingBox = AABB.from_points( [] );
         if( mesh )
         {
             // If there is animation data
@@ -117,7 +131,7 @@ public:
                 }
                 if( maxBonesAttached > 4 )
                 {
-                    log( OutputType.Warning, filePath, " has more than 4 bones for some vertex, data will be truncated. (has ", maxBonesAttached, ")" );
+                    logWarning( filePath, " has more than 4 bones for some vertex, data will be truncated. (has ", maxBonesAttached, ")" );
                 }
 
                 // For each vertex on each face
@@ -133,6 +147,7 @@ public:
                         aiVector3D normal = mesh.mNormals[ face.mIndices[ j ] ];
                         aiVector3D tangent = mesh.mTangents[ face.mIndices[ j ] ];
                         aiVector3D bitangent = mesh.mBitangents[ face.mIndices[ j ] ];
+                        float w = calcTangentHandedness(normal, tangent, bitangent);
 
                         // Append the data
                         outputData ~= pos.x;
@@ -151,6 +166,9 @@ public:
                         //outputData ~= bitangent.z;
                         outputData ~= vertBones[ face.mIndices[ j ] ][0..4];
                         outputData ~= vertWeights[ face.mIndices[ j ] ][0..4];
+
+                        // Save the position in verts
+                        boundingBox.expand( shared vec3( pos.x, pos.y, pos.z ) );
                     }
                 }
             }
@@ -174,6 +192,7 @@ public:
                         aiVector3D normal = mesh.mNormals[ face.mIndices[ j ] ];
                         aiVector3D tangent = mesh.mTangents[ face.mIndices[ j ] ];
                         aiVector3D bitangent = mesh.mBitangents[ face.mIndices[ j ] ];
+                        float w = calcTangentHandedness(normal, tangent, bitangent);
 
                         // Append the data
                         outputData ~= pos.x;
@@ -190,6 +209,9 @@ public:
                         //outputData ~= bitangent.x;
                         //outputData ~= bitangent.y;
                         //outputData ~= bitangent.z;
+
+                        // Save the position in verts
+                        boundingBox.expand( shared vec3( pos.x, pos.y, pos.z ) );
                     }
                 }
             }
@@ -204,7 +226,7 @@ public:
         else
         {
             // Did not load
-            log( OutputType.Error, "Mesh not loaded: ", filePath );
+            logFatal( "Mesh not loaded: ", filePath );
         }
         
         // make and bind the VAO
@@ -272,6 +294,27 @@ public:
         glDeleteBuffers( 1, cast(uint*)&_glVertexBuffer );
         glDeleteBuffers( 1, cast(uint*)&_glVertexArray );
     }
+}
+
+
+/**
+ * Helper function that calculates a modifier for the reconstructed bitangent based on regenerating them
+ * May be needed elsewhere
+ *
+ * Params: TODO
+ *
+ * Returns:
+ */
+private float calcTangentHandedness( aiVector3D nor, aiVector3D tan, aiVector3D bit )
+{
+    shared vec3 n = vec3( nor.x, nor.y, nor.z );
+    shared vec3 t = vec3( tan.x, tan.y, tan.z );
+    shared vec3 b = vec3( bit.x, bit.y, bit.z );
+
+    //Gramm-schmidt
+    t = (t - n * dot( n, t )).normalized();
+
+    return (dot(cross(n,t),b) > 0.0f) ? -1.0f : 1.0f;
 }
 
 static this()

@@ -1,43 +1,21 @@
-Dash
-====
-[![Build Status](https://travis-ci.org/Circular-Studios/Dash.png?branch=develop)](https://travis-ci.org/Circular-Studios/Dash)
-[![Stories in Ready](https://badge.waffle.io/Circular-Studios/Dash.png?label=ready)](http://waffle.io/Circular-Studios/Dash)
-[![Gitter Chat](https://badges.gitter.im/Circular-Studios/Dash.png)](https://gitter.im/Circular-Studios/Dash)
+[![Dash Logo](https://cloud.githubusercontent.com/assets/512416/2726786/6618d624-c5c2-11e3-9049-23637e5a1739.png)](https://github.com/Circular-Studios/Dash/wiki)
 
-Dash is an free and open game engine written in the D Programming Language.
+# [![Build Status](http://img.shields.io/travis/Circular-Studios/Dash/develop.svg?style=flat)](https://travis-ci.org/Circular-Studios/Dash) [![Docs](http://img.shields.io/badge/docs-ddoc-yellow.svg?style=flat)](http://circular-studios.github.io/Dash/docs/v0.6.6) [![Gitter Chat](http://img.shields.io/badge/chat-gitter-brightgreen.svg?style=flat)](https://gitter.im/Circular-Studios/Dash) [![Release](http://img.shields.io/github/release/Circular-Studios/Dash.svg?style=flat)](http://code.dlang.org/packages/dash)
 
-#### [Our Wiki](https://github.com/Circular-Studios/Dash/wiki)
-#### [Planned Features](https://github.com/Circular-Studios/Dash/wiki/Planned-Features)
+If you're reading this page, chances are you fall into one of the following categories:
 
-### Running Dash
+#### I am a game developer interested in making games with Dash:
 
-[Setting up your environment](https://github.com/Circular-Studios/Dash/wiki/Setting-Up-Your-Environment-(Engine)) is your one-stop-shop to running Dash. 
+Our [readme.io page](http://dash.circularstudios.com/) has all the info you could ever want for building a game with Dash. Pro tip: you'll want to read up on [YAML](http://www.yaml.org/) and [D](http://dlang.org) before getting started.
 
-### About Us
+#### I am an engine developer looking to contribute to Dash:
 
-We are a team of 6 students attending Rochester Institute of Technology's Game Design &amp; Development program.
+Great! We'd love to have your support/input/code. Check out [CONTRIBUTING.md](https://github.com/Circular-Studios/Dash/blob/develop/CONTRIBUTING.md) for a guide on how to get started.
 
-### Contact
+#### I have no idea what this is, I just want to see it running:
 
-We'd love to hear from you, and we're currently setting up an avenue for you to get in touch with us. Check back soon!
+The easiest way to get Dash running (on Windows) is to head over to our [Releases](https://github.com/Circular-Studios/Dash/releases) page and download the most recent `dash-game.zip`, and double clicking on `Dash Game`. On Linux, you'll want to check out the simple instructions at [Setting up Your Environment page](https://github.com/Circular-Studios/Dash/wiki/Setting-Up-Your-Environment-(Engine)).
 
-### Copyright & License
+### Contact Us
 
-Copyright (c) 2013-2014 Circular Studios - Released under the MIT License.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+We'd love to hear from you, feel free to get in touch using [gitter](https://gitter.im/Circular-Studios/Dash) (our public chat room) or email us at dash [at] circularstudios [dot] com. We'll do our best to have the appropriate team member respond as quickly as we can.

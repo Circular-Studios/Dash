@@ -2,9 +2,22 @@
  * Defines the static Time class, which manages all game time related things.
  */
 module utility.time;
-import utility.output;
+import utility;
 
 import std.datetime;
+
+/**
+ * Converts a duration to a float of seconds.
+ * 
+ * Params:
+ *  dur =           The duration to convert.
+ *
+ * Returns: The duration in seconds.
+ */
+float toSeconds( Duration dur )
+{
+    return cast(float)dur.total!"hnsecs" / cast(float)1.convert!( "seconds", "hnsecs" );
+}
 
 shared TimeManager Time;
 
@@ -18,59 +31,83 @@ shared static this()
  */
 shared final class TimeManager
 {
+private:
+    Duration delta;
+    Duration total;
+    
 public:
     /**
-     * Time since last frame.
+     * Time since last frame in seconds.
      */
-    final @property const Duration deltaTime() { return delta; }
+    @property float deltaTime() { return delta.toSeconds; }
     /**
-     * Total time spent running.
+     * Total time spent running in seconds.
      */
-    final @property const Duration totalTime() { return total; }
+    @property float totalTime() { return total.toSeconds; }
 
     /**
      * Update the times. Only call once per frame!
      */
-    synchronized final void update()
+    void update()
     {
-        // For first run
-        if( cast()cur == SysTime.min )
-            cast()cur = (cast()prev) = Clock.currTime;
+        assert( onMainThread, "Must call Time.update from main thread." );
 
-        delta = cast()cur - cast()prev;
-        cast()total += cast()delta;
-
-        debug
-        {
-            ++frameCount;
-            cast()second += cast()delta;
-            if( cast()second >= 1.seconds )
-            {
-                log( OutputType.Info, "Framerate: ", frameCount );
-                cast()second = Duration.zero;
-                frameCount = 0;
-            }
-        }
-
-        cast()prev = cur;
-        cast()cur = Clock.currTime;
+        updateTime();
     }
 
 private:
-    SysTime cur;
-    SysTime prev;
-    Duration delta;
-    Duration total;
-    Duration second;
-    int frameCount;
-    
-    /**
-     * Initialize the time controller with initial values.
-     */
-    shared this()
+    this()
+	{
+		delta = total = Duration.zero;
+	}
+}
+
+private:
+StopWatch sw;
+TickDuration cur;
+TickDuration prev;
+Duration delta;
+Duration total;
+Duration second;
+int frameCount;
+
+/**
+ * Initialize the time controller with initial values.
+ */
+static this()
+{
+    cur = prev = TickDuration.min;
+    total = delta = second = Duration.zero;
+    frameCount = 0;
+}
+
+/**
+ * Thread local time update.
+ */
+void updateTime()
+{
+    if( !sw.running )
     {
-        cur = prev = SysTime.min;
-        cast()second = cast()total = cast()delta = Duration.zero;
+        sw.start();
+        cur = prev = sw.peek();
+    }
+
+    delta = cast(Duration)( cur - prev );
+    
+    prev = cur;
+    cur = sw.peek();
+
+    // Pass to shared values
+    cast()Time.total = cast(Duration)cur;
+    cast()Time.delta = delta;
+    
+    // Update framerate
+    ++frameCount;
+    second += delta;
+    if( second >= 1.seconds )
+    {
+        logDebug( "Framerate: ", frameCount );
+        second = Duration.zero;
         frameCount = 0;
     }
 }

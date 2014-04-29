@@ -49,7 +49,7 @@ static this()
 
     constructor.addConstructorScalar( "!Vector2", ( ref Node node )
     {
-        shared vec2 result;
+        vec2 result;
         string[] vals = node.as!string.split();
         if( vals.length != 2 )
             throw new Exception( "Invalid number of values: " ~ node.as!string );
@@ -60,7 +60,7 @@ static this()
     } );
     constructor.addConstructorScalar( "!Vector3", ( ref Node node )
     {
-        shared vec3 result;
+        vec3 result;
         string[] vals = node.as!string.split();
         if( vals.length != 3 )
             throw new Exception( "Invalid number of values: " ~ node.as!string );
@@ -72,7 +72,7 @@ static this()
     } );
     constructor.addConstructorScalar( "!Quaternion", ( ref Node node )
     {
-        shared quat result;
+        quat result;
         string[] vals = node.as!string.split();
         if( vals.length != 3 )
             throw new Exception( "Invalid number of values: " ~ node.as!string );
@@ -85,26 +85,26 @@ static this()
     } );
     constructor.addConstructorMapping( "!Light-Directional", ( ref Node node )
     {
-        shared vec3 color;
-        shared vec3 dir;
+        vec3 color;
+        vec3 dir;
         node.tryFind( "Color", color );
         node.tryFind( "Direction", dir );
-        return cast(Light)new shared DirectionalLight( color, dir );
+        return cast(Light)new DirectionalLight( color, dir );
     } );
     constructor.addConstructorMapping( "!Light-Ambient", ( ref Node node )
     {
-        shared vec3 color;
+        vec3 color;
         node.tryFind( "Color", color );
-        return cast(Light)new shared AmbientLight( color );
+        return cast(Light)new AmbientLight( color );
     } );
     constructor.addConstructorMapping( "!Light-Point", ( ref Node node )
     {
-        shared vec3 color;
+        vec3 color;
         float radius, falloffRate;
         node.tryFind( "Color", color );
         node.tryFind( "Radius", radius );
         node.tryFind( "FalloffRate", falloffRate );
-        return cast(Light)new shared PointLight( color, radius, falloffRate );
+        return cast(Light)new PointLight( color, radius, falloffRate );
     } );
     constructor.addConstructorScalar( "!Verbosity", &constructConv!Verbosity );
     constructor.addConstructorScalar( "!Keyboard", &constructConv!Keyboard );

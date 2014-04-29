@@ -102,7 +102,7 @@ shared static this()
 *
 *   Overwrites default style to use with local OutputType.
 */
-shared final class GlobalLogger : StyledStrictLogger!(OutputType
+synchronized final class GlobalLogger : StyledStrictLogger!(OutputType
                 , OutputType.Debug,   "Debug: %1$s",   "[%2$s] Debug: %1$s"
                 , OutputType.Info,    "Info: %1$s",    "[%2$s] Info: %1$s"
                 , OutputType.Warning, "Warning: %1$s", "[%2$s] Warning: %1$s"

@@ -19,17 +19,17 @@ float toSeconds( Duration dur )
     return cast(float)dur.total!"hnsecs" / cast(float)1.convert!( "seconds", "hnsecs" );
 }
 
-shared TimeManager Time;
+TimeManager Time;
 
-shared static this()
+static this()
 {
-    Time = new shared TimeManager;
+    Time = new TimeManager;
 }
 
 /**
  * Manages time and delta time.
  */
-shared final class TimeManager
+final class TimeManager
 {
 private:
     Duration delta;
@@ -97,7 +97,7 @@ void updateTime()
     prev = cur;
     cur = sw.peek();
 
-    // Pass to shared values
+    // Pass to values
     cast()Time.total = cast(Duration)cur;
     cast()Time.delta = delta;
     

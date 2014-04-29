@@ -11,7 +11,7 @@ import std.variant, std.conv, std.string;
 /**
  * A collection of textures that serve different purposes in the rendering pipeline.
  */
-shared final class Material
+final class Material
 {
 private:
     Texture _diffuse, _normal, _specular;
@@ -44,9 +44,9 @@ public:
      *
      * Returns: A new material with specified maps.
      */
-    static shared(Material) createFromYaml( Node yamlObj )
+    static Material createFromYaml( Node yamlObj )
     {
-        auto obj = new shared Material;
+        auto obj = new Material;
         string prop;
 
         if( yamlObj.tryFind( "Diffuse", prop ) )
@@ -73,7 +73,7 @@ public:
 /**
  * TODO
  */
-shared class Texture
+class Texture
 {
 protected:
     uint _width, _height, _glID;
@@ -88,7 +88,7 @@ protected:
      */
     this( ubyte* buffer )
     {
-        glGenTextures( 1, cast(uint*)&_glID );
+        glGenTextures( 1, &_glID );
         glBindTexture( GL_TEXTURE_2D, glID );
         updateBuffer( buffer );
     }
@@ -108,7 +108,7 @@ protected:
         // Update texture
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_BGRA, GL_UNSIGNED_BYTE, cast(GLvoid*)buffer );
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_BGRA, GL_UNSIGNED_BYTE, buffer );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
     }
 
@@ -152,19 +152,19 @@ public:
     void shutdown()
     {
         glBindTexture( GL_TEXTURE_2D, 0 );
-        glDeleteBuffers( 1, cast(uint*)&_glID );
+        glDeleteBuffers( 1, &_glID );
     }
 }
 
 /**
  * A default black texture.
  */
-@property shared(Texture) defaultTex()
+@property Texture defaultTex()
 {
-    static shared Texture def;
+    static Texture def;
 
     if( !def )
-        def = new shared Texture( [0, 0, 0, 255] );
+        def = new Texture( [0, 0, 0, 255] );
 
     return def;
 }
@@ -172,19 +172,19 @@ public:
 /**
  * A default gray texture
  */
-@property shared(Texture) defaultNormal()
+@property Texture defaultNormal()
 {
-    static shared Texture def;
+    static Texture def;
 
     if( !def )
-        def = new shared Texture( [127, 127, 255, 255] );
+        def = new Texture( [127, 127, 255, 255] );
 
     return def;
 }
 
 static this()
 {
-    IComponent.initializers[ "Material" ] = ( Node yml, shared GameObject obj )
+    IComponent.initializers[ "Material" ] = ( Node yml, GameObject obj )
     {
         obj.material = Assets.get!Material( yml.get!string );
         return null;

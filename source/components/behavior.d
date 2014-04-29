@@ -95,7 +95,8 @@ public:
      * Adds a new behavior to the collection.
      *
      * Params:
-     *  newBehavior =   The behavior to add to the object.
+     *  className =     The behavior to add to the object.
+     *  fields =        Fields to convert give to behavior
      */
     void createBehavior( string className, Node fields = Node( YAMLNull() ) )
     {
@@ -106,7 +107,7 @@ public:
             logWarning( "Class ", className, " either not found or not child of Behavior." );
             return;
         }
-        
+
         newBehavior._owner = _owner;
 
         if( !fields.isNull && className in getInitParams )
@@ -115,6 +116,49 @@ public:
         }
 
         behaviors ~= newBehavior;
+    }
+
+    /**
+     * Adds a new behavior to the collection.
+     *
+     * Params:
+     *  T =             The behavior to add to the object.
+     *  fields =        Fields to convert give to behavior
+     */
+    void createBehavior( T )( Node fields = Node( YAMLNull() ) ) if( is( T : ABehavior ) )
+    {
+        auto newBehavior = new shared T;
+
+        if( !newBehavior )
+        {
+            logWarning( "Class ", T.stringof, " either not found or not child of Behavior." );
+            return;
+        }
+
+        newBehavior._owner = _owner;
+
+        if( !fields.isNull && T.stringof in getInitParams )
+        {
+            newBehavior.initializeBehavior( getInitParams[ T.stringof ]( fields ) );
+        }
+
+        behaviors ~= newBehavior;
+    }
+
+    /**
+     * Gets the behavior of the given type.
+     *
+     * Returns: The bahavior
+     */
+    auto get( BehaviorType = ABehavior )()
+    {
+        foreach( behav; behaviors )
+        {
+            if( typeid(behav) == typeid(BehaviorType) )
+                return behav;
+        }
+
+        return null;
     }
 
     mixin( callBehaviors );

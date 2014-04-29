@@ -7,7 +7,7 @@ import core, components, graphics, utility;
 import yaml;
 import gl3n.linalg, gl3n.math;
 
-import std.conv, std.variant, std.array;
+import std.conv, std.variant, std.array, std.typecons;
 
 enum AnonymousName = "__anonymous";
 
@@ -45,7 +45,7 @@ shared struct ObjectStateFlags
 /**
  * Manages all components and transform in the world. Can be overridden.
  */
-shared class GameObject
+shared final class GameObject
 {
 private:
     Transform _transform;
@@ -199,6 +199,24 @@ public:
         obj.behaviors.onInitialize();
 
         return obj;
+    }
+    /**
+     * Create a GameObject from a Yaml node.
+     *
+     * Params:
+     *  fields =            The YAML node to pull info from.
+     *  scriptOverride =    The ClassInfo to use to create the object. Overrides YAML setting.
+     *
+     * Returns:
+     *  A new game object with components and info pulled from yaml.
+     */
+    static auto createWithBehavior( BehaviorT )( Node fields = Node( YAMLNull() ) )
+    {
+        auto newObj = new shared GameObject;
+
+        newObj.behaviors.createBehavior!BehaviorT( fields );
+
+        return tuple( newObj, newObj.behaviors.get!BehaviorT );
     }
 
     /**

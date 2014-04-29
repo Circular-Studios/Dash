@@ -114,7 +114,7 @@ class TestPropertyInterpolate
     import gl3n.linalg;
 
     private vec3 _vector;
-    public @property shared(vec3) vector() { return _vector; }
+    public @property vec3 vector() { return _vector; }
     public @property void vector( vec3 newVal ) { _vector = newVal; }
 }
 

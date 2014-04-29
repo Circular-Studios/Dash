@@ -98,8 +98,8 @@ void updateTime()
     cur = sw.peek();
 
     // Pass to values
-    cast()Time.total = cast(Duration)cur;
-    cast()Time.delta = delta;
+    Time.total = cast(Duration)cur;
+    Time.delta = delta;
     
     // Update framerate
     ++frameCount;

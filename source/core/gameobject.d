@@ -293,7 +293,7 @@ public:
     final void addChild( GameObject newChild )
     {
         // Nothing to see here.
-        if( cast()newChild.parent == cast()this )
+        if( newChild.parent == this )
             return;
         // Remove from current parent
         else if( newChild.parent )

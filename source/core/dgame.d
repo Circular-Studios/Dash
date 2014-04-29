@@ -171,13 +171,13 @@ public:
         windowInfo.height = CW_USEDEFAULT;
 
         // Initial url.
-        char cwd[1024] = "";
+        //char cwd[1024] = "";
         /*
         if (getcwd(cwd, cwd.sizeof) == '\0') {
             printf("ERROR: getcwd() failed\n");
         }
         */
-        char url[1024];
+        //char url[1024];
         //snprintf(url, url.sizeof, "file://%s/example.html", cwd);
         // There is no _cef_string_t type.
         cef_string_t cefUrl = {};
@@ -253,8 +253,8 @@ public:
                 &browserSettings, NULL);
 
         // Message loop.
-        printf("cef_run_message_loop\n");
-        cef_run_message_loop();
+        //printf("cef_run_message_loop\n");
+        //cef_run_message_loop();
 
         // Shutdown CEF.
         printf("cef_shutdown\n");
@@ -369,7 +369,7 @@ private:
         bench!( { Graphics.initialize(); } )( "Graphics init" );
         bench!( { Assets.initialize(); } )( "Assets init" );
         bench!( { Prefabs.initialize(); } )( "Prefabs init" );
-        bench!( { UserInterface.initializeAwesomium(); } )( "UI init" );
+        bench!( { UserInterface.initializeCEF(); } )( "UI init" );
         bench!( { DGame.instance.onInitialize(); } )( "Game init" );
     }
 

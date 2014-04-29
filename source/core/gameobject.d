@@ -99,7 +99,6 @@ public:
      *
      * Params:
      *  yamlObj =           The YAML node to pull info from.
-     *  scriptOverride =    The ClassInfo to use to create the object. Overrides YAML setting.
      *
      * Returns:
      *  A new game object with components and info pulled from yaml.
@@ -205,10 +204,9 @@ public:
      *
      * Params:
      *  fields =            The YAML node to pull info from.
-     *  scriptOverride =    The ClassInfo to use to create the object. Overrides YAML setting.
      *
      * Returns:
-     *  A new game object with components and info pulled from yaml.
+     *  A tuple of the object created at index 0, and the behavior at index 1.
      */
     static auto createWithBehavior( BehaviorT )( Node fields = Node( YAMLNull() ) )
     {

@@ -98,7 +98,7 @@ public:
      *  className =     The behavior to add to the object.
      *  fields =        Fields to convert give to behavior
      */
-    void createBehavior( string className, Node fields = Node( YAMLNull() ) )
+    ABehavior createBehavior( string className, Node fields = Node( YAMLNull() ) )
     {
         auto newBehavior = cast(shared ABehavior)Object.factory( className );
 
@@ -116,6 +116,8 @@ public:
         }
 
         behaviors ~= newBehavior;
+
+        return newBehavior;
     }
 
     /**
@@ -125,7 +127,7 @@ public:
      *  T =             The behavior to add to the object.
      *  fields =        Fields to convert give to behavior
      */
-    void createBehavior( T )( Node fields = Node( YAMLNull() ) ) if( is( T : ABehavior ) )
+    T createBehavior( T )( Node fields = Node( YAMLNull() ) ) if( is( T : ABehavior ) )
     {
         auto newBehavior = new shared T;
 
@@ -143,6 +145,8 @@ public:
         }
 
         behaviors ~= newBehavior;
+
+        return newBehavior;
     }
 
     /**
@@ -155,7 +159,7 @@ public:
         foreach( behav; behaviors )
         {
             if( typeid(behav) == typeid(BehaviorType) )
-                return behav;
+                return cast(BehaviorType)behav;
         }
 
         return null;

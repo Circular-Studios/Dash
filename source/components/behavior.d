@@ -98,14 +98,14 @@ public:
      *  className =     The behavior to add to the object.
      *  fields =        Fields to convert give to behavior
      */
-    ABehavior createBehavior( string className, Node fields = Node( YAMLNull() ) )
+    shared(ABehavior) createBehavior( string className, Node fields = Node( YAMLNull() ) )
     {
         auto newBehavior = cast(shared ABehavior)Object.factory( className );
 
         if( !newBehavior )
         {
             logWarning( "Class ", className, " either not found or not child of Behavior." );
-            return;
+            return null;
         }
 
         newBehavior._owner = _owner;

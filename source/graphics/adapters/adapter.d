@@ -275,10 +275,8 @@ public:
             {   
                 glBindFramebuffer( GL_FRAMEBUFFER, light.shadowMapFrameBuffer );
 
+                // determine the viewing axis
                 shared quat rotation = quat.identity.rotatex(90.0f.radians);
-
-                //logInfo(temp.transform.rotation);
-
                 shared float cosPitch = cos( rotation.pitch );
                 shared float sinPitch = sin( rotation.pitch );
                 shared float cosYaw = cos( rotation.yaw );
@@ -289,17 +287,8 @@ public:
 
                // logInfo(cosPitch, " ", sinPitch, " ", cosYaw, " ", sinYaw );
                // logInfo( xaxis.vector ~ -( xaxis * temp.transform.position ), yaxis, zaxis );
-                /*
-                tempM = mat4.identity;
-                float far = -50.0f;
-                float near = 50.0f;
-                tempM[0][0] = 2.0f / 1024; 
-                tempM[1][1] = 2.0f / 1024;
-                tempM[2][2] = -2.0f / (far - near);
-                tempM[2][3] = -(far+near)/(far-near);
-                tempM[3][3] = 1.0f;
-                */
 
+                // determine the world space volume for all objects
                 shared AABB frustum;
                 foreach( object; scene.objects )
                 {
@@ -309,11 +298,13 @@ public:
                         frustum.expand( (object.transform.matrix * shared vec4(object.mesh.boundingBox.max, 1.0f)).xyz );
                     }
                 }
-               // logInfo( frustum );
+                // logInfo( frustum );
+                // determine the center of the frustum
                 shared vec3 center = shared vec3( ( frustum.min + frustum.max ).x/2.0f,
                                                   ( frustum.min + frustum.max ).y/2.0f,
                                                   ( frustum.min + frustum.max ).z/2.0f );
 
+                // build the view matrix
                 ///*
                 shared mat4 tempM;
                 tempM.clear(0.0f);
@@ -322,53 +313,54 @@ public:
                 tempM[ 2 ] = zaxis.vector ~ -( zaxis * center );
                 tempM[ 3 ] = [ 0, 0, 0, 1 ];
 
-                light.view = tempM; //*/
+                light.view = tempM; /*/
+                light.view = Camera.lookAt( center - light.direction.normalized, center ); //*/
 
+                // go to view space
                 frustum.min = (light.view * vec4(frustum.min,1.0f)).xyz;
                 frustum.max = (light.view * vec4(frustum.max,1.0f)).xyz;
 
                 //logInfo(frustum);
-
-               // logInfo( center );
-               // light.view = Camera.lookAt( center - (light.direction.normalized * 50), center );
-                shared vec3 mins;
-                shared vec3 maxs;
+                //logInfo( center );
+                // get mins and maxes in view space
+                shared vec3 mins, maxes;
                 if( frustum.min.x < frustum.max.x )
                 {
                     mins.x = frustum.min.x;
-                    maxs.x = frustum.max.x;
+                    maxes.x = frustum.max.x;
                 }
                 else
                 {
                     mins.x = frustum.max.x;
-                    maxs.x = frustum.min.x;
+                    maxes.x = frustum.min.x;
                 }
 
                 if( frustum.min.y < frustum.max.y )
                 {
                     mins.y = frustum.min.y;
-                    maxs.y = frustum.max.y;
+                    maxes.y = frustum.max.y;
                 }
                 else
                 {
                     mins.y = frustum.max.y;
-                    maxs.y = frustum.min.y;
+                    maxes.y = frustum.min.y;
                 }
 
                 if( frustum.min.z < frustum.max.z )
                 {
                     mins.z = frustum.min.z;
-                    maxs.z = frustum.max.z;
+                    maxes.z = frustum.max.z;
                 }
                 else
                 {
                     mins.z = frustum.max.z;
-                    maxs.z = frustum.min.z;
+                    maxes.z = frustum.min.z;
                 }
                 //logInfo( mins, maxs );
-                light.proj = mat4.orthographic( mins.x, maxs.x, 
-                                                mins.y, maxs.y, 
-                                                maxs.z, mins.z );
+                // build the projection matrix
+                light.proj = mat4.orthographic( mins.x, maxes.x, 
+                                                mins.y, maxes.y, 
+                                                maxes.z, mins.z );
 
                 //logInfo(light.proj);
 
@@ -542,11 +534,11 @@ public:
 
         geometryPass();
 
-        glCullFace( GL_FRONT );
+       // glCullFace( GL_FRONT );
 
         shadowPass();
 
-        glCullFace( GL_BACK );
+       // glCullFace( GL_BACK );
 
          // settings for light pass
         glDepthMask( GL_FALSE );

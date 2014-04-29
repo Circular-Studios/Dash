@@ -169,16 +169,16 @@ public:
      * Params:
      *  targetPos = The position for the camera to look at.
      *  cameraPos = The camera's position.
-     *  cameraUp = The up vector from the camera.
+     *  worldUp = The up direction in the world.
      *
      * Returns: 
      * A right handed view matrix for the given params.
      */
-    final static shared(mat4) lookAt( shared vec3 targetPos, shared vec3 cameraPos, shared vec3 cameraUp = vec3(0,1,0) )
+    final static shared(mat4) lookAt( shared vec3 targetPos, shared vec3 cameraPos, shared vec3 worldUp = vec3(0,1,0) )
     {
         shared vec3 zaxis = ( cameraPos - targetPos );
         zaxis.normalize;
-        shared vec3 xaxis = cross( cameraUp, zaxis );
+        shared vec3 xaxis = cross( worldUp, zaxis );
         xaxis.normalize;
         shared vec3 yaxis = cross( zaxis, xaxis );
 

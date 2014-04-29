@@ -4,7 +4,7 @@
 module graphics.adapters.adapter;
 import core, components, graphics, utility;
 
-import gl3n.linalg, gl3n.frustum;
+import gl3n.linalg, gl3n.frustum, gl3n.math;
 import derelict.opengl3.gl3;
 
 import std.algorithm, std.array;
@@ -192,8 +192,8 @@ public:
         }
 
         auto lights = scene.objects
-                                .filter!(obj => obj.stateFlags.drawLight && obj.light)
-                                .map!(obj => obj.light);
+                        .filter!(obj => obj.stateFlags.drawLight && obj.light)
+                        .map!(obj => obj.light);
 
         auto getLightsByType( Type )()
         {
@@ -210,6 +210,15 @@ public:
         shared mat4 projection = scene.camera.perspectiveMatrix;
         shared mat4 invProj = scene.camera.inversePerspectiveMatrix;
 
+        void updateMatricies( shared GameObject current )
+        {
+            current.transform.updateMatrix();
+            foreach( child; current.children )
+               updateMatricies( child );
+        }
+        updateMatricies( scene.root );
+
+
         /**
         * Geometry Pass
         * Writes color(24) and specular(8)
@@ -217,14 +226,6 @@ public:
         */
         void geometryPass()
         {
-            void updateMatricies( shared GameObject current )
-            {
-                current.transform.updateMatrix();
-                foreach( child; current.children )
-                    updateMatricies( child );
-            }
-            updateMatricies( scene.root );
-
             foreach( object; scene.objects )
             {
                 if( object.mesh && object.stateFlags.drawMesh )
@@ -245,7 +246,7 @@ public:
 
                     glUseProgram( shader.programID );
                     glBindVertexArray( object.mesh.glVertexArray );
-                    
+
                     shader.bindUniformMatrix4fv( shader.WorldView, worldView );
                     shader.bindUniformMatrix4fv( shader.WorldViewProjection, worldViewProj );
                     shader.bindUniform1ui( shader.ObjectId, object.id );
@@ -274,8 +275,105 @@ public:
             {   
                 glBindFramebuffer( GL_FRAMEBUFFER, light.shadowMapFrameBuffer );
 
-                light.view = Camera.lookAt( light.direction * 50, vec3(0,0,0), vec3(0,1,0) );
-                light.proj = mat4.orthographic( -50, 50, -10, 50, 50, -50 ); // hardcoded values to change later
+                shared quat rotation = quat.identity.rotatex(90.0f.radians);
+
+                //logInfo(temp.transform.rotation);
+
+                shared float cosPitch = cos( rotation.pitch );
+                shared float sinPitch = sin( rotation.pitch );
+                shared float cosYaw = cos( rotation.yaw );
+                shared float sinYaw = sin( rotation.yaw );
+                shared vec3 xaxis = shared vec3( cosYaw, 0.0f, -sinYaw );
+                shared vec3 yaxis = shared vec3( sinYaw * sinPitch, cosPitch, cosYaw * sinPitch );
+                shared vec3 zaxis = shared vec3( sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw );
+
+               // logInfo(cosPitch, " ", sinPitch, " ", cosYaw, " ", sinYaw );
+               // logInfo( xaxis.vector ~ -( xaxis * temp.transform.position ), yaxis, zaxis );
+                /*
+                tempM = mat4.identity;
+                float far = -50.0f;
+                float near = 50.0f;
+                tempM[0][0] = 2.0f / 1024; 
+                tempM[1][1] = 2.0f / 1024;
+                tempM[2][2] = -2.0f / (far - near);
+                tempM[2][3] = -(far+near)/(far-near);
+                tempM[3][3] = 1.0f;
+                */
+
+                shared AABB frustum;
+                foreach( object; scene.objects )
+                {
+                    if( object.mesh && object.stateFlags.drawMesh )
+                    {
+                        frustum.expand( (object.transform.matrix * shared vec4(object.mesh.boundingBox.min, 1.0f)).xyz );
+                        frustum.expand( (object.transform.matrix * shared vec4(object.mesh.boundingBox.max, 1.0f)).xyz );
+                    }
+                }
+               // logInfo( frustum );
+                shared vec3 center = shared vec3( ( frustum.min + frustum.max ).x/2.0f,
+                                                  ( frustum.min + frustum.max ).y/2.0f,
+                                                  ( frustum.min + frustum.max ).z/2.0f );
+
+                ///*
+                shared mat4 tempM;
+                tempM.clear(0.0f);
+                tempM[ 0 ] = xaxis.vector ~ -( xaxis * center );
+                tempM[ 1 ] = yaxis.vector ~ -( yaxis * center );
+                tempM[ 2 ] = zaxis.vector ~ -( zaxis * center );
+                tempM[ 3 ] = [ 0, 0, 0, 1 ];
+
+                light.view = tempM; //*/
+
+                frustum.min = (light.view * vec4(frustum.min,1.0f)).xyz;
+                frustum.max = (light.view * vec4(frustum.max,1.0f)).xyz;
+
+                //logInfo(frustum);
+
+               // logInfo( center );
+               // light.view = Camera.lookAt( center - (light.direction.normalized * 50), center );
+                shared vec3 mins;
+                shared vec3 maxs;
+                if( frustum.min.x < frustum.max.x )
+                {
+                    mins.x = frustum.min.x;
+                    maxs.x = frustum.max.x;
+                }
+                else
+                {
+                    mins.x = frustum.max.x;
+                    maxs.x = frustum.min.x;
+                }
+
+                if( frustum.min.y < frustum.max.y )
+                {
+                    mins.y = frustum.min.y;
+                    maxs.y = frustum.max.y;
+                }
+                else
+                {
+                    mins.y = frustum.max.y;
+                    maxs.y = frustum.min.y;
+                }
+
+                if( frustum.min.z < frustum.max.z )
+                {
+                    mins.z = frustum.min.z;
+                    maxs.z = frustum.max.z;
+                }
+                else
+                {
+                    mins.z = frustum.max.z;
+                    maxs.z = frustum.min.z;
+                }
+                //logInfo( mins, maxs );
+                light.proj = mat4.orthographic( mins.x, maxs.x, 
+                                                mins.y, maxs.y, 
+                                                maxs.z, mins.z );
+
+                //logInfo(light.proj);
+
+                //logInfo("CameraView: \n", scene.camera.viewMatrix[0],'\n',scene.camera.viewMatrix[1],'\n',scene.camera.viewMatrix[2],'\n',scene.camera.viewMatrix[3],'\n', );
+                //logInfo("View:       \n", light.view[0], '\n',light.view[1], '\n',light.view[2], '\n',light.view[3], '\n', );
 
                 glClear( GL_DEPTH_BUFFER_BIT );
 
@@ -444,7 +542,11 @@ public:
 
         geometryPass();
 
+        glCullFace( GL_FRONT );
+
         shadowPass();
+
+        glCullFace( GL_BACK );
 
          // settings for light pass
         glDepthMask( GL_FALSE );

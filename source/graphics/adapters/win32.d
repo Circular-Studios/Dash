@@ -172,6 +172,17 @@ public:
         
         reload();
         
+        HANDLE hIcon = LoadImage( null, ( FilePath.Resources.Textures ~ "/icon.ico" ).ptr, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_LOADFROMFILE);
+        if( hIcon )
+        {
+            //Change both icons to the same icon handle.
+            SendMessage( hWnd, WM_SETICON, ICON_SMALL, cast(int)hIcon );
+            SendMessage( hWnd, WM_SETICON, ICON_BIG, cast(int)hIcon );
+
+            //This will ensure that the application icon gets changed too.
+            SendMessage( GetWindow( hWnd, GW_OWNER ), WM_SETICON, ICON_SMALL, cast(int)hIcon );
+            SendMessage( GetWindow( hWnd, GW_OWNER ), WM_SETICON, ICON_BIG, cast(int)hIcon );
+        }
     }
 
     /**

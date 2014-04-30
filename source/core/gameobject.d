@@ -7,7 +7,7 @@ import core, components, graphics, utility;
 import yaml;
 import gl3n.linalg, gl3n.math;
 
-import std.conv, std.variant, std.array;
+import std.conv, std.variant, std.array, std.typecons;
 
 enum AnonymousName = "__anonymous";
 
@@ -45,7 +45,7 @@ shared struct ObjectStateFlags
 /**
  * Manages all components and transform in the world. Can be overridden.
  */
-shared class GameObject
+shared final class GameObject
 {
 private:
     Transform _transform;
@@ -60,6 +60,7 @@ private:
     string _name;
     ObjectStateFlags* _stateFlags;
     bool canChangeName;
+    Behaviors _behaviors;
     static uint nextId = 1;
 
 package:
@@ -86,6 +87,8 @@ public:
     mixin( Property!( _stateFlags, AccessModifier.Public ) );
     /// The name of the object.
     mixin( Getter!_name );
+    /// The scripts this object owns.
+    mixin( RefGetter!_behaviors );
     /// ditto
     mixin( ConditionalSetter!( _name, q{canChangeName}, AccessModifier.Public ) );
     /// The ID of the object
@@ -96,77 +99,67 @@ public:
      *
      * Params:
      *  yamlObj =           The YAML node to pull info from.
-     *  scriptOverride =    The ClassInfo to use to create the object. Overrides YAML setting.
      *
      * Returns:
      *  A new game object with components and info pulled from yaml.
      */
-    static shared(GameObject) createFromYaml( Node yamlObj, const ClassInfo scriptOverride = null )
+    static shared(GameObject) createFromYaml( Node yamlObj )
     {
         shared GameObject obj;
         bool foundClassName;
         string prop, className;
         Node innerNode;
 
-        string objName = yamlObj[ "Name" ].as!string;
-
-        // Try to get from script
-        if( scriptOverride !is null )
+        if( yamlObj.tryFind( "InstanceOf", prop ) )
         {
-            obj = cast(shared GameObject)scriptOverride.create();
+            obj = Prefabs[ prop ].createInstance();
         }
         else
         {
-            foundClassName = Config.tryGet( "Script.ClassName", className, yamlObj );
-            // Get class to create script from
-            const ClassInfo scriptClass = foundClassName
-                    ? ClassInfo.find( className )
-                    : null;
-
-            // Check that if a Script.ClassName was provided that it was valid
-            if( foundClassName && scriptClass is null )
-            {
-                logWarning( objName, ": Unable to find Script ClassName: ", className );
-            }
-
-            if( Config.tryGet( "InstanceOf", prop, yamlObj ) )
-            {
-                obj = Prefabs[ prop ].createInstance( scriptClass );
-            }
-            else
-            {
-                obj = scriptClass
-                        ? cast(shared GameObject)scriptClass.create()
-                        : new shared GameObject;
-            }
+            obj = new shared GameObject;
         }
 
-        // set object name
-        obj.name = objName;
+        // Set object name
+        obj.name = yamlObj[ "Name" ].as!string;
 
         // Init transform
-        if( Config.tryGet( "Transform", innerNode, yamlObj ) )
+        if( yamlObj.tryFind( "Transform", innerNode ) )
         {
             shared vec3 transVec;
-            if( Config.tryGet( "Scale", transVec, innerNode ) )
+            if( innerNode.tryFind( "Scale", transVec ) )
                 obj.transform.scale = shared vec3( transVec );
-            if( Config.tryGet( "Position", transVec, innerNode ) )
+            if( innerNode.tryFind( "Position", transVec ) )
                 obj.transform.position = shared vec3( transVec );
-            if( Config.tryGet( "Rotation", transVec, innerNode ) )
+            if( innerNode.tryFind( "Rotation", transVec ) )
                 obj.transform.rotation = quat.identity.rotatex( transVec.x.radians ).rotatey( transVec.y.radians ).rotatez( transVec.z.radians );
         }
 
-        if( foundClassName && Config.tryGet( "Script.Fields", innerNode, yamlObj ) )
+        if( yamlObj.tryFind( "Behaviors", innerNode ) )
         {
-            if( auto initParams = className in getInitParams )
-                obj.initialize( (*initParams)( innerNode ) );
+            if( !innerNode.isSequence )
+            {
+                logWarning( "Behaviors tag of ", obj.name, " must be a sequence." );
+            }
+            else
+            {
+                foreach( Node behavior; innerNode )
+                {
+                    string className;
+                    Node fields;
+                    if( !behavior.tryFind( "Class", className ) )
+                        logFatal( "Behavior element in ", obj.name, " must have a Class value." );
+                    if( !behavior.tryFind( "Fields", fields ) )
+                        fields = Node( YAMLNull() );
+                    obj.behaviors.createBehavior( className, fields );
+                }
+            }
         }
 
         // If parent is specified, add it to the map
-        if( Config.tryGet( "Parent", prop, yamlObj ) )
+        if( yamlObj.tryFind( "Parent", prop ) )
             logWarning( "Specifying parent objects by name is deprecated. Please add this as an inline child to ", prop, "." );
 
-        if( Config.tryGet( "Children", innerNode, yamlObj ) )
+        if( yamlObj.tryFind( "Children", innerNode ) )
         {
             if( innerNode.isSequence )
             {
@@ -175,7 +168,7 @@ public:
                     if( child.isScalar )
                     {
                         // Add child name to map.
-                        logWarning( "Specifing child objects by name is deprecated. Please add ", child.get!string, " as an inline child of ", objName, "." );
+                        logWarning( "Specifing child objects by name is deprecated. Please add ", child.get!string, " as an inline child of ", obj.name, "." );
                     }
                     else
                     {
@@ -193,7 +186,7 @@ public:
         // Init components
         foreach( string key, Node value; yamlObj )
         {
-            if( key == "Name" || key == "Script" || key == "Parent" || key == "InstanceOf" || key == "Transform" || key == "Children" )
+            if( key == "Name" || key == "Script" || key == "Parent" || key == "InstanceOf" || key == "Transform" || key == "Children" || key == "Behaviors" )
                 continue;
 
             if( auto init = key in IComponent.initializers )
@@ -202,7 +195,26 @@ public:
                 logWarning( "Unknown key: ", key );
         }
 
+        obj.behaviors.onInitialize();
+
         return obj;
+    }
+    /**
+     * Create a GameObject from a Yaml node.
+     *
+     * Params:
+     *  fields =            The YAML node to pull info from.
+     *
+     * Returns:
+     *  A tuple of the object created at index 0, and the behavior at index 1.
+     */
+    static auto createWithBehavior( BehaviorT )( Node fields = Node( YAMLNull() ) )
+    {
+        auto newObj = new shared GameObject;
+
+        newObj.behaviors.createBehavior!BehaviorT( fields );
+
+        return tuple( newObj, newObj.behaviors.get!BehaviorT );
     }
 
     /**
@@ -211,6 +223,7 @@ public:
     this()
     {
         _transform = shared Transform( this );
+        _behaviors = shared Behaviors( this );
 
         // Create default material
         material = new shared Material();
@@ -230,7 +243,7 @@ public:
     {
         if( stateFlags.update )
         {
-            onUpdate();
+            behaviors.onUpdate();
 
             foreach( ci, component; componentList )
                 component.update();
@@ -246,7 +259,7 @@ public:
      */
     final void draw()
     {
-        onDraw();
+        behaviors.onDraw();
 
         foreach( obj; children )
             obj.draw();
@@ -257,7 +270,7 @@ public:
      */
     final void shutdown()
     {
-        onShutdown();
+        behaviors.onShutdown();
 
         foreach( obj; children )
             obj.shutdown();
@@ -299,7 +312,7 @@ public:
         if( cast()newChild.parent == cast()this )
             return;
         // Remove from current parent
-        else if( newChild.parent && cast()newChild.parent != cast()this )
+        else if( newChild.parent )
             newChild.parent.removeChild( newChild );
 
         _children ~= newChild;
@@ -350,55 +363,6 @@ public:
 
         oldChild.canChangeName = true;
         oldChild.parent = null;
-    }
-
-    /// Called on the update cycle.
-    void onUpdate() { }
-    /// Called on the draw cycle.
-    void onDraw() { }
-    /// Called on shutdown.
-    void onShutdown() { }
-    /// Called when the object collides with another object.
-    void onCollision( GameObject other ) { }
-
-    /// Allows for GameObjectInit to pass o to typed func.
-    void initialize( Object o ) { }
-}
-
-private shared Object function( Node )[string] getInitParams;
-
-/**
- * Class to extend when looking to use the onInitialize function.
- *
- * Type Params:
- *  T =             The type onInitialize will recieve.
- */
-class GameObjectInit(T) : GameObject if( is( T == class ) )
-{
-    /// Function to override to get args from Fields field in YAML.
-    abstract void onInitialize( T args );
-
-    /// Overridden to give params to child class.
-    final override void initialize( Object o )
-    {
-        onInitialize( cast(T)o );
-    }
-
-    /**
-     * Registers subclasses with onInit function pointers/
-     */
-    shared static this()
-    {
-        foreach( mod; ModuleInfo )
-        {
-            foreach( klass; mod.localClasses )
-            {
-                if( klass.base == typeid(GameObjectInit!T) )
-                {
-                    getInitParams[ klass.name ] = &Config.getObject!T;
-                }
-            }
-        }
     }
 }
 

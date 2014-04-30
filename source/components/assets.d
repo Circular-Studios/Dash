@@ -35,34 +35,26 @@ public:
      */
     final shared(T) get( T )( string name ) if( is( T == Mesh ) || is( T == Texture ) || is( T == Material ) || is( T == AssetAnimation ))
     {
-        enum get( string array ) = q{
-            if( auto result = name in $array )
+        enum get( Type, string array ) = q{
+            static if( is( T == $Type ) )
             {
-                return *result;
+                if( auto result = name in $array )
+                {
+                    result.isUsed = true;
+                    return *result;
+                }
+                else
+                {
+                    logFatal( "Unable to find ", name, " in $array." );
+                    return null;
+                }
             }
-            else
-            {
-                logFatal( "Unable to find ", name, " in $array." );
-                return null;
-            }
-        }.replace( "$array", array );
-        static if( is( T == Mesh ) )
-        {
-            mixin( get!q{meshes} );
-        }
-        else static if( is( T == Texture ) )
-        {
-            mixin( get!q{textures} );
-        }
-        else static if( is( T == Material ) )
-        {
-            mixin( get!q{materials} );
-        }
-        else static if( is( T == AssetAnimation ) )
-        {
-            mixin( get!q{animations} );
-        }
-        else static assert( false, "Material of type " ~ T.stringof ~ " is not maintained by Assets." );
+        }.replaceMap( [ "$array": array, "$Type": Type.stringof ] );
+
+        mixin( get!( Mesh, q{meshes} ) );
+        mixin( get!( Texture, q{textures} ) );
+        mixin( get!( Material, q{materials} ) );
+        mixin( get!( AssetAnimation, q{animations} ) );
     }
 
     /**
@@ -79,19 +71,19 @@ public:
         assert(aiIsExtensionSupported(".fbx".toStringz), "fbx format isn't supported by assimp instance!");
 
         // Load the unitSquare
-        unitSquare = new shared Mesh( "", aiImportFileFromMemory(unitSquareMesh.toStringz, unitSquareMesh.length,
-                                                aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
-                                                aiProcess_JoinIdenticalVertices | aiProcess_SortByPType,
-                                                "obj" ).mMeshes[0] );
+        unitSquare = new shared Mesh( "", aiImportFileFromMemory(
+                                        unitSquareMesh.toStringz, unitSquareMesh.length,
+                                        aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
+                                        aiProcess_JoinIdenticalVertices | aiProcess_SortByPType,
+                                        "obj" ).mMeshes[0] );
 
         foreach( file; FilePath.scanDirectory( FilePath.Resources.Meshes ) )
         {
             // Load mesh
             const aiScene* scene = aiImportFile( file.fullPath.toStringz,
-                                                aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
-                                                aiProcess_JoinIdenticalVertices | aiProcess_SortByPType );
-                                                //| aiProcess_FlipWindingOrder );
-            assert(scene, "Failed to load scene file '" ~ file.fullPath ~ "' Error: " ~ aiGetErrorString().fromStringz);
+                                                 aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
+                                                 aiProcess_JoinIdenticalVertices | aiProcess_SortByPType );
+            assert( scene, "Failed to load scene file '" ~ file.fullPath ~ "' Error: " ~ aiGetErrorString().fromStringz );
             
             // If animation data, add animation
             if( file.baseFileName in meshes )
@@ -143,29 +135,21 @@ public:
      */
     final void shutdown()
     {
-        foreach_reverse( index; 0 .. meshes.length )
-        {
-            auto name = meshes.keys[ index ];
-            meshes[ name ].shutdown();
-            meshes.remove( name );
-        }
-        foreach_reverse( index; 0 .. textures.length )
-        {
-            auto name = textures.keys[ index ];
-            textures[ name ].shutdown();
-            textures.remove( name );
-        }
-        foreach_reverse( index; 0 .. materials.length )
-        {
-            auto name = materials.keys[ index ];
-            materials.remove( name );
-        }
-        foreach_reverse( index; 0 .. animations.length )
-        {
-            auto name = animations.keys[ index ];
-            animations[ name ].shutdown();
-            animations.remove( name );
-        }
+        enum shutdown( string aaName, string friendlyName ) = q{
+            foreach_reverse( name; meshes.keys )
+            {
+                if( !$aaName[ name ].isUsed )
+                    logWarning( "$friendlyName ", name, " not used during this run." );
+
+                $aaName[ name ].shutdown();
+                $aaName.remove( name );
+            }
+        }.replaceMap( [ "$aaName": aaName, "$friendlyName": friendlyName ] );
+
+        mixin( shutdown!( q{meshes}, "Mesh" ) );
+        mixin( shutdown!( q{textures}, "Texture" ) );
+        mixin( shutdown!( q{materials}, "Material" ) );
+        mixin( shutdown!( q{animations}, "Animation" ) );
     }
 }
 

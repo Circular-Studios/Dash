@@ -53,6 +53,7 @@ shared class Mesh : IComponent
 private:
     uint _glVertexArray, _numVertices, _numIndices, _glIndexBuffer, _glVertexBuffer;
     bool _animated;
+    bool _isUsed;
     AABB _boundingBox;
 
 public:
@@ -70,6 +71,8 @@ public:
     mixin( Property!_animated );
     /// The bounding box of the mesh.
     mixin( RefGetter!_boundingBox );
+    /// Whether or not the material is actually used.
+    mixin( Property!( _isUsed, AccessModifier.Package ) );
 
     /**
      * Creates a mesh.

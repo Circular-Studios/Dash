@@ -63,16 +63,13 @@ public:
 
     /**
      * Creates a GameObject instance from the prefab.
-     * 
-     * Params:
-     *  scriptOverride =            Create the instance from this class type instead of the prefab's default.
      *
      * Returns:
      *  The new GameObject from the Prefab.
      */
-    final shared(GameObject) createInstance( const ClassInfo scriptOverride = null )
+    final shared(GameObject) createInstance()
     {
-        return GameObject.createFromYaml( yaml, scriptOverride );
+        return GameObject.createFromYaml( yaml );
     }
 
 private:

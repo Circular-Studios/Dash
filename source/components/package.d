@@ -8,3 +8,4 @@ import components.mesh;
 import components.camera;
 import components.lights;
 import components.userinterface;
+import components.behavior;

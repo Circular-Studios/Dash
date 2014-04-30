@@ -1,11 +1,11 @@
 ﻿/**
-* TODO
+* Lighting Pass shader for ambient lights
 */
 module graphics.shaders.glsl.ambientlight;
 
 package:
 
-/// TODO
+/// Takes in a clip-space quad and interpolates the UVs
 immutable string ambientlightVS = q{
 #version 400
     
@@ -23,7 +23,7 @@ immutable string ambientlightVS = q{
     }
 };
 
-/// TODO
+/// Outputs the color for the diffuse * the ambient light value
 immutable string ambientlightFS = q{
 #version 400
 

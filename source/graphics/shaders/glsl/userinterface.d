@@ -1,5 +1,5 @@
 /**
-* TODO
+* Post-Processing pass shader to render User Interfaces
 */
 module graphics.shaders.glsl.userinterface;
 

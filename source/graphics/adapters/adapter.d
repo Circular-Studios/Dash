@@ -1,5 +1,5 @@
 /**
-* TODO
+* Contains all core code for the Graphics adapters, which is similar across all platforms
 */
 module graphics.adapters.adapter;
 import core, components, graphics, utility;
@@ -10,7 +10,7 @@ import derelict.opengl3.gl3;
 import std.algorithm, std.array;
 
 /**
-* TODO
+* Base class for core rendering logic
 */
 abstract class Adapter
 {
@@ -30,61 +30,61 @@ private:
     shared UserInterface[] uis;
 
 public:
-    /// TODO
+    /// GL DeviceContext
     mixin( Property!_deviceContext );
-    /// TODO
+    /// GL RenderContext
     mixin( Property!_renderContext );
 
-    /// TODO
+    /// Pixel width of the rendering area
     mixin( Property!_width );
-    /// TODO
+    /// Pixel width of the actual window
     mixin( Property!_screenWidth );
-    /// TODO
+    /// Pixel height of the rendering area
     mixin( Property!_height );
-    /// TODO
+    /// Pixel height of the actual window
     mixin( Property!_screenHeight );
-    /// TODO
+    /// If the screen properties match the rendering dimensions
     mixin( Property!_fullscreen );
-    /// TODO
+    /// Hiding backsides of triangles
     mixin( Property!_backfaceCulling );
-    /// TODO
+    /// Vertical Syncing
     mixin( Property!_vsync );
-    /// TODO
+    /// FBO for deferred render textures
     mixin( Property!_deferredFrameBuffer );
-    /// TODO
+    /// Texture storing the Diffuse colors and Specular Intensity
     mixin( Property!_diffuseRenderTexture );
-    /// TODO
+    /// Texture storing the Sphermapped Normal XY and the Object ID in Z
     mixin( Property!_normalRenderTexture );
-    /// TODO
+    /// Texture storing the depth
     mixin( Property!_depthRenderTexture );
 
     /**
-    * TODO
+    * Initializes the Adapter, called in loading
     */
     abstract void initialize();
     /**
-    * TODO
+    * Shuts down the Adapter
     */
     abstract void shutdown();
     /**
-    * TODO
+    * Resizes the window and updates FBOs
     */
     abstract void resize();
     /**
-    * TODO
+    * Reloads the Adapter without closing
     */
     abstract void reload();
     /**
-    * TODO
+    * Swaps the back buffer to the screen
     */
     abstract void swapBuffers();
 
     /**
-    * TODO
+    * Opens the window
     */
     abstract void openWindow();
     /**
-    * TODO
+    * Closes the window
     */
     abstract void closeWindow();
 
@@ -94,7 +94,7 @@ public:
     abstract void messageLoop();
 
     /**
-    * TODO
+    * Initializes the FBO and Textures for deferred rendering
     */
     final void initializeDeferredRendering()
     {
@@ -172,8 +172,7 @@ public:
     }
 
     /**
-     * Called after all desired objects are drawn.
-     * Handles lighting and post processing.
+     * Currently the entire rendering pass for the active Scene. TODO: Refactor the name
      */
     final void endDraw()
     {
@@ -211,7 +210,7 @@ public:
         shared mat4 invProj = scene.camera.inversePerspectiveMatrix;
 
         /**
-        * TODO
+        * Pass for all objects with Meshes
         */
         void geometryPass()
         {
@@ -260,12 +259,12 @@ public:
         }
 
         /**
-        * TODO
+        * Pass for all objects with lights
         */
         void lightPass()
         {
             /**
-            * TODO
+            * Binds the FBO textures to the shader
             */
             void bindGeometryOutputs( Shader shader )
             {
@@ -365,7 +364,7 @@ public:
         }
 
         /**
-        * TODO
+        * Draw the UI
         */
         void uiPass()
         {
@@ -430,7 +429,7 @@ public:
 
 protected:
     /**
-    * TODO
+    * Loads rendering properties from Config
     */
     final void loadProperties()
     {

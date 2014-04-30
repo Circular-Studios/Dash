@@ -1,5 +1,5 @@
 /**
-* TODO
+* Defines Shader class and the Shaders collection for loading, binding, and setting values in GLSL shaders
 */
 module graphics.shaders.shaders;
 import core, components, graphics, utility;
@@ -43,12 +43,12 @@ private enum ShaderUniform
 }
 
 /**
-* TODO
+* A constant string representing immutable uint fields for each ShaderUniform enum values
 */
 enum ShaderUniformFields = reduce!( ( a, b ) => a ~ "immutable uint " ~ b ~ ";\n" )( "", [__traits(allMembers,ShaderUniform )] );
 
 /**
-* TODO
+* Loads necessary shaders into variables, and any custom user shaders into an associative array
 */
 final abstract class Shaders
 {
@@ -57,21 +57,21 @@ private:
     Shader[string] shaders;
 
 public:
-    /// TODO
+    /// Geometry Shader
     Shader geometry;
-    /// TODO
+    /// Animated Geometry Shader
     Shader animatedGeometry;
-    /// TODO
+    /// Ambient Lighting Shader
     Shader ambientLight;
-    /// TODO
+    /// Directional Lighting shader
     Shader directionalLight;
-    /// TODO
+    /// Point Lighting shader
     Shader pointLight;
-    /// TODO
+    /// User Interface shader
     Shader userInterface;
 
     /**
-    * TODO
+    * Loads the field-shaders first, then any additional shaders in the Shaders folder
     */
     final void initialize()
     {
@@ -93,7 +93,7 @@ public:
     }
 
     /**
-    * TODO
+    * Empties the array of shaders and calls their Shutdown function
     */
     final void shutdown()
     {
@@ -106,7 +106,7 @@ public:
     }
 
     /**
-    * TODO
+    * Returns a Shader based on its string name
     */
     final Shader opIndex( string name )
     {
@@ -114,7 +114,7 @@ public:
     }
 
     /**
-    * TODO
+    * Returns a Shader based on its string name
     */
     final Shader get( string name )
     {
@@ -124,7 +124,7 @@ public:
 }
 
 /**
-* TODO
+* Class storing the programID, VS ID, FS ID and ShaderUniform locations for a given Shader program
 */
 final package class Shader
 {
@@ -133,19 +133,19 @@ private:
     string _shaderName;
 
 public:
-    /// TODO
+    /// The program ID for the shader
     mixin( Property!_programID );
-    /// TODO
+    /// The ID for the vertex shader
     mixin( Property!_vertexShaderID );
-    /// TODO
+    /// The ID for the fragment shader
     mixin( Property!_fragmentShaderID );
-    /// TODO
+    /// The string name of the Shader
     mixin( Property!_shaderName );
-
+    /// Uint locations for each possible Shader Uniform
     mixin( ShaderUniformFields );
 
     /**
-    * TODO
+    * Creates a Shader Program from the name, and either the vertex and fragment shader strings, or their file names
     */
     this(string name, string vertex, string fragment, bool preloaded = false )
     {
@@ -176,7 +176,7 @@ public:
     }
 
     /**
-    * TODO
+    * Compiles a Vertex and Fragment shader into a Shader Program
     */
     void compile( string vertexBody, string fragmentBody )
     {

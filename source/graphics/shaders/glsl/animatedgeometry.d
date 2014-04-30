@@ -1,11 +1,11 @@
 /**
-* TODO
+*  Geometry pash shader for bone-animated meshes.  Uses standard Geometry fragment shader
 */
 module graphics.shaders.glsl.animatedgeometry;
 
 package:
 
-/// Animated Geometry Shader
+/// Animated Geometry Shader.  Transforms vertices by bone-weights
 immutable string animatedGeometryVS = q{
     #version 400
 

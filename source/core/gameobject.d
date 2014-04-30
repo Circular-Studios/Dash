@@ -95,7 +95,7 @@ public:
     /// The ID of the object.
     immutable uint id;
     /// Allow setting of state flags directly.
-    alias stateFlags this;
+    //alias stateFlags this;
 
     /**
      * Create a GameObject from a Yaml node.
@@ -165,7 +165,7 @@ public:
                 foreach( Node child; innerNode )
                 {
                     // If inline object, create it and add it as a child.
-                    if( !child.isMapping )
+                    if( child.isMapping )
                         obj.addChild( GameObject.createFromYaml( child ) );
                     // Add child name to map.
                     else

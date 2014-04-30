@@ -16,7 +16,8 @@ enum AnonymousName = "__anonymous";
  */
 shared struct ObjectStateFlags
 {
-    bool update;
+    bool updateComponents;
+    bool updateBehaviors;
     bool updateChildren;
     bool drawMesh;
     bool drawLight;
@@ -91,8 +92,10 @@ public:
     mixin( RefGetter!_behaviors );
     /// ditto
     mixin( ConditionalSetter!( _name, q{canChangeName}, AccessModifier.Public ) );
-    /// The ID of the object
+    /// The ID of the object.
     immutable uint id;
+    /// Allow setting of state flags directly.
+    alias stateFlags this;
 
     /**
      * Create a GameObject from a Yaml node.
@@ -241,13 +244,12 @@ public:
      */
     final void update()
     {
-        if( stateFlags.update )
-        {
+        if( stateFlags.updateBehaviors )
             behaviors.onUpdate();
 
+        if( stateFlags.updateComponents )
             foreach( ci, component; componentList )
                 component.update();
-        }
 
         if( stateFlags.updateChildren )
             foreach( obj; children )

@@ -153,7 +153,7 @@ public:
     }
 }
 
-/// TODO
+/// Obj for a 1x1 square billboard mesh
 immutable string unitSquareMesh = q{
 v -1.0 1.0 0.0
 v -1.0 -1.0 0.0

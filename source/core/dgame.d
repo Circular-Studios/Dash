@@ -4,7 +4,7 @@
 module core.dgame;
 import core, components, graphics, utility, deimos.cef3.app, deimos.cef3.client, deimos.cef3.browser;
 
-import std.string, std.datetime, std.parallelism, std.algorithm, std.traits;
+import std.string, std.datetime, std.parallelism, std.algorithm, std.traits, std.stdio;
 public import core.time;
 import win32.windows;
 
@@ -180,7 +180,45 @@ public:
         //char url[1024];
         //snprintf(url, url.sizeof, "file://%s/example.html", cwd);
         // There is no _cef_string_t type.
+
+
         cef_string_t cefUrl = {};
+
+        //wchar[] url = "http://www.google.com";
+        //wstring wurl = "http://www.google.com";
+        //wchar* url = toStringz(wurl);
+
+
+
+        immutable(cef_char_t)[] url = "http://www.google.com" ~ "\0";
+        //cef_string_utf16_set(url.ptr, url.length, &cefUrl, 0);
+
+        cefUrl.str = url.dup.ptr;
+        cefUrl.length = url.length;
+
+
+        printf("%d\n", url.length);
+        writef("%s\n", url);
+        //writef("%s\n", cefUrl.str);
+        writef("%s\n", cefUrl.str[0..url.length]);
+        
+        /*
+        version(CEF_STRING_TYPE_UTF8) {
+            int cef_string_utf8_set(const(char)* src, size_t src_len,
+                                cef_string_utf8_t* output, int copy);
+        } else version(CEF_STRING_TYPE_UTF16) {
+            int cef_string_utf16_set(const(char16)* src, size_t src_len,
+                                cef_string_utf16_t* output, int copy);
+        } else version(CEF_STRING_TYPE_WIDE) {
+            int cef_string_wide_set(const(wchar_t)* src, size_t src_len,
+                                cef_string_wide_t* output, int copy);
+        }*/
+
+
+
+
+
+
         //cef_string_utf8_to_utf16(url, strlen(url), &cefUrl);
         
         // Browser settings.
@@ -255,6 +293,10 @@ public:
         // Message loop.
         //printf("cef_run_message_loop\n");
         //cef_run_message_loop();
+
+        //cef_do_message_loop_work(); 
+
+        cef_quit_message_loop();
 
         // Shutdown CEF.
         printf("cef_shutdown\n");

@@ -140,12 +140,12 @@ public:
         GLenum[ 2 ] DrawBuffers = [ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 ];
         glDrawBuffers( 2, DrawBuffers.ptr );
 
-        auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-        if(status != GL_FRAMEBUFFER_COMPLETE )
+        auto status = glCheckFramebufferStatus( GL_FRAMEBUFFER );
+        if( status != GL_FRAMEBUFFER_COMPLETE )
         {
-            string mapFramebufferError(int code)
+            string mapFramebufferError( int code )
             {
-                switch(code)
+                switch( code )
                 {
                     case(GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT): return "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT";
                     case(GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT): return "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT";
@@ -218,7 +218,6 @@ public:
         }
         updateMatricies( scene.root );
 
-
         /**
         * Geometry Pass
         * Writes color(24) and specular(8)
@@ -274,7 +273,8 @@ public:
             foreach( light; directionalLights )
             {   
                 glBindFramebuffer( GL_FRAMEBUFFER, light.shadowMapFrameBuffer );
-
+                glClear( GL_DEPTH_BUFFER_BIT );
+                glViewport( 0, 0, light.shadowMapSize, light.shadowMapSize );
 
                 // determine the world space volume for all objects
                 shared AABB frustum;
@@ -286,67 +286,8 @@ public:
                         frustum.expand( (object.transform.matrix * shared vec4(object.mesh.boundingBox.max, 1.0f)).xyz );
                     }
                 }
-                // determine the center of the frustum
-                shared vec3 center = shared vec3( ( frustum.min + frustum.max ).x/2.0f,
-                                                  ( frustum.min + frustum.max ).y/2.0f,
-                                                  ( frustum.min + frustum.max ).z/2.0f );
 
-                // determine the rotation for the viewing axis
-                shared vec3 lDirNorm = light.direction.normalized;
-                shared vec3 baseAxis = vec3( 0, 0, -1 );
-                shared cosTheta = dot( lDirNorm, baseAxis );
-                float halfCosX2 = sqrt( 0.5f * (1.0f + cosTheta) ) * 2.0f;
-                shared vec3 w = cross( lDirNorm, baseAxis );
-                shared quat rotation = quat( halfCosX2/2, w.x / halfCosX2, w.y / halfCosX2, w.z / halfCosX2 );
-
-                // determine the x,y,z axes
-                shared float cosPitch = cos( rotation.pitch );
-                shared float sinPitch = sin( rotation.pitch );
-                shared float cosYaw = cos( rotation.yaw );
-                shared float sinYaw = sin( rotation.yaw );
-                shared vec3 xaxis = shared vec3( cosYaw, 0.0f, -sinYaw );
-                shared vec3 yaxis = shared vec3( sinYaw * sinPitch, cosPitch, cosYaw * sinPitch );
-                shared vec3 zaxis = shared vec3( sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw );
-
-                // build the view matrix
-                shared mat4 tempM;
-                ///*
-                tempM.clear(0.0f);
-                tempM[ 0 ] = xaxis.vector ~ -( xaxis * center );
-                tempM[ 1 ] = yaxis.vector ~ -( yaxis * center );
-                tempM[ 2 ] = zaxis.vector ~ -( zaxis * center );
-                tempM[ 3 ] = [ 0, 0, 0, 1 ];
-                light.view = tempM; /*/
-                // using lookAt works for everying but a light direction of (0,+/-1,0)
-                light.view = Camera.lookAt( center - light.direction.normalized, center ); //*/
-
-                // get frustum in view space
-                frustum.min = (light.view * vec4(frustum.min,1.0f)).xyz;
-                frustum.max = (light.view * vec4(frustum.max,1.0f)).xyz;
-
-                // get mins and maxes in view space
-                shared vec3 mins, maxes;
-                for( int i = 0; i < 3; i++ )
-                {  
-                    if( frustum.min.vector[ i ] < frustum.max.vector[ i ] )
-                    {
-                        mins.vector[ i ] = frustum.min.vector[ i ];
-                        maxes.vector[ i ] = frustum.max.vector[ i ];
-                    }
-                    else
-                    {
-                        mins.vector[ i ] = frustum.max.vector[ i ];
-                        maxes.vector[ i ] = frustum.min.vector[ i ];
-                    }
-                }
-
-                // build the projection matrix
-                shared float magicBias = 1.8f;
-                light.proj = mat4.orthographic( mins.x*magicBias, maxes.x*magicBias, 
-                                                mins.y*magicBias, maxes.y*magicBias, 
-                                                maxes.z*magicBias, mins.z*magicBias );
-
-                glClear( GL_DEPTH_BUFFER_BIT );
+                light.calculateProjView( frustum );
 
                 foreach( object; scene.objects )
                 {
@@ -357,7 +298,7 @@ public:
                         glBindVertexArray( object.mesh.glVertexArray );
 
                         shader.bindUniformMatrix4fv( shader.WorldViewProjection, 
-                                                    light.proj * light.view * object.transform.matrix);
+                                                    light.projView * object.transform.matrix);
                         glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
 
                         glBindVertexArray(0);
@@ -441,8 +382,7 @@ public:
                     glActiveTexture( GL_TEXTURE3 );
                     glBindTexture( GL_TEXTURE_2D, light.shadowMapTexture );
 
-                    shader.bindUniformMatrix4fv( shader.LightView, light.view );
-                    shader.bindUniformMatrix4fv( shader.LightProjection, light.proj );
+                    shader.bindUniformMatrix4fv( shader.LightProjectionView, light.projView );
                     shader.bindUniformMatrix4fv( shader.CameraView, scene.camera.viewMatrix);
                     shader.bindDirectionalLight( light, scene.camera.viewMatrix );
 
@@ -514,8 +454,6 @@ public:
         geometryPass();
 
         //glCullFace( GL_FRONT );
-
-        glViewport( 0, 0, 2048, 2048 );
 
         shadowPass();
 

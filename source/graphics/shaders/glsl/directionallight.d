@@ -51,8 +51,7 @@ immutable string directionallightFS = q{
 
     // shadow map values
     uniform sampler2D shadowMap;
-    uniform mat4 lightView;
-    uniform mat4 lightProj;
+    uniform mat4 lightProjView;
     uniform mat4 cameraView;
 
     uniform DirectionalLight light;
@@ -74,7 +73,7 @@ immutable string directionallightFS = q{
 
     float shadowValue(vec3 pos)
     {
-        mat4 toShadowMap_s = lightProj * lightView * inverse(cameraView);
+        mat4 toShadowMap_s = lightProjView * inverse(cameraView);
         vec4 lightSpacePos = toShadowMap_s * vec4( pos, 1 );
         lightSpacePos = lightSpacePos / lightSpacePos.w;
 

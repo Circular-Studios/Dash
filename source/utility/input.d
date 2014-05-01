@@ -39,52 +39,38 @@ public static:
         foreach( key; keyEvents.keys )
             keyEvents.remove( key );
 
+        foreach( key; axisEvents.keys )
+            axisEvents.remove( key );
+
         foreach( string name, Node bind; bindings )
         {
-            if( bind.isScalar )
-            {
-                keyBindings[ name ] ~= bind.get!Keyboard;
-            }
-            else if( bind.isSequence )
-            {
-                foreach( Node child; bind )
-                {
-                    try
-                    {
-                        keyBindings[ name ] ~= child.get!Keyboard;
-                    }
-                    catch
-                    {
-                        logFatal( "Failed to parse keybinding for input ", name );
-                    }
-                }
-            }
-            else if( bind.isMapping )
+            if( bind.isMapping )
             {
                 foreach( string type, Node value; bind )
                 {
-                    final switch( type )
-                    {
-                        case "Keyboard":
+                    enum parseType( string type, string enumName = type ) = q{
+                        case "$type":
                             try
                             {
-                                keyBindings[ name ] ~= value.get!Keyboard;
+                                keyBindings[ name ] ~= value.get!string.to!$enumName;
                             }
-                            catch
+                            catch( Exception e )
                             {
-                                try
-                                {
-                                    keyBindings[ name ] ~= value.get!string.to!Keyboard;
-                                }
-                                catch
-                                {
-                                    logFatal( "Failed to parse keybinding for input ", name );
-                                }
+                                logFatal( "Failed to parse keybinding for input ", name, ": ", e.msg );
                             }
-
                             break;
+                    }.replaceMap( [ "$type": type, "$enumName": enumName ] );
+
+                    final switch( type )
+                    {
+                        mixin( parseType!"Keyboard" );
+                        mixin( parseType!( "Axis", q{Axes} ) );
                     }
                 }
+            }
+            else
+            {
+                logWarning( "Unsupported input format for ", name, "." );
             }
         }
     }

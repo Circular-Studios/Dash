@@ -84,7 +84,8 @@ public:
         glBindFramebuffer( GL_FRAMEBUFFER, _shadowMapFrameBuffer );
 
         // generate depth texture of shadow map
-        shadowMapSize = 2048;
+        // TODO: make this not be .28125 GB because we have no optimizations
+        shadowMapSize = 2048 * 6;
         glGenTextures( 1, cast(uint*)&_shadowMapTexture );
         glBindTexture( GL_TEXTURE_2D, _shadowMapTexture );
         glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, shadowMapSize, shadowMapSize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, null );
@@ -169,7 +170,12 @@ public:
         }
 
         // build the projectionView matrix
-        projView = mat4.orthographic( mins.x , maxes.x, mins.y , maxes.y, maxes.z, mins.z ) * viewMatrix;
+        mat4 bias = mat4( vec4( .5,  0,  0, .5), 
+                          vec4(  0, .5,  0, .5), 
+                          vec4(  0,  0, .5, .5),
+                          vec4(  0,  0,  0,  1) );
+        float magicNumber = 1.5f; // literally the worst
+        projView = mat4.orthographic( mins.x * magicNumber, maxes.x* magicNumber, mins.y* magicNumber , maxes.y* magicNumber, maxes.z* magicNumber, mins.z* magicNumber ) * viewMatrix;
     }
 }
 

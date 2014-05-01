@@ -27,7 +27,7 @@ private:
     AssetAnimation[string] animations;
 
 public:
-    /// TODO
+    /// Basic quad, generally used for billboarding.
     Mesh unitSquare;
 
     /**
@@ -161,7 +161,7 @@ public:
     }
 }
 
-/// TODO
+/// Mesh data for a basic quad
 immutable string unitSquareMesh = q{
 v -1.0 1.0 0.0
 v -1.0 -1.0 0.0

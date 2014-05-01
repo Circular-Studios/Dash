@@ -46,13 +46,14 @@ enum Verbosity
     Off,
 }
 
-/// Wrapper for logging into default logger instance
 /**
-*   Params:
-*   type     - level of logging
-*   messages - compile-time tuple of printable things
-*              to be written into the log.
-*/
+ * Wrapper for logging into default logger instance
+ *
+ * Params:
+ *   type     - level of logging
+ *   messages - compile-time tuple of printable things
+ *              to be written into the log.
+ */
 void log( A... )( OutputType type, lazy A messages )
 {
     Logger.log( messages.text, type );
@@ -68,8 +69,8 @@ alias logFatal      = logError;
 
 /// Special case is debug logging
 /**
-*   Debug messages are removed in release build.
-*/
+ *   Debug messages are removed in release build.
+ */
 void logDebug( A... )( A messages )
 {
    debug Logger.log( messages.text, OutputType.Debug );

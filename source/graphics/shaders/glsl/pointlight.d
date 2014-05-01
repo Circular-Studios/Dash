@@ -1,11 +1,11 @@
 ﻿/**
-* TODO
+* Lighting pass shader for Point Lights
 */
 module graphics.shaders.glsl.pointlight;
 
 package:
 
-/// TODO
+/// Takes a mesh representing the possible area of the light and creates a ray to each vertex
 immutable string pointlightVS = q{
 #version 400
     
@@ -32,7 +32,7 @@ immutable string pointlightVS = q{
     }
 };
 
-/// TODO
+/// Outputs diffuse and specular color from the light, using the view ray to reconstruct position and a falloff rate to attenuate
 immutable string pointlightFS = q{
 #version 400
 

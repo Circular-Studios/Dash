@@ -58,8 +58,8 @@ public:
         {
             // Update currentanimtime based on deltatime and animations fps
             _currentAnimTime += Time.deltaTime * 24.0f;
-
-            if( _currentAnimTime >= 96.0f )
+            
+            if( _currentAnimTime >= 95.0f )
             {
                 _currentAnimTime = 0.0f;
             }
@@ -269,37 +269,40 @@ public:
     void fillTransforms( mat4[] transforms, Bone bone, float time, mat4 parentTransform )
     {
         mat4 finalTransform;
-        if( bone.positionKeys.length == 0 && bone.rotationKeys.length == 0 && bone.scaleKeys.length == 0 )
+        if(bone)
         {
-            finalTransform = parentTransform * bone.nodeOffset;
-            transforms[ bone.boneNumber ] = finalTransform * bone.offset;
-        }
-        else
-        {
-            mat4 boneTransform = mat4.identity;
-
-            if( bone.positionKeys.length > cast(int)time )
+            if( bone.positionKeys.length == 0 && bone.rotationKeys.length == 0 && bone.scaleKeys.length == 0 )
             {
-                boneTransform = boneTransform.translation( bone.positionKeys[ cast(int)time ].vector[ 0 ], bone.positionKeys[ cast(int)time ].vector[ 1 ], 
-                                                           bone.positionKeys[ cast(int)time ].vector[ 2 ] );
+                finalTransform = parentTransform * bone.nodeOffset;
+                transforms[ bone.boneNumber ] = finalTransform * bone.offset;
             }
-            if( bone.rotationKeys.length > cast(int)time )
+            else
             {
-                boneTransform = boneTransform * bone.rotationKeys[ cast(int)time ].to_matrix!( 4, 4 );
-            }
-            if( bone.scaleKeys.length > cast(int)time )
-            {
-                boneTransform = boneTransform.scale( bone.scaleKeys[ cast(int)time ].vector[ 0 ], bone.scaleKeys[ cast(int)time ].vector[ 1 ], bone.scaleKeys[ cast(int)time ].vector[ 2 ] );
+                mat4 boneTransform = mat4.identity;
+
+                if( bone.positionKeys.length > cast(int)time )
+                {
+                    boneTransform = boneTransform.translation( bone.positionKeys[ cast(int)time ].vector[ 0 ], bone.positionKeys[ cast(int)time ].vector[ 1 ], 
+                                                               bone.positionKeys[ cast(int)time ].vector[ 2 ] );
+                }
+                if( bone.rotationKeys.length > cast(int)time )
+                {
+                    boneTransform = boneTransform * bone.rotationKeys[ cast(int)time ].to_matrix!( 4, 4 );
+                }
+                if( bone.scaleKeys.length > cast(int)time )
+                {
+                    boneTransform = boneTransform.scale( bone.scaleKeys[ cast(int)time ].vector[ 0 ], bone.scaleKeys[ cast(int)time ].vector[ 1 ], bone.scaleKeys[ cast(int)time ].vector[ 2 ] );
+                }
+
+                finalTransform = parentTransform * boneTransform;
+                transforms[ bone.boneNumber ] = finalTransform * bone.offset;
             }
 
-            finalTransform = parentTransform * boneTransform;
-            transforms[ bone.boneNumber ] = finalTransform * bone.offset;
-        }
-
-        // Check children
-        for( int i = 0; i < bone.children.length; i++ )
-        {
-            fillTransforms( transforms, bone.children[ i ], time, finalTransform );
+            // Check children
+            for( int i = 0; i < bone.children.length; i++ )
+            {
+                fillTransforms( transforms, bone.children[ i ], time, finalTransform );
+            }
         }
     }
 

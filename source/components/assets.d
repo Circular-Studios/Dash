@@ -136,7 +136,7 @@ public:
     final void shutdown()
     {
         enum shutdown( string aaName, string friendlyName ) = q{
-            foreach_reverse( name; meshes.keys )
+            foreach_reverse( name; $aaName.keys )
             {
                 if( !$aaName[ name ].isUsed )
                     logWarning( "$friendlyName ", name, " not used during this run." );
@@ -153,7 +153,7 @@ public:
     }
 }
 
-/// TODO
+/// Obj for a 1x1 square billboard mesh
 immutable string unitSquareMesh = q{
 v -1.0 1.0 0.0
 v -1.0 -1.0 0.0

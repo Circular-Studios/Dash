@@ -1,11 +1,11 @@
 /**
-* TODO
+* Geometry pass shader for standard meshes
 */
 module graphics.shaders.glsl.geometry;
 
 package:
 
-/// TODO
+/// Standard mesh vertex shader, transforms position to screen space and normals/tangents to view space
 immutable string geometryVS = q{
     #version 400
 
@@ -37,7 +37,7 @@ immutable string geometryVS = q{
     }
 };
 
-/// TODO
+/// Saves diffuse, specular, mappedNormals (encoded to spheremapped XY), and object ID to appropriate FBO textures
 immutable string geometryFS = q{
     #version 400
 

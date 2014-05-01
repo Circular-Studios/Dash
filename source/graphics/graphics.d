@@ -1,18 +1,18 @@
 /**
- * TODO
+ * Container for the graphics adapter needed for the appropriate platform
  */
 module graphics.graphics;
 import graphics.adapters, graphics.shaders;
 
 /**
- * TODO
+ * Abstract class to store the appropriate Adapter
  */
 final abstract class Graphics
 {
 public static:
-    /// TODO
+    /// The active Adapter
     Adapter adapter;
-    /// TODO
+    /// Aliases adapter to Graphics
     alias adapter this;
 
     /**

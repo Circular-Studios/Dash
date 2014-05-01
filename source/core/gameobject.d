@@ -16,7 +16,8 @@ enum AnonymousName = "__anonymous";
  */
 struct ObjectStateFlags
 {
-    bool update;
+    bool updateComponents;
+    bool updateBehaviors;
     bool updateChildren;
     bool drawMesh;
     bool drawLight;
@@ -91,8 +92,10 @@ public:
     mixin( RefGetter!_behaviors );
     /// ditto
     mixin( ConditionalSetter!( _name, q{canChangeName}, AccessModifier.Public ) );
-    /// The ID of the object
+    /// The ID of the object.
     immutable uint id;
+    /// Allow setting of state flags directly.
+    //alias stateFlags this;
 
     /**
      * Create a GameObject from a Yaml node.
@@ -155,26 +158,18 @@ public:
             }
         }
 
-        // If parent is specified, add it to the map
-        if( yamlObj.tryFind( "Parent", prop ) )
-            logWarning( "Specifying parent objects by name is deprecated. Please add this as an inline child to ", prop, "." );
-
         if( yamlObj.tryFind( "Children", innerNode ) )
         {
             if( innerNode.isSequence )
             {
                 foreach( Node child; innerNode )
                 {
-                    if( child.isScalar )
-                    {
-                        // Add child name to map.
-                        logWarning( "Specifing child objects by name is deprecated. Please add ", child.get!string, " as an inline child of ", obj.name, "." );
-                    }
-                    else
-                    {
-                        // If inline object, create it and add it as a child.
+                    // If inline object, create it and add it as a child.
+                    if( child.isMapping )
                         obj.addChild( GameObject.createFromYaml( child ) );
-                    }
+                    // Add child name to map.
+                    else
+                        logWarning( "Specifing child objects by name is deprecated. Please add ", child.get!string, " as an inline child of ", obj.name, "." );
                 }
             }
             else
@@ -184,13 +179,13 @@ public:
         }
 
         // Init components
-        foreach( string key, Node value; yamlObj )
+        foreach( string key, Node componentNode; yamlObj )
         {
-            if( key == "Name" || key == "Script" || key == "Parent" || key == "InstanceOf" || key == "Transform" || key == "Children" || key == "Behaviors" )
+            if( key == "Name" || key == "InstanceOf" || key == "Transform" || key == "Children" || key == "Behaviors" )
                 continue;
 
             if( auto init = key in IComponent.initializers )
-                obj.addComponent( (*init)( value, obj ) );
+                obj.addComponent( (*init)( componentNode, obj ) );
             else
                 logWarning( "Unknown key: ", key );
         }
@@ -241,13 +236,12 @@ public:
      */
     final void update()
     {
-        if( stateFlags.update )
-        {
+        if( stateFlags.updateBehaviors )
             behaviors.onUpdate();
 
+        if( stateFlags.updateComponents )
             foreach( ci, component; componentList )
                 component.update();
-        }
 
         if( stateFlags.updateChildren )
             foreach( obj; children )
@@ -274,12 +268,6 @@ public:
 
         foreach( obj; children )
             obj.shutdown();
-
-        /*foreach_reverse( ci, component; componentList )
-        {
-            component.shutdown();
-            componentList.remove( ci );
-        }*/
     }
 
     /**

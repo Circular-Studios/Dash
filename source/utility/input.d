@@ -59,7 +59,7 @@ public static:
 
                     final switch( type )
                     {
-                        mixin( parseType!"Keyboard" );
+                        mixin( parseType!( "Keyboard", q{Keys} ) );
                         mixin( parseType!( "Axis", q{Axes} ) );
                     }
                 }
@@ -114,16 +114,16 @@ public static:
         Input.initialize();
 
         bool keyDown;
-        Input.addKeyEvent( Keyboard.Space, ( uint keyCode, bool newState )
+        Input.addKeyEvent( Keys.Space, ( uint keyCode, bool newState )
         {
             keyDown = newState;
         } );
 
-        Input.setKeyState( Keyboard.Space, true );
+        Input.setKeyState( Keys.Space, true );
         Input.update();
         assert( keyDown );
 
-        Input.setKeyState( Keyboard.Space, false );
+        Input.setKeyState( Keys.Space, false );
         Input.update();
         assert( !keyDown );
     }
@@ -208,15 +208,15 @@ public static:
 
         Config.initialize();
         Input.initialize();
-        Input.setKeyState( Keyboard.Space, true );
+        Input.setKeyState( Keys.Space, true );
 
         Input.update();
-        assert( Input.isKeyDown( Keyboard.Space, true ) );
-        assert( Input.isKeyDown( Keyboard.Space, false ) );
+        assert( Input.isKeyDown( Keys.Space, true ) );
+        assert( Input.isKeyDown( Keys.Space, false ) );
 
         Input.update();
-        assert( !Input.isKeyDown( Keyboard.Space, true ) );
-        assert( Input.isKeyDown( Keyboard.Space, false ) );
+        assert( !Input.isKeyDown( Keys.Space, true ) );
+        assert( Input.isKeyDown( Keys.Space, false ) );
     }
 
     /**
@@ -237,18 +237,18 @@ public static:
 
         Config.initialize();
         Input.initialize();
-        Input.setKeyState( Keyboard.Space, true );
+        Input.setKeyState( Keys.Space, true );
 
         Input.update();
-        Input.setKeyState( Keyboard.Space, false );
+        Input.setKeyState( Keys.Space, false );
 
         Input.update();
-        assert( Input.isKeyUp( Keyboard.Space, true ) );
-        assert( Input.isKeyUp( Keyboard.Space, false ) );
+        assert( Input.isKeyUp( Keys.Space, true ) );
+        assert( Input.isKeyUp( Keys.Space, false ) );
 
         Input.update();
-        assert( !Input.isKeyUp( Keyboard.Space, true ) );
-        assert( Input.isKeyUp( Keyboard.Space, false ) );
+        assert( !Input.isKeyUp( Keys.Space, true ) );
+        assert( Input.isKeyUp( Keys.Space, false ) );
     }
 
     /**
@@ -475,6 +475,14 @@ KeyboardKeyState stagingKeys;
 KeyboardAxisState currentAxis;
 KeyboardAxisState stagingAxis;
 
+alias Keyboard = InputSystem!( bool, Keys );
+
+final abstract class InputSystem( InputStorage, SystemEnum )
+{
+public static:
+    alias InputState = State!( InputStorage, SystemEnum.END );
+}
+
 /**
  * Represents the state of an input method (ie. keyboard, gamepad, etc.).
  *
@@ -530,6 +538,7 @@ public:
 enum Axes: uint
 {
     MouseScroll,
+    END,
 }
 
 /**
@@ -537,7 +546,7 @@ enum Axes: uint
  *
  * From: http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
  */
-enum Keyboard: uint
+enum Keys: uint
 {
     MouseLeft   = 0x01, /// Left mouse button
     MouseRight  = 0x02, /// Right mouse button
@@ -669,4 +678,5 @@ enum Keyboard: uint
     ControlRight= 0xA3, /// Right control key
     AltLeft     = 0xA4, /// Left Alt key
     AltRight    = 0xA5, /// Right Alt key
+    END,
 }

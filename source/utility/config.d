@@ -44,7 +44,7 @@ static this()
 
     import components.lights;
     import graphics.shaders.shaders;
-    import utility.input, utility.output;
+    import utility.output;
     import gl3n.linalg;
 
     constructor.addConstructorScalar( "!Vector2", ( ref Node node )
@@ -107,7 +107,6 @@ static this()
         return cast(Light)new PointLight( color, radius, falloffRate );
     } );
     constructor.addConstructorScalar( "!Verbosity", &constructConv!Verbosity );
-    constructor.addConstructorScalar( "!Keyboard", &constructConv!Keyboard );
     constructor.addConstructorScalar( "!Shader", ( ref Node node ) => Shaders.get( node.get!string ) );
     //constructor.addConstructorScalar( "!Texture", ( ref Node node ) => Assets.get!Texture( node.get!string ) );
     //constructor.addConstructorScalar( "!Mesh", ( ref Node node ) => Assets.get!Mesh( node.get!string ) );

@@ -39,19 +39,19 @@ LRESULT WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
             break;
         // On right mouse down
         case WM_RBUTTONDOWN:
-            Input.setKeyState( Keyboard.MouseRight, true );
+            Input.setKeyState( Keys.MouseRight, true );
             break;
         // On right mouse up
         case WM_RBUTTONUP:
-            Input.setKeyState( Keyboard.MouseRight, false );
+            Input.setKeyState( Keys.MouseRight, false );
             break;
         // On left mouse down
         case WM_LBUTTONDOWN:
-            Input.setKeyState( Keyboard.MouseLeft, true );
+            Input.setKeyState( Keys.MouseLeft, true );
             break;
         // On right mouse up
         case WM_LBUTTONUP:
-            Input.setKeyState( Keyboard.MouseLeft, false );
+            Input.setKeyState( Keys.MouseLeft, false );
             break;
         // On mouse scroll
         case WM_MOUSEWHEEL:

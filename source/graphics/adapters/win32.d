@@ -27,9 +27,7 @@ LRESULT WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
     {
         // On close
         case WM_CLOSE:
-        case WM_DESTROY:
-        case WM_QUIT:
-            PostQuitMessage( 0 );
+            DGame.instance.currentState = EngineState.Quit;
             break;
         // If key down, send it to input
         case WM_KEYDOWN:

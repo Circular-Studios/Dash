@@ -29,8 +29,8 @@ public static:
         currentAxis.reset();
         stagingAxis.reset();
 
-        foreach( key; keyBindings.keys )
-            keyBindings.remove( key );
+        foreach( key; keyboardBindings.keys )
+            keyboardBindings.remove( key );
 
         foreach( key; keyEvents.keys )
             keyEvents.remove( key );
@@ -48,7 +48,7 @@ public static:
                         case "$type":
                             try
                             {
-                                keyBindings[ name ] ~= value.get!string.to!$enumName;
+                                keyboardBindings[ name ] ~= value.get!string.to!$enumName;
                             }
                             catch( Exception e )
                             {
@@ -137,7 +137,7 @@ public static:
      */
     final void addKeyEvent( string inputName, KeyEvent func )
     {
-        if( auto keys = inputName in keyBindings )
+        if( auto keys = inputName in keyboardBindings )
             foreach( key; *keys )
                 addKeyEvent( key, func );
     }
@@ -155,7 +155,7 @@ public static:
      */
     final void addKeyDownEvent( string inputName, KeyStateEvent func )
     {
-        if( auto keys = inputName in keyBindings )
+        if( auto keys = inputName in keyboardBindings )
             foreach( key; *keys )
                 addKeyEvent( key, ( uint keyCode, bool newState ) { if( newState ) func( keyCode ); } );
     }
@@ -173,7 +173,7 @@ public static:
      */
     final void addKeyUpEvent( string inputName, KeyStateEvent func )
     {
-        if( auto keys = inputName in keyBindings )
+        if( auto keys = inputName in keyboardBindings )
             foreach( key; *keys )
                 addKeyEvent( key, ( uint keyCode, bool newState ) { if( !newState ) func( keyCode ); } );
     }
@@ -295,7 +295,7 @@ public static:
         {
             bool result = false;
 
-            if( auto keys = input in keyBindings )
+            if( auto keys = input in keyboardBindings )
             {
                 foreach( key; *keys )
                     result = result || isKeyDown( key, checkPrevious );
@@ -441,19 +441,6 @@ public static:
 
         return null;
     }
-
-private:
-    uint[][ string ] keyBindings;
-
-    KeyEvent[][ uint ] keyEvents;
-    AxisEvent[][ uint ] axisEvents;
-
-    KeyboardKeyState currentKeys;
-    KeyboardKeyState previousKeys;
-    KeyboardKeyState stagingKeys;
-
-    KeyboardAxisState currentAxis;
-    KeyboardAxisState stagingAxis;
 }
 
 private:
@@ -470,6 +457,23 @@ alias AxisEvent         = void delegate( uint, float );
 alias KeyboardKeyState  = State!( bool, 256 );
 /// The state of the keyboard axes (mouse pos, mouse wheel, etc.).
 alias KeyboardAxisState = State!( float, 2 );
+
+// Bindings of strings to inputs
+uint[][ string ] keyboardBindings;
+uint[][ string ] axisBindings;
+
+// Events
+KeyEvent[][ uint ] keyEvents;
+AxisEvent[][ uint ] axisEvents;
+
+// Keyboard states
+KeyboardKeyState currentKeys;
+KeyboardKeyState previousKeys;
+KeyboardKeyState stagingKeys;
+
+// Keyboard axis states
+KeyboardAxisState currentAxis;
+KeyboardAxisState stagingAxis;
 
 /**
  * Represents the state of an input method (ie. keyboard, gamepad, etc.).

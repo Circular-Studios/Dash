@@ -21,8 +21,7 @@ private enum ShaderUniform
     WorldView = "worldView",
     WorldViewProjection = "worldViewProj",
     InverseProjection = "invProj",
-    LightView = "lightView",
-    LightProjection = "lightProj",
+    LightProjectionView = "lightProjView",
     CameraView = "cameraView",
     /// Floats
     ProjectionConstants = "projectionConstants",
@@ -73,8 +72,10 @@ public:
     Shader pointLight;
     /// TODO
     Shader userInterface;
-    /// Shader for getting a shadow map's depth values.
+    /// Shader for depth of inanimate objects.
     Shader shadowMap;
+    /// Shader for depth of animated objects.
+    Shader animatedShadowMap;
 
     /**
     * TODO
@@ -88,6 +89,7 @@ public:
         pointLight = new Shader( "PointLight", pointlightVS, pointlightFS, true );
         userInterface = new Shader( "UserInterface", userinterfaceVS, userinterfaceFS, true );
         shadowMap = new Shader( "ShadowMap", shadowmapVS, shadowmapFS, true );
+        animatedShadowMap = new Shader( "AnimatedShadowMap", animatedshadowmapVS, shadowmapFS, true );
 
         foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders, "*.fs.glsl" ) )
         {

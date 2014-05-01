@@ -267,8 +267,7 @@ public:
          */
         void shadowPass()
         {
-            auto shader = Shaders.shadowMap;
-            glUseProgram( shader.programID );
+
 
             foreach( light; directionalLights )
             {   
@@ -293,12 +292,20 @@ public:
                 {
                     if( object.mesh && object.stateFlags.drawMesh )
                     {
-                        // TODO: handle animated objects
+                        // set the shader
+                        Shader shader = object.mesh.animated
+                                        ? Shaders.animatedShadowMap
+                                        : Shaders.shadowMap;
 
+                        glUseProgram( shader.programID );
                         glBindVertexArray( object.mesh.glVertexArray );
 
                         shader.bindUniformMatrix4fv( shader.WorldViewProjection, 
                                                     light.projView * object.transform.matrix);
+
+                        if( object.mesh.animated )
+                            shader.bindUniformMatrix4fvArray( shader.Bones, object.animation.currBoneTransforms );
+
                         glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
 
                         glBindVertexArray(0);

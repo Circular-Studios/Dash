@@ -10,20 +10,20 @@ import std.conv;
 /**
  * Camera manages a view and projection matrix.
  */
-shared final class Camera : IComponent, IDirtyable
+final class Camera : IComponent, IDirtyable
 {
 private:
-    shared float _prevFov, _prevNear, _prevFar, _prevWidth, _prevHeight;
+    float _prevFov, _prevNear, _prevFar, _prevWidth, _prevHeight;
 
-    shared float _fov, _near, _far;
-    shared vec2 _projectionConstants; // For rebuilding linear Z in shaders
-    shared mat4 _prevLocalMatrix;
-    shared mat4 _viewMatrix;
-    shared mat4 _inverseViewMatrix;
-    shared mat4 _perspectiveMatrix;
-    shared mat4 _inversePerspectiveMatrix;
-    shared mat4 _orthogonalMatrix;
-    shared mat4 _inverseOrthogonalMatrix;
+    float _fov, _near, _far;
+    vec2 _projectionConstants; // For rebuilding linear Z in shaders
+    mat4 _prevLocalMatrix;
+    mat4 _viewMatrix;
+    mat4 _inverseViewMatrix;
+    mat4 _perspectiveMatrix;
+    mat4 _inversePerspectiveMatrix;
+    mat4 _orthogonalMatrix;
+    mat4 _inverseOrthogonalMatrix;
 
 public:
     override void update() { }
@@ -47,7 +47,7 @@ public:
      *
      * Returns:
      */
-    final shared(vec2) projectionConstants()
+    final vec2 projectionConstants()
     {
         if( this.projectionDirty )
         {
@@ -66,7 +66,7 @@ public:
      *
      * Returns:
      */
-    final shared(mat4) perspectiveMatrix()
+    final mat4 perspectiveMatrix()
     {
         if( this.projectionDirty )
         {
@@ -85,7 +85,7 @@ public:
      *
      * Returns:
      */
-    final shared(mat4) inversePerspectiveMatrix()
+    final mat4 inversePerspectiveMatrix()
     {
         if( this.projectionDirty )
         {
@@ -104,7 +104,7 @@ public:
      *
      * Returns:
      */
-    final shared(mat4) orthogonalMatrix()
+    final mat4 orthogonalMatrix()
     {
         if( this.projectionDirty )
         {
@@ -123,7 +123,7 @@ public:
      *
      * Returns:
      */
-    final shared(mat4) inverseOrthogonalMatrix()
+    final mat4 inverseOrthogonalMatrix()
     {
         if( this.projectionDirty )
         {
@@ -145,14 +145,14 @@ public:
     final void updateViewMatrix()
     {
         //Assuming pitch & yaw are in radians
-        shared float cosPitch = cos( owner.transform.rotation.pitch );
-        shared float sinPitch = sin( owner.transform.rotation.pitch );
-        shared float cosYaw = cos( owner.transform.rotation.yaw );
-        shared float sinYaw = sin( owner.transform.rotation.yaw );
+        float cosPitch = cos( owner.transform.rotation.pitch );
+        float sinPitch = sin( owner.transform.rotation.pitch );
+        float cosYaw = cos( owner.transform.rotation.yaw );
+        float sinYaw = sin( owner.transform.rotation.yaw );
 
-        shared vec3 xaxis = shared vec3( cosYaw, 0.0f, -sinYaw );
-        shared vec3 yaxis = shared vec3( sinYaw * sinPitch, cosPitch, cosYaw * sinPitch );
-        shared vec3 zaxis = shared vec3( sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw );
+        vec3 xaxis = vec3( cosYaw, 0.0f, -sinYaw );
+        vec3 yaxis = vec3( sinYaw * sinPitch, cosPitch, cosYaw * sinPitch );
+        vec3 zaxis = vec3( sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw );
 
         _viewMatrix.clear( 0.0f );
         _viewMatrix[ 0 ] = xaxis.vector ~ -( xaxis * owner.transform.position );
@@ -160,7 +160,7 @@ public:
         _viewMatrix[ 2 ] = zaxis.vector ~ -( zaxis * owner.transform.position );
         _viewMatrix[ 3 ] = [ 0, 0, 0, 1 ];
         
-        _inverseViewMatrix = cast(shared)_viewMatrix.inverse();
+        _inverseViewMatrix = _viewMatrix.inverse();
     }
 
     /**
@@ -174,15 +174,15 @@ public:
      * Returns: 
      * A right handed view matrix for the given params.
      */
-    final static shared(mat4) lookAt( shared vec3 targetPos, shared vec3 cameraPos, shared vec3 worldUp = vec3(0,1,0) )
+    final static shared(mat4) lookAt( vec3 targetPos, vec3 cameraPos, vec3 worldUp = vec3(0,1,0) )
     {
-        shared vec3 zaxis = ( cameraPos - targetPos );
+        vec3 zaxis = ( cameraPos - targetPos );
         zaxis.normalize;
-        shared vec3 xaxis = cross( worldUp, zaxis );
+        vec3 xaxis = cross( worldUp, zaxis );
         xaxis.normalize;
-        shared vec3 yaxis = cross( zaxis, xaxis );
+        vec3 yaxis = cross( zaxis, xaxis );
 
-        shared mat4 result = mat4.identity;
+        mat4 result = mat4.identity;
 
         result[0][0] = xaxis.x;
         result[1][0] = xaxis.y;
@@ -238,8 +238,8 @@ private:
     final void updatePerspective()
     {
         _projectionConstants = vec2( ( -_far * _near ) / ( _far - _near ), _far / ( _far - _near ) );
-        _perspectiveMatrix = shared mat4.perspective( cast(float)Graphics.width, cast(float)Graphics.height, _fov, _near, _far );
-        _inversePerspectiveMatrix = cast(shared)_perspectiveMatrix.inverse();
+        _perspectiveMatrix = mat4.perspective( cast(float)Graphics.width, cast(float)Graphics.height, _fov, _near, _far );
+        _inversePerspectiveMatrix = _perspectiveMatrix.inverse();
     }
 
     /*
@@ -254,7 +254,7 @@ private:
         _orthogonalMatrix[2][2] = -2.0f / (far - near);
         _orthogonalMatrix[3][3] = 1.0f;
 
-        _inverseOrthogonalMatrix = cast(shared)_orthogonalMatrix.inverse();
+        _inverseOrthogonalMatrix = _orthogonalMatrix.inverse();
     }
 
     /*
@@ -273,9 +273,9 @@ private:
 static this()
 {
     import yaml;
-    IComponent.initializers[ "Camera" ] = ( Node yml, shared GameObject obj )
+    IComponent.initializers[ "Camera" ] = ( Node yml, GameObject obj )
     {
-        obj.camera = new shared Camera;
+        obj.camera = new Camera;
         obj.camera.owner = obj;
 
         //float fromYaml;

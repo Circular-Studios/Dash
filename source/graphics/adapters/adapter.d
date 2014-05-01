@@ -1,5 +1,5 @@
 /**
-* TODO
+* Contains all core code for the Graphics adapters, which is similar across all platforms
 */
 module graphics.adapters.adapter;
 import core, components, graphics, utility;
@@ -10,7 +10,7 @@ import derelict.opengl3.gl3;
 import std.algorithm, std.array;
 
 /**
-* TODO
+* Base class for core rendering logic
 */
 abstract class Adapter
 {
@@ -27,64 +27,64 @@ private:
     uint _normalRenderTexture; //Alpha channel stores nothing important
     uint _depthRenderTexture;
     // Do not add properties for:
-    shared UserInterface[] uis;
+    UserInterface[] uis;
 
 public:
-    /// TODO
+    /// GL DeviceContext
     mixin( Property!_deviceContext );
-    /// TODO
+    /// GL RenderContext
     mixin( Property!_renderContext );
 
-    /// TODO
+    /// Pixel width of the rendering area
     mixin( Property!_width );
-    /// TODO
+    /// Pixel width of the actual window
     mixin( Property!_screenWidth );
-    /// TODO
+    /// Pixel height of the rendering area
     mixin( Property!_height );
-    /// TODO
+    /// Pixel height of the actual window
     mixin( Property!_screenHeight );
-    /// TODO
+    /// If the screen properties match the rendering dimensions
     mixin( Property!_fullscreen );
-    /// TODO
+    /// Hiding backsides of triangles
     mixin( Property!_backfaceCulling );
-    /// TODO
+    /// Vertical Syncing
     mixin( Property!_vsync );
-    /// TODO
+    /// FBO for deferred render textures
     mixin( Property!_deferredFrameBuffer );
-    /// TODO
+    /// Texture storing the Diffuse colors and Specular Intensity
     mixin( Property!_diffuseRenderTexture );
-    /// TODO
+    /// Texture storing the Sphermapped Normal XY and the Object ID in Z
     mixin( Property!_normalRenderTexture );
-    /// TODO
+    /// Texture storing the depth
     mixin( Property!_depthRenderTexture );
 
     /**
-    * TODO
+    * Initializes the Adapter, called in loading
     */
     abstract void initialize();
     /**
-    * TODO
+    * Shuts down the Adapter
     */
     abstract void shutdown();
     /**
-    * TODO
+    * Resizes the window and updates FBOs
     */
     abstract void resize();
     /**
-    * TODO
+    * Reloads the Adapter without closing
     */
     abstract void reload();
     /**
-    * TODO
+    * Swaps the back buffer to the screen
     */
     abstract void swapBuffers();
 
     /**
-    * TODO
+    * Opens the window
     */
     abstract void openWindow();
     /**
-    * TODO
+    * Closes the window
     */
     abstract void closeWindow();
 
@@ -94,7 +94,7 @@ public:
     abstract void messageLoop();
 
     /**
-    * TODO
+    * Initializes the FBO and Textures for deferred rendering
     */
     final void initializeDeferredRendering()
     {
@@ -172,8 +172,7 @@ public:
     }
 
     /**
-     * Called after all desired objects are drawn.
-     * Handles lighting and post processing.
+     * Currently the entire rendering pass for the active Scene. TODO: Refactor the name
      */
     final void endDraw()
     {
@@ -199,7 +198,7 @@ public:
         {
             return lights
                     .filter!(obj => typeid(obj) == typeid(Type))
-                    .map!(obj => cast(shared Type)obj);
+                    .map!(obj => cast(Type)obj);
         }
 
         auto ambientLights = getLightsByType!AmbientLight;
@@ -207,10 +206,10 @@ public:
         auto pointLights = getLightsByType!PointLight;
         auto spotLights = getLightsByType!SpotLight;
 
-        shared mat4 projection = scene.camera.perspectiveMatrix;
-        shared mat4 invProj = scene.camera.inversePerspectiveMatrix;
+        mat4 projection = scene.camera.perspectiveMatrix;
+        mat4 invProj = scene.camera.inversePerspectiveMatrix;
 
-        void updateMatricies( shared GameObject current )
+        void updateMatricies( GameObject current )
         {
             current.transform.updateMatrix();
             foreach( child; current.children )
@@ -219,9 +218,7 @@ public:
         updateMatricies( scene.root );
 
         /**
-        * Geometry Pass
-        * Writes color(24) and specular(8)
-        * normal(32) and depth(32).
+        * Pass for all objects with Meshes
         */
         void geometryPass()
         {
@@ -229,10 +226,10 @@ public:
             {
                 if( object.mesh && object.stateFlags.drawMesh )
                 {
-                    shared mat4 worldView = scene.camera.viewMatrix * object.transform.matrix;
-                    shared mat4 worldViewProj = projection * worldView;
+                    mat4 worldView = scene.camera.viewMatrix * object.transform.matrix;
+                    mat4 worldViewProj = projection * worldView;
 
-                    if( !( object.mesh.boundingBox in shared Frustum( worldViewProj ) ) )
+                    if( !( object.mesh.boundingBox in Frustum( worldViewProj ) ) )
                     {
                         // If we can't see an object, don't draw it.
                         continue;
@@ -276,13 +273,13 @@ public:
                 glViewport( 0, 0, light.shadowMapSize, light.shadowMapSize );
 
                 // determine the world space volume for all objects
-                shared AABB frustum;
+                AABB frustum;
                 foreach( object; scene.objects )
                 {
                     if( object.mesh && object.stateFlags.drawMesh )
                     {
-                        frustum.expand( (object.transform.matrix * shared vec4(object.mesh.boundingBox.min, 1.0f)).xyz );
-                        frustum.expand( (object.transform.matrix * shared vec4(object.mesh.boundingBox.max, 1.0f)).xyz );
+                        frustum.expand( (object.transform.matrix * vec4(object.mesh.boundingBox.min, 1.0f)).xyz );
+                        frustum.expand( (object.transform.matrix * vec4(object.mesh.boundingBox.max, 1.0f)).xyz );
                     }
                 }
 
@@ -320,7 +317,7 @@ public:
         }
 
         /**
-        * Makes the GL class for all active lights to be drawn
+        * Pass for all objects with lights
         */
         void lightPass()
         {
@@ -432,7 +429,7 @@ public:
         }
 
         /**
-        * TODO
+        * Draw the UI
         */
         void uiPass()
         {
@@ -496,14 +493,14 @@ public:
      * Adds a UI to be drawn over the objects in the scene
      * UIs will be drawn ( and overlap ) in the order they are added
      */
-    final void addUI( shared UserInterface ui )
+    final void addUI( UserInterface ui )
     {
         uis ~= ui;
     }
 
 protected:
     /**
-    * TODO
+    * Loads rendering properties from Config
     */
     final void loadProperties()
     {

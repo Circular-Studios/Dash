@@ -1,5 +1,5 @@
 /**
-* TODO
+* Defines Shader class and the Shaders collection for loading, binding, and setting values in GLSL shaders
 */
 module graphics.shaders.shaders;
 import core, components, graphics, utility;
@@ -46,12 +46,12 @@ private enum ShaderUniform
 }
 
 /**
-* TODO
+* A constant string representing immutable uint fields for each ShaderUniform enum values
 */
 enum ShaderUniformFields = reduce!( ( a, b ) => a ~ "immutable uint " ~ b ~ ";\n" )( "", [__traits(allMembers,ShaderUniform )] );
 
 /**
-* TODO
+* Loads necessary shaders into variables, and any custom user shaders into an associative array
 */
 final abstract class Shaders
 {
@@ -60,17 +60,17 @@ private:
     Shader[string] shaders;
 
 public:
-    /// TODO
+    /// Geometry Shader
     Shader geometry;
-    /// TODO
+    /// Animated Geometry Shader
     Shader animatedGeometry;
-    /// TODO
+    /// Ambient Lighting Shader
     Shader ambientLight;
-    /// TODO
+    /// Directional Lighting shader
     Shader directionalLight;
-    /// TODO
+    /// Point Lighting shader
     Shader pointLight;
-    /// TODO
+    /// User Interface shader
     Shader userInterface;
     /// Shader for depth of inanimate objects.
     Shader shadowMap;
@@ -78,7 +78,7 @@ public:
     Shader animatedShadowMap;
 
     /**
-    * TODO
+    * Loads the field-shaders first, then any additional shaders in the Shaders folder
     */
     final void initialize()
     {
@@ -102,7 +102,7 @@ public:
     }
 
     /**
-    * TODO
+    * Empties the array of shaders and calls their Shutdown function
     */
     final void shutdown()
     {
@@ -115,7 +115,7 @@ public:
     }
 
     /**
-    * TODO
+    * Returns a Shader based on its string name
     */
     final Shader opIndex( string name )
     {
@@ -123,7 +123,7 @@ public:
     }
 
     /**
-    * TODO
+    * Returns a Shader based on its string name
     */
     final Shader get( string name )
     {
@@ -133,7 +133,7 @@ public:
 }
 
 /**
-* TODO
+* Class storing the programID, VS ID, FS ID and ShaderUniform locations for a given Shader program
 */
 final package class Shader
 {
@@ -142,19 +142,19 @@ private:
     string _shaderName;
 
 public:
-    /// TODO
+    /// The program ID for the shader
     mixin( Property!_programID );
-    /// TODO
+    /// The ID for the vertex shader
     mixin( Property!_vertexShaderID );
-    /// TODO
+    /// The ID for the fragment shader
     mixin( Property!_fragmentShaderID );
-    /// TODO
+    /// The string name of the Shader
     mixin( Property!_shaderName );
-
+    /// Uint locations for each possible Shader Uniform
     mixin( ShaderUniformFields );
 
     /**
-    * TODO
+    * Creates a Shader Program from the name, and either the vertex and fragment shader strings, or their file names
     */
     this(string name, string vertex, string fragment, bool preloaded = false )
     {
@@ -185,7 +185,7 @@ public:
     }
 
     /**
-    * TODO
+    * Compiles a Vertex and Fragment shader into a Shader Program
     */
     void compile( string vertexBody, string fragmentBody )
     {
@@ -250,7 +250,7 @@ public:
     /**
      * Pass through for glUniform2f
      */
-    final void bindUniform2f( uint uniform, const shared vec2 value )
+    final void bindUniform2f( uint uniform, const vec2 value )
     {
         glUniform2f( uniform, value.x, value.y );
     }
@@ -259,7 +259,7 @@ public:
      * Pass through for glUniform 3f
      * Passes to the shader in XYZ order
      */
-    final void bindUniform3f( uint uniform, const shared vec3 value )
+    final void bindUniform3f( uint uniform, const vec3 value )
     {
         glUniform3f( uniform, value.x, value.y, value.z );
     }
@@ -275,7 +275,7 @@ public:
     /**
      *  pass through for glUniformMatrix4fv
      */
-    final void bindUniformMatrix4fv( uint uniform, shared mat4 matrix )
+    final void bindUniformMatrix4fv( uint uniform, mat4 matrix )
     {
         glUniformMatrix4fv( uniform, 1, true, matrix.value_ptr );
     }
@@ -283,7 +283,7 @@ public:
     /**
      * Bind an array of mat4s.
      */
-    final void bindUniformMatrix4fvArray( uint uniform, shared mat4[] matrices )
+    final void bindUniformMatrix4fvArray( uint uniform, mat4[] matrices )
     {
         float[] matptr;
         foreach( matrix; matrices )
@@ -299,7 +299,7 @@ public:
     /**
      * Binds diffuse, normal, and specular textures to the shader
      */
-    final void bindMaterial( shared Material material )
+    final void bindMaterial( Material material )
     {
         //This is finding the uniform for the given texture, and setting that texture to the appropriate one for the object
         glUniform1i( DiffuseTexture, 0 );
@@ -318,7 +318,7 @@ public:
     /**
      * Binds a UI's texture
      */
-     final void bindUI( shared UserInterface ui )
+     final void bindUI( UserInterface ui )
      {
         glUniform1i( UITexture, 0 );
         glActiveTexture( GL_TEXTURE0 );
@@ -328,7 +328,7 @@ public:
     /**
      * Bind an ambient light
      */
-    final void bindAmbientLight( shared AmbientLight light )
+    final void bindAmbientLight( AmbientLight light )
     {
         bindUniform3f( LightColor, light.color );
     }
@@ -336,7 +336,7 @@ public:
     /**
      * Bind a directional light
      */
-    final void bindDirectionalLight( shared DirectionalLight light )
+    final void bindDirectionalLight( DirectionalLight light )
     {
         bindUniform3f( LightDirection, light.direction);
         bindUniform3f( LightColor, light.color );
@@ -345,16 +345,16 @@ public:
     /**
      * Bind a directional light after a modifying transform
      */
-    final void bindDirectionalLight( shared DirectionalLight light, shared mat4 transform )
+    final void bindDirectionalLight( DirectionalLight light, mat4 transform )
     {
-        bindUniform3f( LightDirection, ( transform * shared vec4( light.direction, 0.0f ) ).xyz );
+        bindUniform3f( LightDirection, ( transform * vec4( light.direction, 0.0f ) ).xyz );
         bindUniform3f( LightColor, light.color );
     }
 
     /**
      * Bind a point light
      */
-    final void bindPointLight( shared PointLight light )
+    final void bindPointLight( PointLight light )
     {
         bindUniform3f( LightColor, light.color );
         bindUniform3f( LightPosition, light.owner.transform.worldPosition );
@@ -365,10 +365,10 @@ public:
     /**
      * Bind a point light after a modifying transform
      */
-    final void bindPointLight( shared PointLight light, shared mat4 transform )
+    final void bindPointLight( PointLight light, mat4 transform )
     {
         bindUniform3f( LightColor, light.color );
-        bindUniform3f( LightPosition, ( transform * shared vec4( light.owner.transform.worldPosition, 1.0f ) ).xyz);
+        bindUniform3f( LightPosition, ( transform * vec4( light.owner.transform.worldPosition, 1.0f ) ).xyz);
         bindUniform1f( LightRadius, light.radius );
         bindUniform1f( LightFalloffRate, light.falloffRate );
     }
@@ -377,7 +377,7 @@ public:
     /**
      * Sets the eye position for lighting calculations
      */
-    final void setEyePosition( shared vec3 pos )
+    final void setEyePosition( vec3 pos )
     {
         glUniform3f( EyePosition, pos.x, pos.y, pos.z );
     }

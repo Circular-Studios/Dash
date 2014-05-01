@@ -20,7 +20,7 @@ enum EngineState
 /**
  * Contains flags for all things that could be disabled.
  */
-shared struct GameStateFlags
+struct GameStateFlags
 {
     bool updateScene;
     bool updateUI;
@@ -51,11 +51,11 @@ shared struct GameStateFlags
 /**
  * The main game loop manager. Meant to be overridden.
  */
-shared class DGame
+class DGame
 {
 public:
     /// The instance to be running from
-    shared static DGame instance;
+    static DGame instance;
 
     /// Current state of the game
     EngineState currentState;
@@ -175,7 +175,7 @@ private:
     {
         currentState = EngineState.Run;
 
-        stateFlags = new shared GameStateFlags;
+        stateFlags = new GameStateFlags;
         stateFlags.resumeAll();
 
         logDebug( "Initializing..." );

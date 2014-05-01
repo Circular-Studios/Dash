@@ -1,11 +1,11 @@
 /**
-* TODO
+* Lighting pass shader for Directional Lights
 */
 module graphics.shaders.glsl.directionallight;
 
 package:
 
-/// TODO
+/// Takes in a clip-space quad and creates a ray from camera to each vertex, which is interpolated during pass-through
 immutable string directionallightVS = q{
     #version 400
 
@@ -30,7 +30,8 @@ immutable string directionallightVS = q{
     }
 };
 
-/// Calculate directional lighting
+/// Calculates diffuse and specular lights from the full-screen directional light, 
+/// using the view ray to reconstruct pixel position
 immutable string directionallightFS = q{
     #version 400
 

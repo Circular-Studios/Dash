@@ -179,7 +179,7 @@ template ConditionalSetter( alias field, string condition, AccessModifier access
 /**
  * Requires implementation of the isDirty property.
  */
-shared interface IDirtyable
+interface IDirtyable
 {
     @property bool isDirty();
 }

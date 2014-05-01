@@ -7,16 +7,17 @@ import core, components, graphics, utility;
 import yaml;
 import gl3n.linalg, gl3n.math;
 
-import std.conv, std.variant, std.array;
+import std.conv, std.variant, std.array, std.algorithm, std.typecons;
 
 enum AnonymousName = "__anonymous";
 
 /**
  * Contains flags for all things that could be disabled.
  */
-shared struct ObjectStateFlags
+struct ObjectStateFlags
 {
-    bool update;
+    bool updateComponents;
+    bool updateBehaviors;
     bool updateChildren;
     bool drawMesh;
     bool drawLight;
@@ -45,7 +46,7 @@ shared struct ObjectStateFlags
 /**
  * Manages all components and transform in the world. Can be overridden.
  */
-shared class GameObject
+final class GameObject
 {
 private:
     Transform _transform;
@@ -91,22 +92,23 @@ public:
     mixin( RefGetter!_behaviors );
     /// ditto
     mixin( ConditionalSetter!( _name, q{canChangeName}, AccessModifier.Public ) );
-    /// The ID of the object
+    /// The ID of the object.
     immutable uint id;
+    /// Allow setting of state flags directly.
+    //alias stateFlags this;
 
     /**
      * Create a GameObject from a Yaml node.
      *
      * Params:
      *  yamlObj =           The YAML node to pull info from.
-     *  scriptOverride =    The ClassInfo to use to create the object. Overrides YAML setting.
      *
      * Returns:
      *  A new game object with components and info pulled from yaml.
      */
-    static shared(GameObject) createFromYaml( Node yamlObj )
+    static GameObject createFromYaml( Node yamlObj )
     {
-        shared GameObject obj;
+        GameObject obj;
         bool foundClassName;
         string prop, className;
         Node innerNode;
@@ -117,7 +119,7 @@ public:
         }
         else
         {
-            obj = new shared GameObject;
+            obj = new GameObject;
         }
 
         // Set object name
@@ -126,11 +128,11 @@ public:
         // Init transform
         if( yamlObj.tryFind( "Transform", innerNode ) )
         {
-            shared vec3 transVec;
+            vec3 transVec;
             if( innerNode.tryFind( "Scale", transVec ) )
-                obj.transform.scale = shared vec3( transVec );
+                obj.transform.scale = vec3( transVec );
             if( innerNode.tryFind( "Position", transVec ) )
-                obj.transform.position = shared vec3( transVec );
+                obj.transform.position = vec3( transVec );
             if( innerNode.tryFind( "Rotation", transVec ) )
                 obj.transform.rotation = quat.identity.rotatex( transVec.x.radians ).rotatey( transVec.y.radians ).rotatez( transVec.z.radians );
         }
@@ -156,26 +158,18 @@ public:
             }
         }
 
-        // If parent is specified, add it to the map
-        if( yamlObj.tryFind( "Parent", prop ) )
-            logWarning( "Specifying parent objects by name is deprecated. Please add this as an inline child to ", prop, "." );
-
         if( yamlObj.tryFind( "Children", innerNode ) )
         {
             if( innerNode.isSequence )
             {
                 foreach( Node child; innerNode )
                 {
-                    if( child.isScalar )
-                    {
-                        // Add child name to map.
-                        logWarning( "Specifing child objects by name is deprecated. Please add ", child.get!string, " as an inline child of ", obj.name, "." );
-                    }
-                    else
-                    {
-                        // If inline object, create it and add it as a child.
+                    // If inline object, create it and add it as a child.
+                    if( child.isMapping )
                         obj.addChild( GameObject.createFromYaml( child ) );
-                    }
+                    // Add child name to map.
+                    else
+                        logWarning( "Specifing child objects by name is deprecated. Please add ", child.get!string, " as an inline child of ", obj.name, "." );
                 }
             }
             else
@@ -185,13 +179,13 @@ public:
         }
 
         // Init components
-        foreach( string key, Node value; yamlObj )
+        foreach( string key, Node componentNode; yamlObj )
         {
-            if( key == "Name" || key == "Script" || key == "Parent" || key == "InstanceOf" || key == "Transform" || key == "Children" || key == "Behaviors" )
+            if( key == "Name" || key == "InstanceOf" || key == "Transform" || key == "Children" || key == "Behaviors" )
                 continue;
 
             if( auto init = key in IComponent.initializers )
-                obj.addComponent( (*init)( value, obj ) );
+                obj.addComponent( (*init)( componentNode, obj ) );
             else
                 logWarning( "Unknown key: ", key );
         }
@@ -200,17 +194,34 @@ public:
 
         return obj;
     }
+    /**
+     * Create a GameObject from a Yaml node.
+     *
+     * Params:
+     *  fields =            The YAML node to pull info from.
+     *
+     * Returns:
+     *  A tuple of the object created at index 0, and the behavior at index 1.
+     */
+    static auto createWithBehavior( BehaviorT )( Node fields = Node( YAMLNull() ) )
+    {
+        auto newObj = new GameObject;
+
+        newObj.behaviors.createBehavior!BehaviorT( fields );
+
+        return tuple( newObj, newObj.behaviors.get!BehaviorT );
+    }
 
     /**
      * Creates basic GameObject with transform and connection to transform's emitter.
      */
     this()
     {
-        _transform = shared Transform( this );
-        _behaviors = shared Behaviors( this );
+        _transform = Transform( this );
+        _behaviors = Behaviors( this );
 
         // Create default material
-        material = new shared Material();
+        material = new Material();
         id = nextId++;
 
         stateFlags = new ObjectStateFlags;
@@ -225,15 +236,12 @@ public:
      */
     final void update()
     {
-        //logInfo(name, " ", parent ? parent.name : "no parent" );
-
-        if( stateFlags.update )
-        {
+        if( stateFlags.updateBehaviors )
             behaviors.onUpdate();
 
+        if( stateFlags.updateComponents )
             foreach( ci, component; componentList )
                 component.update();
-        }
 
         if( stateFlags.updateChildren )
             foreach( obj; children )
@@ -260,18 +268,12 @@ public:
 
         foreach( obj; children )
             obj.shutdown();
-
-        /*foreach_reverse( ci, component; componentList )
-        {
-            component.shutdown();
-            componentList.remove( ci );
-        }*/
     }
 
     /**
      * Adds a component to the object.
      */
-    final void addComponent( T )( shared T newComponent ) if( is( T : IComponent ) )
+    final void addComponent( T )( T newComponent ) if( is( T : IComponent ) )
     {
         if( newComponent )
             componentList[ typeid(T) ] = newComponent;
@@ -292,10 +294,10 @@ public:
      * Params:
      *  newChild =            The object to add.
      */
-    final void addChild( shared GameObject newChild )
+    final void addChild( GameObject newChild )
     {
         // Nothing to see here.
-        if( cast()newChild.parent == cast()this )
+        if( newChild.parent == this )
             return;
         // Remove from current parent
         else if( newChild.parent )
@@ -306,12 +308,12 @@ public:
         newChild.canChangeName = false;
 
         // Get root object
-        shared GameObject par;
+        GameObject par;
         for( par = this; par.parent; par = par.parent ) { }
 
-        shared GameObject[] objectChildren;
+        GameObject[] objectChildren;
         {
-            shared GameObject[] objs;
+            GameObject[] objs;
             objs ~= newChild;
 
             while( objs.length )
@@ -343,9 +345,9 @@ public:
      * Params:
      *  oldChild =            The object to remove.
      */
-    final void removeChild( shared GameObject oldChild )
+    final void removeChild( GameObject oldChild )
     {
-        children = children.remove( oldChild );
+        children = children.remove( children.countUntil( oldChild ) );
 
         oldChild.canChangeName = true;
         oldChild.parent = null;
@@ -358,7 +360,7 @@ public:
  * and can generate a World matrix, worldPosition/Rotation (based on parents' transforms)
  * as well as forward, up, and right axes based on rotation
  */
-private shared struct Transform
+private struct Transform
 {
 private:
     GameObject _owner;
@@ -373,7 +375,7 @@ private:
      * Params:
      *  obj =            The object the transform belongs to.
      */
-    this( shared GameObject obj )
+    this( GameObject obj )
     {
         owner = obj;
         position = vec3(0,0,0);
@@ -403,12 +405,12 @@ public:
      *
      * Returns: The object's position relative to the world origin, not the parent.
      */
-    final @property shared(vec3) worldPosition() @safe pure nothrow
+    final @property vec3 worldPosition() @safe pure nothrow
     {
         if( owner.parent is null )
             return position;
         else
-            return (owner.parent.transform.matrix * shared vec4(position.x,position.y,position.z,1.0f)).xyz;
+            return (owner.parent.transform.matrix * vec4(position.x,position.y,position.z,1.0f)).xyz;
     }
 
     /**
@@ -416,7 +418,7 @@ public:
      *
      * Returns: The object's rotation relative to the world origin, not the parent.
      */
-    final @property shared(quat) worldRotation() @safe pure nothrow
+    final @property quat worldRotation() @safe pure nothrow
     {
         if( owner.parent is null )
             return rotation;
@@ -444,9 +446,9 @@ public:
      *
      * Returns: The forward axis of the current transform.
      */
-    final @property const shared(vec3) forward()
+    final @property const vec3 forward()
     {
-        return shared vec3( -2 * (rotation.x * rotation.z + rotation.w * rotation.y),
+        return vec3( -2 * (rotation.x * rotation.z + rotation.w * rotation.y),
                             -2 * (rotation.y * rotation.z - rotation.w * rotation.x),
                             -1 + 2 * (rotation.x * rotation.x + rotation.y * rotation.y ));
     }
@@ -457,8 +459,8 @@ public:
         import gl3n.math;
         writeln( "Dash Transform forward unittest" );
 
-        auto trans = new shared Transform( null );
-        auto forward = shared vec3( 0.0f, 1.0f, 0.0f );
+        auto trans = new Transform( null );
+        auto forward = vec3( 0.0f, 1.0f, 0.0f );
         trans.rotation.rotatex( 90.radians );
         assert( almost_equal( trans.forward, forward ) );
     }
@@ -468,9 +470,9 @@ public:
      *
      * Returns: The up axis of the current transform.
      */
-    final  @property const shared(vec3) up()
+    final  @property const vec3 up()
     {
-        return shared vec3( 2 * (rotation.x * rotation.y - rotation.w * rotation.z),
+        return vec3( 2 * (rotation.x * rotation.y - rotation.w * rotation.z),
                         1 - 2 * (rotation.x * rotation.x + rotation.z * rotation.z),
                         2 * (rotation.y * rotation.z + rotation.w * rotation.x));
     }
@@ -481,9 +483,9 @@ public:
         import gl3n.math;
         writeln( "Dash Transform up unittest" );
 
-        auto trans = new shared Transform( null );
+        auto trans = new Transform( null );
 
-        auto up = shared vec3( 0.0f, 0.0f, 1.0f );
+        auto up = vec3( 0.0f, 0.0f, 1.0f );
         trans.rotation.rotatex( 90.radians );
         assert( almost_equal( trans.up, up ) );
     }
@@ -493,9 +495,9 @@ public:
      *
      * Returns: The right axis of the current transform.
      */
-    final  @property const shared(vec3) right()
+    final  @property const vec3 right()
     {
-        return shared vec3( 1 - 2 * (rotation.y * rotation.y + rotation.z * rotation.z),
+        return vec3( 1 - 2 * (rotation.y * rotation.y + rotation.z * rotation.z),
                         2 * (rotation.x * rotation.y + rotation.w * rotation.z),
                         2 * (rotation.x * rotation.z - rotation.w * rotation.y));
     }
@@ -506,9 +508,9 @@ public:
         import gl3n.math;
         writeln( "Dash Transform right unittest" );
 
-        auto trans = new shared Transform( null );
+        auto trans = new Transform( null );
 
-        auto right = shared vec3( 0.0f, 0.0f, -1.0f );
+        auto right = vec3( 0.0f, 0.0f, -1.0f );
         trans.rotation.rotatey( 90.radians );
         assert( almost_equal( trans.right, right ) );
     }

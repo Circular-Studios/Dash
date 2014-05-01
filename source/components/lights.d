@@ -12,7 +12,7 @@ import derelict.opengl3.gl3;
 /**
  * Base class for lights.
  */
-shared class Light : IComponent
+class Light : IComponent
 {
 private:
     vec3 _color;
@@ -21,16 +21,16 @@ public:
     /// The color the light gives off.
     mixin( Property!( _color, AccessModifier.Public ) );
 
-    this( shared vec3 color )
+    this( vec3 color )
     {
         this.color = color;
     }
 
     static this()
     {
-        IComponent.initializers[ "Light" ] = ( Node yml, shared GameObject obj )
+        IComponent.initializers[ "Light" ] = ( Node yml, GameObject obj )
         {
-            obj.light = cast(shared)yml.get!Light;
+            obj.light = yml.get!Light;
             obj.light.owner = obj;
             return obj.light;
         };
@@ -43,9 +43,9 @@ public:
 /**
  * Ambient Light
  */
-shared class AmbientLight : Light 
+class AmbientLight : Light 
 { 
-    this( shared vec3 color )
+    this( vec3 color )
     {
         super( color );
     }
@@ -54,7 +54,7 @@ shared class AmbientLight : Light
 /**
  * Directional Light
  */
-shared class DirectionalLight : Light
+class DirectionalLight : Light
 {
 private:
     vec3 _direction;
@@ -73,7 +73,7 @@ public:
     mixin( Property!( _projView ) );
     mixin( Property!( _shadowMapSize ) );
 
-    this( shared vec3 color, shared vec3 direction )
+    this( vec3 color, vec3 direction )
     {
         this.direction = direction; 
         super( color );
@@ -111,33 +111,33 @@ public:
     /**
      * calculates the light's projection and view matrices, and combines them
      */
-    void calculateProjView( shared AABB frustum )
+    void calculateProjView( AABB frustum )
     {
         // determine the center of the frustum
-        shared vec3 center = shared vec3( ( frustum.min + frustum.max ).x/2.0f,
+        vec3 center = vec3( ( frustum.min + frustum.max ).x/2.0f,
                                           ( frustum.min + frustum.max ).y/2.0f,
                                           ( frustum.min + frustum.max ).z/2.0f );
 
         // determine the rotation for the viewing axis
         // adapted from http://lolengine.net/blog/2013/09/18/beautiful-maths-quaternion-from-vectors
-        shared vec3 lDirNorm = direction.normalized;
-        shared vec3 baseAxis = vec3( 0, 0, -1 );
-        shared cosTheta = dot( lDirNorm, baseAxis );
+        vec3 lDirNorm = direction.normalized;
+        vec3 baseAxis = vec3( 0, 0, -1 );
+        float cosTheta = dot( lDirNorm, baseAxis );
         float halfCosX2 = sqrt( 0.5f * (1.0f + cosTheta) ) * 2.0f;
-        shared vec3 w = cross( lDirNorm, baseAxis );
-        shared quat rotation = quat( halfCosX2/2, w.x / halfCosX2, w.y / halfCosX2, w.z / halfCosX2 );
+        vec3 w = cross( lDirNorm, baseAxis );
+        quat rotation = quat( halfCosX2/2, w.x / halfCosX2, w.y / halfCosX2, w.z / halfCosX2 );
 
         // determine the x,y,z axes
-        shared float cosPitch = cos( rotation.pitch );
-        shared float sinPitch = sin( rotation.pitch );
-        shared float cosYaw = cos( rotation.yaw );
-        shared float sinYaw = sin( rotation.yaw );
-        shared vec3 xaxis = shared vec3( cosYaw, 0.0f, -sinYaw );
-        shared vec3 yaxis = shared vec3( sinYaw * sinPitch, cosPitch, cosYaw * sinPitch );
-        shared vec3 zaxis = shared vec3( sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw );
+        float cosPitch = cos( rotation.pitch );
+        float sinPitch = sin( rotation.pitch );
+        float cosYaw = cos( rotation.yaw );
+        float sinYaw = sin( rotation.yaw );
+        vec3 xaxis = vec3( cosYaw, 0.0f, -sinYaw );
+        vec3 yaxis = vec3( sinYaw * sinPitch, cosPitch, cosYaw * sinPitch );
+        vec3 zaxis = vec3( sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw );
 
         // build the view matrix
-        shared mat4 viewMatrix;
+        mat4 viewMatrix;
         ///*
         viewMatrix.clear(0.0f);
         viewMatrix[ 0 ] = xaxis.vector ~ -( xaxis * center );
@@ -153,7 +153,7 @@ public:
         frustum.max = (viewMatrix * vec4(frustum.max,1.0f)).xyz;
 
         // get mins and maxes in view space
-        shared vec3 mins, maxes;
+        vec3 mins, maxes;
         for( int i = 0; i < 3; i++ )
         {  
             if( frustum.min.vector[ i ] < frustum.max.vector[ i ] )
@@ -176,7 +176,7 @@ public:
 /**
  * Point Light
  */
-shared class PointLight : Light
+class PointLight : Light
 {
 private:
     float _radius;
@@ -189,7 +189,7 @@ public:
     /// The light's exponential attenuation modifier.
     mixin( Property!( _falloffRate, AccessModifier.Public ) );
 
-    this( shared vec3 color, float radius, float falloffRate )
+    this( vec3 color, float radius, float falloffRate )
     {
         this.radius = radius;
         this.falloffRate = falloffRate;
@@ -203,7 +203,7 @@ public:
      *
      * Returns:
      */
-    public shared(mat4) getTransform()
+    public mat4 getTransform()
     {
         _matrix = mat4.identity;
         // Scale
@@ -211,7 +211,7 @@ public:
         _matrix[ 1 ][ 1 ] = radius;
         _matrix[ 2 ][ 2 ] = radius;
         // Translate
-        shared vec3 position = owner.transform.worldPosition;
+        vec3 position = owner.transform.worldPosition;
         _matrix[ 0 ][ 3 ] = position.x;
         _matrix[ 1 ][ 3 ] = position.y;
         _matrix[ 2 ][ 3 ] = position.z;
@@ -223,10 +223,10 @@ public:
 /**
  * SpotLight Stub
  */
-shared class SpotLight : Light
+class SpotLight : Light
 {
 public:
-    this( shared vec3 color )
+    this( vec3 color )
     {
         super( color );
     }

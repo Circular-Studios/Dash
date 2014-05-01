@@ -16,22 +16,18 @@ final abstract class Input
 {
 public static:
     /**
-     * Function called when key event triggers.
-     */
-    alias void delegate( uint, bool ) KeyEvent;
-    /// ditto
-    alias void delegate( uint ) KeyStateEvent;
-    /**
-     * Function called when key event triggers.
-     */
-    alias void delegate( uint, float ) AxisEvent;
-
-    /**
      * Processes Config/Input.yml and pulls input string bindings.
      */
     final void initialize()
     {
         auto bindings = FilePath.Resources.InputBindings.loadYamlFile();
+
+        // Init states
+        currentKeys.reset();
+        previousKeys.reset();
+        stagingKeys.reset();
+        currentAxis.reset();
+        stagingAxis.reset();
 
         foreach( key; keyBindings.keys )
             keyBindings.remove( key );
@@ -85,7 +81,6 @@ public static:
         currentKeys = stagingKeys;
 
         auto diffAxis = stagingAxis - currentAxis;
-        previousAxis = currentAxis;
         currentAxis = stagingAxis;
 
         foreach( state; diffKeys )
@@ -453,64 +448,80 @@ private:
     KeyEvent[][ uint ] keyEvents;
     AxisEvent[][ uint ] axisEvents;
 
-    State!( bool, 256 ) currentKeys;
-    State!( bool, 256 ) previousKeys;
-    State!( bool, 256 ) stagingKeys;
+    KeyboardKeyState currentKeys;
+    KeyboardKeyState previousKeys;
+    KeyboardKeyState stagingKeys;
 
-    State!( float, 2 ) currentAxis;
-    State!( float, 2 ) previousAxis;
-    State!( float, 2 ) stagingAxis;
+    KeyboardAxisState currentAxis;
+    KeyboardAxisState stagingAxis;
+}
 
-    static this()
+private:
+/* EVENT TYPES */
+/// Function called when key event triggers.
+alias KeyEvent          = void delegate( uint, bool );
+/// ditto
+alias KeyStateEvent     = void delegate( uint );
+/// Function called when key event triggers.
+alias AxisEvent         = void delegate( uint, float );
+
+/* STATES */
+/// The state of the keyboard keys.
+alias KeyboardKeyState  = State!( bool, 256 );
+/// The state of the keyboard axes (mouse pos, mouse wheel, etc.).
+alias KeyboardAxisState = State!( float, 2 );
+
+/**
+ * Represents the state of an input method (ie. keyboard, gamepad, etc.).
+ *
+ * Params:
+ *  T =                 The type being stored (ie. bool for keys, floats for axes, etc.).
+ *  totalSize =         The number of inputs to store.
+ */
+struct State( T, uint totalSize )
+{
+public:
+    T[ totalSize ] keys;
+
+    ref State!( T, totalSize ) opAssign( const ref State!( T, totalSize ) other )
     {
-        currentAxis.reset();
-        previousAxis.reset();
-        stagingAxis.reset();
+        for( uint ii = 0; ii < other.keys.length; ++ii )
+            keys[ ii ] = other.keys[ ii ];
+
+        return this;
     }
 
-    struct State( T, uint totalSize )
+    T opIndex( size_t keyCode ) const
     {
-    public:
-        T[ totalSize ] keys;
+        return keys[ keyCode ];
+    }
 
-        ref State!( T, totalSize ) opAssign( const ref State!( T, totalSize ) other )
-        {
-            for( uint ii = 0; ii < other.keys.length; ++ii )
-                keys[ ii ] = other.keys[ ii ];
+    T opIndexAssign( T newValue, size_t keyCode )
+    {
+        keys[ keyCode ] = newValue;
+        return newValue;
+    }
 
-            return this;
-        }
+    Tuple!( uint, T )[] opBinary( string Op : "-" )( const ref State!( T, totalSize ) other )
+    {
+        Tuple!( uint, T )[] differences;
 
-        T opIndex( size_t keyCode ) const
-        {
-            return keys[ keyCode ];
-        }
+        for( uint ii = 0; ii < keys.length; ++ii )
+            if( this[ ii ] != other[ ii ] )
+                differences ~= tuple( ii, this[ ii ] );
 
-        T opIndexAssign( T newValue, size_t keyCode )
-        {
-            keys[ keyCode ] = newValue;
-            return newValue;
-        }
+        return differences;
+    }
 
-        Tuple!( uint, T )[] opBinary( string Op : "-" )( const ref State!( T, totalSize ) other )
-        {
-            Tuple!( uint, T )[] differences;
-
-            for( uint ii = 0; ii < keys.length; ++ii )
-                if( this[ ii ] != other[ ii ] )
-                    differences ~= tuple( ii, this[ ii ] );
-
-            return differences;
-        }
-
-        void reset()
-        {
-            for( uint ii = 0; ii < keys.length; ++ii )
-                keys[ ii ] = 0;
-        }
+    void reset()
+    {
+        for( uint ii = 0; ii < keys.length; ++ii )
+            keys[ ii ] = 0;
     }
 }
 
+// Enums of inputs
+public:
 /// Axes of input
 enum Axes: uint
 {

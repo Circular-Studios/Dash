@@ -105,6 +105,13 @@ public:
 
     static void shutdownCEF()
     {
+
+        cef_quit_message_loop();
+
+        // Shutdown CEF.
+        //printf("cef_shutdown\n");
+        cef_shutdown();
+
         //version( Windows )
         //awe_webcore_shutdown();
     }

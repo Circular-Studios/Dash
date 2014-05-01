@@ -150,6 +150,8 @@ public:
         cef_settings_t settings = {};
         settings.size = cef_settings_t.sizeof;
         settings.no_sandbox = 1;
+        settings.multi_threaded_message_loop = 0;
+
 
         // Initialize CEF.
         printf("cef_initialize\n");
@@ -165,10 +167,11 @@ public:
         cef_window_info_t windowInfo = {};
         windowInfo.style = WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE;
         windowInfo.parent_window = NULL;
-        windowInfo.x = CW_USEDEFAULT;
-        windowInfo.y = CW_USEDEFAULT;
-        windowInfo.width = CW_USEDEFAULT;
-        windowInfo.height = CW_USEDEFAULT;
+        windowInfo.x = 0;
+        windowInfo.y = 0;
+        windowInfo.width = 720;
+        windowInfo.height = 480;
+        //windowInfo.transparent_painting_enabled = 1;
 
         // Initial url.
         //char cwd[1024] = "";
@@ -182,13 +185,8 @@ public:
         // There is no _cef_string_t type.
 
 
+        // Create url to display
         cef_string_t cefUrl = {};
-
-        //wchar[] url = "http://www.google.com";
-        //wstring wurl = "http://www.google.com";
-        //wchar* url = toStringz(wurl);
-
-
 
         immutable(cef_char_t)[] url = "http://www.google.com" ~ "\0";
         //cef_string_utf16_set(url.ptr, url.length, &cefUrl, 0);
@@ -197,10 +195,10 @@ public:
         cefUrl.length = url.length;
 
 
-        printf("%d\n", url.length);
-        writef("%s\n", url);
+        //printf("%d\n", url.length);
+        //writef("%s\n", url);
         //writef("%s\n", cefUrl.str);
-        writef("%s\n", cefUrl.str[0..url.length]);
+        //writef("%s\n", cefUrl.str[0..url.length]);
         
         /*
         version(CEF_STRING_TYPE_UTF8) {
@@ -289,6 +287,12 @@ public:
         printf("cef_browser_host_create_browser\n");
         cef_browser_host_create_browser(&windowInfo, &client, &cefUrl,
                 &browserSettings, NULL);
+
+        writef("Get URL\n");
+        
+
+        //writef("%s\n", cefUrl.str[0..url.length]);
+
 
         // Message loop.
         //printf("cef_run_message_loop\n");

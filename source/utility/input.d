@@ -9,19 +9,12 @@ import derelict.opengl3.gl3;
 import core.sync.mutex;
 import std.typecons, std.conv;
 
-shared InputManager Input;
-
-shared static this()
-{
-    Input = new shared InputManager;
-}
-
 /**
  * Manages all input events.
  */
-shared final class InputManager
+final abstract class Input
 {
-public:
+public static:
     /**
      * Function called when key event triggers.
      */
@@ -97,19 +90,16 @@ public:
      */
     final void update()
     {
-        synchronized( this )
-        {
-            auto diff = staging - current;
+        auto diff = staging - current;
 
-            previous = current;
-            current = staging;
-            //staging.reset();
+        previous = current;
+        current = staging;
+        //staging.reset();
 
-            foreach( state; diff )
-                if( auto keyEvent = state[ 0 ] in keyEvents )
-                    foreach( event; *keyEvent )
-                        event( state[ 0 ], state[ 1 ] );
-        }
+        foreach( state; diff )
+            if( auto keyEvent = state[ 0 ] in keyEvents )
+                foreach( event; *keyEvent )
+                    event( state[ 0 ], state[ 1 ] );
     }
 
     /**
@@ -119,7 +109,7 @@ public:
      *      keyCode =   The code of the key to add the event to.
      *      func =      The function to call when the key state changes.
      */
-    synchronized final void addKeyEvent( uint keyCode, KeyEvent func )
+    final void addKeyEvent( uint keyCode, KeyEvent func )
     {
         keyEvents[ keyCode ] ~= func;
     }
@@ -263,10 +253,7 @@ public:
      */
     final void setKeyState( uint keyCode, bool newState )
     {
-        synchronized( this )
-        {
-            staging[ keyCode ] = newState;
-        }
+        staging[ keyCode ] = newState;
     }
 
     /**
@@ -305,7 +292,7 @@ public:
      *
      * Returns:     The position of the mouse cursor.
      */
-    final @property shared(vec2) mousePos()
+    final @property vec2 mousePos()
     {
         version( Windows )
         {
@@ -322,11 +309,11 @@ public:
                 i.y -= GetSystemMetrics( SM_CYBORDER );
             }
 
-            return shared vec2( cast(float)i.x, Graphics.height - cast(float)i.y );
+            return vec2( cast(float)i.x, Graphics.height - cast(float)i.y );
         }
         else version( linux )
         {
-            return shared vec2();
+            return vec2();
         }
     }
 
@@ -335,12 +322,12 @@ public:
      *
      * Returns:     The position of the mouse cursor in world space.
      */
-    final @property shared(vec3) mousePosView()
+    final @property vec3 mousePosView()
     {
         if( !DGame.instance.activeScene )
         {
             logWarning( "No active scene." );
-            return shared vec3( 0.0f, 0.0f, 0.0f );
+            return vec3( 0.0f, 0.0f, 0.0f );
         }
 
         auto scene = DGame.instance.activeScene;
@@ -348,13 +335,13 @@ public:
         if( !scene.camera )
         {
             logWarning( "No camera on active scene." );
-            return shared vec3( 0.0f, 0.0f, 0.0f );
+            return vec3( 0.0f, 0.0f, 0.0f );
         }
-        shared vec2 mouse = mousePos;
+        vec2 mouse = mousePos;
         float depth;
         int x = cast(int)mouse.x;
         int y = cast(int)mouse.y;
-        auto view = shared vec3( 0, 0, 0 );
+        auto view = vec3( 0, 0, 0 );
 
         if( x >= 0 && x <= Graphics.width && y >= 0 && y <= Graphics.height )
         {
@@ -364,11 +351,11 @@ public:
 
             auto linearDepth = scene.camera.projectionConstants.x / ( scene.camera.projectionConstants.y - depth );
             //Convert x and y to normalized device coords
-            shared float screenX = ( mouse.x / cast(shared float)Graphics.width ) * 2 - 1;
-            shared float screenY = -( ( mouse.y / cast(shared float)Graphics.height ) * 2 - 1 );
+            float screenX = ( mouse.x / cast(float)Graphics.width ) * 2 - 1;
+            float screenY = -( ( mouse.y / cast(float)Graphics.height ) * 2 - 1 );
 
-            auto viewSpace = scene.camera.inversePerspectiveMatrix * shared vec4( screenX, screenY, 1.0f, 1.0f);
-            auto viewRay = shared vec3( viewSpace.xy * (1.0f / viewSpace.z), 1.0f);
+            auto viewSpace = scene.camera.inversePerspectiveMatrix * vec4( screenX, screenY, 1.0f, 1.0f);
+            auto viewRay = vec3( viewSpace.xy * (1.0f / viewSpace.z), 1.0f);
             view = viewRay * linearDepth;
 
             glBindFramebuffer( GL_FRAMEBUFFER, 0 );
@@ -382,9 +369,9 @@ public:
      *
      * Returns:     The position of the mouse cursor in world space.
      */
-    final @property shared(vec3) mousePosWorld()
+    final @property vec3 mousePosWorld()
     {
-        return (cast(shared)DGame.instance.activeScene.camera.inverseViewMatrix * shared vec4( mousePosView(), 1.0f )).xyz;
+        return (DGame.instance.activeScene.camera.inverseViewMatrix * vec4( mousePosView(), 1.0f )).xyz;
     }
 
     /**
@@ -392,7 +379,7 @@ public:
      *
      * Returns:     The GameObject located at the current mouse Position
      */
-    final @property shared(GameObject) mouseObject()
+    final @property GameObject mouseObject()
     {
         if( !DGame.instance.activeScene )
         {
@@ -408,7 +395,7 @@ public:
             return null;
         }
 
-        shared vec2 mouse = mousePos();
+        vec2 mouse = mousePos();
         float fId;
         int x = cast(int)mouse.x;
         int y = cast(int)mouse.y;
@@ -440,7 +427,7 @@ private:
 
     this() { }
 
-    shared struct KeyState
+    struct KeyState
     {
     public:
         enum TotalSize = 256u;
@@ -449,7 +436,7 @@ private:
 
         bool[ TotalSize ] keys;
 
-        ref shared(KeyState) opAssign( const ref KeyState other )
+        ref KeyState opAssign( const ref KeyState other )
         {
             for( uint ii = 0; ii < other.keys.length; ++ii )
                 keys[ ii ] = other.keys[ ii ];
@@ -468,7 +455,7 @@ private:
             return newValue;
         }
 
-        Tuple!( uint, bool )[] opBinary( string Op : "-" )( const ref shared KeyState other )
+        Tuple!( uint, bool )[] opBinary( string Op : "-" )( const ref KeyState other )
         {
             Tuple!( uint, bool )[] differences;
 

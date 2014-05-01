@@ -12,7 +12,7 @@ enum SceneName = "[scene]";
 /**
  * The Scene contains a list of all objects that should be drawn at a given time.
  */
-shared final class Scene
+final class Scene
 {
 private:
     GameObject _root;
@@ -29,7 +29,7 @@ public:
 
     this()
     {
-        _root = new shared GameObject;
+        _root = new GameObject;
         _root.name = SceneName;
         _root.scene = this;
     }
@@ -54,7 +54,7 @@ public:
      */
     final void clear()
     {
-        _root = new shared GameObject;
+        _root = new GameObject;
     }
 
     /**
@@ -81,7 +81,7 @@ public:
      *
      * Returns: The object with the given name.
      */
-    final shared(GameObject) opIndex( string name )
+    final GameObject opIndex( string name )
     {
         if( auto id = name in idByName )
             return this[ *id ];
@@ -97,7 +97,7 @@ public:
      *
      * Returns: The object with the given id.
      */
-    final shared(GameObject) opIndex( uint index )
+    final GameObject opIndex( uint index )
     {
         if( auto obj = index in objectById )
             return *obj;
@@ -111,7 +111,7 @@ public:
      * Params:
      *  newChild =            The object to add.
      */
-    final void addChild( shared GameObject newChild )
+    final void addChild( GameObject newChild )
     {
         _root.addChild( newChild );
     }
@@ -122,7 +122,7 @@ public:
      * Params:
      *  oldChild =            The object to remove.
      */
-    final void removechild( shared GameObject oldChild )
+    final void removechild( GameObject oldChild )
     {
         _root.removeChild( oldChild );
     }
@@ -132,7 +132,7 @@ public:
      *
      * Returns: All objects belonging to this scene.
      */
-    final @property shared(GameObject[]) objects()
+    final @property GameObject[] objects()
     {
         return objectById.values;
     }

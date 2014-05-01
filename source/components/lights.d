@@ -10,7 +10,7 @@ import gl3n.linalg;
 /**
  * TODO
  */
-shared class Light : IComponent
+class Light : IComponent
 {
 private:
     vec3 _color;
@@ -19,16 +19,16 @@ public:
     /// TODO
     mixin( Property!( _color, AccessModifier.Public ) );
 
-    this( shared vec3 color )
+    this( vec3 color )
     {
         this.color = color;
     }
 
     static this()
     {
-        IComponent.initializers[ "Light" ] = ( Node yml, shared GameObject obj )
+        IComponent.initializers[ "Light" ] = ( Node yml, GameObject obj )
         {
-            obj.light = cast(shared)yml.get!Light;
+            obj.light = yml.get!Light;
             obj.light.owner = obj;
             return obj.light;
         };
@@ -41,9 +41,9 @@ public:
 /**
  * TODO
  */
-shared class AmbientLight : Light 
+class AmbientLight : Light 
 { 
-    this( shared vec3 color )
+    this( vec3 color )
     {
         super( color );
     }
@@ -52,7 +52,7 @@ shared class AmbientLight : Light
 /* 
  * Directional Light data
  */
-shared class DirectionalLight : Light
+class DirectionalLight : Light
 {
 private:
     vec3 _direction;
@@ -61,7 +61,7 @@ public:
     /// TODO
     mixin( Property!( _direction, AccessModifier.Public ) );
 
-    this( shared vec3 color, shared vec3 direction )
+    this( vec3 color, vec3 direction )
     {
         this.direction = direction;
         super( color );
@@ -71,7 +71,7 @@ public:
 /*
  * Point Light data
  */
-shared class PointLight : Light
+class PointLight : Light
 {
 private:
     float _radius;
@@ -84,7 +84,7 @@ public:
     /// TODO
     mixin( Property!( _falloffRate, AccessModifier.Public ) );
 
-    this( shared vec3 color, float radius, float falloffRate )
+    this( vec3 color, float radius, float falloffRate )
     {
         this.radius = radius;
         this.falloffRate = falloffRate;
@@ -98,7 +98,7 @@ public:
      *
      * Returns:
      */
-    public shared(mat4) getTransform()
+    public mat4 getTransform()
     {
         _matrix = mat4.identity;
         // Scale
@@ -106,7 +106,7 @@ public:
         _matrix[ 1 ][ 1 ] = radius;
         _matrix[ 2 ][ 2 ] = radius;
         // Translate
-        shared vec3 position = owner.transform.worldPosition;
+        vec3 position = owner.transform.worldPosition;
         _matrix[ 0 ][ 3 ] = position.x;
         _matrix[ 1 ][ 3 ] = position.y;
         _matrix[ 2 ][ 3 ] = position.z;
@@ -118,10 +118,10 @@ public:
 /*
  * SpotLight Stub
  */
-shared class SpotLight : Light
+class SpotLight : Light
 {
 public:
-    this( shared vec3 color )
+    this( vec3 color )
     {
         super( color );
     }

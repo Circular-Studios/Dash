@@ -20,7 +20,7 @@ struct Tweakable
 /**
  * Initializes reflection things.
  */
-shared static this()
+static this()
 {
     foreach( mod; ModuleInfo )
     {
@@ -28,7 +28,7 @@ shared static this()
         {
             // Find the appropriate game loop.
             if( klass.base == typeid(DGame) )
-                DGame.instance = cast(shared DGame)klass.create();
+                DGame.instance = cast(DGame)klass.create();
         }
     }
 }

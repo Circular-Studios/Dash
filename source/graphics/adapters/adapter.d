@@ -27,7 +27,7 @@ private:
     uint _normalRenderTexture; //Alpha channel stores nothing important
     uint _depthRenderTexture;
     // Do not add properties for:
-    shared UserInterface[] uis;
+    UserInterface[] uis;
 
 public:
     /// GL DeviceContext
@@ -198,7 +198,7 @@ public:
         {
             return objsWithLights
                     .filter!(obj => typeid(obj) == typeid(Type))
-                    .map!(obj => cast(shared Type)obj);
+                    .map!(obj => cast(Type)obj);
         }
 
         auto ambientLights = getOfType!AmbientLight;
@@ -206,15 +206,15 @@ public:
         auto pointLights = getOfType!PointLight;
         auto spotLights = getOfType!SpotLight;
 
-        shared mat4 projection = scene.camera.perspectiveMatrix;
-        shared mat4 invProj = scene.camera.inversePerspectiveMatrix;
+        mat4 projection = scene.camera.perspectiveMatrix;
+        mat4 invProj = scene.camera.inversePerspectiveMatrix;
 
         /**
         * Pass for all objects with Meshes
         */
         void geometryPass()
         {
-            void updateMatricies( shared GameObject current )
+            void updateMatricies( GameObject current )
             {
                 current.transform.updateMatrix();
                 foreach( child; current.children )
@@ -226,10 +226,10 @@ public:
             {
                 if( object.mesh && object.stateFlags.drawMesh )
                 {
-                    shared mat4 worldView = scene.camera.viewMatrix * object.transform.matrix;
-                    shared mat4 worldViewProj = projection * worldView;
+                    mat4 worldView = scene.camera.viewMatrix * object.transform.matrix;
+                    mat4 worldViewProj = projection * worldView;
 
-                    if( !( object.mesh.boundingBox in shared Frustum( worldViewProj ) ) )
+                    if( !( object.mesh.boundingBox in Frustum( worldViewProj ) ) )
                     {
                         // If we can't see an object, don't draw it.
                         continue;
@@ -422,7 +422,7 @@ public:
      * Adds a UI to be drawn over the objects in the scene
      * UIs will be drawn ( and overlap ) in the order they are added
      */
-    final void addUI( shared UserInterface ui )
+    final void addUI( UserInterface ui )
     {
         uis ~= ui;
     }

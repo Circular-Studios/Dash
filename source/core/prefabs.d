@@ -8,17 +8,17 @@ import yaml;
 import gl3n.linalg;
 import std.variant;
 
-shared PrefabManager Prefabs;
+PrefabManager Prefabs;
 
-shared static this()
+static this()
 {
-    Prefabs = new shared PrefabManager;
+    Prefabs = new PrefabManager;
 }
 
 /**
  * Prefabs manages prefabs and allows access to them.
  */
-shared final class PrefabManager
+final class PrefabManager
 {
 public:
     /// The AA of prefabs.
@@ -39,7 +39,7 @@ public:
         {
             auto name = object[ "Name" ].as!string;
             
-            prefabs[ name ] = new shared Prefab( object );
+            prefabs[ name ] = new Prefab( object );
         }
     }
 }
@@ -47,7 +47,7 @@ public:
 /**
  * A prefab that allows for quick object creation.
  */
-shared final class Prefab
+final class Prefab
 {
 public:
     /**
@@ -67,7 +67,7 @@ public:
      * Returns:
      *  The new GameObject from the Prefab.
      */
-    final shared(GameObject) createInstance()
+    final GameObject createInstance()
     {
         return GameObject.createFromYaml( yaml );
     }

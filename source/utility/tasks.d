@@ -55,9 +55,9 @@ unittest
 
     writeln( "Dash Tasks scheduleInterpolateTask unittest 1" );
 
-    shared vec3 interpVec = shared vec3( 0, 0, 0 );
-    shared vec3 start = shared vec3( 0, 1, 0 );
-    shared vec3 end = shared vec3( 0, 1, 1 );
+    vec3 interpVec = vec3( 0, 0, 0 );
+    vec3 start = vec3( 0, 1, 0 );
+    vec3 end = vec3( 0, 1, 1 );
     scheduleInterpolateTask( interpVec, start, end, 100.msecs );
 
     while( scheduledTasks.length )
@@ -101,9 +101,9 @@ unittest
     writeln( "Dash Tasks scheduleInterpolateTask unittest 2" );
 
     auto testClass = new TestPropertyInterpolate;
-    testClass.vector = shared vec3( 0, 0, 0 );
-    shared vec3 start = shared vec3( 0, 1, 0 );
-    shared vec3 end = shared vec3( 0, 1, 1 );
+    testClass.vector = vec3( 0, 0, 0 );
+    vec3 start = vec3( 0, 1, 0 );
+    vec3 end = vec3( 0, 1, 1 );
     scheduleInterpolateTask!q{vector}( testClass, start, end, 100.msecs );
 
     while( scheduledTasks.length )
@@ -116,9 +116,9 @@ class TestPropertyInterpolate
 {
     import gl3n.linalg;
 
-    private shared vec3 _vector;
-    public @property shared(vec3) vector() { return _vector; }
-    public @property void vector( shared vec3 newVal ) { _vector = newVal; }
+    private vec3 _vector;
+    public @property vec3 vector() { return _vector; }
+    public @property void vector( vec3 newVal ) { _vector = newVal; }
 }
 
 /**

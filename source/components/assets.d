@@ -8,17 +8,17 @@ import std.string, std.array;
 
 import yaml;
 import derelict.freeimage.freeimage, derelict.assimp3.assimp;
-shared AssetManager Assets;
+AssetManager Assets;
 
-shared static this()
+static this()
 {
-    Assets = new shared AssetManager;
+    Assets = new AssetManager;
 }
 
 /**
  * Assets manages all assets that aren't code, GameObjects, or Prefabs.
  */
-shared final class AssetManager
+final class AssetManager
 {
 private:
     Mesh[string] meshes;
@@ -33,7 +33,7 @@ public:
     /**
      * Get the asset with the given type and name.
      */
-    final shared(T) get( T )( string name ) if( is( T == Mesh ) || is( T == Texture ) || is( T == Material ) || is( T == AssetAnimation ))
+    final T get( T )( string name ) if( is( T == Mesh ) || is( T == Texture ) || is( T == Material ) || is( T == AssetAnimation ))
     {
         enum get( Type, string array ) = q{
             static if( is( T == $Type ) )
@@ -71,7 +71,7 @@ public:
         assert(aiIsExtensionSupported(".fbx".toStringz), "fbx format isn't supported by assimp instance!");
 
         // Load the unitSquare
-        unitSquare = new shared Mesh( "", aiImportFileFromMemory(
+        unitSquare = new Mesh( "", aiImportFileFromMemory(
                                         unitSquareMesh.toStringz, unitSquareMesh.length,
                                         aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
                                         aiProcess_JoinIdenticalVertices | aiProcess_SortByPType,
@@ -93,9 +93,9 @@ public:
             if( scene.mNumMeshes > 0 )
             {
                 if( scene.mNumAnimations > 0 )
-                    animations[ file.baseFileName ] = new shared AssetAnimation( scene.mAnimations[ 0 ], scene.mMeshes[ 0 ], scene.mRootNode );
+                    animations[ file.baseFileName ] = new AssetAnimation( scene.mAnimations[ 0 ], scene.mMeshes[ 0 ], scene.mRootNode );
 
-                meshes[ file.baseFileName ] = new shared Mesh( file.fullPath, scene.mMeshes[ 0 ] );
+                meshes[ file.baseFileName ] = new Mesh( file.fullPath, scene.mMeshes[ 0 ] );
             }
             else
             {
@@ -111,7 +111,7 @@ public:
             if( file.baseFileName in textures )
                logWarning( "Texture ", file.baseFileName, " exists more than once." );
 
-            textures[ file.baseFileName ] = new shared Texture( file.fullPath );
+            textures[ file.baseFileName ] = new Texture( file.fullPath );
         }
 
         foreach( object; loadYamlDocuments( FilePath.Resources.Materials ) )

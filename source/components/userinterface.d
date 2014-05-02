@@ -50,8 +50,8 @@ public:
     {
         /// TODO: Check for mouse & keyboard input
 
+        // Send mouse pos to awesomium
         auto mousePos = Input.mousePos();
-
         awe_webview_inject_mouse_move( _view.webView, cast(int)mousePos.x,cast(int)( Graphics.height - mousePos.y ) );
 
         _view.update();
@@ -79,6 +79,11 @@ public:
 
     /*
      * Call a JS Function on this UI
+     * 
+     * Params:
+     *  funcName =          Name of the function to call
+     *  args =              Array of integer args to send to the function
+     *  object =            Name of the js object containing the function. Blank for global function.
      */
     void callJSFunction( string funcName, int[] args, string object = "" )
     {
@@ -102,14 +107,14 @@ public:
         // Execute call
         awe_webview_call_javascript_function( _view.webView, objectStr, funcStr, argArr, frameStr );
 
-        /*
+        
         // Clean up js objects
         for( int i = 0; i < args.length; i++ )
         {
             awe_jsvalue_destroy( jsArgs[i] );
         }
         awe_jsarray_destroy( argArr );
-        */
+        
     }
 
     /*

@@ -609,7 +609,6 @@ public:
 }
 
 // Enums of inputs
-public:
 enum MouseButtons
 {
     Left   = 0x01, /// Left mouse button

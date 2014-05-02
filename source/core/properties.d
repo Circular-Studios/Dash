@@ -4,6 +4,7 @@
  * Authors: Colden Cullen, ColdenCullen@gmail.com
  */
 module core.properties;
+import utility.string;
 
 public import std.traits;
 import std.array;
@@ -13,6 +14,7 @@ enum AccessModifier : string
     Public = "public",
     Protected = "protected",
     Private = "private",
+    Package = "package",
 }
 
 /**
@@ -177,24 +179,12 @@ template ConditionalSetter( alias field, string condition, AccessModifier access
 /**
  * Requires implementation of the isDirty property.
  */
-shared interface IDirtyable
+interface IDirtyable
 {
     @property bool isDirty();
 }
 
 private:
-T replaceMap( T, TKey, TValue )( T base, TKey[TValue] replaceMap ) if( isSomeString!T && isSomeString!TKey && isSomeString!TValue )
-{
-    auto result = base;
-
-    foreach( key, value; replaceMap )
-    {
-        result = result.replace( key, value );
-    }
-
-    return result;
-}
-
 string functionTraitsString( alias func )()
 {
     string result = "";

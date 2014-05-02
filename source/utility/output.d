@@ -46,13 +46,14 @@ enum Verbosity
     Off,
 }
 
-/// Wrapper for logging into default logger instance
 /**
-*   Params:
-*   type     - level of logging
-*   messages - compile-time tuple of printable things
-*              to be written into the log.
-*/
+ * Wrapper for logging into default logger instance
+ *
+ * Params:
+ *   type     - level of logging
+ *   messages - compile-time tuple of printable things
+ *              to be written into the log.
+ */
 void log( A... )( OutputType type, lazy A messages )
 {
     Logger.log( messages.text, type );
@@ -68,8 +69,8 @@ alias logFatal      = logError;
 
 /// Special case is debug logging
 /**
-*   Debug messages are removed in release build.
-*/
+ *   Debug messages are removed in release build.
+ */
 void logDebug( A... )( A messages )
 {
    debug Logger.log( messages.text, OutputType.Debug );
@@ -102,7 +103,7 @@ shared static this()
 *
 *   Overwrites default style to use with local OutputType.
 */
-shared final class GlobalLogger : StyledStrictLogger!(OutputType
+synchronized final class GlobalLogger : StyledStrictLogger!(OutputType
                 , OutputType.Debug,   "Debug: %1$s",   "[%2$s] Debug: %1$s"
                 , OutputType.Info,    "Info: %1$s",    "[%2$s] Info: %1$s"
                 , OutputType.Warning, "Warning: %1$s", "[%2$s] Warning: %1$s"
@@ -131,7 +132,7 @@ shared final class GlobalLogger : StyledStrictLogger!(OutputType
         
         // Try to get new path for logging
         string newFileName;
-        if( Config.tryGet!string( LognameSection, newFileName ) )
+        if( config.tryFind( LognameSection, newFileName ) )
         {
             string oldFileName = this.name; 
             try
@@ -152,7 +153,7 @@ shared final class GlobalLogger : StyledStrictLogger!(OutputType
         
         // Try to get output verbosity from config
         Verbosity outputVerbosity;
-        if( Config.tryGet!Verbosity( OutputVerbositySection, outputVerbosity ) )
+        if( config.tryFind( OutputVerbositySection, outputVerbosity ) )
         {
             minOutputLevel = cast(OutputType)( outputVerbosity ); 
         } 
@@ -164,7 +165,7 @@ shared final class GlobalLogger : StyledStrictLogger!(OutputType
         
         // Try to get logging verbosity from config
         Verbosity loggingVerbosity;
-        if( Config.tryGet!Verbosity( LoggingVerbositySection, loggingVerbosity ) )
+        if( config.tryFind( LoggingVerbositySection, loggingVerbosity ) )
         {
             minLoggingLevel = cast(OutputType)( loggingVerbosity );
         } 

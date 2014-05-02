@@ -25,34 +25,37 @@ LRESULT WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
     switch( message )
     {
+        // On close
         case WM_CLOSE:
-        case WM_DESTROY:
-        case WM_QUIT:
-            PostQuitMessage( 0 );
+            DGame.instance.currentState = EngineState.Quit;
             break;
-            // If key down, send it to input
+        // If key down, send it to input
         case WM_KEYDOWN:
             Input.setKeyState( cast(uint)wParam, true );
             break;
-            // If key up, send it to input
+        // If key up, send it to input
         case WM_KEYUP:
             Input.setKeyState( cast(uint)wParam, false );
             break;
-            // On Mouse Event
+        // On right mouse down
         case WM_RBUTTONDOWN:
-            Input.setKeyState( VK_RBUTTON, true );
+            Input.setKeyState( Keyboard.MouseRight, true );
             break;
-            // On Mouse Event
+        // On right mouse up
         case WM_RBUTTONUP:
-            Input.setKeyState( VK_RBUTTON, false );
+            Input.setKeyState( Keyboard.MouseRight, false );
             break;
-            // On Mouse Event
+        // On left mouse down
         case WM_LBUTTONDOWN:
-            Input.setKeyState( VK_LBUTTON, true );
+            Input.setKeyState( Keyboard.MouseLeft, true );
             break;
-            // On Mouse Event
+        // On right mouse up
         case WM_LBUTTONUP:
-            Input.setKeyState( VK_LBUTTON, false );
+            Input.setKeyState( Keyboard.MouseLeft, false );
+            break;
+        // On mouse scroll
+        case WM_MOUSEWHEEL:
+            Input.setAxisState( Axes.MouseScroll, Input.getAxisState( Axes.MouseScroll ) + ( ( cast(int)wParam >> 16 ) / 120 ) );
             break;
             // If no change, send to default windows handler
         default:
@@ -172,6 +175,17 @@ public:
         
         reload();
         
+        HANDLE hIcon = LoadImage( null, ( FilePath.Resources.Textures ~ "/icon.ico" ).ptr, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_LOADFROMFILE);
+        if( hIcon )
+        {
+            //Change both icons to the same icon handle.
+            SendMessage( hWnd, WM_SETICON, ICON_SMALL, cast(int)hIcon );
+            SendMessage( hWnd, WM_SETICON, ICON_BIG, cast(int)hIcon );
+
+            //This will ensure that the application icon gets changed too.
+            SendMessage( GetWindow( hWnd, GW_OWNER ), WM_SETICON, ICON_SMALL, cast(int)hIcon );
+            SendMessage( GetWindow( hWnd, GW_OWNER ), WM_SETICON, ICON_BIG, cast(int)hIcon );
+        }
     }
 
     /**

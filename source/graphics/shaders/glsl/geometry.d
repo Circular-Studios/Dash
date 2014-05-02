@@ -1,11 +1,11 @@
 /**
-* TODO
+* Geometry pass shader for standard meshes
 */
 module graphics.shaders.glsl.geometry;
 
 package:
 
-/// TODO
+/// Standard mesh vertex shader, transforms position to screen space and normals/tangents to view space
 immutable string geometryVS = q{
     #version 400
 
@@ -37,7 +37,7 @@ immutable string geometryVS = q{
     }
 };
 
-/// TODO
+/// Saves diffuse, specular, mappedNormals (encoded to spheremapped XY), and object ID to appropriate FBO textures
 immutable string geometryFS = q{
     #version 400
 
@@ -75,7 +75,7 @@ immutable string geometryFS = q{
     void main( void )
     {
         color = texture( diffuseTexture, fUV );
-        // specular exponent
+        // specular intensity
         vec3 specularSample = texture( specularTexture, fUV ).xyz;
         color.w = ( specularSample.x + specularSample.y + specularSample.z ) / 3;
         normal_v = vec3( encode( calculateMappedNormal()), float(fObjectId) );

@@ -6,4 +6,5 @@ import graphics.shaders.glsl.geometry;
 import graphics.shaders.glsl.pointlight;
 import graphics.shaders.glsl.animatedgeometry;
 import graphics.shaders.glsl.userinterface;
+import graphics.shaders.glsl.shadowmap;
 import graphics.shaders.glsl.edgedetection;

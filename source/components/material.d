@@ -11,10 +11,11 @@ import std.variant, std.conv, std.string;
 /**
  * A collection of textures that serve different purposes in the rendering pipeline.
  */
-shared final class Material
+final class Material
 {
 private:
     Texture _diffuse, _normal, _specular;
+    bool _isUsed;
 
 public:
     /// The diffuse (or color) map.
@@ -23,13 +24,16 @@ public:
     mixin( Property!(_normal, AccessModifier.Public) );
     /// The specular map, which specifies how shiny a given point is.
     mixin( Property!(_specular, AccessModifier.Public) );
+    /// Whether or not the material is actually used.
+    mixin( Property!( _isUsed, AccessModifier.Package ) );
 
     /**
      * Default constructor, makes sure everything is initialized to default.
      */
     this()
     {
-        _diffuse = _normal = _specular = defaultTex;
+        _diffuse = _specular = defaultTex;
+        _normal = defaultNormal;
     }
 
     /**
@@ -40,31 +44,42 @@ public:
      *
      * Returns: A new material with specified maps.
      */
-    static shared(Material) createFromYaml( Node yamlObj )
+    static Material createFromYaml( Node yamlObj )
     {
-        auto obj = new shared Material;
+        auto obj = new Material;
         string prop;
 
-        if( Config.tryGet( "Diffuse", prop, yamlObj ) )
+        if( yamlObj.tryFind( "Diffuse", prop ) )
             obj.diffuse = Assets.get!Texture( prop );
 
-        if( Config.tryGet( "Normal", prop, yamlObj ) )
+        if( yamlObj.tryFind( "Normal", prop ) )
             obj.normal = Assets.get!Texture( prop );
 
-        if( Config.tryGet( "Specular", prop, yamlObj ) )
+        if( yamlObj.tryFind( "Specular", prop ) )
             obj.specular = Assets.get!Texture( prop );
 
         return obj;
+    }
+
+    /**
+     * Shuts down the material, making sure all references are released.
+     */
+    void shutdown()
+    {
+        _diffuse = _specular = _normal = null;
     }
 }
 
 /**
  * TODO
  */
-shared class Texture
+class Texture
 {
 protected:
-    uint _width, _height, _glID;
+    uint _width = 1;
+    uint _height = 1;
+    uint _glID;
+    bool _isUsed;
 
     /**
      * TODO
@@ -75,7 +90,7 @@ protected:
      */
     this( ubyte* buffer )
     {
-        glGenTextures( 1, cast(uint*)&_glID );
+        glGenTextures( 1, &_glID );
         glBindTexture( GL_TEXTURE_2D, glID );
         updateBuffer( buffer );
     }
@@ -95,7 +110,7 @@ protected:
         // Update texture
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_BGRA, GL_UNSIGNED_BYTE, cast(GLvoid*)buffer );
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_BGRA, GL_UNSIGNED_BYTE, buffer );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
     }
 
@@ -106,6 +121,8 @@ public:
     mixin( Property!_height );
     /// TODO
     mixin( Property!_glID );
+    /// Whether or not the texture is actually used.
+    mixin( Property!( _isUsed, AccessModifier.Package ) );
 
     /**
      * TODO
@@ -137,30 +154,39 @@ public:
     void shutdown()
     {
         glBindTexture( GL_TEXTURE_2D, 0 );
-        glDeleteBuffers( 1, cast(uint*)&_glID );
+        glDeleteBuffers( 1, &_glID );
     }
 }
 
 /**
- * TODO
- *
- * Params:
- *
- * Returns:
+ * A default black texture.
  */
-@property shared(Texture) defaultTex()
+@property Texture defaultTex()
 {
-    static shared Texture def;
+    static Texture def;
 
     if( !def )
-        def = new shared Texture( [0, 0, 0, 255] );
+        def = new Texture( [cast(ubyte)0, cast(ubyte)0, cast(ubyte)0, cast(ubyte)255].ptr );
+
+    return def;
+}
+
+/**
+ * A default gray texture
+ */
+@property Texture defaultNormal()
+{
+    static Texture def;
+
+    if( !def )
+        def = new Texture( [cast(ubyte)255, cast(ubyte)127, cast(ubyte)127, cast(ubyte)255].ptr );
 
     return def;
 }
 
 static this()
 {
-    IComponent.initializers[ "Material" ] = ( Node yml, shared GameObject obj )
+    IComponent.initializers[ "Material" ] = ( Node yml, GameObject obj )
     {
         obj.material = Assets.get!Material( yml.get!string );
         return null;

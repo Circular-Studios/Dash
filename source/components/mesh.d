@@ -48,11 +48,12 @@ import std.stdio, std.stream, std.format, std.math;
  *  Ogre XML
  *  Q3D
  */
-shared class Mesh : IComponent
+class Mesh : IComponent
 {
 private:
     uint _glVertexArray, _numVertices, _numIndices, _glIndexBuffer, _glVertexBuffer;
     bool _animated;
+    bool _isUsed;
     AABB _boundingBox;
 
 public:
@@ -70,6 +71,8 @@ public:
     mixin( Property!_animated );
     /// The bounding box of the mesh.
     mixin( RefGetter!_boundingBox );
+    /// Whether or not the material is actually used.
+    mixin( Property!( _isUsed, AccessModifier.Package ) );
 
     /**
      * Creates a mesh.
@@ -165,7 +168,7 @@ public:
                         outputData ~= vertWeights[ face.mIndices[ j ] ][0..4];
 
                         // Save the position in verts
-                        boundingBox.expand( shared vec3( pos.x, pos.y, pos.z ) );
+                        boundingBox.expand( vec3( pos.x, pos.y, pos.z ) );
                     }
                 }
             }
@@ -208,7 +211,7 @@ public:
                         //outputData ~= bitangent.z;
 
                         // Save the position in verts
-                        boundingBox.expand( shared vec3( pos.x, pos.y, pos.z ) );
+                        boundingBox.expand( vec3( pos.x, pos.y, pos.z ) );
                     }
                 }
             }
@@ -227,11 +230,11 @@ public:
         }
         
         // make and bind the VAO
-        glGenVertexArrays( 1, cast(uint*)&_glVertexArray );
+        glGenVertexArrays( 1, &_glVertexArray );
         glBindVertexArray( glVertexArray );
 
         // make and bind the VBO
-        glGenBuffers( 1, cast(uint*)&_glVertexBuffer );
+        glGenBuffers( 1, &_glVertexBuffer );
         glBindBuffer( GL_ARRAY_BUFFER, glVertexBuffer );
 
         // Buffer the data
@@ -288,8 +291,8 @@ public:
      */
     override void shutdown()
     {
-        glDeleteBuffers( 1, cast(uint*)&_glVertexBuffer );
-        glDeleteBuffers( 1, cast(uint*)&_glVertexArray );
+        glDeleteBuffers( 1, &_glVertexBuffer );
+        glDeleteBuffers( 1, &_glVertexArray );
     }
 }
 
@@ -304,9 +307,9 @@ public:
  */
 private float calcTangentHandedness( aiVector3D nor, aiVector3D tan, aiVector3D bit )
 {
-    shared vec3 n = vec3( nor.x, nor.y, nor.z );
-    shared vec3 t = vec3( tan.x, tan.y, tan.z );
-    shared vec3 b = vec3( bit.x, bit.y, bit.z );
+    vec3 n = vec3( nor.x, nor.y, nor.z );
+    vec3 t = vec3( tan.x, tan.y, tan.z );
+    vec3 b = vec3( bit.x, bit.y, bit.z );
 
     //Gramm-schmidt
     t = (t - n * dot( n, t )).normalized();
@@ -317,14 +320,14 @@ private float calcTangentHandedness( aiVector3D nor, aiVector3D tan, aiVector3D 
 static this()
 {
     import yaml;
-    IComponent.initializers[ "Mesh" ] = ( Node yml, shared GameObject obj )
+    IComponent.initializers[ "Mesh" ] = ( Node yml, GameObject obj )
     {
         obj.mesh = Assets.get!Mesh( yml.get!string );
         
         // If the mesh has animation also add animation component
         if( obj.mesh.animated )
         {
-            auto anim = new shared Animation( Assets.get!AssetAnimation( yml.get!string ) );
+            auto anim = new Animation( Assets.get!AssetAnimation( yml.get!string ) );
             obj.addComponent( anim );
             obj.animation = anim;
         }

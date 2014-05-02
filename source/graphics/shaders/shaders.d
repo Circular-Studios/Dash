@@ -21,6 +21,8 @@ private enum ShaderUniform
     WorldView = "worldView",
     WorldViewProjection = "worldViewProj",
     InverseProjection = "invProj",
+    LightProjectionView = "lightProjView",
+    CameraView = "cameraView",
     /// Floats
     ProjectionConstants = "projectionConstants",
     /// Textures
@@ -29,6 +31,7 @@ private enum ShaderUniform
     NormalTexture = "normalTexture",
     SpecularTexture = "specularTexture",
     DepthTexture = "depthTexture",
+    ShadowMap = "shadowMap",
     /// Lights
     LightDirection = "light.direction",
     LightColor = "light.color",
@@ -69,6 +72,10 @@ public:
     Shader pointLight;
     /// User Interface shader
     Shader userInterface;
+    /// Shader for depth of inanimate objects.
+    Shader shadowMap;
+    /// Shader for depth of animated objects.
+    Shader animatedShadowMap;
 
     /**
     * Loads the field-shaders first, then any additional shaders in the Shaders folder
@@ -81,6 +88,8 @@ public:
         directionalLight = new Shader( "DirectionalLight", directionallightVS, directionallightFS, true );
         pointLight = new Shader( "PointLight", pointlightVS, pointlightFS, true );
         userInterface = new Shader( "UserInterface", userinterfaceVS, userinterfaceFS, true );
+        shadowMap = new Shader( "ShadowMap", shadowmapVS, shadowmapFS, true );
+        animatedShadowMap = new Shader( "AnimatedShadowMap", animatedshadowmapVS, shadowmapFS, true );
 
         foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders, "*.fs.glsl" ) )
         {
@@ -374,10 +383,10 @@ public:
     }
 
     /**
-     * TODO
+     * Clean up the shader
      */
     void shutdown()
     {
-        // please write me :(
+        glDeleteProgram( programID );
     }
 }

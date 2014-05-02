@@ -33,13 +33,34 @@ public static:
                 {
                     enum parseType( string type ) = q{
                         case "$type":
-                            try
+                            if( value.isScalar )
                             {
-                                $type.buttonBindings[ name ] ~= value.get!string.to!($type.Buttons);
+                                try
+                                {
+                                    $type.buttonBindings[ name ] ~= value.get!string.to!($type.Buttons);
+                                }
+                                catch( Exception e )
+                                {
+                                    logFatal( "Failed to parse keybinding for input ", name, ": ", e.msg );
+                                }
                             }
-                            catch( Exception e )
+                            else if( value.isSequence )
                             {
-                                logFatal( "Failed to parse keybinding for input ", name, ": ", e.msg );
+                                foreach( Node element; value )
+                                {
+                                    try
+                                    {
+                                        $type.buttonBindings[ name ] ~= element.get!string.to!($type.Buttons);
+                                    }
+                                    catch( Exception e )
+                                    {
+                                        logFatal( "Failed to parse keybinding for input ", name, ": ", e.msg );
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                logFatal( "Failed to parse keybinding for input ", name, ": Mappings not allowed." );
                             }
                             break;
                     }.replaceMap( [ "$type": type ] );

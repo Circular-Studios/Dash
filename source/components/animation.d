@@ -83,16 +83,19 @@ public:
         _animating = false;
         _currentAnimTime = 0.0f;
     }
-	/**
-	* Switches the current animation
-	*/
-	void changeAnimation( int animNumber )
-	{
-		if( animNumber < _animationData.animationset.length )
-			_currentAnim = animNumber;
-		else
-			logWarning( "Could not change to new animation, the animation did not exist." );
-	}
+    /**
+    * Switches the current animation
+    */
+    void changeAnimation( int animNumber, int startAnimTime )
+    {
+        if( animNumber < _animationData.animationSet.length )
+        {
+            _currentAnim = animNumber;
+            _currentAnimTime = startAnimTime;
+        }
+        else
+            logWarning( "Could not change to new animation, the animation did not exist." );
+    }
 
     /**
     * Shutdown the gameobjects animation data
@@ -113,8 +116,8 @@ private:
     AnimationSet[] _animationSet;
     /// Amount of bones
     int _numberOfBones;
-	/// Hierarchy of bones for this animation
-	Bone boneHierarchy;
+    /// Hierarchy of bones for this animation
+    Bone boneHierarchy;
     bool _isUsed;
 
 public:
@@ -129,11 +132,12 @@ public:
      * Create the assetanimation, parsing all of the animation data
      *
      * Params:
-     *      animation =     Assimp animation/poses object
+     *      animations =    List of assimp animation/poses object
+     *      numAnimations = Number of 
      *      mesh =          Assimp mesh/bone object
      *      nodeHierarchy = Hierarchy of bones/filler nodes used for the animation
      */
-    this( const(aiAnimation*) animation, const(aiMesh*) mesh, const(aiNode*) nodeHierarchy )
+    this( const(aiAnimation**) animations, int numAnimations, const(aiMesh*) mesh, const(aiNode*) nodeHierarchy )
     {
         for( int i = 0; i < nodeHierarchy.mNumChildren; i++)
         {
@@ -144,8 +148,8 @@ public:
             }
         }
 
-		addAnimationSet( animation );
-		addAnimationSet( animation );
+        for( int ii = 0; ii < numAnimations; ii++)
+            addAnimationSet( animations[ ii ], 24 );
     }
 
     /**
@@ -176,13 +180,13 @@ public:
 
         for( int i = 0; i < currNode.mNumChildren; i++ )
         {
-			string childName = currNode.mChildren[ i ].mName.data.ptr.fromStringz;
-			int childBoneNumber = findBoneWithName( childName, mesh );
+            string childName = currNode.mChildren[ i ].mName.data.ptr.fromStringz;
+            int childBoneNumber = findBoneWithName( childName, mesh );
 
-			// Ensure end nodes are bones, otherwise do not keep 
+            // Ensure end nodes are bones, otherwise do not keep 
             if( boneNumber != -1 && childBoneNumber != -1 )
                 bone.children ~= makeBonesFromHierarchy( mesh, currNode.mChildren[ i ] );
-			else if( childBoneNumber != -1 )
+            else if( childBoneNumber != -1 )
                 return makeBonesFromHierarchy( mesh, currNode.mChildren[ i ] );
         }
 
@@ -210,31 +214,31 @@ public:
         return -1;
     }
 
-	void addAnimationSet( const(aiAnimation*) animation )
-	{
-		AnimationSet newAnimSet;
-		newAnimSet.duration = cast(float)animation.mDuration;
-        newAnimSet.fps = cast(float)animation.mTicksPerSecond;
-		for( int i = 0; i < _numberOfBones; i++)
-		{
-			newAnimSet.bonePoses ~= new BonePose();
-		}
-		addPoses( animation, boneHierarchy, newAnimSet );
-		_animationSet ~= newAnimSet;
-	}
-	void addPoses( const(aiAnimation*) animation, Bone currBone, AnimationSet newAnimSet )
-	{
-		if( currBone.boneNumber != -1 )
-		{
-			assignAnimationData( animation, currBone.name, newAnimSet.bonePoses[ currBone.boneNumber ] );
-		}
+    void addAnimationSet( const(aiAnimation*) animation, int fps )
+    {
+        AnimationSet newAnimSet;
+        newAnimSet.duration = cast(float)animation.mDuration;
+        newAnimSet.fps = fps;
+        for( int i = 0; i < _numberOfBones; i++)
+        {
+            newAnimSet.bonePoses ~= new BonePose();
+        }
+        addPoses( animation, boneHierarchy, newAnimSet );
+        _animationSet ~= newAnimSet;
+    }
+    void addPoses( const(aiAnimation*) animation, Bone currBone, AnimationSet newAnimSet )
+    {
+        if( currBone.boneNumber != -1 )
+        {
+            assignAnimationData( animation, currBone.name, newAnimSet.bonePoses[ currBone.boneNumber ] );
+        }
 
         // Add to children
         for( int i = 0; i < currBone.children.length; i++ )
         {
             addPoses( animation, currBone.children[ i ], newAnimSet );
         }
-	}
+    }
     /**
      * Access the animation channels to find a match with the bone, then store its animation data
      *
@@ -292,7 +296,7 @@ public:
      */
     void fillTransforms( BonePose[] bonePoses, mat4[] transforms, Bone bone, float time, mat4 parentTransform )
     {
-		BonePose bonePose = bonePoses[ bone.boneNumber ];
+        BonePose bonePose = bonePoses[ bone.boneNumber ];
         mat4 finalTransform;
         if( bonePose.positionKeys.length == 0 && bonePose.rotationKeys.length == 0 && bonePose.scaleKeys.length == 0 )
         {
@@ -306,7 +310,7 @@ public:
             if( bonePose.positionKeys.length > cast(int)time )
             {
                 boneTransform = boneTransform.translation( bonePose.positionKeys[ cast(int)time ].vector[ 0 ], 
-														   bonePose.positionKeys[ cast(int)time ].vector[ 1 ], 
+                                                           bonePose.positionKeys[ cast(int)time ].vector[ 1 ], 
                                                            bonePose.positionKeys[ cast(int)time ].vector[ 2 ] );
             }
             if( bonePose.rotationKeys.length > cast(int)time )
@@ -316,8 +320,8 @@ public:
             if( bonePose.scaleKeys.length > cast(int)time )
             {
                 boneTransform = boneTransform.scale( bonePose.scaleKeys[ cast(int)time ].vector[ 0 ], 
-													 bonePose.scaleKeys[ cast(int)time ].vector[ 1 ], 
-													 bonePose.scaleKeys[ cast(int)time ].vector[ 2 ] );
+                                                     bonePose.scaleKeys[ cast(int)time ].vector[ 1 ], 
+                                                     bonePose.scaleKeys[ cast(int)time ].vector[ 2 ] );
             }
 
             finalTransform = parentTransform * boneTransform;
@@ -341,7 +345,7 @@ public:
      * Returns: The vectors in vector[] format
      */ 
     vec3[] convertVectorArray( const(aiVectorKey*) vectors, int numKeys ) 
-	{
+    {
         vec3[] keys;
         for( int i = 0; i < numKeys; i++ )
         {
@@ -418,17 +422,17 @@ public:
     {
         float duration;
         float fps;
-		BonePose[] bonePoses;
+        BonePose[] bonePoses;
     }
-	/**
-	* All the bone transforms/rotations/scales for a sc
-	*/
-	class BonePose
-	{
-		vec3[] positionKeys;
+    /**
+    * All the bone transforms/rotations/scales for a sc
+    */
+    class BonePose
+    {
+        vec3[] positionKeys;
         quat[] rotationKeys;
         vec3[] scaleKeys;
-	}
+    }
     /**
      * A bone in the animation, storing everything it needs
      */

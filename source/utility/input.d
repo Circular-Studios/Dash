@@ -31,33 +31,23 @@ public static:
             {
                 foreach( string type, Node value; bind )
                 {
-                    enum parseType( string type, string enumName = type ) = q{
+                    enum parseType( string type ) = q{
                         case "$type":
                             try
                             {
-                                keyboardBindings[ name ] ~= value.get!string.to!$enumName;
+                                $type.buttonBindings[ name ] ~= value.get!string.to!($type.Buttons);
                             }
                             catch( Exception e )
                             {
                                 logFatal( "Failed to parse keybinding for input ", name, ": ", e.msg );
                             }
                             break;
-                    }.replaceMap( [ "$type": type, "$enumName": enumName ] );
+                    }.replaceMap( [ "$type": type ] );
 
                     final switch( type )
                     {
-                        //mixin( parseType!( "Keyboard", q{Keys} ) );
-                        case "Keyboard":
-                            try
-                            {
-                                Keyboard.buttonBindings[ name ] ~= value.get!string.to!(Keyboard.Buttons);
-                            }
-                            catch( Exception e )
-                            {
-                                logFatal( "Failed to parse keybinding for input ", name, ": ", e.msg );
-                            }
-                            break;
-                        //mixin( parseType!( "Axis", q{Axes} ) );
+                        mixin( parseType!q{Keyboard} );
+                        mixin( parseType!q{Mouse} );
                     }
                 }
             }

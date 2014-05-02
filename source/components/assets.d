@@ -27,7 +27,7 @@ private:
     AssetAnimation[string] animations;
 
 public:
-    /// TODO
+    /// Basic quad, generally used for billboarding.
     Mesh unitSquare;
 
     /**

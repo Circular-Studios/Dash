@@ -75,7 +75,7 @@ immutable string geometryFS = q{
     void main( void )
     {
         color = texture( diffuseTexture, fUV );
-        // specular exponent
+        // specular intensity
         vec3 specularSample = texture( specularTexture, fUV ).xyz;
         color.w = ( specularSample.x + specularSample.y + specularSample.z ) / 3;
         normal_v = vec3( encode( calculateMappedNormal()), float(fObjectId) );

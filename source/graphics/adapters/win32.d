@@ -31,31 +31,31 @@ LRESULT WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
             break;
         // If key down, send it to input
         case WM_KEYDOWN:
-            Input.setKeyState( cast(uint)wParam, true );
+            Keyboard.setButtonState( cast(Keyboard.Buttons)wParam, true );
             break;
         // If key up, send it to input
         case WM_KEYUP:
-            Input.setKeyState( cast(uint)wParam, false );
+            Keyboard.setButtonState( cast(Keyboard.Buttons)wParam, false );
             break;
         // On right mouse down
         case WM_RBUTTONDOWN:
-            Input.setKeyState( Keys.MouseRight, true );
+            Mouse.setButtonState( Mouse.Buttons.Right, true );
             break;
         // On right mouse up
         case WM_RBUTTONUP:
-            Input.setKeyState( Keys.MouseRight, false );
+            Mouse.setButtonState( Mouse.Buttons.Right, false );
             break;
         // On left mouse down
         case WM_LBUTTONDOWN:
-            Input.setKeyState( Keys.MouseLeft, true );
+            Mouse.setButtonState( Mouse.Buttons.Left, true );
             break;
-        // On right mouse up
+        // On left mouse up
         case WM_LBUTTONUP:
-            Input.setKeyState( Keys.MouseLeft, false );
+            Mouse.setButtonState( Mouse.Buttons.Left, false );
             break;
         // On mouse scroll
         case WM_MOUSEWHEEL:
-            Input.setAxisState( Axes.MouseScroll, Input.getAxisState( Axes.MouseScroll ) + ( ( cast(int)wParam >> 16 ) / 120 ) );
+            Mouse.setAxisState( Mouse.Axes.ScrollWheel, Mouse.getAxisState( Mouse.Axes.ScrollWheel ) + ( ( cast(int)wParam >> 16 ) / 120 ) );
             break;
             // If no change, send to default windows handler
         default:

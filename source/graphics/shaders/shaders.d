@@ -25,7 +25,7 @@ private enum ShaderUniform
     CameraView = "cameraView",
     /// Floats
     ProjectionConstants = "projectionConstants",
-    PixelOffsets = "PixelOffsets",
+    PixelOffsets = "pixelOffsets",
     /// Textures
     UITexture = "uiTexture",
     DiffuseTexture = "diffuseTexture",
@@ -76,7 +76,8 @@ public:
     /// Shader for depth of inanimate objects.
     Shader shadowMap;
     /// Shader for depth of animated objects.
-    Shader animatedShadowMap;    /// Edge Detection shader program
+    Shader animatedShadowMap;    
+	/// Edge Detection shader program
     Shader edgeDetection;
     /**
     * Loads the field-shaders first, then any additional shaders in the Shaders folder    */
@@ -88,8 +89,10 @@ public:
         directionalLight = new Shader( "DirectionalLight", directionallightVS, directionallightFS, true );
         pointLight = new Shader( "PointLight", pointlightVS, pointlightFS, true );
         userInterface = new Shader( "UserInterface", userinterfaceVS, userinterfaceFS, true );
-        shadowMap = new Shader( "ShadowMap", shadowmapVS, shadowmapFS, true );        animatedShadowMap = new Shader( "AnimatedShadowMap", animatedshadowmapVS, shadowmapFS, true );
+        shadowMap = new Shader( "ShadowMap", shadowmapVS, shadowmapFS, true );        
+		animatedShadowMap = new Shader( "AnimatedShadowMap", animatedshadowmapVS, shadowmapFS, true );
         edgeDetection = new Shader( "EdgeDetection", edgedetectionVS, edgedetectionFS, true );
+
         foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders, "*.fs.glsl" ) )
         {
             // Strip .fs from file name

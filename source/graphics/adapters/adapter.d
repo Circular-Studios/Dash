@@ -448,6 +448,31 @@ public:
             glBindVertexArray(0);
         }
 
+		/**
+		 * Detects Edges in scene
+		 */
+		void edgePass()
+		{
+			Shader shader = Shaders.edgeDetection;
+			glUseProgram( shader.programID );
+			glBindVertexArray( Assets.unitSquare.glVertexArray );
+
+			// normal
+			glUniform1i( shader.NormalTexture, 0 );
+			glActiveTexture( GL_TEXTURE0 );
+			glBindTexture( GL_TEXTURE_2D, _normalRenderTexture );
+
+			// depth
+			glUniform1i( shader.DepthTexture, 1 );
+			glActiveTexture( GL_TEXTURE1 );
+			glBindTexture( GL_TEXTURE_2D, _depthRenderTexture );
+
+            shader.bindUniform2f( shader.PixelOffsets, vec2( 1.0f / width, 1.0f / height ) );
+            glDrawElements( GL_TRIANGLES, Assets.unitSquare.numVertices, GL_UNSIGNED_INT, null );
+
+            glBindVertexArray(0);
+		}
+
         glBindFramebuffer( GL_FRAMEBUFFER, _deferredFrameBuffer );
         // must be called before glClear to clear the depth buffer, otherwise depth buffer won't be cleared
         glDepthMask( GL_TRUE );
@@ -459,7 +484,7 @@ public:
 
         //glCullFace( GL_FRONT );
 
-        shadowPass();
+        //shadowPass();
 
         //glCullFace( GL_BACK );
         glViewport( 0, 0, Graphics.width, Graphics.height );
@@ -474,11 +499,12 @@ public:
         glBindFramebuffer( GL_FRAMEBUFFER, 0 );
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-        lightPass();
+        //lightPass();
+        edgePass();
 
         glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
-        uiPass();
+        //uiPass();
 
         // put it on the screen
         swapBuffers();

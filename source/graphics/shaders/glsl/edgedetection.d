@@ -45,6 +45,11 @@ immutable string edgedetectionFS = q{
         vec2( -1.0, 0.0 ) //left          8
     );
 
+    const vec2 delta[8] = vec2[](
+        vec2(-1,1),vec2(1,-1),vec2(-1,1),vec2(1,1),
+        vec2(-1,0),vec2(1,0),vec2(0,-1),vec2(0,-1)
+    );
+
     // Function for decoding normals
     vec3 decode( vec2 enc )
     {
@@ -53,14 +58,14 @@ immutable string edgedetectionFS = q{
         return vec3( ti * enc.x, ti * enc.y, -1 + t * 2 );
     }
 
-    void main( void )
+    float getEdgeWeight( in vec2 UV )
     {
         float depths[9];
         vec3 normals[9];
 
         for( int i = 0; i < 9; i++ )
         {
-            vec2 uv = fUV;
+            vec2 uv = UV;
             uv.x += offsets[i].x * pixelOffsets.x;
             uv.y += offsets[i].y * pixelOffsets.y;
             depths[i] = texture( depthTexture, uv ).x;
@@ -109,6 +114,25 @@ immutable string edgedetectionFS = q{
         // independent of the angles involved, an arccos function would be required.  
         vec4 normalResults = step( 0.4, deltas1 );
         normalResults = max( normalResults, depthResults );
-        color = ( normalResults.x + normalResults.y + normalResults.z + normalResults.w ) * .25;
+        return ( normalResults.x + normalResults.y + normalResults.z + normalResults.w ) * .25;
+    }
+
+    void main( void )
+    {
+        vec3 norm = decode( texture( normalTexture, fUV ).xy );
+        float factor = 0.0f;
+
+        for( int i = 0; i < 4; i++ )
+        {
+            vec2 uv = fUV;
+            uv.x += delta[i].x * pixelOffsets.x;
+            uv.y += delta[i].y * pixelOffsets.y;
+            vec3 n = decode( texture( normalTexture, uv ).xy );
+            n -= norm;
+            factor += dot( n, n );
+        }
+
+        factor = clamp( getEdgeWeight( fUV ), 0.0f, 1.0f );
+        color = factor;
     }
 };

@@ -21,6 +21,10 @@ public static:
     alias void delegate( uint, bool ) KeyEvent;
     /// ditto
     alias void delegate( uint ) KeyStateEvent;
+    /**
+     * Function called when key event triggers.
+     */
+    alias void delegate( uint, float ) AxisEvent;
 
     /**
      * Processes Config/Input.yml and pulls input string bindings.
@@ -35,52 +39,38 @@ public static:
         foreach( key; keyEvents.keys )
             keyEvents.remove( key );
 
+        foreach( key; axisEvents.keys )
+            axisEvents.remove( key );
+
         foreach( string name, Node bind; bindings )
         {
-            if( bind.isScalar )
-            {
-                keyBindings[ name ] ~= bind.get!Keyboard;
-            }
-            else if( bind.isSequence )
-            {
-                foreach( Node child; bind )
-                {
-                    try
-                    {
-                        keyBindings[ name ] ~= child.get!Keyboard;
-                    }
-                    catch
-                    {
-                        logFatal( "Failed to parse keybinding for input ", name );
-                    }
-                }
-            }
-            else if( bind.isMapping )
+            if( bind.isMapping )
             {
                 foreach( string type, Node value; bind )
                 {
-                    final switch( type )
-                    {
-                        case "Keyboard":
+                    enum parseType( string type, string enumName = type ) = q{
+                        case "$type":
                             try
                             {
-                                keyBindings[ name ] ~= value.get!Keyboard;
+                                keyBindings[ name ] ~= value.get!string.to!$enumName;
                             }
-                            catch
+                            catch( Exception e )
                             {
-                                try
-                                {
-                                    keyBindings[ name ] ~= value.get!string.to!Keyboard;
-                                }
-                                catch
-                                {
-                                    logFatal( "Failed to parse keybinding for input ", name );
-                                }
+                                logFatal( "Failed to parse keybinding for input ", name, ": ", e.msg );
                             }
-
                             break;
+                    }.replaceMap( [ "$type": type, "$enumName": enumName ] );
+
+                    final switch( type )
+                    {
+                        mixin( parseType!"Keyboard" );
+                        mixin( parseType!( "Axis", q{Axes} ) );
                     }
                 }
+            }
+            else
+            {
+                logWarning( "Unsupported input format for ", name, "." );
             }
         }
     }
@@ -90,15 +80,22 @@ public static:
      */
     final void update()
     {
-        auto diff = staging - current;
+        auto diffKeys = stagingKeys - currentKeys;
+        previousKeys = currentKeys;
+        currentKeys = stagingKeys;
 
-        previous = current;
-        current = staging;
-        //staging.reset();
+        auto diffAxis = stagingAxis - currentAxis;
+        previousAxis = currentAxis;
+        currentAxis = stagingAxis;
 
-        foreach( state; diff )
+        foreach( state; diffKeys )
             if( auto keyEvent = state[ 0 ] in keyEvents )
                 foreach( event; *keyEvent )
+                    event( state[ 0 ], state[ 1 ] );
+
+        foreach( state; diffAxis )
+            if( auto axisEvent = state[ 0 ] in axisEvents )
+                foreach( event; *axisEvent )
                     event( state[ 0 ], state[ 1 ] );
     }
 
@@ -187,6 +184,18 @@ public static:
     }
 
     /**
+     * Add an event to be fired when the given axis changes.
+     *
+     * Params:
+     *      inputName = The name of the input to add the event to.
+     *      func =      The function to call when the key state changes.
+     */
+    final void addAxisEvent( uint keyCode, AxisEvent func )
+    {
+        axisEvents[ keyCode ] ~= func;
+    }
+
+    /**
      * Check if a given key is down.
      *
      * Params:
@@ -195,7 +204,7 @@ public static:
      */
     final bool isKeyDown( uint keyCode, bool checkPrevious = false )
     {
-        return current[ keyCode ] && ( !checkPrevious || !previous[ keyCode ] );
+        return currentKeys[ keyCode ] && ( !checkPrevious || !previousKeys[ keyCode ] );
     }
     unittest
     {
@@ -224,7 +233,7 @@ public static:
      */
     final bool isKeyUp( uint keyCode, bool checkPrevious = false )
     {
-        return !current[ keyCode ] && ( !checkPrevious || previous[ keyCode ] );
+        return !currentKeys[ keyCode ] && ( !checkPrevious || previousKeys[ keyCode ] );
     }
     unittest
     {
@@ -248,12 +257,34 @@ public static:
     }
 
     /**
+     * Get the state of a given access
+     *
+     * Params:
+     *  axisCod =       The axis to get the state of.
+     *
+     * Returns: The value of axis.
+     */
+    final float getAxisState( uint axisCode )
+    {
+        return currentAxis[ axisCode ];
+    }
+
+    /**
      * Sets the state of the key to be assigned at the beginning of next frame.
      * Should only be called from a window controller.
      */
     final void setKeyState( uint keyCode, bool newState )
     {
-        staging[ keyCode ] = newState;
+        stagingKeys[ keyCode ] = newState;
+    }
+
+    /**
+     * Sets the state of the axis to be assigned at the beginning of next frame.
+     * Should only be called from a window controller.
+     */
+    final void setAxisState( uint axisCode, float newState )
+    {
+        stagingAxis[ axisCode ] = newState;
     }
 
     /**
@@ -417,26 +448,32 @@ public static:
     }
 
 private:
-    Keyboard[][ string ] keyBindings;
+    uint[][ string ] keyBindings;
 
     KeyEvent[][ uint ] keyEvents;
+    AxisEvent[][ uint ] axisEvents;
 
-    KeyState current;
-    KeyState previous;
-    KeyState staging;
+    State!( bool, 256 ) currentKeys;
+    State!( bool, 256 ) previousKeys;
+    State!( bool, 256 ) stagingKeys;
 
-    this() { }
+    State!( float, 2 ) currentAxis;
+    State!( float, 2 ) previousAxis;
+    State!( float, 2 ) stagingAxis;
 
-    struct KeyState
+    static this()
+    {
+        currentAxis.reset();
+        previousAxis.reset();
+        stagingAxis.reset();
+    }
+
+    struct State( T, uint totalSize )
     {
     public:
-        enum TotalSize = 256u;
-        enum ElementSize = uint.sizeof;
-        enum Split = TotalSize / ElementSize;
+        T[ totalSize ] keys;
 
-        bool[ TotalSize ] keys;
-
-        ref KeyState opAssign( const ref KeyState other )
+        ref State!( T, totalSize ) opAssign( const ref State!( T, totalSize ) other )
         {
             for( uint ii = 0; ii < other.keys.length; ++ii )
                 keys[ ii ] = other.keys[ ii ];
@@ -444,24 +481,24 @@ private:
             return this;
         }
 
-        bool opIndex( size_t keyCode ) const
+        T opIndex( size_t keyCode ) const
         {
             return keys[ keyCode ];
         }
 
-        bool opIndexAssign( bool newValue, size_t keyCode )
+        T opIndexAssign( T newValue, size_t keyCode )
         {
             keys[ keyCode ] = newValue;
             return newValue;
         }
 
-        Tuple!( uint, bool )[] opBinary( string Op : "-" )( const ref KeyState other )
+        Tuple!( uint, T )[] opBinary( string Op : "-" )( const ref State!( T, totalSize ) other )
         {
-            Tuple!( uint, bool )[] differences;
+            Tuple!( uint, T )[] differences;
 
             for( uint ii = 0; ii < keys.length; ++ii )
                 if( this[ ii ] != other[ ii ] )
-                    differences ~= Tuple!( uint, bool )( ii, this[ ii ] );
+                    differences ~= tuple( ii, this[ ii ] );
 
             return differences;
         }
@@ -469,9 +506,15 @@ private:
         void reset()
         {
             for( uint ii = 0; ii < keys.length; ++ii )
-                keys[ ii ] = false;
+                keys[ ii ] = 0;
         }
     }
+}
+
+/// Axes of input
+enum Axes: uint
+{
+    MouseScroll,
 }
 
 /**

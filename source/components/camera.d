@@ -164,6 +164,45 @@ public:
     }
 
     /**
+     * Creates a view matrix looking at a position.
+     *
+     * Params:
+     *  targetPos = The position for the camera to look at.
+     *  cameraPos = The camera's position.
+     *  worldUp = The up direction in the world.
+     *
+     * Returns: 
+     * A right handed view matrix for the given params.
+     */
+    final static shared(mat4) lookAt( vec3 targetPos, vec3 cameraPos, vec3 worldUp = vec3(0,1,0) )
+    {
+        vec3 zaxis = ( cameraPos - targetPos );
+        zaxis.normalize;
+        vec3 xaxis = cross( worldUp, zaxis );
+        xaxis.normalize;
+        vec3 yaxis = cross( zaxis, xaxis );
+
+        mat4 result = mat4.identity;
+
+        result[0][0] = xaxis.x;
+        result[1][0] = xaxis.y;
+        result[2][0] = xaxis.z;
+        result[3][0] = -dot( xaxis, cameraPos );
+        result[0][1] = yaxis.x;
+        result[1][1] = yaxis.y;
+        result[2][1] = yaxis.z;
+        result[3][1] = -dot( yaxis, cameraPos );
+        result[0][2] = zaxis.x;
+        result[1][2] = zaxis.y;
+        result[2][2] = zaxis.z;
+        result[3][2] = -dot( zaxis, cameraPos );
+
+        return result.transposed;
+    }
+
+
+
+    /**
      * TODO
      *
      * Params:

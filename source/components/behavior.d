@@ -60,7 +60,7 @@ abstract class Behavior( InitType = void ) : ABehavior
                 {
                     if( klass.base == typeid(Behavior!InitType) )
                     {
-                        getInitParams[ klass.name ] = &Config.getObject!InitType;
+                        getInitParams[ klass.name ] = &getObject!InitType;
                     }
                 }
             }

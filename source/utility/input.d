@@ -7,13 +7,35 @@ import utility, core, graphics;
 import yaml, gl3n.linalg;
 import derelict.opengl3.gl3;
 import core.sync.mutex;
-import std.typecons, std.conv;
+import std.typecons, std.conv, std.traits;
 
 /**
  * Manages all input events.
  */
 final abstract class Input
 {
+private:
+    enum passThrough( string functionName, string args ) = q{
+        void $functionName( string inputName, void delegate( $args ) func )
+        {
+            bool eventAdded = false;
+            try
+            {
+                Keyboard.$functionName( inputName, cast(ParameterTypeTuple!(__traits(getMember, Keyboard, "$functionName"))[ 1 ])func );
+                eventAdded = true;
+            }
+            catch( Exception e ) { }
+            try
+            {
+                Mouse.$functionName( inputName, cast(ParameterTypeTuple!(__traits(getMember, Mouse, "$functionName"))[ 1 ])func );
+                eventAdded = true;
+            }
+            catch( Exception e ) { }
+
+            if( !eventAdded )
+                throw new Exception( "Name " ~ inputName ~ " not bound." );
+        }
+    }.replaceMap( [ "$functionName": functionName, "$args": args ] );
 public static:
     /**
      * Processes Config/Input.yml and pulls input string bindings.
@@ -79,6 +101,14 @@ public static:
         }
     }
 
+    /**
+     * Updates the key states, and calls all key events.
+     */
+    void update()
+    {
+        Keyboard.update();
+        Mouse.update();
+    }
 
     /**
      * Gets the state of a string-bound input.
@@ -93,11 +123,11 @@ public static:
         {
             if( input in Keyboard.buttonBindings )
             {
-                return Keyboard.getButtonState( input );
+                return Keyboard.isButtonDown( input, checkPrevious );
             }
             else if( input in Mouse.buttonBindings )
             {
-                return Mouse.getButtonState( input );
+                return Mouse.isButtonDown( input, checkPrevious );
             }
         }
         else static if( is( T == float ) )
@@ -116,20 +146,42 @@ public static:
     }
 
     /**
-     * Updates the key states, and calls all key events.
+     * Check if a given button is down.
+     *
+     * Params:
+     *      buttonCode =        The code of the button to check.
+     *      checkPrevious =     Whether or not to make sure the button was down last frame.
      */
-    void update()
+    bool isButtonDown( string buttonName, bool checkPrevious = false )
     {
-        Keyboard.update();
-        Mouse.update();
+        return Keyboard.isButtonDown( buttonName, checkPrevious ) || Mouse.isButtonDown( buttonName, checkPrevious );
     }
+
+    /**
+     * Add an event to be fired when the given button changes.
+     *
+     * Params:
+     *      inputName =     The name of the input to add the event to.
+     *      func =          The function to call when the button state changes.
+     */
+    mixin( passThrough!( "addButtonEvent", "uint, bool" ) );
+
+    /**
+     * Add a button event only when the button is down.
+     */
+    mixin( passThrough!( "addButtonDownEvent", "uint" ) );
+
+    /**
+     * Add a button event only when the button is up.
+     */
+    mixin( passThrough!( "addButtonUpEvent", "uint" ) );
 
     /**
      * Gets the position of the cursor.
      *
      * Returns:     The position of the mouse cursor.
      */
-    @property vec2 mousePos()
+    vec2 mousePos()
     {
         version( Windows )
         {
@@ -159,7 +211,7 @@ public static:
      *
      * Returns:     The position of the mouse cursor in world space.
      */
-    @property vec3 mousePosView()
+    vec3 mousePosView()
     {
         if( !DGame.instance.activeScene )
         {
@@ -206,7 +258,7 @@ public static:
      *
      * Returns:     The position of the mouse cursor in world space.
      */
-    @property vec3 mousePosWorld()
+    vec3 mousePosWorld()
     {
         return (DGame.instance.activeScene.camera.inverseViewMatrix * vec4( mousePosView(), 1.0f )).xyz;
     }
@@ -216,7 +268,7 @@ public static:
      *
      * Returns:     The GameObject located at the current mouse Position
      */
-    @property GameObject mouseObject()
+    GameObject mouseObject()
     {
         if( !DGame.instance.activeScene )
         {
@@ -361,7 +413,7 @@ public:
     }
 
     /**
-     * Get the state of a given axis.
+     * Get the state of a given button.
      *
      * Params:
      *  buttonName =        The button to get the state of.
@@ -388,12 +440,39 @@ public:
      * Check if a given button is down.
      *
      * Params:
-     *      buttonCode =        The code of the button to check.
-     *      checkPrevious =     Whether or not to make sure the button was down last frame.
+     *  buttonCode =        The code of the button to check.
+     *  checkPrevious =     Whether or not to make sure the button was down last frame.
+     *
+     * Returns: The state of the button.
      */
     ButtonStorageType isButtonDown( Buttons buttonCode, bool checkPrevious = false )
     {
         return buttonCurrent[ buttonCode ] && ( !checkPrevious || !buttonCurrent[ buttonCode ] );
+    }
+
+    /**
+     * Check if a given button is down.
+     *
+     * Params:
+     *  buttonName =        The button to get the state of.
+     *  checkPrevious =     Whether or not to make sure the button was down last frame.
+     *
+     * Returns: The state of the button.
+     */
+    ButtonStorageType isButtonDown( string buttonName, bool checkPrevious = false )
+    {
+        if( auto button = buttonName in buttonBindings )
+        {
+            foreach( binding; *button )
+                if( isButtonDown( binding, checkPrevious ) != false )
+                    return isButtonDown( binding, checkPrevious );
+
+            return false;
+        }
+        else
+        {
+            throw new Exception( "Input " ~ buttonName ~ " not bound." );
+        }
     }
 
     /**
@@ -402,10 +481,37 @@ public:
      * Params:
      *      buttonCode =        The code of the button to check.
      *      checkPrevious =     Whether or not to make sure the button was up last frame.
+     *
+     * Returns: The state of the button.
      */
     ButtonStorageType isButtonUp( Buttons buttonCode, bool checkPrevious = false )
     {
         return !buttonCurrent[ buttonCode ] && ( !checkPrevious || buttonCurrent[ buttonCode ] );
+    }
+
+    /**
+     * Check if a given button is up.
+     *
+     * Params:
+     *  buttonName =        The button to get the state of.
+     *  checkPrevious =     Whether or not to make sure the button was down last frame.
+     *
+     * Returns: The state of the button.
+     */
+    ButtonStorageType isButtonUp( string buttonName, bool checkPrevious = false )
+    {
+        if( auto button = buttonName in buttonBindings )
+        {
+            foreach( binding; *button )
+                if( isButtonUp( binding, checkPrevious ) != false )
+                    return isButtonUp( binding, checkPrevious );
+
+            return false;
+        }
+        else
+        {
+            throw new Exception( "Input " ~ buttonName ~ " not bound." );
+        }
     }
 
     /**

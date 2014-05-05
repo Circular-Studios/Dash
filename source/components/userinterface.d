@@ -50,6 +50,10 @@ public:
     {
         /// TODO: Check for mouse & keyboard input
 
+        // Send mouse pos to awesomium
+        auto mousePos = Input.mousePos();
+        awe_webview_inject_mouse_move( _view.webView, cast(int)mousePos.x,cast(int)( Graphics.height - mousePos.y ) );
+
         _view.update();
 
         return;
@@ -71,6 +75,46 @@ public:
         // Try to clean up gl buffers
         _view.shutdown();
         // Clean up mesh, material, and view
+    }
+
+    /*
+     * Call a JS Function on this UI
+     * 
+     * Params:
+     *  funcName =          Name of the function to call
+     *  args =              Array of integer args to send to the function
+     *  object =            Name of the js object containing the function. Blank for global function.
+     */
+    void callJSFunction( string funcName, int[] args, string object = "" )
+    {
+        // Convert params to awe_js objects
+        awe_string* funcStr = awe_string_create_from_ascii( funcName.toStringz(), funcName.length );
+        awe_string* objectStr = awe_string_create_from_ascii( object.toStringz(), object.length );
+        awe_string* frameStr = awe_string_create_from_ascii( "".toStringz(), 1 );
+
+        // Build array of js ints
+        awe_jsvalue*[] jsArgs = new awe_jsvalue*[ args.length ];
+
+        for( int i = 0; i < args.length; i++ )
+        {
+            jsArgs[i] = awe_jsvalue_create_integer_value( args[i] );
+        }
+
+        awe_jsarray* argArr = awe_jsarray_create( jsArgs.ptr, args.length );
+
+
+
+        // Execute call
+        awe_webview_call_javascript_function( _view.webView, objectStr, funcStr, argArr, frameStr );
+
+        
+        // Clean up js objects
+        for( int i = 0; i < args.length; i++ )
+        {
+            awe_jsvalue_destroy( jsArgs[i] );
+        }
+        awe_jsarray_destroy( argArr );
+        
     }
 
     /*

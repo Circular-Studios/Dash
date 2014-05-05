@@ -93,7 +93,7 @@ public:
             if( scene.mNumMeshes > 0 )
             {
                 if( scene.mNumAnimations > 0 )
-                    animations[ file.baseFileName ] = new AssetAnimation( scene.mAnimations[ 0 ], scene.mMeshes[ 0 ], scene.mRootNode );
+                    animations[ file.baseFileName ] = new AssetAnimation( scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
 
                 meshes[ file.baseFileName ] = new Mesh( file.fullPath, scene.mMeshes[ 0 ] );
             }

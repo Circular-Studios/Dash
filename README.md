@@ -1,6 +1,6 @@
 [![Dash Logo](https://cloud.githubusercontent.com/assets/512416/2726786/6618d624-c5c2-11e3-9049-23637e5a1739.png)](https://github.com/Circular-Studios/Dash/wiki)
 
-# [![Build Status](http://img.shields.io/travis/Circular-Studios/Dash/develop.svg?style=flat)](https://travis-ci.org/Circular-Studios/Dash) [![Docs](http://img.shields.io/badge/docs-ddoc-yellow.svg?style=flat)](http://circular-studios.github.io/Dash/docs/v0.7.0) [![Gitter Chat](http://img.shields.io/badge/chat-gitter-brightgreen.svg?style=flat)](https://gitter.im/Circular-Studios/Dash) [![Release](http://img.shields.io/github/release/Circular-Studios/Dash.svg?style=flat)](http://code.dlang.org/packages/dash)
+# [![Build Status](http://img.shields.io/travis/Circular-Studios/Dash/develop.svg?style=flat)](https://travis-ci.org/Circular-Studios/Dash) [![Docs](http://img.shields.io/badge/docs-ddoc-yellow.svg?style=flat)](http://circular-studios.github.io/Dash/docs/latest) [![Gitter Chat](http://img.shields.io/badge/chat-gitter-brightgreen.svg?style=flat)](https://gitter.im/Circular-Studios/Dash) [![Release](http://img.shields.io/github/release/Circular-Studios/Dash.svg?style=flat)](http://code.dlang.org/packages/dash)
 
 If you're reading this page, chances are you fall into one of the following categories:
 

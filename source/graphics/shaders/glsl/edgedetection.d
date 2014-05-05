@@ -95,7 +95,7 @@ immutable string edgedetectionFS = q{
         // How severe the change must be to get flagged is a function of the minimum gradient.
         // It is not resolution dependent.  The constant number here would change based on how depth is stored
         // and how sensitive the edge detection should be.
-        vec4 depthResults = step( minDeltas * 25.0f, maxDeltas );
+        vec4 depthResults = step( minDeltas * 1.0f, maxDeltas );
 
         // Compute change in cosine of the angle between normals
         deltas1.x = dot( normals[1], normals[0] );
@@ -112,7 +112,7 @@ immutable string edgedetectionFS = q{
         // above some constant threshold. The cosine of the angle is not a  
         // linear function of the angle, so to have the flagging be  
         // independent of the angles involved, an arccos function would be required.  
-        vec4 normalResults = step( 0.4, deltas1 );
+        vec4 normalResults = step( 0.2, deltas1 );
         normalResults = max( normalResults, depthResults );
         return ( normalResults.x + normalResults.y + normalResults.z + normalResults.w ) * .25;
     }

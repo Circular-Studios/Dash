@@ -4,7 +4,7 @@
 module graphics.adapters.adapter;
 import core, components, graphics, utility;
 
-import gl3n.linalg, gl3n.frustum;
+import gl3n.linalg, gl3n.frustum, gl3n.math;
 import derelict.opengl3.gl3;
 
 import std.algorithm, std.array;
@@ -27,7 +27,7 @@ private:
     uint _normalRenderTexture; //Alpha channel stores nothing important
     uint _depthRenderTexture;
     // Do not add properties for:
-    shared UserInterface[] uis;
+    UserInterface[] uis;
 
 public:
     /// GL DeviceContext
@@ -140,12 +140,12 @@ public:
         GLenum[ 2 ] DrawBuffers = [ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 ];
         glDrawBuffers( 2, DrawBuffers.ptr );
 
-        auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-        if(status != GL_FRAMEBUFFER_COMPLETE )
+        auto status = glCheckFramebufferStatus( GL_FRAMEBUFFER );
+        if( status != GL_FRAMEBUFFER_COMPLETE )
         {
-            string mapFramebufferError(int code)
+            string mapFramebufferError( int code )
             {
-                switch(code)
+                switch( code )
                 {
                     case(GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT): return "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT";
                     case(GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT): return "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT";
@@ -190,46 +190,46 @@ public:
             return;
         }
 
-        auto objsWithLights = scene.objects
-                                .filter!(obj => obj.stateFlags.drawLight && obj.light)
-                                .map!(obj => obj.light);
+        auto lights = scene.objects
+                        .filter!(obj => obj.stateFlags.drawLight && obj.light)
+                        .map!(obj => obj.light);
 
-        auto getOfType( Type )()
+        auto getLightsByType( Type )()
         {
-            return objsWithLights
+            return lights
                     .filter!(obj => typeid(obj) == typeid(Type))
-                    .map!(obj => cast(shared Type)obj);
+                    .map!(obj => cast(Type)obj);
         }
 
-        auto ambientLights = getOfType!AmbientLight;
-        auto directionalLights = getOfType!DirectionalLight;
-        auto pointLights = getOfType!PointLight;
-        auto spotLights = getOfType!SpotLight;
+        auto ambientLights = getLightsByType!AmbientLight;
+        auto directionalLights = getLightsByType!DirectionalLight;
+        auto pointLights = getLightsByType!PointLight;
+        auto spotLights = getLightsByType!SpotLight;
 
-        shared mat4 projection = scene.camera.perspectiveMatrix;
-        shared mat4 invProj = scene.camera.inversePerspectiveMatrix;
+        mat4 projection = scene.camera.perspectiveMatrix;
+        mat4 invProj = scene.camera.inversePerspectiveMatrix;
+
+        void updateMatricies( GameObject current )
+        {
+            current.transform.updateMatrix();
+            foreach( child; current.children )
+               updateMatricies( child );
+        }
+        updateMatricies( scene.root );
 
         /**
         * Pass for all objects with Meshes
         */
         void geometryPass()
         {
-            void updateMatricies( shared GameObject current )
-            {
-                current.transform.updateMatrix();
-                foreach( child; current.children )
-                    updateMatricies( child );
-            }
-            updateMatricies( scene.root );
-
             foreach( object; scene.objects )
             {
                 if( object.mesh && object.stateFlags.drawMesh )
                 {
-                    shared mat4 worldView = scene.camera.viewMatrix * object.transform.matrix;
-                    shared mat4 worldViewProj = projection * worldView;
+                    mat4 worldView = scene.camera.viewMatrix * object.transform.matrix;
+                    mat4 worldViewProj = projection * worldView;
 
-                    if( !( object.mesh.boundingBox in shared Frustum( worldViewProj ) ) )
+                    if( !( object.mesh.boundingBox in Frustum( worldViewProj ) ) )
                     {
                         // If we can't see an object, don't draw it.
                         continue;
@@ -242,6 +242,7 @@ public:
 
                     glUseProgram( shader.programID );
                     glBindVertexArray( object.mesh.glVertexArray );
+
                     shader.bindUniformMatrix4fv( shader.WorldView, worldView );
                     shader.bindUniformMatrix4fv( shader.WorldViewProjection, worldViewProj );
                     shader.bindUniform1ui( shader.ObjectId, object.id );
@@ -259,12 +260,69 @@ public:
         }
 
         /**
+         * Calculate shadow maps for lights in the scene.
+         */
+        void shadowPass()
+        {
+
+
+            foreach( light; directionalLights )
+            {   
+                glBindFramebuffer( GL_FRAMEBUFFER, light.shadowMapFrameBuffer );
+                glClear( GL_DEPTH_BUFFER_BIT );
+                glViewport( 0, 0, light.shadowMapSize, light.shadowMapSize );
+
+                // determine the world space volume for all objects
+                AABB frustum;
+                foreach( object; scene.objects )
+                {
+                    if( object.mesh && object.stateFlags.drawMesh )
+                    {
+                        frustum.expand( (object.transform.matrix * vec4(object.mesh.boundingBox.min, 1.0f)).xyz );
+                        frustum.expand( (object.transform.matrix * vec4(object.mesh.boundingBox.max, 1.0f)).xyz );
+                    }
+                }
+
+                light.calculateProjView( frustum );
+
+                foreach( object; scene.objects )
+                {
+                    if( object.mesh && object.stateFlags.drawMesh )
+                    {
+                        // set the shader
+                        Shader shader = object.mesh.animated
+                                        ? Shaders.animatedShadowMap
+                                        : Shaders.shadowMap;
+
+                        glUseProgram( shader.programID );
+                        glBindVertexArray( object.mesh.glVertexArray );
+
+                        shader.bindUniformMatrix4fv( shader.WorldViewProjection, 
+                                                    light.projView * object.transform.matrix);
+
+                        if( object.mesh.animated )
+                            shader.bindUniformMatrix4fvArray( shader.Bones, object.animation.currBoneTransforms );
+
+                        glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
+
+                        glBindVertexArray(0);
+                    }
+                }
+                glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+            }
+
+            foreach( light; pointLights ){}
+
+            foreach( light; spotLights ){}
+        }
+
+        /**
         * Pass for all objects with lights
         */
         void lightPass()
         {
             /**
-            * Binds the FBO textures to the shader
+            * Binds the g-buffer textures for sampling.
             */
             void bindGeometryOutputs( Shader shader )
             {
@@ -324,7 +382,14 @@ public:
                 // bind and draw directional lights
                 foreach( light; directionalLights )
                 {
+                    glUniform1i( shader.ShadowMap, 3 );
+                    glActiveTexture( GL_TEXTURE3 );
+                    glBindTexture( GL_TEXTURE_2D, light.shadowMapTexture );
+
+                    shader.bindUniformMatrix4fv( shader.LightProjectionView, light.projView );
+                    shader.bindUniformMatrix4fv( shader.CameraView, scene.camera.viewMatrix);
                     shader.bindDirectionalLight( light, scene.camera.viewMatrix );
+
                     glDrawElements( GL_TRIANGLES, Assets.unitSquare.numVertices, GL_UNSIGNED_INT, null );
                 }
             }
@@ -340,7 +405,7 @@ public:
                 // bind WorldView for creating the View rays for reconstruction position
                 shader.bindUniform2f( shader.ProjectionConstants, scene.camera.projectionConstants );
 
-                // bind the sphere mesh for point lights
+                // bind the mesh for point lights
                 glBindVertexArray( Assets.unitSquare.glVertexArray );
 
                 // bind and draw point lights
@@ -392,6 +457,13 @@ public:
 
         geometryPass();
 
+        //glCullFace( GL_FRONT );
+
+        shadowPass();
+
+        //glCullFace( GL_BACK );
+        glViewport( 0, 0, Graphics.width, Graphics.height );
+
         // settings for light pass
         glDepthMask( GL_FALSE );
         glDisable( GL_DEPTH_TEST );
@@ -405,7 +477,6 @@ public:
         lightPass();
 
         glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-        //glBlendEquation( GL_FUNC_ADD );
 
         uiPass();
 
@@ -422,7 +493,7 @@ public:
      * Adds a UI to be drawn over the objects in the scene
      * UIs will be drawn ( and overlap ) in the order they are added
      */
-    final void addUI( shared UserInterface ui )
+    final void addUI( UserInterface ui )
     {
         uis ~= ui;
     }

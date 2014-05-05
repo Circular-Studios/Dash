@@ -16,7 +16,7 @@
 		"derelict-fi": "~master",
 		"derelict-assimp3": "~master",
 		"dyaml": "~master",
-		"gl3n-shared" : "~master",
+		"gl3n" : "~master",
 		"dlogg": "~>0.2.2",
 		"x11": { "version": "==1.0.0", "optional": true }
 	},
@@ -28,9 +28,7 @@
 	"libs-windows": [
 		"Awesomium"
 	],
-
 	"-ddoxFilterArgs": [ "--min-protection=Protected" ],
-
 	"importPaths-windows": [ "third_party/DWinProgramming" ],
 	"libs-windows": [
 		"gdi32", "ole32", "kernel32",

@@ -49,7 +49,7 @@ static this()
 
     constructor.addConstructorScalar( "!Vector2", ( ref Node node )
     {
-        shared vec2 result;
+        vec2 result;
         string[] vals = node.as!string.split();
         if( vals.length != 2 )
             throw new Exception( "Invalid number of values: " ~ node.as!string );
@@ -60,7 +60,7 @@ static this()
     } );
     constructor.addConstructorScalar( "!Vector3", ( ref Node node )
     {
-        shared vec3 result;
+        vec3 result;
         string[] vals = node.as!string.split();
         if( vals.length != 3 )
             throw new Exception( "Invalid number of values: " ~ node.as!string );
@@ -72,7 +72,7 @@ static this()
     } );
     constructor.addConstructorScalar( "!Quaternion", ( ref Node node )
     {
-        shared quat result;
+        quat result;
         string[] vals = node.as!string.split();
         if( vals.length != 3 )
             throw new Exception( "Invalid number of values: " ~ node.as!string );
@@ -85,26 +85,26 @@ static this()
     } );
     constructor.addConstructorMapping( "!Light-Directional", ( ref Node node )
     {
-        shared vec3 color;
-        shared vec3 dir;
+        vec3 color;
+        vec3 dir;
         node.tryFind( "Color", color );
         node.tryFind( "Direction", dir );
-        return cast(Light)new shared DirectionalLight( color, dir );
+        return cast(Light)new DirectionalLight( color, dir );
     } );
     constructor.addConstructorMapping( "!Light-Ambient", ( ref Node node )
     {
-        shared vec3 color;
+        vec3 color;
         node.tryFind( "Color", color );
-        return cast(Light)new shared AmbientLight( color );
+        return cast(Light)new AmbientLight( color );
     } );
     constructor.addConstructorMapping( "!Light-Point", ( ref Node node )
     {
-        shared vec3 color;
+        vec3 color;
         float radius, falloffRate;
         node.tryFind( "Color", color );
         node.tryFind( "Radius", radius );
         node.tryFind( "FalloffRate", falloffRate );
-        return cast(Light)new shared PointLight( color, radius, falloffRate );
+        return cast(Light)new PointLight( color, radius, falloffRate );
     } );
     constructor.addConstructorScalar( "!Verbosity", &constructConv!Verbosity );
     constructor.addConstructorScalar( "!Keyboard", &constructConv!Keyboard );
@@ -493,227 +493,6 @@ public static:
 
         config = loadYamlFile( FilePath.Resources.ConfigFile );
     }
-
-    deprecated( "Use global find functions instead." )
-    {
-    /**
-     * Get the element, cast to the given type, at the given path, in the given node.
-     */
-    final T get( T )( string path, Node node = config )
-    {
-        Node current = node;
-        string left;
-        string right = path;
-
-        while( true )
-        {
-            auto split = right.countUntil( '.' );
-            if( split == -1 )
-            {
-                static if( is( T == Node ) )
-                    return current[ right ];
-                else
-                    return current[ right ].get!T;
-            }
-            else
-            {
-                left = right[ 0..split ];
-                right = right[ split + 1..$ ];
-                current = current[ left ];
-            }
-        }
-    }
-    unittest
-    {
-        import std.stdio;
-        import std.exception;
-        
-        writeln( "Dash Config get unittest" );
-
-        auto n1 = Node( [ "test1": 10 ] );
-
-        assert( Config.get!int( "test1", n1 ) == 10, "Config.get error." );
-
-        assertThrown!Exception(Config.get!int( "dontexist", n1 ));
-        
-        // nested test
-        auto n2 = Node( ["test2": n1] );
-        auto n3 = Node( ["test3": n2] );
-        
-        assert( Config.get!int( "test3.test2.test1", n3 ) == 10, "Config.get nested test failed");
-        
-        auto n4 = Loader.fromString(
-            "test3:\n"
-            "   test2:\n"
-            "       test1: 10").load;
-        assert( Config.get!int( "test3.test2.test1", n4 ) == 10, "Config.get nested test failed");
-    }
-
-    /**
-    * Try to get the value at path, assign to result, and return success.
-    */
-    final bool tryGet( T )( string path, ref T result, Node node = config )
-    {
-        Node res;
-        bool found = tryGet( path, res, node );
-
-        if( found )
-        {
-            static if( !isSomeString!T && is( T U : U[] ) )
-            {
-                assert( res.isSequence, "Trying to access non-sequence node " ~ path ~ " as an array." );
-
-                foreach( Node element; res )
-                    result ~= element.get!U;
-            }
-            else
-            {
-                result = res.get!T;
-            }
-        }
-
-        return found;
-    }
-
-    /// ditto
-    final bool tryGet( T: Node )( string path, ref T result, Node node = config )
-    {
-        Node current;
-        string left;
-        string right = path;
-
-        for( current = node; right.length; )
-        {
-            auto split = right.countUntil( '.' );
-
-            if( split == -1 )
-            {
-                left = right;
-                right.length = 0;
-            }
-            else
-            {
-                left = right[ 0..split ];
-                right = right[ split + 1..$ ];
-            }
-
-            if( !current.isMapping || !current.containsKey( left ) )
-                return false;
-
-            current = current[ left ];
-        }
-
-        result = current;
-
-        return true;
-    }
-
-    /// ditto
-    final bool tryGet( T = Node )( string path, ref Variant result, Node node = config )
-    {
-        // Get the value
-        T temp;
-        bool found = tryGet!T( path, temp, node );
-
-        // Assign and return results
-        if( found )
-            result = temp;
-
-        return found;
-    }
-
-    @disable bool tryGet( T: Variant )( string path, ref T result, Node node = config );
-
-    /**
-     * Get element as a file path.
-     */
-    final string getPath( string path )
-    {
-        return FilePath.ResourceHome ~ get!string( path );//buildNormalizedPath( FilePath.ResourceHome, get!string( path ) );;
-    }
-
-    final T getObject( T )( Node node )
-    {
-        T toReturn;
-
-        static if( is( T == class ) )
-            toReturn = new T;
-
-        // Get each member of the type
-        foreach( memberName; __traits(derivedMembers, T) )
-        {
-            // Make sure member is accessable
-            enum protection = __traits( getProtection, __traits( getMember, toReturn, memberName ) );
-            static if( protection == "public" || protection == "export" &&
-                       __traits( compiles, isMutable!( __traits( getMember, toReturn, memberName ) ) ) )
-            {
-                // If it is a field and not a function, tryGet it's value
-                static if( !__traits( compiles, ParameterTypeTuple!( __traits( getMember, toReturn, memberName ) ) ) &&
-                           !__traits( compiles, isBasicType!( __traits( getMember, toReturn, memberName ) ) ) )
-                {
-                    // Make sure member is mutable
-                    static if( isMutable!( typeof( __traits( getMember, toReturn, memberName ) ) ) )
-                    {
-                        tryGet( memberName, __traits( getMember, toReturn, memberName ), node );
-                    }
-                }
-                else
-                {
-                    // Iterate over each overload of the function (common to have getter and setter)
-                    foreach( func; __traits( getOverloads, T, memberName ) )
-                    {
-                        enum funcProtection = __traits( getProtection, func );
-                        static if( funcProtection == "public" || funcProtection == "export" )
-                        {
-                            // Get the param types of the function
-                            alias params = ParameterTypeTuple!func;
-
-                            // If it can be a setter and is a property
-                            static if( params.length == 1 && ( functionAttributes!func & FunctionAttribute.property ) )
-                            {
-                                // Else, set as temp
-                                static if( is( params[ 0 ] == enum ) )
-                                {
-                                    string tempValue;
-                                }
-                                else
-                                {
-                                    params[ 0 ] otherTempValue;
-                                    auto tempValue = cast()otherTempValue;
-                                }
-
-                                if( tryGet( memberName, tempValue, node ) )
-                                    mixin( "toReturn." ~ memberName ~ " = tempValue.to!(params[0]);" );
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        
-        return toReturn;
-    }
-    unittest
-    {
-        import std.stdio;
-        writeln( "Dash Config getObject unittest" );
-
-        auto t = getObject!Test( Node( ["x": 5, "y": 7, "z": 9] ) );
-
-        assert( t.x == 5 );
-        assert( t.y == 7 );
-        assert( t.z == 9 );
-    }
-    version(unittest) class Test
-    {
-        int x;
-        int y;
-        private int _z;
-
-        @property int z() { return _z; }
-        @property void z( int newZ ) { _z = newZ; }
-    }
-    }
 }
 
 /**
@@ -723,7 +502,7 @@ T constructConv( T )( ref Node node ) if( is( T == enum ) )
 {
     if( node.isScalar )
     {
-        return node.as!string.to!T;
+        return node.get!string.to!T;
     }
     else
     {

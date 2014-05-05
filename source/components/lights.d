@@ -84,8 +84,7 @@ public:
         glBindFramebuffer( GL_FRAMEBUFFER, _shadowMapFrameBuffer );
 
         // generate depth texture of shadow map
-        // TODO: make this not be .28125 GB because we have no optimizations
-        shadowMapSize = 2048 * 6;
+        shadowMapSize = 2048;
         glGenTextures( 1, cast(uint*)&_shadowMapTexture );
         glBindTexture( GL_TEXTURE_2D, _shadowMapTexture );
         glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, shadowMapSize, shadowMapSize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, null );

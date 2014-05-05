@@ -28,9 +28,7 @@
 	"libs-windows": [
 		"Awesomium"
 	],
-
 	"-ddoxFilterArgs": [ "--min-protection=Protected" ],
-
 	"importPaths-windows": [ "third_party/DWinProgramming" ],
 	"libs-windows": [
 		"gdi32", "ole32", "kernel32",

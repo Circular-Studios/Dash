@@ -95,7 +95,7 @@ immutable string edgedetectionFS = q{
         // How severe the change must be to get flagged is a function of the minimum gradient.
         // It is not resolution dependent.  The constant number here would change based on how depth is stored
         // and how sensitive the edge detection should be.
-        vec4 depthResults = step( minDeltas * 1.0f, maxDeltas );
+        vec4 depthResults = step( minDeltas * 25.0f, maxDeltas );
 
         // Compute change in cosine of the angle between normals
         deltas1.x = dot( normals[1], normals[0] );

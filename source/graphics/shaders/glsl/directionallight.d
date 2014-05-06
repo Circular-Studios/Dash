@@ -39,6 +39,7 @@ immutable string directionallightFS = q{
     {
         vec3 color;
         vec3 direction;
+        float shadowless;
     };
 
     in vec4 fPosition_s;
@@ -111,6 +112,6 @@ immutable string directionallightFS = q{
         // specularIntensity is the light's contribution
         vec3 specular = ( pow( specularScale, 8 ) * light.color * specularIntensity);
 
-        color = shadowValue(position_v) * vec4( ( diffuse + specular ), 1.0f );
+        color = max( light.shadowless , shadowValue(position_v) ) * vec4( ( diffuse + specular ), 1.0f );
     }
 };

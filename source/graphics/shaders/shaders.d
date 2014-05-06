@@ -38,6 +38,7 @@ private enum ShaderUniform
     LightRadius = "light.radius",
     LightFalloffRate = "light.falloffRate",
     LightPosition = "light.pos_v",
+    LightShadowless = "light.shadowless",
     EyePosition = "eyePosition_w",
     /// Animations
     Bones = "bones",
@@ -340,6 +341,7 @@ public:
     {
         bindUniform3f( LightDirection, light.direction);
         bindUniform3f( LightColor, light.color );
+        bindUniform1f( LightShadowless, cast(float)(!light.castShadows) );
     }
 
     /**
@@ -349,6 +351,7 @@ public:
     {
         bindUniform3f( LightDirection, ( transform * vec4( light.direction, 0.0f ) ).xyz );
         bindUniform3f( LightColor, light.color );
+        bindUniform1f( LightShadowless, cast(float)(!light.castShadows) );
     }
 
     /**

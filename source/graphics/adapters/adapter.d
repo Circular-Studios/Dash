@@ -264,51 +264,52 @@ public:
          */
         void shadowPass()
         {
-
-
             foreach( light; directionalLights )
             {   
-                glBindFramebuffer( GL_FRAMEBUFFER, light.shadowMapFrameBuffer );
-                glClear( GL_DEPTH_BUFFER_BIT );
-                glViewport( 0, 0, light.shadowMapSize, light.shadowMapSize );
-
-                // determine the world space volume for all objects
-                AABB frustum;
-                foreach( object; scene.objects )
+                if( light.castShadows )
                 {
-                    if( object.mesh && object.stateFlags.drawMesh )
+                    glBindFramebuffer( GL_FRAMEBUFFER, light.shadowMapFrameBuffer );
+                    glClear( GL_DEPTH_BUFFER_BIT );
+                    glViewport( 0, 0, light.shadowMapSize, light.shadowMapSize );
+
+                    // determine the world space volume for all objects
+                    AABB frustum;
+                    foreach( object; scene.objects )
                     {
-                        frustum.expand( (object.transform.matrix * vec4(object.mesh.boundingBox.min, 1.0f)).xyz );
-                        frustum.expand( (object.transform.matrix * vec4(object.mesh.boundingBox.max, 1.0f)).xyz );
+                        if( object.mesh && object.stateFlags.drawMesh )
+                        {
+                            frustum.expand( (object.transform.matrix * vec4(object.mesh.boundingBox.min, 1.0f)).xyz );
+                            frustum.expand( (object.transform.matrix * vec4(object.mesh.boundingBox.max, 1.0f)).xyz );
+                        }
                     }
-                }
 
-                light.calculateProjView( frustum );
+                    light.calculateProjView( frustum );
 
-                foreach( object; scene.objects )
-                {
-                    if( object.mesh && object.stateFlags.drawMesh )
+                    foreach( object; scene.objects )
                     {
-                        // set the shader
-                        Shader shader = object.mesh.animated
-                                        ? Shaders.animatedShadowMap
-                                        : Shaders.shadowMap;
+                        if( object.mesh && object.stateFlags.drawMesh )
+                        {
+                            // set the shader
+                            Shader shader = object.mesh.animated
+                                            ? Shaders.animatedShadowMap
+                                            : Shaders.shadowMap;
 
-                        glUseProgram( shader.programID );
-                        glBindVertexArray( object.mesh.glVertexArray );
+                            glUseProgram( shader.programID );
+                            glBindVertexArray( object.mesh.glVertexArray );
 
-                        shader.bindUniformMatrix4fv( shader.WorldViewProjection, 
-                                                    light.projView * object.transform.matrix);
+                            shader.bindUniformMatrix4fv( shader.WorldViewProjection, 
+                                                        light.projView * object.transform.matrix);
 
-                        if( object.mesh.animated )
-                            shader.bindUniformMatrix4fvArray( shader.Bones, object.animation.currBoneTransforms );
+                            if( object.mesh.animated )
+                                shader.bindUniformMatrix4fvArray( shader.Bones, object.animation.currBoneTransforms );
 
-                        glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
+                            glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
 
-                        glBindVertexArray(0);
+                            glBindVertexArray(0);
+                        }
                     }
+                    glBindFramebuffer( GL_FRAMEBUFFER, 0 );
                 }
-                glBindFramebuffer( GL_FRAMEBUFFER, 0 );
             }
 
             foreach( light; pointLights ){}

@@ -87,9 +87,11 @@ static this()
     {
         vec3 color;
         vec3 dir;
+        bool shadows = false;
         node.tryFind( "Color", color );
         node.tryFind( "Direction", dir );
-        return cast(Light)new DirectionalLight( color, dir );
+        node.tryFind( "CastShadows", shadows );
+        return cast(Light)new DirectionalLight( color, dir, shadows );
     } );
     constructor.addConstructorMapping( "!Light-Ambient", ( ref Node node )
     {

@@ -9,7 +9,7 @@ public import yaml;
 import std.variant, std.algorithm, std.traits,
        std.array, std.conv, std.file;
 
-private string fileToYaml( string filePath ) { return filePath.replace( "\\", "/" ).replace( "../", "" ).replace( "/", "." ); }
+private string fileToYaml( string filePath ) { return filePath.replace( "\\", "/" ).replace( "../", "" ).replace( "/", "." ).replace( ".yml", "" ); }
 
 /**
  * Place this mixin anywhere in your game code to allow the Content.yml file
@@ -35,6 +35,8 @@ Constructor constructor;
 /// The string to store imported yaml content in.
 version( EmbedContent ) string contentYML;
 private Node contentNode;
+/// The file storing config.
+private Resource configFile;
 
 /// Initializes contentNode and constructor.
 static this()
@@ -189,7 +191,7 @@ Node loadYamlFile( string filePath )
 {
     if( contentNode.isNull )
     {
-        auto loader = Loader( filePath ~ ".yml" );
+        auto loader = Loader( filePath );
         loader.constructor = constructor;
         try
         {
@@ -467,7 +469,7 @@ public static:
     /**
      * TODO
      */
-    final void initialize()
+    void initialize()
     {
         version( EmbedContent )
         {
@@ -481,6 +483,29 @@ public static:
         }
         else
         {
+            if( exists( Resources.CompactContentFile ) )
+            {
+                logDebug( "Using Content.yml file." );
+                contentNode = Resources.CompactContentFile.loadYamlFile();
+            }
+            else
+            {
+                logDebug( "Using normal content directory." );
+                configFile = Resource( Resources.ConfigFile );
+            }
+        }
+
+        config = configFile.fullPath.loadYamlFile();
+    }
+
+    void refresh()
+    {
+        version( EmbedContent )
+        {
+            initialize();
+        }
+        else
+        {
             if( exists( Resources.CompactContentFile ~ ".yml" ) )
             {
                 logDebug( "Using Content.yml file." );
@@ -489,10 +514,10 @@ public static:
             else
             {
                 logDebug( "Using normal content directory." );
+                if( configFile.needsRefresh )
+                    config = configFile.fullPath.loadYamlFile();
             }
         }
-
-        config = Resources.ConfigFile.loadYamlFile();
     }
 }
 

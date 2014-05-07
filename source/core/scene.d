@@ -42,7 +42,7 @@ public:
      */
     final void loadObjects( string objectPath = "" )
     {
-        foreach( yml; loadYamlDocuments( buildNormalizedPath( FilePath.Resources.Objects, objectPath ) ) )
+        foreach( yml; buildNormalizedPath( Resources.Objects, objectPath ).loadYamlDocuments() )
         {
             // Create the object
             _root.addChild( GameObject.createFromYaml( yml ) );

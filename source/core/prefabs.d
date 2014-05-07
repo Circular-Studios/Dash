@@ -35,7 +35,7 @@ public:
         foreach( key; prefabs.keys )
             prefabs.remove( key );
 
-        foreach( object; loadYamlDocuments( FilePath.Resources.Prefabs ) )
+        foreach( object; loadYamlDocuments( Resources.Prefabs ) )
         {
             auto name = object[ "Name" ].as!string;
             

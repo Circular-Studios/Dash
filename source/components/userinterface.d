@@ -133,7 +133,7 @@ public:
         {
             // Webcore setup
             awe_webcore_initialize_default();
-            string baseDir = FilePath.Resources.UI;
+            string baseDir = Resources.UI;
             awe_string* aweBaseDir = awe_string_create_from_ascii( baseDir.toStringz(), baseDir.length );
             awe_webcore_set_base_directory( aweBaseDir );
             awe_string_destroy( aweBaseDir );

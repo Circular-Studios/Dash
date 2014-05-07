@@ -77,7 +77,7 @@ public:
                                         aiProcess_JoinIdenticalVertices | aiProcess_SortByPType,
                                         "obj" ).mMeshes[0] );
 
-        foreach( file; FilePath.scanDirectory( FilePath.Resources.Meshes ) )
+        foreach( file; scanDirectory( Resources.Meshes ) )
         {
             // Load mesh
             const aiScene* scene = aiImportFile( file.fullPath.toStringz,
@@ -106,7 +106,7 @@ public:
             aiReleaseImport( scene );
         }
 
-        foreach( file; FilePath.scanDirectory( FilePath.Resources.Textures ) )
+        foreach( file; scanDirectory( Resources.Textures ) )
         {
             if( file.baseFileName in textures )
                logWarning( "Texture ", file.baseFileName, " exists more than once." );
@@ -114,7 +114,7 @@ public:
             textures[ file.baseFileName ] = new Texture( file.fullPath );
         }
 
-        foreach( object; loadYamlDocuments( FilePath.Resources.Materials ) )
+        foreach( object; loadYamlDocuments( Resources.Materials ) )
         {
             auto name = object[ "Name" ].as!string;
 

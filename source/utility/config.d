@@ -2,7 +2,7 @@
  * Defines the static class Config, which handles all configuration options.
  */
 module utility.config;
-import utility.filepath, utility.output;
+import utility.resources, utility.output;
 
 public import yaml;
 
@@ -128,7 +128,7 @@ Node[] loadYamlDocuments( string folder )
     if( contentNode.isNull )
     {
         // Actually scan directories
-        foreach( file; FilePath.scanDirectory( folder, "*.yml" ) )
+        foreach( file; scanDirectory( folder, "*.yml" ) )
         {
             auto loader = Loader( file.fullPath );
             loader.constructor = constructor;
@@ -197,7 +197,7 @@ Node loadYamlFile( string filePath )
         }
         catch( YAMLException e )
         {
-            logFatal( "Error parsing file ", new FilePath( filePath ).baseFileName, ": ", e.msg );
+            logFatal( "Error parsing file ", Resource( filePath ).baseFileName, ": ", e.msg );
             return Node();
         }  
     }
@@ -364,7 +364,7 @@ unittest
  */
 final string findPath( Node node, string path )
 {
-    return FilePath.ResourceHome ~ node.find!string( path );//buildNormalizedPath( FilePath.ResourceHome, get!string( path ) );;
+    return Resources.Home ~ node.find!string( path );//buildNormalizedPath( FilePath.ResourceHome, get!string( path ) );;
 }
 
 /**
@@ -481,10 +481,10 @@ public static:
         }
         else
         {
-            if( exists( FilePath.Resources.CompactContentFile ~ ".yml" ) )
+            if( exists( Resources.CompactContentFile ~ ".yml" ) )
             {
                 logDebug( "Using Content.yml file." );
-                contentNode = loadYamlFile( FilePath.Resources.CompactContentFile );
+                contentNode = Resources.CompactContentFile.loadYamlFile();
             }
             else
             {
@@ -492,7 +492,7 @@ public static:
             }
         }
 
-        config = loadYamlFile( FilePath.Resources.ConfigFile );
+        config = Resources.ConfigFile.loadYamlFile();
     }
 }
 

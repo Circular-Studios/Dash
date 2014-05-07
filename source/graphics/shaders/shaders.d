@@ -92,7 +92,7 @@ public:
         shadowMap = new Shader( "ShadowMap", shadowmapVS, shadowmapFS, true );
         animatedShadowMap = new Shader( "AnimatedShadowMap", animatedshadowmapVS, shadowmapFS, true );
 
-        foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders, "*.fs.glsl" ) )
+        foreach( file; scanDirectory( Resources.Shaders, "*.fs.glsl" ) )
         {
             // Strip .fs from file name
             string name = file.baseFileName[ 0..$-3 ];
@@ -167,10 +167,10 @@ public:
 
         if(!preloaded)
         {
-            auto vertexFile = new FilePath( vertex );
-            auto fragmentFile = new FilePath( fragment );
-            string vertexBody = vertexFile.getContents();
-            string fragmentBody = fragmentFile.getContents();
+            auto vertexFile = Resource( vertex );
+            auto fragmentFile = Resource( fragment );
+            string vertexBody = vertexFile.readText();
+            string fragmentBody = fragmentFile.readText();
             compile( vertexBody, fragmentBody );
         }
         else
@@ -179,7 +179,7 @@ public:
         }
 
         //uniform is the *name* of the enum member not it's value
-        foreach( uniform; __traits(allMembers,ShaderUniform ) )
+        foreach( uniform; __traits( allMembers, ShaderUniform ) )
         {
             mixin(uniform) = glGetUniformLocation( programID, mixin("ShaderUniform." ~ uniform).ptr );
         }

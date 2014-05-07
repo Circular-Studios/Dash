@@ -177,7 +177,7 @@ Node[] loadYamlDocuments( string folder )
  */
 T[] loadYamlObjects( T )( string folder )
 {
-    return folder.loadYamlDocuments.map!(yml => yml.toObject!T() );
+    return folder.loadYamlDocuments.map!(yml => yml.getObject!T() );
 }
 
 /**
@@ -428,7 +428,7 @@ final T getObject( T )( Node node )
                             }
 
                             if( node.tryFind( memberName, tempValue ) )
-                                mixin( "toReturn." ~ memberName ~ " = tempValue.to!(params[0]);" );
+                                mixin( "toReturn." ~ memberName ) = tempValue.to!(params[0]);
                         }
                     }
                 }

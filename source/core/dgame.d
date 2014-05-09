@@ -11,6 +11,8 @@ enum EngineState
 {
     /// The main game state.
     Run,
+    /// Refresh changed assets, but don't reset state.
+    Refresh,
     /// Reload all assets at the beginning of the next cycle.
     Reset,
     /// Quit the game and the end of this cycle.
@@ -88,7 +90,14 @@ public:
         while( currentState != EngineState.Quit )
         {
             if( currentState == EngineState.Reset )
-                reload();
+            {
+                stop();
+                start();
+            }
+            else if( currentState == EngineState.Refresh )
+            {
+                refresh();
+            }
 
             //////////////////////////////////////////////////////////////////////////
             // Update
@@ -208,14 +217,15 @@ private:
     /**
      * Reloads content and yaml.
      */
-    final void reload()
+    final void refresh()
     {
         // Refresh
         Config.refresh();
         Assets.refresh();
         Graphics.refresh();
         Prefabs.refresh();
-        Input.initialize();
+        // Need to refresh key events.
+        //Input.initialize();
 
         // Restart
         currentState = EngineState.Run;

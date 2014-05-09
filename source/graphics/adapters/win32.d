@@ -235,7 +235,7 @@ public:
     /**
     * TODO
     */
-    override void reload()
+    override void refresh()
     {
         resize();
         

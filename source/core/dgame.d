@@ -213,7 +213,7 @@ private:
         // Refresh
         Config.refresh();
         Assets.refresh();
-        Graphics.reload();
+        Graphics.refresh();
         Prefabs.refresh();
         Input.initialize();
 

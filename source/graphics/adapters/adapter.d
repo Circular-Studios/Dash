@@ -73,7 +73,7 @@ public:
     /**
     * Reloads the Adapter without closing
     */
-    abstract void reload();
+    abstract void refresh();
     /**
     * Swaps the back buffer to the screen
     */

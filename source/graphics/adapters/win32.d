@@ -227,6 +227,8 @@ public:
                       height + GetSystemMetrics( SM_CYCAPTION ) + GetSystemMetrics( SM_CYBORDER ),
                       SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED );
 
+        resizeDefferedRenderBuffer();
+
         glViewport( 0, 0, width, height );
     }
 

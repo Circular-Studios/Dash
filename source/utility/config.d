@@ -36,7 +36,7 @@ Constructor constructor;
 version( EmbedContent ) string contentYML;
 private Node contentNode;
 /// The file storing config.
-private Resource configFile;
+private Resource configFile = Resource( "" );
 
 /// Initializes contentNode and constructor.
 static this()

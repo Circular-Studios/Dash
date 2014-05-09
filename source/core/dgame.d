@@ -207,29 +207,28 @@ private:
     final void reload()
     {
         // Shut everything down
-        onShutdown();
-        resetTasks();
-        UserInterface.shutdownAwesomium();
-        Assets.shutdown();
-        Graphics.shutdown();
+        //onShutdown();
+        //resetTasks();
+        //UserInterface.shutdownAwesomium();
+        //Graphics.shutdown();
 
         // Refresh
         Config.refresh();
+        Assets.refresh();
 
         // Restart
         currentState = EngineState.Run;
 
-        stateFlags = new GameStateFlags;
+        /*stateFlags = new GameStateFlags;
         stateFlags.resumeAll();
 
         logDebug( "Initializing..." );
         bench!( { Logger.initialize(); } )( "Logger init" );
         bench!( { Input.initialize(); } )( "Input init" );
         bench!( { Graphics.initialize(); } )( "Graphics init" );
-        bench!( { Assets.initialize(); } )( "Assets init" );
         bench!( { Prefabs.initialize(); } )( "Prefabs init" );
         bench!( { UserInterface.initializeAwesomium(); } )( "UI init" );
-        bench!( { DGame.instance.onInitialize(); } )( "Game init" );
+        bench!( { DGame.instance.onInitialize(); } )( "Game init" );*/
     }
 
     /**

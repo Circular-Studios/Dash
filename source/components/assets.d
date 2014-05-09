@@ -2,25 +2,20 @@
  * Defines the static Assets class, a static class which manages all textures, meshes, materials, and animations.
  */
 module components.assets;
-import components, utility;
+import core.properties, components, utility;
 
 import std.string, std.array;
 
 import yaml;
 import derelict.freeimage.freeimage, derelict.assimp3.assimp;
-AssetManager Assets;
-
-static this()
-{
-    Assets = new AssetManager;
-}
 
 /**
  * Assets manages all assets that aren't code, GameObjects, or Prefabs.
  */
-final class AssetManager
+abstract final class Assets
 {
-private:
+static:
+package:
     Mesh[string] meshes;
     Texture[string] textures;
     Material[string] materials;
@@ -33,7 +28,7 @@ public:
     /**
      * Get the asset with the given type and name.
      */
-    final T get( T )( string name ) if( is( T == Mesh ) || is( T == Texture ) || is( T == Material ) || is( T == AssetAnimation ))
+    T get( T )( string name ) if( is( T == Mesh ) || is( T == Texture ) || is( T == Material ) || is( T == AssetAnimation ))
     {
         enum get( Type, string array ) = q{
             static if( is( T == $Type ) )
@@ -60,7 +55,7 @@ public:
     /**
      * Load all assets in the FilePath.ResourceHome folder.
      */
-    final void initialize()
+    void initialize()
     {
         DerelictFI.load();
 
@@ -131,9 +126,36 @@ public:
     }
 
     /**
+     * Refresh the assets that have changed.
+     */
+    void refresh()
+    {
+        enum refresh( string aaName ) = q{
+            foreach_reverse( name; $aaName.keys )
+            {
+                auto asset = $aaName[ name ];
+                if( !asset.resource.exists )
+                {
+                    asset.shutdown();
+                    $aaName.remove( name );
+                }
+                else if( asset.resource.needsRefresh )
+                {
+                    logDebug( "Refreshing ", name, "." );
+                    asset.refresh();
+                }
+            }
+        }.replace( "$aaName", aaName );
+
+        mixin( refresh!q{meshes} );
+        mixin( refresh!q{textures} );
+        mixin( refresh!q{materials} );
+    }
+
+    /**
      * Unload and destroy all stored assets.
      */
-    final void shutdown()
+    void shutdown()
     {
         enum shutdown( string aaName, string friendlyName ) = q{
             foreach_reverse( name; $aaName.keys )
@@ -151,6 +173,31 @@ public:
         mixin( shutdown!( q{materials}, "Material" ) );
         mixin( shutdown!( q{animations}, "Animation" ) );
     }
+}
+
+abstract class Asset : IComponent
+{
+private:
+    bool _isUsed;
+    Resource _resource;
+
+public:
+    /// Whether or not the material is actually used.
+    mixin( Property!( _isUsed, AccessModifier.Package ) );
+    /// The resource containing this asset.
+    mixin( RefGetter!_resource );
+
+    /**
+     * Creates asset with resource.
+     */
+    this( Resource resource )
+    {
+        _resource = resource;
+    }
+
+    override void update() { }
+    abstract void refresh();
+    abstract override void shutdown();
 }
 
 /// Obj for a 1x1 square billboard mesh

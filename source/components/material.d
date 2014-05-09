@@ -11,11 +11,10 @@ import std.variant, std.conv, std.string;
 /**
  * A collection of textures that serve different purposes in the rendering pipeline.
  */
-final class Material
+final class Material : Asset
 {
 private:
     Texture _diffuse, _normal, _specular;
-    bool _isUsed;
 
 public:
     /// The diffuse (or color) map.
@@ -24,14 +23,13 @@ public:
     mixin( Property!(_normal, AccessModifier.Public) );
     /// The specular map, which specifies how shiny a given point is.
     mixin( Property!(_specular, AccessModifier.Public) );
-    /// Whether or not the material is actually used.
-    mixin( Property!( _isUsed, AccessModifier.Package ) );
 
     /**
      * Default constructor, makes sure everything is initialized to default.
      */
     this()
     {
+        super( Resource( "" ) );
         _diffuse = _specular = defaultTex;
         _normal = defaultNormal;
     }
@@ -62,9 +60,21 @@ public:
     }
 
     /**
+     * Refresh the asset.
+     */
+    override void refresh()
+    {
+        auto tempMat = createFromYaml( resource.fullPath.loadYamlFile() );
+        _diffuse = tempMat._diffuse;
+        _normal = tempMat._normal;
+        _specular = tempMat._specular;
+        tempMat.shutdown();
+    }
+
+    /**
      * Shuts down the material, making sure all references are released.
      */
-    void shutdown()
+    override void shutdown()
     {
         _diffuse = _specular = _normal = null;
     }
@@ -73,23 +83,21 @@ public:
 /**
  * TODO
  */
-class Texture
+class Texture : Asset
 {
 protected:
     uint _width = 1;
     uint _height = 1;
     uint _glID;
-    bool _isUsed;
 
     /**
      * TODO
      *
      * Params:
-     *
-     * Returns:
      */
-    this( ubyte* buffer )
+    this( ubyte* buffer, string filePath = "" )
     {
+        super( Resource( filePath ) );
         glGenTextures( 1, &_glID );
         glBindTexture( GL_TEXTURE_2D, glID );
         updateBuffer( buffer );
@@ -99,8 +107,6 @@ protected:
      * TODO
      *
      * Params:
-     *
-     * Returns:
      */
     void updateBuffer( const ubyte* buffer )
     {
@@ -121,40 +127,52 @@ public:
     mixin( Property!_height );
     /// TODO
     mixin( Property!_glID );
-    /// Whether or not the texture is actually used.
-    mixin( Property!( _isUsed, AccessModifier.Package ) );
 
     /**
      * TODO
      *
      * Params:
-     *
-     * Returns:
      */
     this( string filePath )
     {
-        filePath ~= "\0";
-        auto imageData = FreeImage_ConvertTo32Bits( FreeImage_Load( FreeImage_GetFileType( filePath.ptr, 0 ), filePath.ptr, 0 ) );
+        auto imageData = loadFreeImage( filePath );
 
-        width = FreeImage_GetWidth( imageData );
-        height = FreeImage_GetHeight( imageData );
+        this( cast(ubyte*)FreeImage_GetBits( imageData ), filePath );
 
-        this( cast(ubyte*)FreeImage_GetBits( imageData ) );
+        FreeImage_Unload( imageData );
+    }
+
+    /**
+     * Refresh the asset.
+     */
+    override void refresh()
+    {
+        auto imageData = loadFreeImage( resource.fullPath );
+
+        updateBuffer( cast(ubyte*)FreeImage_GetBits( imageData ) );
 
         FreeImage_Unload( imageData );
     }
 
     /**
      * TODO
-     *
-     * Params:
-     *
-     * Returns:
      */
-    void shutdown()
+    override void shutdown()
     {
         glBindTexture( GL_TEXTURE_2D, 0 );
         glDeleteBuffers( 1, &_glID );
+    }
+
+private:
+    auto loadFreeImage( string filePath )
+    {
+        filePath ~= '\0';
+        auto imageData = FreeImage_ConvertTo32Bits( FreeImage_Load( FreeImage_GetFileType( filePath.ptr, 0 ), filePath.ptr, 0 ) );
+
+        width = FreeImage_GetWidth( imageData );
+        height = FreeImage_GetHeight( imageData );
+
+        return imageData;
     }
 }
 

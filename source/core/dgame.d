@@ -215,6 +215,7 @@ private:
         // Refresh
         Config.refresh();
         Assets.refresh();
+        Graphics.reload();
 
         // Restart
         currentState = EngineState.Run;

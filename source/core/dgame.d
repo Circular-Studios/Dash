@@ -163,6 +163,10 @@ protected:
      */
     void onShutdown() { }
     /**
+     * To be overridden, called when refreshing content.
+     */
+    void onRefresh() { }
+    /**
      * To be overridden, called when resetting and the state must be saved.
      */
     void onSaveState() { }
@@ -206,31 +210,18 @@ private:
      */
     final void reload()
     {
-        // Shut everything down
-        //onShutdown();
-        //resetTasks();
-        //UserInterface.shutdownAwesomium();
-        //Graphics.shutdown();
-
         // Refresh
         Config.refresh();
         Assets.refresh();
         Graphics.reload();
         Prefabs.refresh();
+        Input.initialize();
 
         // Restart
         currentState = EngineState.Run;
 
-        /*stateFlags = new GameStateFlags;
-        stateFlags.resumeAll();
-
-        logDebug( "Initializing..." );
-        bench!( { Logger.initialize(); } )( "Logger init" );
-        bench!( { Input.initialize(); } )( "Input init" );
-        bench!( { Graphics.initialize(); } )( "Graphics init" );
-        bench!( { Prefabs.initialize(); } )( "Prefabs init" );
-        bench!( { UserInterface.initializeAwesomium(); } )( "UI init" );
-        bench!( { DGame.instance.onInitialize(); } )( "Game init" );*/
+        // Refresh game.
+        onRefresh();
     }
 
     /**

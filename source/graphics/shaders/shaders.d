@@ -301,6 +301,11 @@ public:
      * Binds diffuse, normal, and specular textures to the shader
      */
     final void bindMaterial( Material material )
+    in
+    {
+        assert( material, "Cannot bind null material." );
+    }
+    body
     {
         //This is finding the uniform for the given texture, and setting that texture to the appropriate one for the object
         glUniform1i( DiffuseTexture, 0 );

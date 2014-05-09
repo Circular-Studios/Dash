@@ -4,7 +4,7 @@
 module components.assets;
 import core.properties, components, utility;
 
-import std.string, std.array;
+import std.string, std.array, std.algorithm;
 
 import yaml;
 import derelict.freeimage.freeimage, derelict.assimp3.assimp;
@@ -15,6 +15,9 @@ import derelict.freeimage.freeimage, derelict.assimp3.assimp;
 abstract final class Assets
 {
 static:
+private:
+    Material[][Resource] materialResources;
+
 package:
     Mesh[string] meshes;
     Texture[string] textures;
@@ -109,20 +112,24 @@ public:
             textures[ file.baseFileName ] = new Texture( file.fullPath );
         }
 
-        foreach( object; loadYamlDocuments( Resources.Materials ) )
+        foreach( objFile; loadYamlFiles( Resources.Materials ) )
         {
+            auto object = objFile[ 0 ];
             auto name = object[ "Name" ].as!string;
 
             if( name in materials )
                 logWarning( "Material ", name, " exists more than once." );
             
-            materials[ name ] = Material.createFromYaml( object );
+            auto newMat = Material.createFromYaml( object );
+            materials[ name ] = newMat;
+            materialResources[ objFile[ 1 ] ] ~= newMat;
         }
 
         meshes.rehash();
         textures.rehash();
         materials.rehash();
         animations.rehash();
+        materialResources.rehash();
     }
 
     /**
@@ -149,7 +156,60 @@ public:
 
         mixin( refresh!q{meshes} );
         mixin( refresh!q{textures} );
-        mixin( refresh!q{materials} );
+        
+        logDebug( "Refreshing materials..." );
+        // Iterate over each file, and it's materials
+        foreach( file, ref mats; materialResources.dup )
+        {
+            // If the file was deleted, remove all materials in it.
+            if( !file.exists )
+            {
+                foreach( asset; mats )
+                {
+                    asset.shutdown();
+                    materials.remove( asset.name );
+                }
+
+                mats = [];
+            }
+            // Else if the file changed, update each material.
+            else if( file.needsRefresh )
+            {
+                // For each material, whether or not it still exists
+                bool[Material] matsFound;
+                foreach( mat; mats )
+                    matsFound[ mat ] = false;
+
+                // Reset materialResources for this file
+                mats = [];
+
+                // Foreach material currently in the file
+                foreach( node; loadAllDocumentsInYamlFile( file.fullPath ) )
+                {
+                    // If the material already existed, update it.
+                    if( auto oldMat = node[ "Name" ].get!string in materials )
+                    {
+                        oldMat.refresh( node );
+                        matsFound[ *oldMat ] = true;
+                        materialResources[ file ] ~= *oldMat;
+                    }
+                    // Else add new materials
+                    else
+                    {
+                        auto newMat = Material.createFromYaml( node );
+                        materials[ node[ "Name" ].get!string ] = newMat;
+                        materialResources[ file ] ~= newMat;
+                    }
+                }
+
+                foreach( mat; matsFound.keys.filter!( material => !matsFound[ material ] ) )
+                {
+                    logDebug( "Removing material ", mat.name );
+                    mat.shutdown();
+                    materials.remove( mat.name );
+                }
+            }
+        }
     }
 
     /**

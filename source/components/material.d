@@ -15,6 +15,7 @@ final class Material : Asset
 {
 private:
     Texture _diffuse, _normal, _specular;
+    string _name;
 
 public:
     /// The diffuse (or color) map.
@@ -23,6 +24,8 @@ public:
     mixin( Property!(_normal, AccessModifier.Public) );
     /// The specular map, which specifies how shiny a given point is.
     mixin( Property!(_specular, AccessModifier.Public) );
+    /// The name of the material.
+    mixin( Property!_name );
 
     /**
      * Default constructor, makes sure everything is initialized to default.
@@ -45,16 +48,8 @@ public:
     static Material createFromYaml( Node yamlObj )
     {
         auto obj = new Material;
-        string prop;
-
-        if( yamlObj.tryFind( "Diffuse", prop ) )
-            obj.diffuse = Assets.get!Texture( prop );
-
-        if( yamlObj.tryFind( "Normal", prop ) )
-            obj.normal = Assets.get!Texture( prop );
-
-        if( yamlObj.tryFind( "Specular", prop ) )
-            obj.specular = Assets.get!Texture( prop );
+        
+        obj.refresh( yamlObj );
 
         return obj;
     }
@@ -62,13 +57,22 @@ public:
     /**
      * Refresh the asset.
      */
-    override void refresh()
+    override void refresh() { }
+
+    void refresh( Node yamlObj )
     {
-        auto tempMat = createFromYaml( resource.fullPath.loadYamlFile() );
-        _diffuse = tempMat._diffuse;
-        _normal = tempMat._normal;
-        _specular = tempMat._specular;
-        tempMat.shutdown();
+        string prop;
+
+        name = yamlObj[ "Name" ].get!string();
+
+        if( yamlObj.tryFind( "Diffuse", prop ) )
+            diffuse = Assets.get!Texture( prop );
+
+        if( yamlObj.tryFind( "Normal", prop ) )
+            normal = Assets.get!Texture( prop );
+
+        if( yamlObj.tryFind( "Specular", prop ) )
+            specular = Assets.get!Texture( prop );
     }
 
     /**

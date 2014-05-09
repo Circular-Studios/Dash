@@ -7,7 +7,7 @@ import utility.resources, utility.output;
 public import yaml;
 
 import std.variant, std.algorithm, std.traits,
-       std.array, std.conv, std.file;
+       std.array, std.conv, std.file, std.typecons;
 
 private string fileToYaml( string filePath ) { return filePath.replace( "\\", "/" ).replace( "../", "" ).replace( "/", "." ).replace( ".yml", "" ); }
 
@@ -123,9 +123,9 @@ static this()
  * Params:
  *  folder =                The folder to iterate over.
  */
-Node[] loadYamlDocuments( string folder )
+Tuple!( Node, Resource )[] loadYamlFiles( string folder )
 {
-    Node[] nodes;
+    Tuple!( Node, Resource )[] nodes;
 
     if( contentNode.isNull )
     {
@@ -140,7 +140,7 @@ Node[] loadYamlDocuments( string folder )
                 // Iterate over all documents in a file
                 foreach( doc; loader )
                 {
-                    nodes ~= doc;
+                    nodes ~= tuple( doc, file );
                 }
             }
             catch( YAMLException e )
@@ -158,16 +158,27 @@ Node[] loadYamlDocuments( string folder )
             if( fileContent.isSequence )
             {
                 foreach( Node childChild; fileContent )
-                    nodes ~= childChild;
+                    nodes ~= tuple( childChild, Resource( "" ) );
             }
             else
             {
-                nodes ~= fileContent;
+                nodes ~= tuple( fileContent, Resource( "" ) );
             }
         }
     }
 
     return nodes;
+}
+
+/**
+ * Process all documents files in a directory.
+ * 
+ * Params:
+ *  folder =                The folder to iterate over.
+ */
+Node[] loadYamlDocuments( string path )
+{
+    return loadYamlFiles( path ).map!( tup => tup[ 0 ] ).array;
 }
 
 /**
@@ -206,6 +217,37 @@ Node loadYamlFile( string filePath )
     else
     {
         return contentNode.find( filePath.fileToYaml );
+    }
+}
+
+/**
+ * Load a yaml file with the engine-specific mappings.
+ * 
+ * Params:
+ *  filePath =              The path to file to load.
+ */
+Node[] loadAllDocumentsInYamlFile( string filePath )
+{
+    if( contentNode.isNull )
+    {
+        auto loader = Loader( filePath );
+        loader.constructor = constructor;
+        try
+        {
+            Node[] nodes;
+            foreach( document; loader )
+                nodes ~= document;
+            return nodes;
+        }
+        catch( YAMLException e )
+        {
+            logFatal( "Error parsing file ", Resource( filePath ).baseFileName, ": ", e.msg );
+            return [];
+        }  
+    }
+    else
+    {
+        return contentNode.find( filePath.fileToYaml ).get!( Node[] );
     }
 }
 

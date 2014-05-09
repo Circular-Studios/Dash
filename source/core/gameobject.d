@@ -221,7 +221,7 @@ public:
         _behaviors = Behaviors( this );
 
         // Create default material
-        material = new Material();
+        material = new Material( "default" );
         id = nextId++;
 
         stateFlags = new ObjectStateFlags;

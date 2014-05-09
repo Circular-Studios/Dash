@@ -252,6 +252,73 @@ Node[] loadAllDocumentsInYamlFile( string filePath )
 }
 
 /**
+ * Refreshs a set of objects based on yaml files.
+ *
+ * Params:
+ *  createFunc =        The function used to create a new object of type ObjectType.
+ *  existsFunc =        The function that checks if a node is already stored. Returns a pointer to the object.
+ *  addToResourcesFunc =Adds the 
+ *  ObjectType =        The type of object stored in YAML.
+ *  objectResources =   The map of files to the objects they store.
+ */
+void refreshYamlObjects( alias createFunc, alias existsFunc, alias addToResourcesFunc, alias removeFunc, ObjectType )( ref ObjectType[][Resource] objectResources )
+{
+    // Iterate over each file, and it's objects
+    foreach( file, ref objs; objectResources.dup )
+    {
+        // If the file was deleted, remove all objects in it.
+        if( !file.exists )
+        {
+            foreach( asset; objs )
+            {
+                static if( __traits( compiles, asset.shutdown() ) )
+                    asset.shutdown();
+                removeFunc( asset );
+            }
+
+            objs = [];
+        }
+        // Else if the file changed, update each material.
+        else if( file.needsRefresh )
+        {
+            // For each material, whether or not it still exists
+            bool[ObjectType] objsFound;
+            foreach( obj; objs )
+                objsFound[ obj ] = false;
+
+            // Reset objectResources for this file
+            objs = [];
+
+            // Foreach material currently in the file
+            foreach( node; loadAllDocumentsInYamlFile( file.fullPath ) )
+            {
+                // If the material already existed, update it.
+                if( auto oldMat = existsFunc( node ) )
+                {
+                    oldMat.refresh( node );
+                    objsFound[ *oldMat ] = true;
+                    objectResources[ file ] ~= *oldMat;
+                }
+                // Else add new objects
+                else
+                {
+                    auto newMat = createFunc( node );
+                    addToResourcesFunc( node, newMat );
+                    objectResources[ file ] ~= newMat;
+                }
+            }
+
+            foreach( mat; objsFound.keys.filter!( object => !objsFound[ object ] ) )
+            {
+                static if( __traits( compiles, mat.shutdown() ) )
+                    mat.shutdown();
+                removeFunc( mat );
+            }
+        }
+    }
+}
+
+/**
  * Get the element, cast to the given type, at the given path, in the given node.
  *
  * Params:

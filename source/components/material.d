@@ -15,7 +15,7 @@ final class Material : Asset
 {
 private:
     Texture _diffuse, _normal, _specular;
-    string _name;
+    immutable string _name;
 
 public:
     /// The diffuse (or color) map.
@@ -25,16 +25,17 @@ public:
     /// The specular map, which specifies how shiny a given point is.
     mixin( Property!(_specular, AccessModifier.Public) );
     /// The name of the material.
-    mixin( Property!_name );
+    mixin( Getter!_name );
 
     /**
      * Default constructor, makes sure everything is initialized to default.
      */
-    this()
+    this( string name )
     {
         super( Resource( "" ) );
         _diffuse = _specular = defaultTex;
         _normal = defaultNormal;
+        _name = name;
     }
 
     /**
@@ -47,7 +48,7 @@ public:
      */
     static Material createFromYaml( Node yamlObj )
     {
-        auto obj = new Material;
+        auto obj = new Material( yamlObj[ "Name" ].get!string );
         
         obj.refresh( yamlObj );
 
@@ -59,11 +60,15 @@ public:
      */
     override void refresh() { }
 
+    /**
+     * Refresh the asset.
+     *
+     * Params:
+     *  yamlObj =       The new makeup of the material.
+     */
     void refresh( Node yamlObj )
     {
         string prop;
-
-        name = yamlObj[ "Name" ].get!string();
 
         if( yamlObj.tryFind( "Diffuse", prop ) )
             diffuse = Assets.get!Texture( prop );

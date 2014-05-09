@@ -157,59 +157,13 @@ public:
         mixin( refresh!q{meshes} );
         mixin( refresh!q{textures} );
         
-        logDebug( "Refreshing materials..." );
         // Iterate over each file, and it's materials
-        foreach( file, ref mats; materialResources.dup )
-        {
-            // If the file was deleted, remove all materials in it.
-            if( !file.exists )
-            {
-                foreach( asset; mats )
-                {
-                    asset.shutdown();
-                    materials.remove( asset.name );
-                }
-
-                mats = [];
-            }
-            // Else if the file changed, update each material.
-            else if( file.needsRefresh )
-            {
-                // For each material, whether or not it still exists
-                bool[Material] matsFound;
-                foreach( mat; mats )
-                    matsFound[ mat ] = false;
-
-                // Reset materialResources for this file
-                mats = [];
-
-                // Foreach material currently in the file
-                foreach( node; loadAllDocumentsInYamlFile( file.fullPath ) )
-                {
-                    // If the material already existed, update it.
-                    if( auto oldMat = node[ "Name" ].get!string in materials )
-                    {
-                        oldMat.refresh( node );
-                        matsFound[ *oldMat ] = true;
-                        materialResources[ file ] ~= *oldMat;
-                    }
-                    // Else add new materials
-                    else
-                    {
-                        auto newMat = Material.createFromYaml( node );
-                        materials[ node[ "Name" ].get!string ] = newMat;
-                        materialResources[ file ] ~= newMat;
-                    }
-                }
-
-                foreach( mat; matsFound.keys.filter!( material => !matsFound[ material ] ) )
-                {
-                    logDebug( "Removing material ", mat.name );
-                    mat.shutdown();
-                    materials.remove( mat.name );
-                }
-            }
-        }
+        refreshYamlObjects!(
+            Material.createFromYaml,
+            node => node[ "Name" ].get!string in materials,
+            ( node, mat ) => materials[ node[ "Name" ].get!string ] = mat,
+            mat => materials.remove( mat.name ) )
+                ( materialResources );
     }
 
     /**

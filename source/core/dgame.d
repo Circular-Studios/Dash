@@ -216,6 +216,7 @@ private:
         Config.refresh();
         Assets.refresh();
         Graphics.reload();
+        Prefabs.refresh();
 
         // Restart
         currentState = EngineState.Run;

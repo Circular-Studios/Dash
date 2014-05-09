@@ -103,10 +103,12 @@ static this()
     {
         vec3 color;
         float radius, falloffRate;
+        bool shadows = false;
         node.tryFind( "Color", color );
         node.tryFind( "Radius", radius );
         node.tryFind( "FalloffRate", falloffRate );
-        return cast(Light)new PointLight( color, radius, falloffRate );
+        node.tryFind( "CastShadows", shadows );
+        return cast(Light)new PointLight( color, radius, falloffRate, shadows );
     } );
     constructor.addConstructorScalar( "!Verbosity", &constructConv!Verbosity );
     constructor.addConstructorScalar( "!Shader", ( ref Node node ) => Shaders.get( node.get!string ) );

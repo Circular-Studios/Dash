@@ -85,7 +85,6 @@ public:
         if( castShadows )
         {
             // generate framebuffer for shadow map
-            shadowMapFrameBuffer = 0;
             glGenFramebuffers( 1, cast(uint*)&_shadowMapFrameBuffer );
             glBindFramebuffer( GL_FRAMEBUFFER, _shadowMapFrameBuffer );
 
@@ -195,17 +194,81 @@ private:
     float _falloffRate;
     mat4 _matrix;
 
+    uint _shadowMapFrameBuffer;
+    uint _shadowMapTexture;
+    mat4 _projView;
+    int _shadowMapSize;
+
 public:
     /// The area that lighting will be calculated for.
     mixin( Property!( _radius, AccessModifier.Public ) );
     /// The light's exponential attenuation modifier.
     mixin( Property!( _falloffRate, AccessModifier.Public ) );
 
-    this( vec3 color, float radius, float falloffRate )
+    /// The FrameBuffer for the shadowmap.
+    mixin( Property!( _shadowMapFrameBuffer ) );
+    /// The shadow map's depth texture.
+    mixin( Property!( _shadowMapTexture ) );
+    mixin( Property!( _projView ) );
+    mixin( Property!( _shadowMapSize ) );
+
+    this( vec3 color, float radius, float falloffRate, bool castShadows )
     {
         this.radius = radius;
         this.falloffRate = falloffRate;
         super( color );
+        this.castShadows = castShadows;
+        if( castShadows )
+        {
+            // generate framebuffer for shadow map
+            glGenFramebuffers( 1, cast(uint*)&_shadowMapFrameBuffer );
+            glBindFramebuffer( GL_FRAMEBUFFER, _shadowMapFrameBuffer );
+
+            // generate depth texture of shadow map
+            shadowMapSize = 256;
+            glGenTextures( 1, cast(uint*)&_shadowMapTexture );
+            glBindTexture( GL_TEXTURE_CUBE_MAP, _shadowMapTexture );
+            glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+            glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+            glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+            glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+            glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE );
+            for( int face = 0; face < 6; face++ )
+            {    
+                glTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_DEPTH_COMPONENT16, 
+                    shadowMapSize, shadowMapSize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, null );
+            }
+
+            glFramebufferTexture( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, _shadowMapTexture, 0 );
+
+            // don't want any info besides depth
+            glDrawBuffer( GL_NONE );
+            // don't want to read from gpu
+            glReadBuffer( GL_NONE );
+
+            // check for success
+            auto status = glCheckFramebufferStatus( GL_FRAMEBUFFER );
+            if( status != GL_FRAMEBUFFER_COMPLETE )
+            {
+                string mapFramebufferError( int code )
+                {
+                    switch( code )
+                    {
+                        case(GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT): return "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT";
+                        case(GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT): return "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT";
+                        case(GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER): return "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER";
+                        case(GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER): return "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER";
+                        case(GL_FRAMEBUFFER_UNSUPPORTED): return "GL_FRAMEBUFFER_UNSUPPORTED";
+                        case(GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE): return "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE";
+                        case(GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS): return "GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS";
+                        default: return "UNKNOWN";
+                    }
+                }
+
+                logFatal( "Deffered rendering Frame Buffer was not initialized correctly. Error: ", mapFramebufferError(status) );
+                assert(false);
+            }
+        }
     }
 
     /**

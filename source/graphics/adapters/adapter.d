@@ -412,7 +412,6 @@ public:
                 // bind and draw point lights
                 foreach( light; pointLights )
                 {
-                //  logInfo(light.owner.name);
                     shader.bindUniformMatrix4fv( shader.WorldView, 
                                                  scene.camera.viewMatrix * light.getTransform() );
                     shader.bindUniformMatrix4fv( shader.WorldViewProjection,

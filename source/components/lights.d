@@ -16,14 +16,18 @@ class Light : IComponent
 {
 private:
     vec3 _color;
+    bool _castShadows;
 
 public:
     /// The color the light gives off.
     mixin( Property!( _color, AccessModifier.Public ) );
+    /// If it should cast shadows
+    mixin( Property!( _castShadows ) );
 
     this( vec3 color )
     {
         this.color = color;
+        _castShadows = false;
     }
 
     static this()
@@ -73,38 +77,41 @@ public:
     mixin( Property!( _projView ) );
     mixin( Property!( _shadowMapSize ) );
 
-    this( vec3 color, vec3 direction )
+    this( vec3 color, vec3 direction, bool castShadows )
     {
         this.direction = direction; 
         super( color );
-
-        // generate framebuffer for shadow map
-        shadowMapFrameBuffer = 0;
-        glGenFramebuffers( 1, cast(uint*)&_shadowMapFrameBuffer );
-        glBindFramebuffer( GL_FRAMEBUFFER, _shadowMapFrameBuffer );
-
-        // generate depth texture of shadow map
-        shadowMapSize = 2048;
-        glGenTextures( 1, cast(uint*)&_shadowMapTexture );
-        glBindTexture( GL_TEXTURE_2D, _shadowMapTexture );
-        glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, shadowMapSize, shadowMapSize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, null );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-
-        glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shadowMapTexture, 0 );
-
-        // don't want any info besides depth
-        glDrawBuffer( GL_NONE );
-        // don't want to read from gpu
-        glReadBuffer( GL_NONE );
-
-        // check for success
-        if( glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE )
+        this.castShadows = castShadows;
+        if( castShadows )
         {
-            logFatal("Shadow map frame buffer failure.");
-            assert(false);
+            // generate framebuffer for shadow map
+            shadowMapFrameBuffer = 0;
+            glGenFramebuffers( 1, cast(uint*)&_shadowMapFrameBuffer );
+            glBindFramebuffer( GL_FRAMEBUFFER, _shadowMapFrameBuffer );
+
+            // generate depth texture of shadow map
+            shadowMapSize = 2048;
+            glGenTextures( 1, cast(uint*)&_shadowMapTexture );
+            glBindTexture( GL_TEXTURE_2D, _shadowMapTexture );
+            glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, shadowMapSize, shadowMapSize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, null );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+
+            glFramebufferTexture2D( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shadowMapTexture, 0 );
+
+            // don't want any info besides depth
+            glDrawBuffer( GL_NONE );
+            // don't want to read from gpu
+            glReadBuffer( GL_NONE );
+
+            // check for success
+            if( glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE )
+            {
+                logFatal("Shadow map frame buffer failure.");
+                assert(false);
+            }
         }
     }
 

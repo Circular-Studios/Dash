@@ -224,6 +224,7 @@ private:
         Assets.refresh();
         Graphics.refresh();
         Prefabs.refresh();
+        activeScene.refresh();
         // Need to refresh key events.
         //Input.initialize();
 

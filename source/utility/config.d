@@ -295,9 +295,15 @@ void refreshYamlObjects( alias createFunc, alias existsFunc, alias addToResource
                 // If the material already existed, update it.
                 if( auto oldMat = existsFunc( node ) )
                 {
-                    oldMat.refresh( node );
-                    objsFound[ *oldMat ] = true;
-                    objectResources[ file ] ~= *oldMat;
+                    // If is pointer, dereference
+                    static if( isPointer!( typeof(oldMat) ) )
+                        auto mat = *oldMat;
+                    else
+                        auto mat = oldMat;
+
+                    mat.refresh( node );
+                    objsFound[ mat ] = true;
+                    objectResources[ file ] ~= mat;
                 }
                 // Else add new objects
                 else

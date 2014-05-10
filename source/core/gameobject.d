@@ -271,6 +271,29 @@ public:
     }
 
     /**
+     * Refreshes the object with the given YAML node.
+     *
+     * Params:
+     *  node =          The node to refresh the object with.
+     */
+    final void refresh( Node node )
+    {
+        /*
+        foreach( string name, Node component; node )
+        {
+            if( auto refresher = *( name in IComponent.refreshers ) )
+            {
+                refresher( component, null );
+            }
+        }
+        */
+
+        logInfo( "Refreshing object ", name );
+
+        behaviors.onRefresh();   
+    }
+
+    /**
      * Adds a component to the object.
      */
     final void addComponent( T )( T newComponent ) if( is( T : IComponent ) )

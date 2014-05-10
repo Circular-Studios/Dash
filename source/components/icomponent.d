@@ -18,6 +18,10 @@ public:
      * Functions to call when creating components.
      */
     static IComponent function( Node, GameObject )[string] initializers;
+    /**
+     * Functions to call when refreshing a component.
+     */
+    static void function( Node, IComponent )[string] refreshers;
 
     /**
      * The GameObject that owns this component.

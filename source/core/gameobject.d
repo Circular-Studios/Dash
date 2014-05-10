@@ -288,6 +288,9 @@ public:
         }
         */
 
+        foreach( child; children )
+            child.refresh();
+
         logInfo( "Refreshing object ", name );
 
         behaviors.onRefresh();   

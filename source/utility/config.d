@@ -282,9 +282,7 @@ void refreshYamlObjects( alias createFunc, alias existsFunc, alias addToResource
         else if( file.needsRefresh )
         {
             // For each material, whether or not it still exists
-            bool[ObjectType] objsFound;
-            foreach( obj; objs )
-                objsFound[ obj ] = false;
+            bool[ObjectType] objsFound = objs.zip( false.repeat( objs.length ) ).assocArray();
 
             // Reset objectResources for this file
             objs = [];

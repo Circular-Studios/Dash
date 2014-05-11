@@ -215,7 +215,24 @@ static this()
 {
     IComponent.initializers[ "Material" ] = ( Node yml, GameObject obj )
     {
-        obj.material = Assets.get!Material( yml.get!string );
+        if( yml.isScalar )
+        {
+            obj.material = Assets.get!Material( yml.get!string );
+        }
+        else if( yml.isMapping )
+        {
+            logError( "Inline material definitions are not yet supported." );
+        }
+        else
+        {
+            logError( "Unsupported format for Material in ", obj.name, "." );
+        }
+
         return null;
+    };
+
+    IComponent.refreshers[ "Material" ] = ( Node yml, GameObject obj )
+    {
+        IComponent.initializers[ "Material" ]( yml, obj );
     };
 }

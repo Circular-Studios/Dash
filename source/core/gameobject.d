@@ -280,9 +280,9 @@ public:
     {
         foreach( string name, Node component; node )
         {
-            if( auto refresher = *( name in IComponent.refreshers ) )
+            if( auto refresher = name in IComponent.refreshers )
             {
-                refresher( component, this );
+                ( *refresher )( component, this );
             }
         }
 

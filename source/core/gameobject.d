@@ -288,10 +288,27 @@ public:
         }
         */
 
-        foreach( child; children )
-            child.refresh();
-
-        logInfo( "Refreshing object ", name );
+        Node yamlChildren;
+        if( node.tryFind( "Children", yamlChildren ) && yamlChildren.isSequence )
+        {
+            foreach( Node yamlChild; yamlChildren )
+            {
+                // Find 0 based index of child in yamlChildren
+                auto index = children
+                                .map!( child => child.name )
+                                .countUntil( yamlChild[ "Name" ].get!string );
+                if( index != -1 )
+                {
+                    // Refresh with YAML node.
+                    children[ index ].refresh( yamlChild );
+                }
+                // If not in children, add it.
+                else
+                {
+                    addChild( GameObject.createFromYaml( yamlChild ) );
+                }
+            }
+        }
 
         behaviors.onRefresh();   
     }
@@ -337,24 +354,24 @@ public:
         GameObject par;
         for( par = this; par.parent; par = par.parent ) { }
 
-        GameObject[] objectChildren;
-        {
-            GameObject[] objs;
-            objs ~= newChild;
-
-            while( objs.length )
-            {
-                auto obj = objs[ 0 ];
-                objs = objs[ 1..$ ];
-                objectChildren ~= obj;
-
-                foreach( child; obj.children )
-                    objs ~= child;
-            }
-        }
-
         if( par.scene )
         {
+            GameObject[] objectChildren;
+            {
+                GameObject[] objs;
+                objs ~= newChild;
+
+                while( objs.length )
+                {
+                    auto obj = objs[ 0 ];
+                    objs = objs[ 1..$ ];
+                    objectChildren ~= obj;
+
+                    foreach( child; obj.children )
+                        objs ~= child;
+                }
+            }
+
             // If adding to the scene, make sure all new children are in.
             foreach( child; objectChildren )
             {
@@ -377,6 +394,17 @@ public:
 
         oldChild.canChangeName = true;
         oldChild.parent = null;
+
+        // Get root object
+        GameObject par;
+        for( par = this; par.parent; par = par.parent ) { }
+
+        // Remove from scene.
+        if( par.scene )
+        {
+            par.scene.objectById.remove( oldChild.id );
+            par.scene.idByName.remove( oldChild.name );
+        }
     }
 }
 

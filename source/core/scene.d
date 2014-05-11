@@ -86,7 +86,7 @@ public:
             GameObject.createFromYaml,
             node => this[ node[ "Name" ].get!string ],
             ( node, obj ) => _root.addChild( obj ),
-            obj => obj.parent.removeChild( obj ) )
+            ( obj ) { if( obj.parent ) obj.parent.removeChild( obj ); } )
                 ( goResources );
     }
 

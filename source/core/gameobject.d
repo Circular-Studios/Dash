@@ -7,7 +7,7 @@ import core, components, graphics, utility;
 import yaml;
 import gl3n.linalg, gl3n.math;
 
-import std.conv, std.variant, std.array, std.algorithm, std.typecons;
+import std.conv, std.variant, std.array, std.algorithm, std.typecons, std.range;
 
 enum AnonymousName = "__anonymous";
 
@@ -291,22 +291,43 @@ public:
         Node yamlChildren;
         if( node.tryFind( "Children", yamlChildren ) && yamlChildren.isSequence )
         {
+            auto childNames = children.map!( child => child.name );
+            bool[string] childFound = childNames.zip( false.repeat( childNames.length ) ).assocArray();
+
             foreach( Node yamlChild; yamlChildren )
             {
                 // Find 0 based index of child in yamlChildren
-                auto index = children
-                                .map!( child => child.name )
-                                .countUntil( yamlChild[ "Name" ].get!string );
-                if( index != -1 )
+                if( auto index = childNames.countUntil( yamlChild[ "Name" ].get!string ) + 1 )
                 {
                     // Refresh with YAML node.
-                    children[ index ].refresh( yamlChild );
+                    children[ index - 1 ].refresh( yamlChild );
+                    childFound[ yamlChild[ "Name" ].get!string ] = true;
                 }
                 // If not in children, add it.
                 else
                 {
                     addChild( GameObject.createFromYaml( yamlChild ) );
                 }
+            }
+
+            // Filter out found children's names, and then get the objects.
+            auto unfoundChildren = childFound.keys
+                                        .filter!( name => !childFound[ name ] )
+                                        .map!( name => children[ childNames.countUntil( name ) ] );
+            foreach( unfound; unfoundChildren )
+            {
+                logDebug( "Removing child ", unfound.name, " from ", name, "." );
+                unfound.shutdown();
+                removeChild( unfound );
+            }
+        }
+        // Remove all children
+        else
+        {
+            foreach( child; children )
+            {
+                child.shutdown();
+                removeChild( child );
             }
         }
 

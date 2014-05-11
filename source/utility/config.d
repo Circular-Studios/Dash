@@ -6,7 +6,7 @@ import utility.resources, utility.output;
 
 public import yaml;
 
-import std.variant, std.algorithm, std.traits,
+import std.variant, std.algorithm, std.traits, std.range,
        std.array, std.conv, std.file, std.typecons;
 
 private string fileToYaml( string filePath ) { return filePath.replace( "\\", "/" ).replace( "../", "" ).replace( "/", "." ).replace( ".yml", "" ); }

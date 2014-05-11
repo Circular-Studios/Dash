@@ -278,15 +278,13 @@ public:
      */
     final void refresh( Node node )
     {
-        /*
         foreach( string name, Node component; node )
         {
             if( auto refresher = *( name in IComponent.refreshers ) )
             {
-                refresher( component, null );
+                refresher( component, this );
             }
         }
-        */
 
         Node yamlChildren;
         if( node.tryFind( "Children", yamlChildren ) && yamlChildren.isSequence )

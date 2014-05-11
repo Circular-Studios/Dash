@@ -21,7 +21,7 @@ public:
     /**
      * Functions to call when refreshing a component.
      */
-    static void function( Node, IComponent )[string] refreshers;
+    static void function( Node, GameObject )[string] refreshers;
 
     /**
      * The GameObject that owns this component.

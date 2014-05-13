@@ -61,7 +61,6 @@ private:
     string _name;
     ObjectStateFlags* _stateFlags;
     bool canChangeName;
-    Behaviors _behaviors;
     Node _yaml;
     static uint nextId = 1;
 
@@ -85,8 +84,6 @@ public:
     mixin( Property!_parent );
     /// All of the objects which list this as parent
     mixin( Property!_children );
-    /// The scripts this object owns.
-    mixin( RefGetter!_behaviors );
     /// The yaml node that created the object.
     mixin( RefGetter!_yaml );
     /// The current update settings
@@ -138,27 +135,6 @@ public:
                 obj.transform.position = vec3( transVec );
             if( innerNode.tryFind( "Rotation", transVec ) )
                 obj.transform.rotation = quat.identity.rotatex( transVec.x.radians ).rotatey( transVec.y.radians ).rotatez( transVec.z.radians );
-        }
-
-        if( yamlObj.tryFind( "Behaviors", innerNode ) )
-        {
-            if( !innerNode.isSequence )
-            {
-                logWarning( "Behaviors tag of ", obj.name, " must be a sequence." );
-            }
-            else
-            {
-                foreach( Node behavior; innerNode )
-                {
-                    string className;
-                    Node fields;
-                    if( !behavior.tryFind( "Class", className ) )
-                        logFatal( "Behavior element in ", obj.name, " must have a Class value." );
-                    if( !behavior.tryFind( "Fields", fields ) )
-                        fields = Node( YAMLNull() );
-                    obj.behaviors.createBehavior( className, fields );
-                }
-            }
         }
 
         if( yamlObj.tryFind( "Children", innerNode ) )
@@ -227,7 +203,6 @@ public:
     this()
     {
         _transform = Transform( this );
-        _behaviors = Behaviors( this );
 
         // Create default material
         material = new Material( "default" );

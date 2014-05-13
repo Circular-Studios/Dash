@@ -341,7 +341,7 @@ public:
     /**
      * Adds a component to the object.
      */
-    final void addComponent( T )( T newComponent ) if( is( T : Component ) )
+    final void addComponent( Component newComponent )
     {
         if( newComponent )
         {
@@ -349,19 +349,28 @@ public:
 
             enum setProperty( string prop ) = q{
                 if( typeid(newComponent) == typeid(typeof($prop)) )
+                {
                     $prop = cast(typeof($prop))newComponent;
+                    return;
+                }
             }.replace( "$prop", prop );
 
             mixin( setProperty!q{_material} );
             mixin( setProperty!q{_camera} );
             mixin( setProperty!q{_animation} );
-
             if( typeid(newComponent) == typeid(Mesh) )
             {
                 _mesh = cast(Mesh)newComponent;
 
                 if( _mesh.animated )
                     addComponent( _mesh.animationData.getComponent() );
+
+                return;
+            }
+            else if( typeid(newComponent) == typeid(Light) || typeid(newComponent).base == typeid(Light) )
+            {
+                _light = cast(Light)newComponent;
+                return;
             }
         }
     }

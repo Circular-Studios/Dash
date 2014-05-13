@@ -274,7 +274,7 @@ public:
         void shadowPass()
         {
             foreach( light; directionalLights )
-            {   
+            {
                 if( light.castShadows )
                 {
                     glBindFramebuffer( GL_FRAMEBUFFER, light.shadowMapFrameBuffer );

@@ -179,23 +179,6 @@ public:
 
         return obj;
     }
-    /**
-     * Create a GameObject from a Yaml node.
-     *
-     * Params:
-     *  fields =            The YAML node to pull info from.
-     *
-     * Returns:
-     *  A tuple of the object created at index 0, and the behavior at index 1.
-     */
-    static auto createWithBehavior( BehaviorT )( Node fields = Node( YAMLNull() ) )
-    {
-        auto newObj = new GameObject;
-
-        newObj.behaviors.createBehavior!BehaviorT( fields );
-
-        return tuple( newObj, newObj.behaviors.get!BehaviorT );
-    }
 
     /**
      * Creates basic GameObject with transform and connection to transform's emitter.

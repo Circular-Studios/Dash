@@ -85,31 +85,6 @@ static this()
         result.w = vals[ 3 ].to!float;
         return result;
     } );
-    constructor.addConstructorMapping( "!Light-Directional", ( ref Node node )
-    {
-        vec3 color;
-        vec3 dir;
-        bool shadows = false;
-        node.tryFind( "Color", color );
-        node.tryFind( "Direction", dir );
-        node.tryFind( "CastShadows", shadows );
-        return cast(Light)new DirectionalLight( color, dir, shadows );
-    } );
-    constructor.addConstructorMapping( "!Light-Ambient", ( ref Node node )
-    {
-        vec3 color;
-        node.tryFind( "Color", color );
-        return cast(Light)new AmbientLight( color );
-    } );
-    constructor.addConstructorMapping( "!Light-Point", ( ref Node node )
-    {
-        vec3 color;
-        float radius, falloffRate;
-        node.tryFind( "Color", color );
-        node.tryFind( "Radius", radius );
-        node.tryFind( "FalloffRate", falloffRate );
-        return cast(Light)new PointLight( color, radius, falloffRate );
-    } );
     constructor.addConstructorScalar( "!Verbosity", &constructConv!Verbosity );
     constructor.addConstructorScalar( "!Shader", ( ref Node node ) => Shaders.get( node.get!string ) );
     //constructor.addConstructorScalar( "!Texture", ( ref Node node ) => Assets.get!Texture( node.get!string ) );

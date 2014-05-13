@@ -59,20 +59,28 @@ enum registerComponents( string modName ) = q{
     {
         import yaml;
         mixin( "import mod = $modName;" );
+
+        // Foreach definition in the module (classes, structs, functions, etc.)
         foreach( member; __traits( allMembers, mod ) )
         {
+            // If the we can get the attributes of the definition
             static if( __traits( compiles, __traits( getAttributes, __traits( getMember, mod, member ) ) ) )
             {
+                // Iterate over each attribute and try to find a YamlEntry
                 foreach( attrib; __traits( getAttributes, __traits( getMember, mod, member ) ) )
                 {
+                    // If we find one, process it and go to next definition.
                     static if( is( typeof(attrib) == YamlEntry ) )
                     {
+                        // If the type has a loader, register it as the create function.
                         if( attrib.loader )
                         {
                             create[ member ] = ( Node node ) => attrib.loader( node.get!string );
                         }
-
-                        registerYamlComponent!( mixin( member ) )( attrib.name.length == 0 ? member : attrib.name );
+                        else
+                        {
+                            registerYamlComponent!( mixin( member ) )( attrib.name.length == 0 ? member : attrib.name );
+                        }
 
                         break;
                     }
@@ -87,30 +95,41 @@ Component delegate( Node )[string] create;
 /// DON'T MIND ME
 void registerYamlComponent( Base )( string yamlName = "" ) if( is( Base : Component ) )
 {
+    // If no name specified, use class name.
     if( yamlName == "" )
         yamlName = Base.stringof.split( "." )[ $-1 ];
 
+    // Make sure the type is instantiable
     static if( __traits( compiles, new Base ) )
     {
+        // Make a creator function for the type.
         create[ yamlName ] = ( Node node )
         {
+            // Create an instance of the class to assign things to.
             Base b = new Base;
+            // Set the yaml property so the class has access to the yaml that created it.
             b.yaml = node;
 
+            // Get all members of the class (including inherited ones).
             foreach( memberName; __traits( allMembers, Base ) )
             {
+                // If the attributes are gettable.
                 static if( __traits( compiles, __traits( getAttributes, __traits( getMember, Base, memberName ) ) ) )
                 {
+                    // Iterate over each attribute on the member.
                     foreach( attrib; __traits( getAttributes, __traits( getMember, Base, memberName ) ) )
                     {
+                        // If it is marked as a field, process.
                         static if( is( typeof(attrib) == Field ) )
                         {
                             string yamlFieldName;
+                            // If a name is not specified, use the name of the member.
                             if( attrib.name == "" )
                                 yamlFieldName = memberName;
                             else
                                 yamlFieldName = attrib.name;
 
+                            // If there's an loader on the field, use that.
                             if( attrib.loader )
                             {
                                 static if( is( typeof( mixin( "b." ~ memberName ) ) : Component ) )
@@ -122,6 +141,7 @@ void registerYamlComponent( Base )( string yamlName = "" ) if( is( Base : Compon
                                         logDebug( "Failed finding ", yamlFieldName );
                                 }
                             }
+                            // If the type of the field has a loader, use that.
                             else if( auto loader = typeof( mixin( "b." ~ memberName ) ).stringof in create )
                             {
                                 static if( is( typeof( mixin( "b." ~ memberName ) ) : Component ) )
@@ -133,6 +153,7 @@ void registerYamlComponent( Base )( string yamlName = "" ) if( is( Base : Compon
                                         logDebug( "Failed finding ", yamlFieldName );
                                 }
                             }
+                            // Else just try to parse the yaml.
                             else
                             {
                                 typeof( __traits( getMember, b, memberName ) ) val;
@@ -144,6 +165,7 @@ void registerYamlComponent( Base )( string yamlName = "" ) if( is( Base : Compon
 
                             break;
                         }
+                        // If the user forgot (), remind them.
                         else static if( is( typeof(attrib == typeof(field) ) ) )
                         {
                             logWarning( "Don't forget () after field on ", memberName );

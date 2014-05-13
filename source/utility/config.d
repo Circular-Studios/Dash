@@ -366,6 +366,10 @@ final bool tryFind( T )( Node node, string path, ref T result ) nothrow @safe
             foreach( Node element; res )
                 result ~= element.get!U;
         }
+        else static if( __traits( compiles, res.getObject!T ) )
+        {
+            result = res.getObject!T;
+        }
         else
         {
             result = res.get!T;

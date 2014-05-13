@@ -69,27 +69,27 @@ package:
 
 public:
     /// The current transform of the object.
-    mixin( RefGetter!( _transform, AccessModifier.Public ) );
+    mixin( RefGetter!_transform );
     /// The Material belonging to the object.
-    mixin( Property!( _material, AccessModifier.Public ) );
+    mixin( Property!_material );
     /// The Mesh belonging to the object.
-    mixin( Property!( _mesh, AccessModifier.Public ) );
+    mixin( Property!_mesh );
     /// The animation on the object.
-    mixin( Property!( _animation, AccessModifier.Public ) );
+    mixin( Property!_animation );
     /// The light attached to this object.
-    mixin( Property!( _light, AccessModifier.Public ) );
+    mixin( Property!_light );
     /// The camera attached to this object.
-    mixin( Property!( _camera, AccessModifier.Public ) );
+    mixin( Property!_camera );
     /// The object that this object belongs to.
-    mixin( Property!( _parent, AccessModifier.Public ) );
+    mixin( Property!_parent );
     /// All of the objects which list this as parent
-    mixin( Property!( _children, AccessModifier.Public ) );
+    mixin( Property!_children );
+    /// The scripts this object owns.
+    mixin( RefGetter!_behaviors );
     /// The current update settings
     mixin( Property!( _stateFlags, AccessModifier.Public ) );
     /// The name of the object.
     mixin( Getter!_name );
-    /// The scripts this object owns.
-    mixin( RefGetter!_behaviors );
     /// ditto
     mixin( ConditionalSetter!( _name, q{canChangeName}, AccessModifier.Public ) );
     /// The ID of the object.

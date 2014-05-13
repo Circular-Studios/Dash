@@ -10,6 +10,13 @@ import gl3n.linalg;
 
 import std.string, std.traits, std.algorithm;
 
+enum Stage
+{
+    Vertex,
+    Geometry,
+    Fragment,
+}
+
 /*
  * String constants for our shader uniforms
  */
@@ -133,6 +140,51 @@ public:
     }
 }
 
+final class Pipeline
+{
+private:
+    uint _pipeID, vID, fID, gID;
+
+    uint stageID( Stage stage )() 
+    {
+        with( Stage )
+        {
+            static if( stage == Vertex )
+                return vID;
+            else static if( stage == Geometry )
+                return gID;
+            else static if( stage == Fragment )
+                return fID;
+            else
+                static assert( false, "Invalid stage parameter." );
+        }
+    }
+
+public:
+    /// The pipeline's ID.
+    mixin( Property!_pipeID );
+
+    this( uint vertexShaderID, uint fragmentShaderID, uint geometryShaderID = 0 )
+    {
+        vID = vertexShaderID;
+        fID = fragmentShaderID;
+        gID = geometryShaderID;
+        glGenProgramPipelines( 1, &_pipeID );
+        glUseProgramStages( pipeID, GL_VERTEX_SHADER_BIT, vertexShaderID );
+        if( geometryShaderID )
+            glUseProgramStages( pipeID, GL_GEOMETRY_SHADER_BIT, geometryShaderID );
+        glUseProgramStages( pipeID, GL_FRAGMENT_SHADER_BIT, fragmentShaderID );
+    }
+
+    final void bindUniform1f( Stage stage )( uint uniform, const float value )
+    {
+        glProgramUniform1f( stageID!stage, uniform, value );
+    }
+
+private:
+
+}
+
 /**
 * Class storing the programID, VS ID, FS ID and ShaderUniform locations for a given Shader program
 */
@@ -190,6 +242,7 @@ public:
     */
     void compile( string vertexBody, string fragmentBody )
     {
+        char[1000] errorLog;
         auto vertexCBody = vertexBody.ptr;
         auto fragmentCBody = fragmentBody.ptr;
         int vertexSize = cast(int)vertexBody.length;
@@ -204,9 +257,7 @@ public:
         if( compileStatus != GL_TRUE )
         {
             logFatal( shaderName ~ " Vertex Shader compile error" );
-            char[1000] errorLog;
-            auto info = errorLog.ptr;
-            glGetShaderInfoLog( vertexShaderID, 1000, null, info );
+            glGetShaderInfoLog( vertexShaderID, 1000, null, errorLog.ptr );
             logFatal( errorLog );
             assert(false);
         }
@@ -216,9 +267,7 @@ public:
         if( compileStatus != GL_TRUE )
         {
             logFatal( shaderName ~ " Fragment Shader compile error" );
-            char[1000] errorLog;
-            auto info = errorLog.ptr;
-            glGetShaderInfoLog( fragmentShaderID, 1000, null, info );
+            glGetShaderInfoLog( fragmentShaderID, 1000, null, errorLog.ptr );
             logFatal( errorLog );
             assert(false);
         }
@@ -232,9 +281,7 @@ public:
         if( compileStatus != GL_TRUE )
         {
             logFatal( shaderName ~ " Shader program linking error" );
-            char[1000] errorLog;
-            auto info = errorLog.ptr;
-            glGetProgramInfoLog( programID, 1000, null, info );
+            glGetProgramInfoLog( programID, 1000, null, errorLog.ptr );
             logFatal( errorLog );
             assert(false);
         }

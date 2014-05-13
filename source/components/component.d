@@ -69,7 +69,6 @@ enum registerComponents( string modName ) = q{
                     {
                         if( attrib.loader )
                         {
-                            typeLoaders[ typeid(mixin( member )) ] = attrib.loader;
                             create[ member ] = ( Node node ) => attrib.loader( node.get!string );
                         }
 
@@ -77,15 +76,7 @@ enum registerComponents( string modName ) = q{
 
                         break;
                     }
-                    else static if( is( typeof(attrib) == typeof(yamlEntry) ) )
-                    {
-                        logWarning( "Don't forget () after yamlEntry on ", member );
-                    }
                 }
-            }
-            else
-            {
-                logInfo( "No compile on member ", member );
             }
         }
     }
@@ -131,7 +122,7 @@ void registerYamlComponent( Base )( string yamlName = "" ) if( is( Base : Compon
                                         logDebug( "Failed finding ", yamlFieldName );
                                 }
                             }
-                            else if( auto loader = typeid( mixin( "b." ~ memberName ) ) in typeLoaders )
+                            else if( auto loader = typeof( mixin( "b." ~ memberName ) ).stringof in create )
                             {
                                 static if( is( typeof( mixin( "b." ~ memberName ) ) : Component ) )
                                 {
@@ -184,11 +175,6 @@ YamlEntry yamlEntry( string loader = "null" )( string name = "" )
 {
     return YamlEntry( name, mixin( loader ) );
 }
-/// ditto
-/*YamlEntry yamlEntry( string loader )
-{
-    return YamlEntry( "", loader );
-}*/
 
 /**
  * Meant to be added to members for making them YAML accessible.
@@ -211,13 +197,6 @@ Field field( string loader = "null" )( string name = "" )
 {
     return Field( name, mixin( loader ) );
 }
-/// ditto
-/*Field field( string loader )
-{
-    return Field( "", loader );
-}*/
-
-LoaderFunction[TypeInfo] typeLoaders;
 
 struct YamlEntry
 {

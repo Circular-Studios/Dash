@@ -274,7 +274,12 @@ void refreshYamlObjects( alias createFunc, alias existsFunc, alias addToResource
                     else
                         auto mat = oldMat;
 
-                    mat.refresh( node );
+                    if( mat.yaml != node )
+                    {
+                        mat.refresh( node );
+                        mat.yaml = node;
+                    }
+
                     objsFound[ mat ] = true;
                     objectResources[ file ] ~= mat;
                 }

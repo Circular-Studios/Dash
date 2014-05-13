@@ -62,6 +62,7 @@ private:
     ObjectStateFlags* _stateFlags;
     bool canChangeName;
     Behaviors _behaviors;
+    Node _yaml;
     static uint nextId = 1;
 
 package:
@@ -86,6 +87,8 @@ public:
     mixin( Property!_children );
     /// The scripts this object owns.
     mixin( RefGetter!_behaviors );
+    /// The yaml node that created the object.
+    mixin( RefGetter!_yaml );
     /// The current update settings
     mixin( Property!( _stateFlags, AccessModifier.Public ) );
     /// The name of the object.

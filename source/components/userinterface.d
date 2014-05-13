@@ -163,7 +163,7 @@ public:
 /**
  * Creates an Awesomium web view texture
  */
-class AwesomiumView : Texture, IComponent
+class AwesomiumView : Texture
 {
 private:
     version( Windows )

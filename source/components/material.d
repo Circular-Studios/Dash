@@ -8,22 +8,27 @@ import yaml;
 import derelict.opengl3.gl3, derelict.freeimage.freeimage;
 import std.variant, std.conv, std.string;
 
+mixin( registerComponents!q{components.material} );
+
 /**
  * A collection of textures that serve different purposes in the rendering pipeline.
  */
+@yamlEntry!( q{name => Assets.get!Material( name )} )()
 final class Material : Asset
 {
 private:
-    Texture _diffuse, _normal, _specular;
     immutable string _name;
 
 public:
     /// The diffuse (or color) map.
-    mixin( Property!(_diffuse, AccessModifier.Public) );
+    //@field( "Diffuse" )
+    Texture diffuse;
     /// The normal map, which specifies which way a face is pointing at a given pixel.
-    mixin( Property!(_normal, AccessModifier.Public) );
+    //@field( "Normal" )
+    Texture normal;
     /// The specular map, which specifies how shiny a given point is.
-    mixin( Property!(_specular, AccessModifier.Public) );
+    //@field( "Specular" )
+    Texture specular;
     /// The name of the material.
     mixin( Getter!_name );
 
@@ -33,8 +38,8 @@ public:
     this( string name )
     {
         super( Resource( "" ) );
-        _diffuse = _specular = defaultTex;
-        _normal = defaultNormal;
+        diffuse = specular = defaultTex;
+        normal = defaultNormal;
         _name = name;
     }
 
@@ -66,7 +71,7 @@ public:
      * Params:
      *  yamlObj =       The new makeup of the material.
      */
-    void refresh( Node yamlObj )
+    override void refresh( Node yamlObj )
     {
         string prop;
 
@@ -85,7 +90,7 @@ public:
      */
     override void shutdown()
     {
-        _diffuse = _specular = _normal = null;
+        diffuse = specular = normal = null;
     }
 }
 
@@ -213,7 +218,7 @@ private:
 
 static this()
 {
-    IComponent.initializers[ "Material" ] = ( Node yml, GameObject obj )
+    /*initializers[ "Material" ] = ( Node yml, GameObject obj )
     {
         if( yml.isScalar )
         {
@@ -231,8 +236,8 @@ static this()
         return null;
     };
 
-    IComponent.refreshers[ "Material" ] = ( Node yml, GameObject obj )
+    refreshers[ "Material" ] = ( Node yml, GameObject obj )
     {
         IComponent.initializers[ "Material" ]( yml, obj );
-    };
+    };*/
 }

@@ -149,6 +149,8 @@ public:
 
             // End drawing
             Graphics.endDraw();
+
+            //break;
         }
 
         stop();

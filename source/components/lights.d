@@ -9,18 +9,20 @@ import utility;
 import gl3n.linalg, gl3n.aabb;
 import derelict.opengl3.gl3;
 
+mixin( registerComponents!q{components.lights} );
+
 /**
  * Base class for lights.
  */
-class Light : IComponent
+abstract class Light : YamlComponent
 {
 private:
-    vec3 _color;
     bool _castShadows;
 
 public:
     /// The color the light gives off.
-    mixin( Property!( _color, AccessModifier.Public ) );
+    @field( "Color" )
+    vec3 color;
     /// If it should cast shadows
     mixin( Property!( _castShadows ) );
 
@@ -32,12 +34,12 @@ public:
 
     static this()
     {
-        IComponent.initializers[ "Light" ] = ( Node yml, GameObject obj )
+        /*initializers[ "Light" ] = ( Node yml, GameObject obj )
         {
             obj.light = yml.get!Light;
             obj.light.owner = obj;
             return obj.light;
-        };
+        };*/
     }
     
     override void update() { }
@@ -47,9 +49,10 @@ public:
 /**
  * Ambient Light
  */
-class AmbientLight : Light 
+@yamlEntry( "AmbientLight" )
+class AmbientLight : Light
 { 
-    this( vec3 color )
+    this( vec3 color = vec3() )
     {
         super( color );
     }
@@ -58,10 +61,10 @@ class AmbientLight : Light
 /**
  * Directional Light
  */
+@yamlEntry()
 class DirectionalLight : Light
 {
 private:
-    vec3 _direction;
     uint _shadowMapFrameBuffer;
     uint _shadowMapTexture;
     mat4 _projView;
@@ -69,7 +72,8 @@ private:
 
 public:
     /// The direction the light points in.
-    mixin( Property!( _direction, AccessModifier.Public ) );
+    @field( "Direction" )
+    vec3 direction;
     /// The FrameBuffer for the shadowmap.
     mixin( Property!( _shadowMapFrameBuffer ) );
     /// The shadow map's depth texture.
@@ -77,7 +81,7 @@ public:
     mixin( Property!( _projView ) );
     mixin( Property!( _shadowMapSize ) );
 
-    this( vec3 color, vec3 direction, bool castShadows )
+    this( vec3 color = vec3(), vec3 direction = vec3(), bool castShadows = false )
     {
         this.direction = direction; 
         super( color );
@@ -188,20 +192,21 @@ public:
 /**
  * Point Light
  */
+@yamlEntry()
 class PointLight : Light
 {
 private:
-    float _radius;
-    float _falloffRate;
     mat4 _matrix;
 
 public:
     /// The area that lighting will be calculated for.
-    mixin( Property!( _radius, AccessModifier.Public ) );
+    @field( "Radius" )
+    float radius;
     /// The light's exponential attenuation modifier.
-    mixin( Property!( _falloffRate, AccessModifier.Public ) );
+    @field( "FalloffRate" )
+    float falloffRate;
 
-    this( vec3 color, float radius, float falloffRate )
+    this( vec3 color = vec3(), float radius = 0.0f, float falloffRate = 0.0f )
     {
         this.radius = radius;
         this.falloffRate = falloffRate;
@@ -235,10 +240,11 @@ public:
 /**
  * SpotLight Stub
  */
+@yamlEntry()
 class SpotLight : Light
 {
 public:
-    this( vec3 color )
+    this( vec3 color = vec3() )
     {
         super( color );
     }

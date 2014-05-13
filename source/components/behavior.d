@@ -2,7 +2,7 @@
  * Defines Behavior class, the base class for all scripts.
  */
 module components.behavior;
-import core, utility;
+import core, components, utility;
 
 import yaml;
 import std.algorithm, std.array, std.traits;
@@ -10,7 +10,7 @@ import std.algorithm, std.array, std.traits;
 /**
  * Defines methods for child classes to override.
  */
-private abstract class ABehavior
+private abstract class ABehavior : YamlComponent
 {
     /// The object the behavior belongs to.
     private GameObject _owner;
@@ -21,12 +21,12 @@ private abstract class ABehavior
     void onInitialize() { }
     /// Called on the update cycle.
     void onUpdate() { }
-    /// Called on the draw cycle.
-    void onDraw() { }
     /// Called on shutdown.
     void onShutdown() { }
-    /// Called when refreshing an object.
-    void onRefresh() { }
+
+    override void initialize() { onInitialize(); }
+    override void update() { onUpdate(); }
+    override void shutdown() { onShutdown(); }
 }
 
 /**
@@ -167,21 +167,4 @@ public:
 
         return null;
     }
-
-    mixin( callBehaviors );
 }
-
-enum callBehaviors = "".reduce!( ( a, func ) => a ~
-    q{
-        static if( __traits( compiles, ParameterTypeTuple!( __traits( getMember, ABehavior, "$func") ) ) &&
-                    ParameterTypeTuple!( __traits( getMember, ABehavior, "$func") ).length == 0 )
-        {
-            void $func()
-            {
-                foreach( script; behaviors )
-                {
-                    script.$func();
-                }
-            }
-        }
-    }.replace( "$func", func ) )( cast(string[])[__traits( derivedMembers, ABehavior )] );

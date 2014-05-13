@@ -57,7 +57,7 @@ private:
     Camera _camera;
     GameObject _parent;
     GameObject[] _children;
-    IComponent[TypeInfo] componentList;
+    Component[TypeInfo] componentList;
     string _name;
     ObjectStateFlags* _stateFlags;
     bool canChangeName;
@@ -181,16 +181,22 @@ public:
         // Init components
         foreach( string key, Node componentNode; yamlObj )
         {
-            if( key == "Name" || key == "InstanceOf" || key == "Transform" || key == "Children" || key == "Behaviors" )
+            if( key == "Name" || key == "InstanceOf" || key == "Transform" || key == "Children" )
                 continue;
 
-            if( auto init = key in IComponent.initializers )
-                obj.addComponent( (*init)( componentNode, obj ) );
+            if( auto init = key in create )
+            {
+                auto newComp = (*init)( componentNode );
+                obj.addComponent( newComp );
+                newComp.owner = obj;
+            }
             else
                 logWarning( "Unknown key: ", key );
         }
 
-        obj.behaviors.onInitialize();
+        //obj.behaviors.onInitialize();
+        foreach( comp; obj.componentList )
+            comp.initialize();
 
         return obj;
     }
@@ -236,8 +242,8 @@ public:
      */
     final void update()
     {
-        if( stateFlags.updateBehaviors )
-            behaviors.onUpdate();
+        /*if( stateFlags.updateBehaviors )
+            behaviors.onUpdate();*/
 
         if( stateFlags.updateComponents )
             foreach( ci, component; componentList )
@@ -253,7 +259,7 @@ public:
      */
     final void draw()
     {
-        behaviors.onDraw();
+        //behaviors.onDraw();
 
         foreach( obj; children )
             obj.draw();
@@ -264,7 +270,7 @@ public:
      */
     final void shutdown()
     {
-        behaviors.onShutdown();
+        //behaviors.onShutdown();
 
         foreach( obj; children )
             obj.shutdown();
@@ -278,13 +284,13 @@ public:
      */
     final void refresh( Node node )
     {
-        foreach( string name, Node component; node )
+        /*foreach( string name, Node component; node )
         {
             if( auto refresher = name in IComponent.refreshers )
             {
                 ( *refresher )( component, this );
             }
-        }
+        }*/
 
         Node yamlChildren;
         if( node.tryFind( "Children", yamlChildren ) && yamlChildren.isSequence )
@@ -329,25 +335,46 @@ public:
             }
         }
 
-        behaviors.onRefresh();   
+        //behaviors.onRefresh();   
     }
 
     /**
      * Adds a component to the object.
      */
-    final void addComponent( T )( T newComponent ) if( is( T : IComponent ) )
+    final void addComponent( T )( T newComponent ) if( is( T : Component ) )
     {
         if( newComponent )
-            componentList[ typeid(T) ] = newComponent;
+        {
+            componentList[ typeid(newComponent) ] = newComponent;
+
+            enum setProperty( string prop ) = q{
+                if( typeid(newComponent) == typeid(typeof($prop)) )
+                    $prop = cast(typeof($prop))newComponent;
+            }.replace( "$prop", prop );
+
+            mixin( setProperty!q{_material} );
+            mixin( setProperty!q{_camera} );
+            mixin( setProperty!q{_animation} );
+
+            if( typeid(newComponent) == typeid(Mesh) )
+            {
+                _mesh = cast(Mesh)newComponent;
+
+                if( _mesh.animated )
+                    addComponent( _mesh.animationData.getComponent() );
+            }
+        }
     }
 
     /**
      * Gets a component of the given type.
      */
-    deprecated( "Make properties for any component being accessed." )
-    final T getComponent( T )() if( is( T : IComponent ) )
+    final T getComponent( T )() if( is( T : Component ) )
     {
-        return componentList[ typeid(T) ];
+        if( auto comp = typeid(T) in componentList )
+            return cast(T)*comp;
+        else
+            return null;
     }
 
     /**

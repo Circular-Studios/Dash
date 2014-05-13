@@ -22,7 +22,6 @@ package:
     Mesh[string] meshes;
     Texture[string] textures;
     Material[string] materials;
-    AssetAnimation[string] animations;
 
 public:
     /// Basic quad, generally used for billboarding.
@@ -90,10 +89,12 @@ public:
             // Add mesh
             if( scene.mNumMeshes > 0 )
             {
-                if( scene.mNumAnimations > 0 )
-                    animations[ file.baseFileName ] = new AssetAnimation( scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
+                auto newMesh = new Mesh( file.fullPath, scene.mMeshes[ 0 ] );
 
-                meshes[ file.baseFileName ] = new Mesh( file.fullPath, scene.mMeshes[ 0 ] );
+                if( scene.mNumAnimations > 0 )
+                    newMesh.animationData = new AssetAnimation( scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
+
+                meshes[ file.baseFileName ] = newMesh;
             }
             else
             {
@@ -128,7 +129,6 @@ public:
         meshes.rehash();
         textures.rehash();
         materials.rehash();
-        animations.rehash();
         materialResources.rehash();
     }
 
@@ -185,11 +185,10 @@ public:
         mixin( shutdown!( q{meshes}, "Mesh" ) );
         mixin( shutdown!( q{textures}, "Texture" ) );
         mixin( shutdown!( q{materials}, "Material" ) );
-        mixin( shutdown!( q{animations}, "Animation" ) );
     }
 }
 
-abstract class Asset : IComponent
+abstract class Asset : YamlComponent
 {
 private:
     bool _isUsed;
@@ -208,10 +207,6 @@ public:
     {
         _resource = resource;
     }
-
-    override void update() { }
-    abstract void refresh();
-    abstract override void shutdown();
 }
 
 /// Obj for a 1x1 square billboard mesh

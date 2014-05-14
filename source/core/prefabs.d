@@ -8,6 +8,8 @@ import yaml;
 import gl3n.linalg;
 import std.variant;
 
+mixin( registerComponents!q{core.prefabs} );
+
 /**
  * Prefabs manages prefabs and allows access to them.
  */
@@ -34,7 +36,9 @@ public:
             auto object = objFile[0];
             auto name = object[ "Name" ].as!string;
             
-            auto newFab = new Prefab( object );
+            //auto newFab = new Prefab( object );
+            auto newFab = cast(Prefab)createYamlObject[ "Prefab" ]( object );
+            newFab.name = name;
             prefabs[ name ] = newFab;
             prefabResources[ objFile[1] ] ~= newFab;
         }
@@ -46,7 +50,7 @@ public:
     void refresh()
     {
         refreshYamlObjects!(
-            node => new Prefab( node ),
+            node => cast(Prefab)createYamlObject[ "Prefab" ]( node ),
             node => node[ "Name" ].get!string in prefabs,
             ( node, fab ) => prefabs[ node[ "Name" ].get!string ] = fab,
             fab => prefabs.remove( fab.name ) )
@@ -60,36 +64,12 @@ private:
 /**
  * A prefab that allows for quick object creation.
  */
-final class Prefab
+@yamlEntry!( q{name => Prefabs[ name ]} )()
+final class Prefab : YamlObject
 {
 public:
     /// The name of the prefab.
-    mixin( Getter!_name );
-    /// The yaml node that created the prefab.
-    Node yaml;
-
-    /**
-     * Create a prefab from a YAML node.
-     * 
-     * Params:
-     *  yml =           The YAML node to get info from.
-     */
-    this( Node yml )
-    {
-        refresh( yml );
-        this._name = yml[ "Name" ].get!string;
-    }
-
-    /**
-     * Refreshes the makeup of the prefab.
-     *
-     * Params:
-     *  yml =           The new yaml for the prefab.
-     */
-    void refresh( Node yml )
-    {
-        this.yaml = yml;
-    }
+    mixin( Property!_name );
 
     /**
      * Creates a GameObject instance from the prefab.
@@ -103,5 +83,5 @@ public:
     }
 
 private:
-    immutable string _name;
+    string _name;
 }

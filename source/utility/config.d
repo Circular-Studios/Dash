@@ -280,7 +280,7 @@ void refreshYamlObjects( alias createFunc, alias existsFunc, alias addToResource
                         static if( __traits( compiles, mat.refresh( node ) ) )
                             mat.refresh( node );
                         else
-                            refreshComponent[ typeid(mat) ]( mat, node );
+                            refreshYamlObject[ typeid(mat) ]( mat, node );
                         mat.yaml = node;
                     }
 

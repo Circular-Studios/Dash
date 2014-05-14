@@ -435,7 +435,7 @@ public static:
         {
             glBindFramebuffer( GL_FRAMEBUFFER, Graphics.deferredFrameBuffer );
             glReadBuffer( GL_COLOR_ATTACHMENT1 );
-            glReadPixels( x, y, 1, 1, GL_BLUE, GL_FLOAT, &fId);
+            glReadPixels( x, y, 1, 1, GL_ALPHA, GL_FLOAT, &fId);
 
             uint id = cast(int)(fId);
             glBindFramebuffer( GL_FRAMEBUFFER, 0 );

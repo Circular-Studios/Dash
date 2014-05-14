@@ -34,18 +34,15 @@ public:
 abstract class YamlComponent : Component
 {
     /// The node that defined the component.
-    mixin( RefGetter!_yaml );
+    Node yaml;
 
     /// Called when refreshing an object.
     void refresh( Node node ) { }
 
     this()
     {
-        _yaml = Node( YAMLNull() );
+        yaml = Node( YAMLNull() );
     }
-
-private:
-    Node _yaml;
 }
 
 /**
@@ -75,7 +72,8 @@ enum registerComponents( string modName ) = q{
                         // If the type has a loader, register it as the create function.
                         if( attrib.loader )
                         {
-                            create[ member ] = ( Node node ) => attrib.loader( node.get!string );
+                            typeLoaders[ typeid(mixin( member )) ] = attrib.loader;
+                            createComponent[ member ] = ( Node node ) => attrib.loader( node.get!string );
                         }
                         else
                         {
@@ -90,7 +88,8 @@ enum registerComponents( string modName ) = q{
     }
 }.replace( "$modName", modName );
 
-Component delegate( Node )[string] create;
+Component delegate( Node )[string] createComponent;
+void delegate( Component, Node )[TypeInfo] refreshComponent;
 
 /// DON'T MIND ME
 void registerYamlComponent( Base )( string yamlName = "" ) if( is( Base : Component ) )
@@ -99,80 +98,126 @@ void registerYamlComponent( Base )( string yamlName = "" ) if( is( Base : Compon
     if( yamlName == "" )
         yamlName = Base.stringof.split( "." )[ $-1 ];
 
+    refreshComponent[ typeid(Base) ] = ( Component comp, Node n )
+    {
+        auto b = cast(Base)comp;
+
+        // If node contains reference to this type, grab that as root instead.
+        Node node;
+        if( !n.tryFind( yamlName, node ) )
+            node = n;
+
+         // Get all members of the class (including inherited ones).
+        foreach( memberName; __traits( allMembers, Base ) )
+        {
+            // If the attributes are gettable.
+            static if( __traits( compiles, __traits( getAttributes, __traits( getMember, Base, memberName ) ) ) )
+            {
+                // Iterate over each attribute on the member.
+                foreach( attrib; __traits( getAttributes, __traits( getMember, Base, memberName ) ) )
+                {
+                    // If it is marked as a field, process.
+                    static if( is( typeof(attrib) == Field ) )
+                    {
+                        string yamlFieldName;
+                        // If a name is not specified, use the name of the member.
+                        if( attrib.name == "" )
+                            yamlFieldName = memberName;
+                        else
+                            yamlFieldName = attrib.name;
+
+                        // If there's an loader on the field, use that.
+                        if( attrib.loader )
+                        {
+                            static if( is( typeof( mixin( "b." ~ memberName ) ) : Component ) )
+                            {
+                                string val;
+                                if( node.tryFind( yamlFieldName, val ) )
+                                {
+                                    // If value hasn't changed, ignore.
+                                    string oldVal;
+                                    if( b.yaml.tryFind( yamlFieldName, oldVal ) )
+                                        if( oldVal == val )
+                                            continue;
+
+                                    logInfo( "Loading value of ", yamlName, ".", memberName );
+                                    mixin( "b." ~ memberName ) = cast(typeof(mixin( "b." ~ memberName )))attrib.loader( val );
+                                }
+                                else
+                                {
+                                    logDebug( "Failed finding ", yamlFieldName );
+                                }
+                            }
+                        }
+                        // If the type of the field has a loader, use that.
+                        else if( auto loader = typeid( mixin( "b." ~ memberName ) ) in typeLoaders )
+                        {
+                            static if( is( typeof( mixin( "b." ~ memberName ) ) : Component ) )
+                            {
+                                string val;
+                                if( node.tryFind( yamlFieldName, val ) )
+                                {
+                                    // If value hasn't changed, ignore.
+                                    string oldVal;
+                                    if( b.yaml.tryFind( yamlFieldName, oldVal ) )
+                                        if( oldVal == val )
+                                            continue;
+
+                                    logInfo( "Loading value of ", yamlName, ".", memberName );
+                                    mixin( "b." ~ memberName ) = cast(typeof(mixin( "b." ~ memberName )))( *loader )( val );
+                                }
+                                else
+                                {
+                                    logDebug( "Failed finding ", yamlFieldName );
+                                }
+                            }
+                        }
+                        // Else just try to parse the yaml.
+                        else
+                        {
+                            typeof( __traits( getMember, b, memberName ) ) val;
+                            if( node.tryFind( yamlFieldName, val ) )
+                            {
+                                // If value hasn't changed, ignore.
+                                typeof( __traits( getMember, b, memberName ) ) oldVal;
+                                if( b.yaml.tryFind( yamlFieldName, oldVal ) )
+                                    if( oldVal == val )
+                                        continue;
+
+                                logInfo( "Loading value of ", yamlName, ".", memberName );
+                                mixin( "b." ~ memberName ) = val;
+                            }
+                            else
+                            {
+                                logDebug( "Failed finding ", yamlFieldName );
+                            }
+                        }
+
+                        break;
+                    }
+                    // If the user forgot (), remind them.
+                    else static if( is( typeof(attrib == typeof(field) ) ) )
+                    {
+                        logWarning( "Don't forget () after field on ", memberName );
+                    }
+                }
+            }
+        }
+
+        // Set the yaml property so the class has access to the yaml that created it.
+        b.yaml = node;
+    };
+
     // Make sure the type is instantiable
     static if( __traits( compiles, new Base ) )
     {
         // Make a creator function for the type.
-        create[ yamlName ] = ( Node node )
+        createComponent[ yamlName ] = ( Node node )
         {
             // Create an instance of the class to assign things to.
             Base b = new Base;
-            // Set the yaml property so the class has access to the yaml that created it.
-            b.yaml = node;
 
-            // Get all members of the class (including inherited ones).
-            foreach( memberName; __traits( allMembers, Base ) )
-            {
-                // If the attributes are gettable.
-                static if( __traits( compiles, __traits( getAttributes, __traits( getMember, Base, memberName ) ) ) )
-                {
-                    // Iterate over each attribute on the member.
-                    foreach( attrib; __traits( getAttributes, __traits( getMember, Base, memberName ) ) )
-                    {
-                        // If it is marked as a field, process.
-                        static if( is( typeof(attrib) == Field ) )
-                        {
-                            string yamlFieldName;
-                            // If a name is not specified, use the name of the member.
-                            if( attrib.name == "" )
-                                yamlFieldName = memberName;
-                            else
-                                yamlFieldName = attrib.name;
-
-                            // If there's an loader on the field, use that.
-                            if( attrib.loader )
-                            {
-                                static if( is( typeof( mixin( "b." ~ memberName ) ) : Component ) )
-                                {
-                                    string val;
-                                    if( node.tryFind( yamlFieldName, val ) )
-                                        mixin( "b." ~ memberName ) = cast(typeof(mixin( "b." ~ memberName )))attrib.loader( val );
-                                    else
-                                        logDebug( "Failed finding ", yamlFieldName );
-                                }
-                            }
-                            // If the type of the field has a loader, use that.
-                            else if( auto loader = typeof( mixin( "b." ~ memberName ) ).stringof in create )
-                            {
-                                static if( is( typeof( mixin( "b." ~ memberName ) ) : Component ) )
-                                {
-                                    string val;
-                                    if( node.tryFind( yamlFieldName, val ) )
-                                        mixin( "b." ~ memberName ) = cast(typeof(mixin( "b." ~ memberName )))( *loader )( val );
-                                    else
-                                        logDebug( "Failed finding ", yamlFieldName );
-                                }
-                            }
-                            // Else just try to parse the yaml.
-                            else
-                            {
-                                typeof( __traits( getMember, b, memberName ) ) val;
-                                if( node.tryFind( yamlFieldName, val ) )
-                                    mixin( "b." ~ memberName ) = val;
-                                else
-                                    logDebug( "Failed finding ", yamlFieldName );
-                            }
-
-                            break;
-                        }
-                        // If the user forgot (), remind them.
-                        else static if( is( typeof(attrib == typeof(field) ) ) )
-                        {
-                            logWarning( "Don't forget () after field on ", memberName );
-                        }
-                    }
-                }
-            }
+            refreshComponent[ typeid(Base) ]( b, node );          
 
             return b;
         };
@@ -219,6 +264,8 @@ Field field( string loader = "null" )( string name = "" )
 {
     return Field( name, mixin( loader ) );
 }
+
+LoaderFunction[TypeInfo] typeLoaders;
 
 struct YamlEntry
 {

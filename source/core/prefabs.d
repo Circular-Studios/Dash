@@ -66,7 +66,7 @@ public:
     /// The name of the prefab.
     mixin( Getter!_name );
     /// The yaml node that created the prefab.
-    mixin( RefGetter!_yaml );
+    Node yaml;
 
     /**
      * Create a prefab from a YAML node.
@@ -104,5 +104,4 @@ public:
 
 private:
     immutable string _name;
-    Node _yaml;
 }

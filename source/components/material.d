@@ -21,13 +21,13 @@ private:
 
 public:
     /// The diffuse (or color) map.
-    //@field( "Diffuse" )
+    @field( "Diffuse" )
     Texture diffuse;
     /// The normal map, which specifies which way a face is pointing at a given pixel.
-    //@field( "Normal" )
+    @field( "Normal" )
     Texture normal;
     /// The specular map, which specifies how shiny a given point is.
-    //@field( "Specular" )
+    @field( "Specular" )
     Texture specular;
     /// The name of the material.
     mixin( Getter!_name );

@@ -163,7 +163,7 @@ public:
             if( key == "Name" || key == "InstanceOf" || key == "Transform" || key == "Children" )
                 continue;
 
-            if( auto init = key in create )
+            if( auto init = key in createComponent )
             {
                 auto newComp = (*init)( componentNode );
                 obj.addComponent( newComp );
@@ -245,13 +245,13 @@ public:
      */
     final void refresh( Node node )
     {
-        /*foreach( string name, Node component; node )
+        foreach( type, component; componentList )
         {
-            if( auto refresher = name in IComponent.refreshers )
+            if( auto refresher = type in refreshComponent )
             {
-                ( *refresher )( component, this );
+                ( *refresher )( component, node );
             }
-        }*/
+        }
 
         Node yamlChildren;
         if( node.tryFind( "Children", yamlChildren ) && yamlChildren.isSequence )

@@ -2,14 +2,14 @@
  * Defines the static class Config, which handles all configuration options.
  */
 module utility.config;
-import utility.filepath, utility.output;
+import utility.resources, utility.output;
 
 public import yaml;
 
-import std.variant, std.algorithm, std.traits,
-       std.array, std.conv, std.file;
+import std.variant, std.algorithm, std.traits, std.range,
+       std.array, std.conv, std.file, std.typecons;
 
-private string fileToYaml( string filePath ) { return filePath.replace( "\\", "/" ).replace( "../", "" ).replace( "/", "." ); }
+private string fileToYaml( string filePath ) { return filePath.replace( "\\", "/" ).replace( "../", "" ).replace( "/", "." ).replace( ".yml", "" ); }
 
 /**
  * Place this mixin anywhere in your game code to allow the Content.yml file
@@ -35,6 +35,8 @@ Constructor constructor;
 /// The string to store imported yaml content in.
 version( EmbedContent ) string contentYML;
 private Node contentNode;
+/// The file storing config.
+private Resource configFile = Resource( "" );
 
 /// Initializes contentNode and constructor.
 static this()
@@ -121,14 +123,14 @@ static this()
  * Params:
  *  folder =                The folder to iterate over.
  */
-Node[] loadYamlDocuments( string folder )
+Tuple!( Node, Resource )[] loadYamlFiles( string folder )
 {
-    Node[] nodes;
+    Tuple!( Node, Resource )[] nodes;
 
     if( contentNode.isNull )
     {
         // Actually scan directories
-        foreach( file; FilePath.scanDirectory( folder, "*.yml" ) )
+        foreach( file; scanDirectory( folder, "*.yml" ) )
         {
             auto loader = Loader( file.fullPath );
             loader.constructor = constructor;
@@ -138,7 +140,7 @@ Node[] loadYamlDocuments( string folder )
                 // Iterate over all documents in a file
                 foreach( doc; loader )
                 {
-                    nodes ~= doc;
+                    nodes ~= tuple( doc, file );
                 }
             }
             catch( YAMLException e )
@@ -156,16 +158,27 @@ Node[] loadYamlDocuments( string folder )
             if( fileContent.isSequence )
             {
                 foreach( Node childChild; fileContent )
-                    nodes ~= childChild;
+                    nodes ~= tuple( childChild, Resource( "" ) );
             }
             else
             {
-                nodes ~= fileContent;
+                nodes ~= tuple( fileContent, Resource( "" ) );
             }
         }
     }
 
     return nodes;
+}
+
+/**
+ * Process all documents files in a directory.
+ * 
+ * Params:
+ *  folder =                The folder to iterate over.
+ */
+Node[] loadYamlDocuments( string path )
+{
+    return loadYamlFiles( path ).map!( tup => tup[ 0 ] ).array;
 }
 
 /**
@@ -189,7 +202,7 @@ Node loadYamlFile( string filePath )
 {
     if( contentNode.isNull )
     {
-        auto loader = Loader( filePath ~ ".yml" );
+        auto loader = Loader( filePath );
         loader.constructor = constructor;
         try
         {
@@ -197,13 +210,115 @@ Node loadYamlFile( string filePath )
         }
         catch( YAMLException e )
         {
-            logFatal( "Error parsing file ", new FilePath( filePath ).baseFileName, ": ", e.msg );
+            logFatal( "Error parsing file ", Resource( filePath ).baseFileName, ": ", e.msg );
             return Node();
         }  
     }
     else
     {
         return contentNode.find( filePath.fileToYaml );
+    }
+}
+
+/**
+ * Load a yaml file with the engine-specific mappings.
+ * 
+ * Params:
+ *  filePath =              The path to file to load.
+ */
+Node[] loadAllDocumentsInYamlFile( string filePath )
+{
+    if( contentNode.isNull )
+    {
+        auto loader = Loader( filePath );
+        loader.constructor = constructor;
+        try
+        {
+            Node[] nodes;
+            foreach( document; loader )
+                nodes ~= document;
+            return nodes;
+        }
+        catch( YAMLException e )
+        {
+            logFatal( "Error parsing file ", Resource( filePath ).baseFileName, ": ", e.msg );
+            return [];
+        }  
+    }
+    else
+    {
+        return contentNode.find( filePath.fileToYaml ).get!( Node[] );
+    }
+}
+
+/**
+ * Refreshs a set of objects based on yaml files.
+ *
+ * Params:
+ *  createFunc =        The function used to create a new object of type ObjectType.
+ *  existsFunc =        The function that checks if a node is already stored. Returns a pointer to the object.
+ *  addToResourcesFunc =Adds the 
+ *  ObjectType =        The type of object stored in YAML.
+ *  objectResources =   The map of files to the objects they store.
+ */
+void refreshYamlObjects( alias createFunc, alias existsFunc, alias addToResourcesFunc, alias removeFunc, ObjectType )( ref ObjectType[][Resource] objectResources )
+{
+    // Iterate over each file, and it's objects
+    foreach( file, ref objs; objectResources.dup )
+    {
+        // If the file was deleted, remove all objects in it.
+        if( !file.exists )
+        {
+            foreach( asset; objs )
+            {
+                static if( __traits( compiles, asset.shutdown() ) )
+                    asset.shutdown();
+                removeFunc( asset );
+            }
+
+            objs = [];
+        }
+        // Else if the file changed, update each material.
+        else if( file.needsRefresh )
+        {
+            // For each material, whether or not it still exists
+            bool[ObjectType] objsFound = objs.zip( false.repeat( objs.length ) ).assocArray();
+
+            // Reset objectResources for this file
+            objs = [];
+
+            // Foreach material currently in the file
+            foreach( node; loadAllDocumentsInYamlFile( file.fullPath ) )
+            {
+                // If the material already existed, update it.
+                if( auto oldMat = existsFunc( node ) )
+                {
+                    // If is pointer, dereference
+                    static if( isPointer!( typeof(oldMat) ) )
+                        auto mat = *oldMat;
+                    else
+                        auto mat = oldMat;
+
+                    mat.refresh( node );
+                    objsFound[ mat ] = true;
+                    objectResources[ file ] ~= mat;
+                }
+                // Else add new objects
+                else
+                {
+                    auto newMat = createFunc( node );
+                    addToResourcesFunc( node, newMat );
+                    objectResources[ file ] ~= newMat;
+                }
+            }
+
+            foreach( mat; objsFound.keys.filter!( object => !objsFound[ object ] ) )
+            {
+                static if( __traits( compiles, mat.shutdown() ) )
+                    mat.shutdown();
+                removeFunc( mat );
+            }
+        }
     }
 }
 
@@ -364,7 +479,7 @@ unittest
  */
 final string findPath( Node node, string path )
 {
-    return FilePath.ResourceHome ~ node.find!string( path );//buildNormalizedPath( FilePath.ResourceHome, get!string( path ) );;
+    return Resources.Home ~ node.find!string( path );//buildNormalizedPath( FilePath.ResourceHome, get!string( path ) );;
 }
 
 /**
@@ -467,7 +582,7 @@ public static:
     /**
      * TODO
      */
-    final void initialize()
+    void initialize()
     {
         version( EmbedContent )
         {
@@ -481,18 +596,41 @@ public static:
         }
         else
         {
-            if( exists( FilePath.Resources.CompactContentFile ~ ".yml" ) )
+            if( exists( Resources.CompactContentFile ) )
             {
                 logDebug( "Using Content.yml file." );
-                contentNode = loadYamlFile( FilePath.Resources.CompactContentFile );
+                contentNode = Resources.CompactContentFile.loadYamlFile();
             }
             else
             {
                 logDebug( "Using normal content directory." );
+                configFile = Resource( Resources.ConfigFile );
             }
         }
 
-        config = loadYamlFile( FilePath.Resources.ConfigFile );
+        config = configFile.fullPath.loadYamlFile();
+    }
+
+    void refresh()
+    {
+        version( EmbedContent )
+        {
+            initialize();
+        }
+        else
+        {
+            if( exists( Resources.CompactContentFile ~ ".yml" ) )
+            {
+                logDebug( "Using Content.yml file." );
+                contentNode = Resources.CompactContentFile.loadYamlFile();
+            }
+            else
+            {
+                logDebug( "Using normal content directory." );
+                if( configFile.needsRefresh )
+                    config = configFile.fullPath.loadYamlFile();
+            }
+        }
     }
 }
 

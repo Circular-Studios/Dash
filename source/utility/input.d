@@ -42,7 +42,7 @@ public static:
      */
     void initialize()
     {
-        auto bindings = FilePath.Resources.InputBindings.loadYamlFile();
+        auto bindings = Resources.InputBindings.loadYamlFile();
 
         Keyboard.initialize();
         Mouse.initialize();

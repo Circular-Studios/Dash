@@ -173,9 +173,9 @@ public:
         // Set current context
         wglMakeCurrent( deviceContext, renderContext );
         
-        reload();
+        refresh();
         
-        HANDLE hIcon = LoadImage( null, ( FilePath.Resources.Textures ~ "/icon.ico" ).ptr, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_LOADFROMFILE);
+        HANDLE hIcon = LoadImage( null, ( Resources.Textures ~ "/icon.ico" ).ptr, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_LOADFROMFILE);
         if( hIcon )
         {
             //Change both icons to the same icon handle.
@@ -227,13 +227,15 @@ public:
                       height + GetSystemMetrics( SM_CYCAPTION ) + GetSystemMetrics( SM_CYBORDER ),
                       SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED );
 
+        resizeDefferedRenderBuffer();
+
         glViewport( 0, 0, width, height );
     }
 
     /**
     * TODO
     */
-    override void reload()
+    override void refresh()
     {
         resize();
         

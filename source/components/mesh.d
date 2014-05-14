@@ -7,7 +7,7 @@ import core, components, graphics, utility;
 import derelict.opengl3.gl3, derelict.assimp3.assimp;
 import gl3n.linalg, gl3n.aabb;
 
-import std.stdio, std.stream, std.format, std.math;
+import std.stdio, std.stream, std.format, std.math, std.string;
 
 /**
  * Loads and manages meshes into OpenGL.
@@ -48,12 +48,11 @@ import std.stdio, std.stream, std.format, std.math;
  *  Ogre XML
  *  Q3D
  */
-class Mesh : IComponent
+class Mesh : Asset
 {
 private:
     uint _glVertexArray, _numVertices, _numIndices, _glIndexBuffer, _glVertexBuffer;
     bool _animated;
-    bool _isUsed;
     AABB _boundingBox;
 
 public:
@@ -71,8 +70,6 @@ public:
     mixin( Property!_animated );
     /// The bounding box of the mesh.
     mixin( RefGetter!_boundingBox );
-    /// Whether or not the material is actually used.
-    mixin( Property!( _isUsed, AccessModifier.Package ) );
 
     /**
      * Creates a mesh.
@@ -83,11 +80,13 @@ public:
      */
     this( string filePath, const(aiMesh*) mesh )
     {
+        super( Resource( filePath ) );
         int floatsPerVertex, vertexSize;
         float[] outputData;
         uint[] indices;
         animated = false;
         boundingBox = AABB.from_points( [] );
+
         if( mesh )
         {
             // If there is animation data
@@ -285,6 +284,48 @@ public:
     }
 
     override void update() { }
+
+    /**
+     * Refresh the asset.
+     */
+    override void refresh()
+    {
+        shutdown();
+
+        // Load mesh
+        const aiScene* scene = aiImportFile( resource.fullPath.toStringz,
+                                             aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
+                                             aiProcess_JoinIdenticalVertices | aiProcess_SortByPType );
+        assert( scene, "Failed to load scene file '" ~ resource.fullPath ~ "' Error: " ~ aiGetErrorString().fromStringz );
+
+        Mesh tempMesh;
+
+        // Add mesh
+        if( scene.mNumMeshes > 0 )
+        {
+            if( scene.mNumAnimations > 0 )
+                Assets.animations[ resource.baseFileName ] = new AssetAnimation( scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
+
+            tempMesh = new Mesh( resource.fullPath, scene.mMeshes[ 0 ] );
+        }
+        else
+        {
+            logWarning( "Assimp did not contain mesh data, ensure you are loading a valid mesh." );
+            return;
+        }
+
+        // Release mesh
+        aiReleaseImport( scene );
+
+        // Copy attributes
+        _glVertexArray = tempMesh._glVertexArray;
+        _numVertices = tempMesh._numVertices;
+        _numIndices = tempMesh._numIndices;
+        _glIndexBuffer = tempMesh._glIndexBuffer;
+        _glVertexBuffer = tempMesh._glVertexBuffer;
+        _animated = tempMesh._animated;
+        _boundingBox = tempMesh._boundingBox;
+    }
 
     /**
      * Deletes mesh data stored on the GPU.

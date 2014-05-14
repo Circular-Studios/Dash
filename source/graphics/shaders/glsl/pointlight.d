@@ -71,7 +71,7 @@ immutable string pointlightFS = q{
         vec2 UV = ( ( fPosition_s.xy / fPosition_s.w ) + 1 ) / 2;
         vec3 textureColor = texture( diffuseTexture, UV ).xyz;
         float specularIntensity = texture( diffuseTexture, UV ).w;
-        vec3 normal_v = decode(texture( normalTexture, UV ).xy);
+        vec3 normal_v = texture( normalTexture, UV ).xyz;
 
         // Reconstruct position from depth
         float depth = texture( depthTexture, UV ).x;

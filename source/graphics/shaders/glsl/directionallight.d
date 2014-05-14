@@ -90,7 +90,7 @@ immutable string directionallightFS = q{
     {
         vec3 textureColor = texture( diffuseTexture, fUV ).xyz;
         float specularIntensity = texture( diffuseTexture, fUV ).w;
-        vec3 normal_v = decode(texture( normalTexture, fUV ).xy);
+        vec3 normal_v = texture( normalTexture, fUV ).xyz;
         vec3 lightDir_v = -normalize( light.direction );
 
         // Reconstruct position from Depth

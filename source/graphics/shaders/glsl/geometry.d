@@ -48,7 +48,7 @@ immutable string geometryFS = q{
     flat in uint fObjectId;
 
     layout( location = 0 ) out vec4 color;
-    layout( location = 1 ) out vec3 normal_v;
+    layout( location = 1 ) out vec4 normal_v;
 
     uniform sampler2D diffuseTexture;
     uniform sampler2D normalTexture;
@@ -78,7 +78,7 @@ immutable string geometryFS = q{
         // specular intensity
         vec3 specularSample = texture( specularTexture, fUV ).xyz;
         color.w = ( specularSample.x + specularSample.y + specularSample.z ) / 3;
-        normal_v = vec3( encode( calculateMappedNormal()), float(fObjectId) );
+        normal_v = vec4( calculateMappedNormal(), float(fObjectId) );
     }
 };
 

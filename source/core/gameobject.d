@@ -163,9 +163,9 @@ public:
             if( key == "Name" || key == "InstanceOf" || key == "Transform" || key == "Children" )
                 continue;
 
-            if( auto init = key in createComponent )
+            if( auto init = key in createYamlObject )
             {
-                auto newComp = (*init)( componentNode );
+                auto newComp = cast(Component)(*init)( componentNode );
                 obj.addComponent( newComp );
                 newComp.owner = obj;
             }
@@ -245,14 +245,21 @@ public:
      */
     final void refresh( Node node )
     {
-        foreach( type, component; componentList )
+        // Update components
+        foreach( type; componentList.keys )
         {
-            if( auto refresher = type in refreshComponent )
+            if( auto refresher = type in refreshYamlObject )
             {
-                ( *refresher )( component, node );
+                ( *refresher )( componentList[ type ], node );
+                componentList[ type ].refresh();
+            }
+            else
+            {
+                componentList.remove( type );
             }
         }
 
+        // Update children
         Node yamlChildren;
         if( node.tryFind( "Children", yamlChildren ) && yamlChildren.isSequence )
         {
@@ -295,8 +302,6 @@ public:
                 removeChild( child );
             }
         }
-
-        //behaviors.onRefresh();   
     }
 
     /**

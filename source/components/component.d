@@ -7,10 +7,23 @@ import core, components, graphics, utility;
 import yaml;
 import std.array, std.string, std.traits;
 
+abstract class YamlObject
+{
+    Node yaml;
+
+    /// Called when refreshing an object.
+    void refresh() { }
+
+    this()
+    {
+        yaml = Node( YAMLNull() );
+    }
+}
+
 /**
  * Interface for components to implement.
  */
-abstract class Component
+abstract class Component : YamlObject
 {
 public:
     /// The node that defined the component.
@@ -26,13 +39,6 @@ public:
     void draw() { }
     /// Called on shutdown.
     void shutdown() { }
-    /// Called when refreshing an object.
-    void refresh() { }
-
-    this()
-    {
-        yaml = Node( YAMLNull() );
-    }
 }
 
 /**
@@ -63,10 +69,10 @@ enum registerComponents( string modName ) = q{
                         if( attrib.loader )
                         {
                             typeLoaders[ typeid(mixin( member )) ] = attrib.loader;
-                            createComponent[ member ] = ( Node node ) => attrib.loader( node.get!string );
+                            createYamlObject[ member ] = ( Node node ) => attrib.loader( node.get!string );
                         }
                             
-                        registerYamlComponent!( mixin( member ) )( attrib.name.length == 0 ? member : attrib.name );
+                        registerYamlObjects!( mixin( member ) )( attrib.name.length == 0 ? member : attrib.name );
 
                         break;
                     }
@@ -76,17 +82,17 @@ enum registerComponents( string modName ) = q{
     }
 }.replace( "$modName", modName );
 
-Component delegate( Node )[string] createComponent;
-void delegate( Component, Node )[TypeInfo] refreshComponent;
+YamlObject delegate( Node )[string] createYamlObject;
+void delegate( YamlObject, Node )[TypeInfo] refreshYamlObject;
 
 /// DON'T MIND ME
-void registerYamlComponent( Base )( string yamlName = "" ) if( is( Base : Component ) )
+void registerYamlObjects( Base )( string yamlName = "" ) if( is( Base : YamlObject ) )
 {
     // If no name specified, use class name.
     if( yamlName == "" )
         yamlName = Base.stringof.split( "." )[ $-1 ];
 
-    refreshComponent[ typeid(Base) ] = ( Component comp, Node n )
+    refreshYamlObject[ typeid(Base) ] = ( YamlObject comp, Node n )
     {
         auto b = cast(Base)comp;
 
@@ -117,7 +123,7 @@ void registerYamlComponent( Base )( string yamlName = "" ) if( is( Base : Compon
                         // If there's an loader on the field, use that.
                         if( attrib.loader )
                         {
-                            static if( is( typeof( mixin( "b." ~ memberName ) ) : Component ) )
+                            static if( is( typeof( mixin( "b." ~ memberName ) ) : YamlObject ) )
                             {
                                 string val;
                                 if( node.tryFind( yamlFieldName, val ) )
@@ -140,7 +146,7 @@ void registerYamlComponent( Base )( string yamlName = "" ) if( is( Base : Compon
                         // If the type of the field has a loader, use that.
                         else if( auto loader = typeid( mixin( "b." ~ memberName ) ) in typeLoaders )
                         {
-                            static if( is( typeof( mixin( "b." ~ memberName ) ) : Component ) )
+                            static if( is( typeof( mixin( "b." ~ memberName ) ) : YamlObject ) )
                             {
                                 string val;
                                 if( node.tryFind( yamlFieldName, val ) )
@@ -200,26 +206,26 @@ void registerYamlComponent( Base )( string yamlName = "" ) if( is( Base : Compon
     static if( __traits( compiles, new Base ) )
     {
         // Make a creator function for the type.
-        createComponent[ yamlName ] = ( Node node )
+        createYamlObject[ yamlName ] = ( Node node )
         {
             // Create an instance of the class to assign things to.
             Base b = new Base;
 
-            refreshComponent[ typeid(Base) ]( b, node );          
+            refreshYamlObject[ typeid(Base) ]( b, node );          
 
             return b;
         };
     }
 }
 
-alias LoaderFunction = Component delegate( string );
+alias LoaderFunction = YamlObject delegate( string );
 
 /**
  * Meant to be added to components that can be set from YAML.
  * Example:
  * ---
  * @yamlEntry("Test")
- * class Test : YamlComponent
+ * class Test : Component
  * {
  *     @field("X")
  *     int x;
@@ -241,7 +247,7 @@ YamlEntry yamlEntry( string loader = "null" )( string name = "" )
  * Example:
  * ---
  * @yamlEntry("Test")
- * class Test : YamlComponent
+ * class Test : Component
  * {
  *     @field("X")
  *     int x;

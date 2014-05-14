@@ -188,7 +188,7 @@ public:
     }
 }
 
-abstract class Asset : YamlComponent
+abstract class Asset : Component
 {
 private:
     bool _isUsed;

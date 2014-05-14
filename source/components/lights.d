@@ -14,7 +14,7 @@ mixin( registerComponents!q{components.lights} );
 /**
  * Base class for lights.
  */
-abstract class Light : YamlComponent
+abstract class Light : Component
 {
 private:
     bool _castShadows;

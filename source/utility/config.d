@@ -2,6 +2,7 @@
  * Defines the static class Config, which handles all configuration options.
  */
 module utility.config;
+import components.component;
 import utility.resources, utility.output;
 
 public import yaml;
@@ -276,7 +277,10 @@ void refreshYamlObjects( alias createFunc, alias existsFunc, alias addToResource
 
                     if( mat.yaml != node )
                     {
-                        mat.refresh( node );
+                        static if( __traits( compiles, mat.refresh( node ) ) )
+                            mat.refresh( node );
+                        else
+                            refreshComponent[ typeid(mat) ]( mat, node );
                         mat.yaml = node;
                     }
 

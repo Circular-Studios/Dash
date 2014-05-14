@@ -13,6 +13,8 @@ import std.array, std.string, std.traits;
 abstract class Component
 {
 public:
+    /// The node that defined the component.
+    Node yaml;
     /// The GameObject that owns this component.
     GameObject owner;
 
@@ -26,18 +28,6 @@ public:
     void shutdown() { }
     /// Called when refreshing an object.
     void refresh() { }
-}
-
-/**
- * A component that can be defined through YAML.
- */
-abstract class YamlComponent : Component
-{
-    /// The node that defined the component.
-    Node yaml;
-
-    /// Called when refreshing an object.
-    void refresh( Node node ) { }
 
     this()
     {
@@ -75,10 +65,8 @@ enum registerComponents( string modName ) = q{
                             typeLoaders[ typeid(mixin( member )) ] = attrib.loader;
                             createComponent[ member ] = ( Node node ) => attrib.loader( node.get!string );
                         }
-                        else
-                        {
-                            registerYamlComponent!( mixin( member ) )( attrib.name.length == 0 ? member : attrib.name );
-                        }
+                            
+                        registerYamlComponent!( mixin( member ) )( attrib.name.length == 0 ? member : attrib.name );
 
                         break;
                     }

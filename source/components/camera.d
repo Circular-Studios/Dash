@@ -13,7 +13,7 @@ mixin( registerComponents!q{components.camera} );
  * Camera manages a view and projection matrix.
  */
 @yamlEntry( "Camera" )
-final class Camera : YamlComponent, IDirtyable
+final class Camera : Component, IDirtyable
 {
 private:
     float _prevFov, _prevNear, _prevFar, _prevWidth, _prevHeight;
@@ -29,9 +29,6 @@ private:
     mat4 _inverseOrthogonalMatrix;
 
 public:
-    override void update() { }
-    override void shutdown() { }
-
     /// TODO
     mixin( ThisDirtyGetter!( _viewMatrix, updateViewMatrix ) );
     /// TODO

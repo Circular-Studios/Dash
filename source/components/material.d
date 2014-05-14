@@ -62,16 +62,11 @@ public:
 
     /**
      * Refresh the asset.
-     */
-    override void refresh() { }
-
-    /**
-     * Refresh the asset.
      *
      * Params:
      *  yamlObj =       The new makeup of the material.
      */
-    override void refresh( Node yamlObj )
+    void refresh( Node yamlObj )
     {
         string prop;
 

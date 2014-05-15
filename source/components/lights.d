@@ -32,16 +32,6 @@ public:
         _castShadows = false;
     }
 
-    static this()
-    {
-        /*initializers[ "Light" ] = ( Node yml, GameObject obj )
-        {
-            obj.light = yml.get!Light;
-            obj.light.owner = obj;
-            return obj.light;
-        };*/
-    }
-    
     override void update() { }
     override void shutdown() { }
 }
@@ -51,7 +41,7 @@ public:
  */
 @yamlComponent()
 class AmbientLight : Light
-{ 
+{
     this( vec3 color = vec3() )
     {
         super( color );
@@ -83,7 +73,7 @@ public:
 
     this( vec3 color = vec3(), vec3 direction = vec3(), bool castShadows = false )
     {
-        this.direction = direction; 
+        this.direction = direction;
         super( color );
         this.castShadows = castShadows;
         if( castShadows )
@@ -166,7 +156,7 @@ public:
         // get mins and maxes in view space
         vec3 mins, maxes;
         for( int i = 0; i < 3; i++ )
-        {  
+        {
             if( frustum.min.vector[ i ] < frustum.max.vector[ i ] )
             {
                 mins.vector[ i ] = frustum.min.vector[ i ];
@@ -180,8 +170,8 @@ public:
         }
 
         // build the projectionView matrix
-        mat4 bias = mat4( vec4( .5,  0,  0, .5), 
-                          vec4(  0, .5,  0, .5), 
+        mat4 bias = mat4( vec4( .5,  0,  0, .5),
+                          vec4(  0, .5,  0, .5),
                           vec4(  0,  0, .5, .5),
                           vec4(  0,  0,  0,  1) );
         float magicNumber = 1.5f; // literally the worst

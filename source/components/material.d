@@ -176,29 +176,3 @@ private:
 
     return def;
 }
-
-static this()
-{
-    /*initializers[ "Material" ] = ( Node yml, GameObject obj )
-    {
-        if( yml.isScalar )
-        {
-            obj.material = Assets.get!Material( yml.get!string );
-        }
-        else if( yml.isMapping )
-        {
-            logError( "Inline material definitions are not yet supported." );
-        }
-        else
-        {
-            logError( "Unsupported format for Material in ", obj.name, "." );
-        }
-
-        return null;
-    };
-
-    refreshers[ "Material" ] = ( Node yml, GameObject obj )
-    {
-        IComponent.initializers[ "Material" ]( yml, obj );
-    };*/
-}

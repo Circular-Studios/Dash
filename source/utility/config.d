@@ -2,6 +2,7 @@
  * Defines the static class Config, which handles all configuration options.
  */
 module utility.config;
+import components.component;
 import utility.resources, utility.output;
 
 public import yaml;
@@ -84,31 +85,6 @@ static this()
         result.z = vals[ 2 ].to!float;
         result.w = vals[ 3 ].to!float;
         return result;
-    } );
-    constructor.addConstructorMapping( "!Light-Directional", ( ref Node node )
-    {
-        vec3 color;
-        vec3 dir;
-        bool shadows = false;
-        node.tryFind( "Color", color );
-        node.tryFind( "Direction", dir );
-        node.tryFind( "CastShadows", shadows );
-        return cast(Light)new DirectionalLight( color, dir, shadows );
-    } );
-    constructor.addConstructorMapping( "!Light-Ambient", ( ref Node node )
-    {
-        vec3 color;
-        node.tryFind( "Color", color );
-        return cast(Light)new AmbientLight( color );
-    } );
-    constructor.addConstructorMapping( "!Light-Point", ( ref Node node )
-    {
-        vec3 color;
-        float radius, falloffRate;
-        node.tryFind( "Color", color );
-        node.tryFind( "Radius", radius );
-        node.tryFind( "FalloffRate", falloffRate );
-        return cast(Light)new PointLight( color, radius, falloffRate );
     } );
     constructor.addConstructorScalar( "!Verbosity", &constructConv!Verbosity );
     constructor.addConstructorScalar( "!Shader", ( ref Node node ) => Shaders.get( node.get!string ) );
@@ -299,7 +275,15 @@ void refreshYamlObjects( alias createFunc, alias existsFunc, alias addToResource
                     else
                         auto mat = oldMat;
 
-                    mat.refresh( node );
+                    if( mat.yaml != node )
+                    {
+                        static if( __traits( compiles, mat.refresh( node ) ) )
+                            mat.refresh( node );
+                        else
+                            refreshYamlObject[ typeid(mat) ]( mat, node );
+                        mat.yaml = node;
+                    }
+
                     objsFound[ mat ] = true;
                     objectResources[ file ] ~= mat;
                 }
@@ -390,6 +374,10 @@ final bool tryFind( T )( Node node, string path, ref T result ) nothrow @safe
 
             foreach( Node element; res )
                 result ~= element.get!U;
+        }
+        else static if( __traits( compiles, res.getObject!T ) )
+        {
+            result = res.getObject!T;
         }
         else
         {

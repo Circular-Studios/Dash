@@ -3,7 +3,7 @@
  */
 module components.animation;
 import core.properties;
-import components.icomponent;
+import components.component;
 import utility;
 
 import derelict.assimp3.assimp;
@@ -12,7 +12,7 @@ import gl3n.linalg;
 /**
  * Animation object which handles all animation specific to the gameobject
  */
-class Animation : IComponent
+class Animation : Component
 {
 private:
     /// Asset animation that the gameobject is animating based off of
@@ -176,6 +176,14 @@ public:
 
         for( int ii = 0; ii < numAnimations; ii++)
             addAnimationSet( animations[ ii ], 24 );
+    }
+
+    /**
+     * Returns the animation as an addible component.
+     */
+    Animation getComponent()
+    {
+        return new Animation( this );
     }
 
     /**

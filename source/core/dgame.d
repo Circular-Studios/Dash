@@ -149,6 +149,8 @@ public:
 
             // End drawing
             Graphics.endDraw();
+
+            //break;
         }
 
         stop();
@@ -200,6 +202,8 @@ private:
         bench!( { Prefabs.initialize(); } )( "Prefabs init" );
         bench!( { UserInterface.initializeAwesomium(); } )( "UI init" );
         bench!( { DGame.instance.onInitialize(); } )( "Game init" );
+
+        debug scheduleIntervaledTask( 1.seconds, { currentState = EngineState.Refresh; return false; } );
     }
 
     /**

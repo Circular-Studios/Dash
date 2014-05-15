@@ -9,6 +9,15 @@ import gl3n.linalg, gl3n.aabb;
 
 import std.stdio, std.stream, std.format, std.math, std.string;
 
+mixin( registerComponents!q{components.mesh} );
+
+/*Mesh getMesh( string name )
+{
+    auto mesh = Assets.get!Mesh( yml.get!string );
+
+    return mesh;
+}*/
+
 /**
  * Loads and manages meshes into OpenGL.
  * 
@@ -48,12 +57,14 @@ import std.stdio, std.stream, std.format, std.math, std.string;
  *  Ogre XML
  *  Q3D
  */
+@yamlComponent!( q{name => Assets.get!Mesh( name )} )()
 class Mesh : Asset
 {
 private:
     uint _glVertexArray, _numVertices, _numIndices, _glIndexBuffer, _glVertexBuffer;
     bool _animated;
     AABB _boundingBox;
+    AssetAnimation _animationData;
 
 public:
     /// TODO
@@ -68,6 +79,8 @@ public:
     mixin( Property!_glVertexBuffer );
     /// TODO
     mixin( Property!_animated );
+    /// Stores all data about animations on the mesh.
+    mixin( Property!( _animationData, AccessModifier.Package ) );
     /// The bounding box of the mesh.
     mixin( RefGetter!_boundingBox );
 
@@ -283,8 +296,6 @@ public:
         glBindVertexArray( 0 );
     }
 
-    override void update() { }
-
     /**
      * Refresh the asset.
      */
@@ -298,15 +309,22 @@ public:
                                              aiProcess_JoinIdenticalVertices | aiProcess_SortByPType );
         assert( scene, "Failed to load scene file '" ~ resource.fullPath ~ "' Error: " ~ aiGetErrorString().fromStringz );
 
-        Mesh tempMesh;
-
         // Add mesh
         if( scene.mNumMeshes > 0 )
         {
-            if( scene.mNumAnimations > 0 )
-                Assets.animations[ resource.baseFileName ] = new AssetAnimation( scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
+            Mesh tempMesh = new Mesh( resource.fullPath, scene.mMeshes[ 0 ] );
 
-            tempMesh = new Mesh( resource.fullPath, scene.mMeshes[ 0 ] );
+            if( scene.mNumAnimations > 0 )
+                tempMesh.animationData = new AssetAnimation( scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
+
+            // Copy attributes
+            _glVertexArray = tempMesh._glVertexArray;
+            _numVertices = tempMesh._numVertices;
+            _numIndices = tempMesh._numIndices;
+            _glIndexBuffer = tempMesh._glIndexBuffer;
+            _glVertexBuffer = tempMesh._glVertexBuffer;
+            _animated = tempMesh._animated;
+            _boundingBox = tempMesh._boundingBox;
         }
         else
         {
@@ -316,15 +334,6 @@ public:
 
         // Release mesh
         aiReleaseImport( scene );
-
-        // Copy attributes
-        _glVertexArray = tempMesh._glVertexArray;
-        _numVertices = tempMesh._numVertices;
-        _numIndices = tempMesh._numIndices;
-        _glIndexBuffer = tempMesh._glIndexBuffer;
-        _glVertexBuffer = tempMesh._glVertexBuffer;
-        _animated = tempMesh._animated;
-        _boundingBox = tempMesh._boundingBox;
     }
 
     /**
@@ -336,7 +345,6 @@ public:
         glDeleteBuffers( 1, &_glVertexArray );
     }
 }
-
 
 /**
  * Helper function that calculates a modifier for the reconstructed bitangent based on regenerating them
@@ -356,23 +364,4 @@ private float calcTangentHandedness( aiVector3D nor, aiVector3D tan, aiVector3D 
     t = (t - n * dot( n, t )).normalized();
 
     return (dot(cross(n,t),b) > 0.0f) ? -1.0f : 1.0f;
-}
-
-static this()
-{
-    import yaml;
-    IComponent.initializers[ "Mesh" ] = ( Node yml, GameObject obj )
-    {
-        obj.mesh = Assets.get!Mesh( yml.get!string );
-        
-        // If the mesh has animation also add animation component
-        if( obj.mesh.animated )
-        {
-            auto anim = new Animation( Assets.get!AssetAnimation( yml.get!string ) );
-            obj.addComponent( anim );
-            obj.animation = anim;
-        }
-
-        return obj.mesh;
-    };
 }

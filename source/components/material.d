@@ -8,76 +8,41 @@ import yaml;
 import derelict.opengl3.gl3, derelict.freeimage.freeimage;
 import std.variant, std.conv, std.string;
 
+mixin( registerComponents!q{components.material} );
+
 /**
  * A collection of textures that serve different purposes in the rendering pipeline.
  */
+@yamlComponent!( q{name => Assets.get!Material( name )} )()
+@yamlObject()
 final class Material : Asset
 {
-private:
-    Texture _diffuse, _normal, _specular;
-    immutable string _name;
+package:
+    @field( "Name" )
+    string _name;
 
 public:
     /// The diffuse (or color) map.
-    mixin( Property!(_diffuse, AccessModifier.Public) );
+    @field( "Diffuse" )
+    Texture diffuse;
     /// The normal map, which specifies which way a face is pointing at a given pixel.
-    mixin( Property!(_normal, AccessModifier.Public) );
+    @field( "Normal" )
+    Texture normal;
     /// The specular map, which specifies how shiny a given point is.
-    mixin( Property!(_specular, AccessModifier.Public) );
+    @field( "Specular" )
+    Texture specular;
     /// The name of the material.
     mixin( Getter!_name );
 
     /**
      * Default constructor, makes sure everything is initialized to default.
      */
-    this( string name )
+    this( string name = "" )
     {
         super( Resource( "" ) );
-        _diffuse = _specular = defaultTex;
-        _normal = defaultNormal;
+        diffuse = specular = defaultTex;
+        normal = defaultNormal;
         _name = name;
-    }
-
-    /**
-     * Create a Material from a Yaml node.
-     *
-     * Params:
-     *  yamlObj =           The YAML object to pull the data from.
-     *
-     * Returns: A new material with specified maps.
-     */
-    static Material createFromYaml( Node yamlObj )
-    {
-        auto obj = new Material( yamlObj[ "Name" ].get!string );
-        
-        obj.refresh( yamlObj );
-
-        return obj;
-    }
-
-    /**
-     * Refresh the asset.
-     */
-    override void refresh() { }
-
-    /**
-     * Refresh the asset.
-     *
-     * Params:
-     *  yamlObj =       The new makeup of the material.
-     */
-    void refresh( Node yamlObj )
-    {
-        string prop;
-
-        if( yamlObj.tryFind( "Diffuse", prop ) )
-            diffuse = Assets.get!Texture( prop );
-
-        if( yamlObj.tryFind( "Normal", prop ) )
-            normal = Assets.get!Texture( prop );
-
-        if( yamlObj.tryFind( "Specular", prop ) )
-            specular = Assets.get!Texture( prop );
     }
 
     /**
@@ -85,13 +50,14 @@ public:
      */
     override void shutdown()
     {
-        _diffuse = _specular = _normal = null;
+        diffuse = specular = normal = null;
     }
 }
 
 /**
  * TODO
  */
+@yamlComponent!( q{name => Assets.get!Texture( name )} )()
 class Texture : Asset
 {
 protected:
@@ -209,30 +175,4 @@ private:
         def = new Texture( [cast(ubyte)255, cast(ubyte)127, cast(ubyte)127, cast(ubyte)255].ptr );
 
     return def;
-}
-
-static this()
-{
-    IComponent.initializers[ "Material" ] = ( Node yml, GameObject obj )
-    {
-        if( yml.isScalar )
-        {
-            obj.material = Assets.get!Material( yml.get!string );
-        }
-        else if( yml.isMapping )
-        {
-            logError( "Inline material definitions are not yet supported." );
-        }
-        else
-        {
-            logError( "Unsupported format for Material in ", obj.name, "." );
-        }
-
-        return null;
-    };
-
-    IComponent.refreshers[ "Material" ] = ( Node yml, GameObject obj )
-    {
-        IComponent.initializers[ "Material" ]( yml, obj );
-    };
 }

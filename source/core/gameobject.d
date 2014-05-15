@@ -163,7 +163,7 @@ public:
             if( key == "Name" || key == "InstanceOf" || key == "Transform" || key == "Children" )
                 continue;
 
-            if( auto init = key in createYamlObject )
+            if( auto init = key in createYamlComponent )
             {
                 auto newComp = cast(Component)(*init)( componentNode );
                 obj.addComponent( newComp );

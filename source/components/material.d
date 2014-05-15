@@ -13,11 +13,13 @@ mixin( registerComponents!q{components.material} );
 /**
  * A collection of textures that serve different purposes in the rendering pipeline.
  */
-@yamlEntry!( q{name => Assets.get!Material( name )} )()
+@yamlComponent!( q{name => Assets.get!Material( name )} )()
+@yamlObject()
 final class Material : Asset
 {
-private:
-    immutable string _name;
+package:
+    @field( "Name" )
+    string _name;
 
 public:
     /// The diffuse (or color) map.
@@ -35,49 +37,12 @@ public:
     /**
      * Default constructor, makes sure everything is initialized to default.
      */
-    this( string name )
+    this( string name = "" )
     {
         super( Resource( "" ) );
         diffuse = specular = defaultTex;
         normal = defaultNormal;
         _name = name;
-    }
-
-    /**
-     * Create a Material from a Yaml node.
-     *
-     * Params:
-     *  yamlObj =           The YAML object to pull the data from.
-     *
-     * Returns: A new material with specified maps.
-     */
-    static Material createFromYaml( Node yamlObj )
-    {
-        auto obj = new Material( yamlObj[ "Name" ].get!string );
-        
-        obj.refresh( yamlObj );
-
-        return obj;
-    }
-
-    /**
-     * Refresh the asset.
-     *
-     * Params:
-     *  yamlObj =       The new makeup of the material.
-     */
-    void refresh( Node yamlObj )
-    {
-        string prop;
-
-        if( yamlObj.tryFind( "Diffuse", prop ) )
-            diffuse = Assets.get!Texture( prop );
-
-        if( yamlObj.tryFind( "Normal", prop ) )
-            normal = Assets.get!Texture( prop );
-
-        if( yamlObj.tryFind( "Specular", prop ) )
-            specular = Assets.get!Texture( prop );
     }
 
     /**
@@ -92,6 +57,7 @@ public:
 /**
  * TODO
  */
+@yamlComponent!( q{name => Assets.get!Texture( name )} )()
 class Texture : Asset
 {
 protected:

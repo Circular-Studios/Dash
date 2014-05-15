@@ -57,7 +57,7 @@ mixin( registerComponents!q{components.mesh} );
  *  Ogre XML
  *  Q3D
  */
-@yamlEntry!( q{name => Assets.get!Mesh( name )} )()
+@yamlComponent!( q{name => Assets.get!Mesh( name )} )()
 class Mesh : Asset
 {
 private:

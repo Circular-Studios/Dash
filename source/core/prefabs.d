@@ -64,7 +64,7 @@ private:
 /**
  * A prefab that allows for quick object creation.
  */
-@yamlEntry!( q{name => Prefabs[ name ]} )()
+@yamlObject()
 final class Prefab : YamlObject
 {
 public:

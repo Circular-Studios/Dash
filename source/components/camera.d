@@ -12,7 +12,7 @@ mixin( registerComponents!q{components.camera} );
 /**
  * Camera manages a view and projection matrix.
  */
-@yamlEntry( "Camera" )
+@yamlComponent( "Camera" )
 final class Camera : Component, IDirtyable
 {
 private:

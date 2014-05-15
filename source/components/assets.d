@@ -70,7 +70,7 @@ public:
         // Load the unitSquare
         unitSquare = new Mesh( "", aiImportFileFromMemory(
                                         unitSquareMesh.toStringz, unitSquareMesh.length,
-                                        aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
+                                        aiProcess_CalcTangentSpace | aiProcess_Triangulate |
                                         aiProcess_JoinIdenticalVertices | aiProcess_SortByPType,
                                         "obj" ).mMeshes[0] );
 
@@ -78,10 +78,10 @@ public:
         {
             // Load mesh
             const aiScene* scene = aiImportFile( file.fullPath.toStringz,
-                                                 aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
+                                                 aiProcess_CalcTangentSpace | aiProcess_Triangulate |
                                                  aiProcess_JoinIdenticalVertices | aiProcess_SortByPType );
             assert( scene, "Failed to load scene file '" ~ file.fullPath ~ "' Error: " ~ aiGetErrorString().fromStringz );
-            
+
             // If animation data, add animation
             if( file.baseFileName in meshes )
                 logWarning( "Mesh ", file.baseFileName, " exsists more than once." );
@@ -120,8 +120,8 @@ public:
 
             if( name in materials )
                 logWarning( "Material ", name, " exists more than once." );
-            
-            auto newMat = Material.createFromYaml( object );
+
+            auto newMat = cast(Material)createYamlObject[ "Material" ]( object );
             materials[ name ] = newMat;
             materialResources[ objFile[ 1 ] ] ~= newMat;
         }
@@ -156,10 +156,10 @@ public:
 
         mixin( refresh!q{meshes} );
         mixin( refresh!q{textures} );
-        
+
         // Iterate over each file, and it's materials
         refreshYamlObjects!(
-            Material.createFromYaml,
+            node => cast(Material)createYamlObject[ "Material" ]( node ),
             node => node[ "Name" ].get!string in materials,
             ( node, mat ) => materials[ node[ "Name" ].get!string ] = mat,
             mat => materials.remove( mat.name ) )

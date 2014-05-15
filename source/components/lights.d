@@ -49,7 +49,7 @@ public:
 /**
  * Ambient Light
  */
-@yamlEntry( "AmbientLight" )
+@yamlComponent()
 class AmbientLight : Light
 { 
     this( vec3 color = vec3() )
@@ -61,7 +61,7 @@ class AmbientLight : Light
 /**
  * Directional Light
  */
-@yamlEntry()
+@yamlComponent()
 class DirectionalLight : Light
 {
 private:
@@ -192,7 +192,7 @@ public:
 /**
  * Point Light
  */
-@yamlEntry()
+@yamlComponent()
 class PointLight : Light
 {
 private:
@@ -240,7 +240,7 @@ public:
 /**
  * SpotLight Stub
  */
-@yamlEntry()
+@yamlComponent()
 class SpotLight : Light
 {
 public:

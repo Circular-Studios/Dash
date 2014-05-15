@@ -7,6 +7,9 @@ import core, components, graphics, utility;
 import yaml;
 import std.array, std.string, std.traits;
 
+/// Tests if a type can be created from yaml.
+enum isYamlObject(T) = __traits( compiles, { T obj; obj.yaml = Node( YAMLNull() ); } );
+
 abstract class YamlObject
 {
     Node yaml;
@@ -42,6 +45,69 @@ public:
 }
 
 /**
+ * Meant to be added to components that can be set from YAML.
+ * Example:
+ * ---
+ * @yamlObject("Test")
+ * class Test : YamlObject
+ * {
+ *     @field("X")
+ *     int x;
+ * }
+ * ---
+ */
+auto yamlObject( string name = "" )
+{
+    return YamlUDA( YamlType.Object, name, null );
+}
+
+/**
+ * Meant to be added to components that can be set from YAML.
+ * Example:
+ * ---
+ * @yamlComponent("Test")
+ * class Test : Component
+ * {
+ *     @field("X")
+ *     int x;
+ * }
+ * ---
+ */
+auto yamlComponent( string loader = "null" )( string name = "" )
+{
+    return YamlUDA( YamlType.Component, name, mixin( loader ) );
+}
+
+/**
+ * Meant to be added to members for making them YAML accessible.
+ *
+ * Params:
+ *  name =              The name of the tag in YAML.
+ *  loader =            If cannot be loaded directly, specify function used to load it.
+ *
+ * Example:
+ * ---
+ * @yamlComponent("Test")
+ * class Test : Component
+ * {
+ *     @field("X")
+ *     int x;
+ * }
+ * ---
+ */
+auto field( string loader = "null" )( string name = "" )
+{
+    return YamlUDA( YamlType.Field, name, mixin( loader ) );
+}
+
+/// Used to create objects from yaml. The key is the YAML name of the type.
+YamlObject delegate( Node )[string] createYamlObject;
+/// Used to create components from yaml. The key is the YAML name of the type.
+Component delegate( Node )[string] createYamlComponent;
+/// Refresh any object defined from yaml. The key is the typeid of the type.
+void delegate( YamlObject, Node )[TypeInfo] refreshYamlObject;
+
+/**
  * To be placed at the top of any module defining YamlComponents.
  *
  * Params:
@@ -63,18 +129,31 @@ enum registerComponents( string modName ) = q{
                 foreach( attrib; __traits( getAttributes, __traits( getMember, mod, member ) ) )
                 {
                     // If we find one, process it and go to next definition.
-                    static if( is( typeof(attrib) == YamlEntry ) )
+                    static if( is( typeof(attrib) == YamlUDA ) )
                     {
-                        // If the type has a loader, register it as the create function.
-                        if( attrib.loader )
+                        if( attrib.type == YamlType.Component )
                         {
-                            typeLoaders[ typeid(mixin( member )) ] = attrib.loader;
-                            createYamlObject[ member ] = ( Node node ) => attrib.loader( node.get!string );
-                        }
-                            
-                        registerYamlObjects!( mixin( member ) )( attrib.name.length == 0 ? member : attrib.name );
+                            /*static if( !is( typeof( mixin( member ) ) : Component ) )
+                                logError( "@yamlComponent() must be placed on a class which extends Component. ", member, " fails this check." );*/
 
-                        break;
+                            // If the type has a loader, register it as the create function.
+                            if( attrib.loader )
+                            {
+                                typeLoaders[ typeid(mixin( member )) ] = attrib.loader;
+                                createYamlComponent[ member ] = ( node ) { if( node.isScalar ) return cast(Component)attrib.loader( node.get!string ); else { logInfo( "Invalid node for ", member ); return null; } };
+                            }
+                        }
+                        else if( attrib.type == YamlType.Object )
+                        {
+                            /*static if( !is( typeof( mixin( member ) ) : YamlObject ) && !isYamlObject!( mixin( member ) ) )
+                                logError( "@yamlObject() must be placed on a class which extends YamlObject or passes isYamlObject. ", member, " fails this check." );*/
+                        }
+                        else
+                        {
+                            logError( "@field on a type is illegal." );
+                        }
+
+                        registerYamlObjects!( mixin( member ) )( attrib.name.length == 0 ? member : attrib.name, attrib.type );
                     }
                 }
             }
@@ -82,17 +161,17 @@ enum registerComponents( string modName ) = q{
     }
 }.replace( "$modName", modName );
 
-YamlObject delegate( Node )[string] createYamlObject;
-void delegate( YamlObject, Node )[TypeInfo] refreshYamlObject;
+/// For internal use only.
+LoaderFunction[TypeInfo] typeLoaders;
 
 /// DON'T MIND ME
-void registerYamlObjects( Base )( string yamlName = "" ) if( is( Base : YamlObject ) )
+void registerYamlObjects( Base )( string yamlName, YamlType type ) if( is( Base : YamlObject ) )
 {
     // If no name specified, use class name.
     if( yamlName == "" )
         yamlName = Base.stringof.split( "." )[ $-1 ];
 
-    refreshYamlObject[ typeid(Base) ] = ( YamlObject comp, Node n )
+    refreshYamlObject[ typeid(Base) ] = ( comp, n )
     {
         auto b = cast(Base)comp;
 
@@ -101,7 +180,7 @@ void registerYamlObjects( Base )( string yamlName = "" ) if( is( Base : YamlObje
         if( !n.tryFind( yamlName, node ) )
             node = n;
 
-         // Get all members of the class (including inherited ones).
+        // Get all members of the class (including inherited ones).
         foreach( memberName; __traits( allMembers, Base ) )
         {
             // If the attributes are gettable.
@@ -111,79 +190,82 @@ void registerYamlObjects( Base )( string yamlName = "" ) if( is( Base : YamlObje
                 foreach( attrib; __traits( getAttributes, __traits( getMember, Base, memberName ) ) )
                 {
                     // If it is marked as a field, process.
-                    static if( is( typeof(attrib) == Field ) )
+                    static if( is( typeof(attrib) == YamlUDA ) )
                     {
-                        string yamlFieldName;
-                        // If a name is not specified, use the name of the member.
-                        if( attrib.name == "" )
-                            yamlFieldName = memberName;
-                        else
-                            yamlFieldName = attrib.name;
-
-                        // If there's an loader on the field, use that.
-                        if( attrib.loader )
+                        if( attrib.type == YamlType.Field )
                         {
-                            static if( is( typeof( mixin( "b." ~ memberName ) ) : YamlObject ) )
-                            {
-                                string val;
-                                if( node.tryFind( yamlFieldName, val ) )
-                                {
-                                    // If value hasn't changed, ignore.
-                                    string oldVal;
-                                    if( b.yaml.tryFind( yamlFieldName, oldVal ) )
-                                        if( oldVal == val )
-                                            continue;
+                            string yamlFieldName;
+                            // If a name is not specified, use the name of the member.
+                            if( attrib.name == "" )
+                                yamlFieldName = memberName;
+                            else
+                                yamlFieldName = attrib.name;
 
-                                    logInfo( "Loading value of ", yamlName, ".", memberName );
-                                    mixin( "b." ~ memberName ) = cast(typeof(mixin( "b." ~ memberName )))attrib.loader( val );
-                                }
-                                else
+                            // If there's an loader on the field, use that.
+                            if( attrib.loader )
+                            {
+                                static if( is( typeof( mixin( "b." ~ memberName ) ) : YamlObject ) )
                                 {
-                                    logDebug( "Failed finding ", yamlFieldName );
+                                    string val;
+                                    if( node.tryFind( yamlFieldName, val ) )
+                                    {
+                                        // If value hasn't changed, ignore.
+                                        string oldVal;
+                                        if( b.yaml.tryFind( yamlFieldName, oldVal ) )
+                                            if( oldVal == val )
+                                                continue;
+
+                                        mixin( "b." ~ memberName ) = cast(typeof(mixin( "b." ~ memberName )))attrib.loader( val );
+                                    }
+                                    else
+                                    {
+                                        logDebug( "Failed using attrib loader for ", yamlFieldName );
+                                    }
                                 }
                             }
-                        }
-                        // If the type of the field has a loader, use that.
-                        else if( auto loader = typeid( mixin( "b." ~ memberName ) ) in typeLoaders )
-                        {
-                            static if( is( typeof( mixin( "b." ~ memberName ) ) : YamlObject ) )
+                            // If the type of the field has a loader, use that.
+                            else if( typeid( mixin( "b." ~ memberName ) ) in typeLoaders )
                             {
-                                string val;
-                                if( node.tryFind( yamlFieldName, val ) )
+                                static if( is( typeof( mixin( "b." ~ memberName ) ) : YamlObject ) )
                                 {
-                                    // If value hasn't changed, ignore.
-                                    string oldVal;
-                                    if( b.yaml.tryFind( yamlFieldName, oldVal ) )
-                                        if( oldVal == val )
-                                            continue;
+                                    auto loader = typeid( mixin( "b." ~ memberName ) ) in typeLoaders;
 
-                                    logInfo( "Loading value of ", yamlName, ".", memberName );
-                                    mixin( "b." ~ memberName ) = cast(typeof(mixin( "b." ~ memberName )))( *loader )( val );
-                                }
-                                else
-                                {
-                                    logDebug( "Failed finding ", yamlFieldName );
+                                    string val;
+                                    if( node.tryFind( yamlFieldName, val ) )
+                                    {
+                                        // If value hasn't changed, ignore.
+                                        string oldVal;
+                                        if( b.yaml.tryFind( yamlFieldName, oldVal ) )
+                                            if( oldVal == val )
+                                                continue;
+
+                                        mixin( "b." ~ memberName ) = cast(typeof(mixin( "b." ~ memberName )))( *loader )( val );
+                                    }
+                                    else
+                                    {
+                                        logDebug( "Failed using typeloader for ", yamlFieldName );
+                                    }
                                 }
                             }
-                        }
-                        // Else just try to parse the yaml.
-                        else
-                        {
-                            typeof( __traits( getMember, b, memberName ) ) val;
-                            if( node.tryFind( yamlFieldName, val ) )
-                            {
-                                // If value hasn't changed, ignore.
-                                typeof( __traits( getMember, b, memberName ) ) oldVal;
-                                if( b.yaml.tryFind( yamlFieldName, oldVal ) )
-                                    if( oldVal == val )
-                                        continue;
-
-                                logInfo( "Loading value of ", yamlName, ".", memberName );
-                                mixin( "b." ~ memberName ) = val;
-                            }
+                            // Else just try to parse the yaml.
                             else
                             {
-                                logDebug( "Failed finding ", yamlFieldName );
+                                typeof( __traits( getMember, b, memberName ) ) val;
+                                if( node.tryFind( yamlFieldName, val ) )
+                                {
+                                    // If value hasn't changed, ignore.
+                                    typeof( __traits( getMember, b, memberName ) ) oldVal;
+                                    if( b.yaml.tryFind( yamlFieldName, oldVal ) )
+                                        if( oldVal == val )
+                                            continue;
+
+                                    mixin( "b." ~ memberName ) = val;
+                                }
+                                else
+                                {
+                                    logDebug( "Failed creating ", yamlFieldName, " of type ", typeof( mixin( "b." ~ memberName ) ).stringof );
+                                    logDebug( "Typeloaders: ", typeLoaders );
+                                }
                             }
                         }
 
@@ -192,7 +274,7 @@ void registerYamlObjects( Base )( string yamlName = "" ) if( is( Base : YamlObje
                     // If the user forgot (), remind them.
                     else static if( is( typeof(attrib == typeof(field) ) ) )
                     {
-                        logWarning( "Don't forget () after field on ", memberName );
+                        static assert( false, "Don't forget () after field on " ~ memberName );
                     }
                 }
             }
@@ -205,70 +287,52 @@ void registerYamlObjects( Base )( string yamlName = "" ) if( is( Base : YamlObje
     // Make sure the type is instantiable
     static if( __traits( compiles, new Base ) )
     {
-        // Make a creator function for the type.
-        createYamlObject[ yamlName ] = ( Node node )
+        static if( is( Base : Component ) )
         {
-            // Create an instance of the class to assign things to.
-            Base b = new Base;
+            if( type == YamlType.Component )
+            {
+                if( auto loader = typeid( Base ) in typeLoaders )
+                {
+                    createYamlComponent[ yamlName ] = ( node )
+                    {
+                        return cast(Component)( *loader )( node.get!string );
+                    };
+                }
+                else
+                {
+                    createYamlComponent[ yamlName ] = ( node )
+                    {
+                        // Create an instance of the class to assign things to.
+                        Component b = new Base;
 
-            refreshYamlObject[ typeid(Base) ]( b, node );          
+                        refreshYamlObject[ typeid(Base) ]( b, node );
 
-            return b;
-        };
+                        return b;
+                    };
+                }
+            }
+        }
+        if( type == YamlType.Object )
+        {
+            createYamlObject[ yamlName ] = ( node )
+            {
+                // Create an instance of the class to assign things to.
+                YamlObject b = new Base;
+
+                refreshYamlObject[ typeid(Base) ]( b, node );
+
+                return b;
+            };
+        }
     }
 }
 
-alias LoaderFunction = YamlObject delegate( string );
+enum YamlType { Object, Component, Field }
+private alias LoaderFunction = YamlObject delegate( string );
 
-/**
- * Meant to be added to components that can be set from YAML.
- * Example:
- * ---
- * @yamlEntry("Test")
- * class Test : Component
- * {
- *     @field("X")
- *     int x;
- * }
- * ---
- */
-YamlEntry yamlEntry( string loader = "null" )( string name = "" )
+struct YamlUDA
 {
-    return YamlEntry( name, mixin( loader ) );
-}
-
-/**
- * Meant to be added to members for making them YAML accessible.
- *
- * Params:
- *  name =              The name of the tag in YAML.
- *  loader =            If cannot be loaded directly, specify function used to load it.
- *
- * Example:
- * ---
- * @yamlEntry("Test")
- * class Test : Component
- * {
- *     @field("X")
- *     int x;
- * }
- * ---
- */
-Field field( string loader = "null" )( string name = "" )
-{
-    return Field( name, mixin( loader ) );
-}
-
-LoaderFunction[TypeInfo] typeLoaders;
-
-struct YamlEntry
-{
-    string name;
-    LoaderFunction loader;
-}
-
-struct Field
-{
+    YamlType type;
     string name;
     LoaderFunction loader;
 }

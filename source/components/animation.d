@@ -26,10 +26,10 @@ private:
     /// If the gameobject should be animating
     bool _animating;
 
-	/// Animation to return to if _animateOnce is true
-	int _returnAnimation;
-	/// If the animation is animating once, then returning to _returnAnimation
-	bool _animateOnce;
+    /// Animation to return to if _animateOnce is true
+    int _returnAnimation;
+    /// If the animation is animating once, then returning to _returnAnimation
+    bool _animateOnce;
 
 public:
     /// Bone transforms for the current pose (Passed to the shader)
@@ -60,11 +60,11 @@ public:
             {
                 _currentAnimTime = 0.0f;
 
-				if( _animateOnce )
-				{
-					_animateOnce = false;
-					_currentAnim = _returnAnimation;
-				}
+                if( _animateOnce )
+                {
+                    _animateOnce = false;
+                    _currentAnim = _returnAnimation;
+                }
             }
         }
 
@@ -107,16 +107,16 @@ public:
         else
             logWarning( "Could not change to new animation, the animation did not exist." );
     }
-	/**
-	* Runs an animation once, then returns
-	*/
+    /**
+    * Runs an animation once, then returns
+    */
     void runAnimationOnce( int animNumber, int returnAnimNumber )
     {
         if( animNumber < _animationData.animationSet.length )
         {
-			_animateOnce = true;
+            _animateOnce = true;
             _currentAnim = animNumber;
-			_returnAnimation = returnAnimNumber;
+            _returnAnimation = returnAnimNumber;
             _currentAnimTime = 0;
         }
         else

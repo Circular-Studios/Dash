@@ -206,16 +206,20 @@ void registerYamlObjects( Base )( string yamlName, YamlType type ) if( is( Base 
                             {
                                 static if( is( typeof( mixin( "b." ~ memberName ) ) : YamlObject ) )
                                 {
-                                    string val;
-                                    if( node.tryFind( yamlFieldName, val ) )
+                                    string newStringVal;
+                                    if( node.tryFind( yamlFieldName, newStringVal ) )
                                     {
-                                        // If value hasn't changed, ignore.
-                                        string oldVal;
-                                        if( b.yaml.tryFind( yamlFieldName, oldVal ) )
-                                            if( oldVal == val )
+                                        auto newVal = cast(typeof(mixin( "b." ~ memberName )))attrib.loader( newStringVal );
+                                        // If value hasn't changed, or if it was changed through code, ignore.
+                                        string oldStringVal;
+                                        if( b.yaml.tryFind( yamlFieldName, oldStringVal ) )
+                                        {
+                                            auto oldVal = cast(typeof(mixin( "b." ~ memberName )))attrib.loader( oldStringVal );
+                                            if( oldStringVal == newStringVal || oldVal != mixin( "b." ~ memberName ) )
                                                 continue;
+                                        }
 
-                                        mixin( "b." ~ memberName ) = cast(typeof(mixin( "b." ~ memberName )))attrib.loader( val );
+                                        mixin( "b." ~ memberName ) = newVal;
                                     }
                                     else
                                     {
@@ -230,16 +234,20 @@ void registerYamlObjects( Base )( string yamlName, YamlType type ) if( is( Base 
                                 {
                                     auto loader = typeid( mixin( "b." ~ memberName ) ) in typeLoaders;
 
-                                    string val;
-                                    if( node.tryFind( yamlFieldName, val ) )
+                                    string newStringVal;
+                                    if( node.tryFind( yamlFieldName, newStringVal ) )
                                     {
+                                        auto newVal = cast(typeof(mixin( "b." ~ memberName )))( *loader )( newStringVal );
                                         // If value hasn't changed, ignore.
-                                        string oldVal;
-                                        if( b.yaml.tryFind( yamlFieldName, oldVal ) )
-                                            if( oldVal == val )
+                                        string oldStringVal;
+                                        if( b.yaml.tryFind( yamlFieldName, oldStringVal ) )
+                                        {
+                                            auto oldVal = cast(typeof(mixin( "b." ~ memberName )))( *loader )( oldStringVal );
+                                            if( oldStringVal == newStringVal || oldVal != mixin( "b." ~ memberName ) )
                                                 continue;
+                                        }
 
-                                        mixin( "b." ~ memberName ) = cast(typeof(mixin( "b." ~ memberName )))( *loader )( val );
+                                        mixin( "b." ~ memberName ) = newVal;
                                     }
                                     else
                                     {
@@ -256,8 +264,10 @@ void registerYamlObjects( Base )( string yamlName, YamlType type ) if( is( Base 
                                     // If value hasn't changed, ignore.
                                     typeof( __traits( getMember, b, memberName ) ) oldVal;
                                     if( b.yaml.tryFind( yamlFieldName, oldVal ) )
-                                        if( oldVal == val )
+                                    {
+                                        if( oldVal == val || oldVal != mixin( "b." ~ memberName ) )
                                             continue;
+                                    }
 
                                     mixin( "b." ~ memberName ) = val;
                                 }

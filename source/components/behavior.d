@@ -25,6 +25,8 @@ private abstract class ABehavior
     void onDraw() { }
     /// Called on shutdown.
     void onShutdown() { }
+    /// Called when refreshing an object.
+    void onRefresh() { }
 }
 
 /**

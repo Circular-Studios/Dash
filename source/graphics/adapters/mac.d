@@ -26,7 +26,7 @@ public:
     override void initialize() { }
     override void shutdown() { }
     override void resize() { }
-    override void reload() { }
+    override void refresh() { }
     override void swapBuffers() { }
 
     override void openWindow() { }

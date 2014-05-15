@@ -7,7 +7,7 @@ import core, components, graphics, utility;
 import yaml;
 import gl3n.linalg, gl3n.math;
 
-import std.conv, std.variant, std.array, std.algorithm, std.typecons;
+import std.conv, std.variant, std.array, std.algorithm, std.typecons, std.range;
 
 enum AnonymousName = "__anonymous";
 
@@ -221,7 +221,7 @@ public:
         _behaviors = Behaviors( this );
 
         // Create default material
-        material = new Material();
+        material = new Material( "default" );
         id = nextId++;
 
         stateFlags = new ObjectStateFlags;
@@ -271,6 +271,68 @@ public:
     }
 
     /**
+     * Refreshes the object with the given YAML node.
+     *
+     * Params:
+     *  node =          The node to refresh the object with.
+     */
+    final void refresh( Node node )
+    {
+        foreach( string name, Node component; node )
+        {
+            if( auto refresher = name in IComponent.refreshers )
+            {
+                ( *refresher )( component, this );
+            }
+        }
+
+        Node yamlChildren;
+        if( node.tryFind( "Children", yamlChildren ) && yamlChildren.isSequence )
+        {
+            auto childNames = children.map!( child => child.name );
+            bool[string] childFound = childNames.zip( false.repeat( childNames.length ) ).assocArray();
+
+            foreach( Node yamlChild; yamlChildren )
+            {
+                // Find 0 based index of child in yamlChildren
+                if( auto index = childNames.countUntil( yamlChild[ "Name" ].get!string ) + 1 )
+                {
+                    // Refresh with YAML node.
+                    children[ index - 1 ].refresh( yamlChild );
+                    childFound[ yamlChild[ "Name" ].get!string ] = true;
+                }
+                // If not in children, add it.
+                else
+                {
+                    addChild( GameObject.createFromYaml( yamlChild ) );
+                }
+            }
+
+            // Filter out found children's names, and then get the objects.
+            auto unfoundChildren = childFound.keys
+                                        .filter!( name => !childFound[ name ] )
+                                        .map!( name => children[ childNames.countUntil( name ) ] );
+            foreach( unfound; unfoundChildren )
+            {
+                logDebug( "Removing child ", unfound.name, " from ", name, "." );
+                unfound.shutdown();
+                removeChild( unfound );
+            }
+        }
+        // Remove all children
+        else
+        {
+            foreach( child; children )
+            {
+                child.shutdown();
+                removeChild( child );
+            }
+        }
+
+        behaviors.onRefresh();   
+    }
+
+    /**
      * Adds a component to the object.
      */
     final void addComponent( T )( T newComponent ) if( is( T : IComponent ) )
@@ -311,24 +373,24 @@ public:
         GameObject par;
         for( par = this; par.parent; par = par.parent ) { }
 
-        GameObject[] objectChildren;
-        {
-            GameObject[] objs;
-            objs ~= newChild;
-
-            while( objs.length )
-            {
-                auto obj = objs[ 0 ];
-                objs = objs[ 1..$ ];
-                objectChildren ~= obj;
-
-                foreach( child; obj.children )
-                    objs ~= child;
-            }
-        }
-
         if( par.scene )
         {
+            GameObject[] objectChildren;
+            {
+                GameObject[] objs;
+                objs ~= newChild;
+
+                while( objs.length )
+                {
+                    auto obj = objs[ 0 ];
+                    objs = objs[ 1..$ ];
+                    objectChildren ~= obj;
+
+                    foreach( child; obj.children )
+                        objs ~= child;
+                }
+            }
+
             // If adding to the scene, make sure all new children are in.
             foreach( child; objectChildren )
             {
@@ -351,6 +413,17 @@ public:
 
         oldChild.canChangeName = true;
         oldChild.parent = null;
+
+        // Get root object
+        GameObject par;
+        for( par = this; par.parent; par = par.parent ) { }
+
+        // Remove from scene.
+        if( par.scene )
+        {
+            par.scene.objectById.remove( oldChild.id );
+            par.scene.idByName.remove( oldChild.name );
+        }
     }
 }
 

@@ -8,18 +8,12 @@ import yaml;
 import gl3n.linalg;
 import std.variant;
 
-PrefabManager Prefabs;
-
-static this()
-{
-    Prefabs = new PrefabManager;
-}
-
 /**
  * Prefabs manages prefabs and allows access to them.
  */
-final class PrefabManager
+final abstract class Prefabs
 {
+static:
 public:
     /// The AA of prefabs.
     Prefab[string] prefabs;
@@ -35,13 +29,32 @@ public:
         foreach( key; prefabs.keys )
             prefabs.remove( key );
 
-        foreach( object; loadYamlDocuments( FilePath.Resources.Prefabs ) )
+        foreach( objFile; loadYamlFiles( Resources.Prefabs ) )
         {
+            auto object = objFile[0];
             auto name = object[ "Name" ].as!string;
             
-            prefabs[ name ] = new Prefab( object );
+            auto newFab = new Prefab( object );
+            prefabs[ name ] = newFab;
+            prefabResources[ objFile[1] ] ~= newFab;
         }
     }
+
+    /**
+     * Refreshes prefabs that are outdated.
+     */
+    void refresh()
+    {
+        refreshYamlObjects!(
+            node => new Prefab( node ),
+            node => node[ "Name" ].get!string in prefabs,
+            ( node, fab ) => prefabs[ node[ "Name" ].get!string ] = fab,
+            fab => prefabs.remove( fab.name ) )
+                ( prefabResources );
+    }
+
+private:
+    Prefab[][Resource] prefabResources;
 }
 
 /**
@@ -50,6 +63,9 @@ public:
 final class Prefab
 {
 public:
+    /// The name of the prefab.
+    mixin( Getter!_name );
+
     /**
      * Create a prefab from a YAML node.
      * 
@@ -57,6 +73,18 @@ public:
      *  yml =           The YAML node to get info from.
      */
     this( Node yml )
+    {
+        refresh( yml );
+        this._name = yml[ "Name" ].get!string;
+    }
+
+    /**
+     * Refreshes the makeup of the prefab.
+     *
+     * Params:
+     *  yml =           The new yaml for the prefab.
+     */
+    void refresh( Node yml )
     {
         this.yaml = yml;
     }
@@ -67,11 +95,12 @@ public:
      * Returns:
      *  The new GameObject from the Prefab.
      */
-    final GameObject createInstance()
+    GameObject createInstance()
     {
         return GameObject.createFromYaml( yaml );
     }
 
 private:
-    immutable Node yaml;
+    immutable string _name;
+    Node yaml;
 }

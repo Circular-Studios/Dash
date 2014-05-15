@@ -16,6 +16,7 @@ final class Scene
 {
 private:
     GameObject _root;
+    GameObject[][Resource] goResources;
 
 package:
     GameObject[uint] objectById;
@@ -42,10 +43,12 @@ public:
      */
     final void loadObjects( string objectPath = "" )
     {
-        foreach( yml; loadYamlDocuments( buildNormalizedPath( FilePath.Resources.Objects, objectPath ) ) )
+        foreach( ymlFile; buildNormalizedPath( Resources.Objects, objectPath ).loadYamlFiles() )
         {
             // Create the object
-            _root.addChild( GameObject.createFromYaml( yml ) );
+            auto newObj = GameObject.createFromYaml( ymlFile[ 0 ] );
+            _root.addChild( newObj );
+            goResources[ ymlFile[ 1 ] ] ~= newObj;
         }
     }
 
@@ -71,6 +74,20 @@ public:
     final void draw()
     {
         _root.draw();
+    }
+
+    /**
+     * Refreshes all objects in the scene that need refreshing.
+     */
+    final void refresh()
+    {
+        // Iterate over each file, and it's objects
+        refreshYamlObjects!(
+            GameObject.createFromYaml,
+            node => this[ node[ "Name" ].get!string ],
+            ( node, obj ) => _root.addChild( obj ),
+            ( obj ) { if( obj.parent ) obj.parent.removeChild( obj ); } )
+                ( goResources );
     }
 
     /**

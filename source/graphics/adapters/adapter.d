@@ -73,7 +73,7 @@ public:
     /**
     * Reloads the Adapter without closing
     */
-    abstract void reload();
+    abstract void refresh();
     /**
     * Swaps the back buffer to the screen
     */
@@ -110,27 +110,8 @@ public:
         glGenTextures( 1, &_normalRenderTexture );
         glGenTextures( 1, &_depthRenderTexture );
 
-        //For each texture, we bind it to our active texture, and set the format and filtering
-        glBindTexture( GL_TEXTURE_2D, _diffuseRenderTexture );
-        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, null );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-
-        glBindTexture( GL_TEXTURE_2D, _normalRenderTexture );
-        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, null );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-
-        glBindTexture( GL_TEXTURE_2D, _depthRenderTexture );
-        glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, null );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+        // Initialize render textures
+        resizeDefferedRenderBuffer();
 
         //And finally set all of these to our frameBuffer
         glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _diffuseRenderTexture, 0 );
@@ -161,6 +142,34 @@ public:
             logFatal( "Deffered rendering Frame Buffer was not initialized correctly. Error: ", mapFramebufferError(status) );
             assert(false);
         }
+    }
+
+    /**
+     * Resizes the deffered rendering buffer.
+     */
+    final void resizeDefferedRenderBuffer()
+    {
+        //For each texture, we bind it to our active texture, and set the format and filtering
+        glBindTexture( GL_TEXTURE_2D, _diffuseRenderTexture );
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, null );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+
+        glBindTexture( GL_TEXTURE_2D, _normalRenderTexture );
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, null );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+
+        glBindTexture( GL_TEXTURE_2D, _depthRenderTexture );
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, null );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
     }
 
     /**
@@ -264,51 +273,52 @@ public:
          */
         void shadowPass()
         {
-
-
             foreach( light; directionalLights )
             {   
-                glBindFramebuffer( GL_FRAMEBUFFER, light.shadowMapFrameBuffer );
-                glClear( GL_DEPTH_BUFFER_BIT );
-                glViewport( 0, 0, light.shadowMapSize, light.shadowMapSize );
-
-                // determine the world space volume for all objects
-                AABB frustum;
-                foreach( object; scene.objects )
+                if( light.castShadows )
                 {
-                    if( object.mesh && object.stateFlags.drawMesh )
+                    glBindFramebuffer( GL_FRAMEBUFFER, light.shadowMapFrameBuffer );
+                    glClear( GL_DEPTH_BUFFER_BIT );
+                    glViewport( 0, 0, light.shadowMapSize, light.shadowMapSize );
+
+                    // determine the world space volume for all objects
+                    AABB frustum;
+                    foreach( object; scene.objects )
                     {
-                        frustum.expand( (object.transform.matrix * vec4(object.mesh.boundingBox.min, 1.0f)).xyz );
-                        frustum.expand( (object.transform.matrix * vec4(object.mesh.boundingBox.max, 1.0f)).xyz );
+                        if( object.mesh && object.stateFlags.drawMesh )
+                        {
+                            frustum.expand( (object.transform.matrix * vec4(object.mesh.boundingBox.min, 1.0f)).xyz );
+                            frustum.expand( (object.transform.matrix * vec4(object.mesh.boundingBox.max, 1.0f)).xyz );
+                        }
                     }
-                }
 
-                light.calculateProjView( frustum );
+                    light.calculateProjView( frustum );
 
-                foreach( object; scene.objects )
-                {
-                    if( object.mesh && object.stateFlags.drawMesh )
+                    foreach( object; scene.objects )
                     {
-                        // set the shader
-                        Shader shader = object.mesh.animated
-                                        ? Shaders.animatedShadowMap
-                                        : Shaders.shadowMap;
+                        if( object.mesh && object.stateFlags.drawMesh )
+                        {
+                            // set the shader
+                            Shader shader = object.mesh.animated
+                                            ? Shaders.animatedShadowMap
+                                            : Shaders.shadowMap;
 
-                        glUseProgram( shader.programID );
-                        glBindVertexArray( object.mesh.glVertexArray );
+                            glUseProgram( shader.programID );
+                            glBindVertexArray( object.mesh.glVertexArray );
 
-                        shader.bindUniformMatrix4fv( shader.WorldViewProjection, 
-                                                    light.projView * object.transform.matrix);
+                            shader.bindUniformMatrix4fv( shader.WorldViewProjection, 
+                                                        light.projView * object.transform.matrix);
 
-                        if( object.mesh.animated )
-                            shader.bindUniformMatrix4fvArray( shader.Bones, object.animation.currBoneTransforms );
+                            if( object.mesh.animated )
+                                shader.bindUniformMatrix4fvArray( shader.Bones, object.animation.currBoneTransforms );
 
-                        glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
+                            glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
 
-                        glBindVertexArray(0);
+                            glBindVertexArray(0);
+                        }
                     }
+                    glBindFramebuffer( GL_FRAMEBUFFER, 0 );
                 }
-                glBindFramebuffer( GL_FRAMEBUFFER, 0 );
             }
 
             foreach( light; pointLights ){}

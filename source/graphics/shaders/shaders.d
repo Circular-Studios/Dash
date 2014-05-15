@@ -38,6 +38,7 @@ private enum ShaderUniform
     LightRadius = "light.radius",
     LightFalloffRate = "light.falloffRate",
     LightPosition = "light.pos_v",
+    LightShadowless = "light.shadowless",
     EyePosition = "eyePosition_w",
     /// Animations
     Bones = "bones",
@@ -91,7 +92,7 @@ public:
         shadowMap = new Shader( "ShadowMap", shadowmapVS, shadowmapFS, true );
         animatedShadowMap = new Shader( "AnimatedShadowMap", animatedshadowmapVS, shadowmapFS, true );
 
-        foreach( file; FilePath.scanDirectory( FilePath.Resources.Shaders, "*.fs.glsl" ) )
+        foreach( file; scanDirectory( Resources.Shaders, "*.fs.glsl" ) )
         {
             // Strip .fs from file name
             string name = file.baseFileName[ 0..$-3 ];
@@ -166,10 +167,10 @@ public:
 
         if(!preloaded)
         {
-            auto vertexFile = new FilePath( vertex );
-            auto fragmentFile = new FilePath( fragment );
-            string vertexBody = vertexFile.getContents();
-            string fragmentBody = fragmentFile.getContents();
+            auto vertexFile = Resource( vertex );
+            auto fragmentFile = Resource( fragment );
+            string vertexBody = vertexFile.readText();
+            string fragmentBody = fragmentFile.readText();
             compile( vertexBody, fragmentBody );
         }
         else
@@ -178,7 +179,7 @@ public:
         }
 
         //uniform is the *name* of the enum member not it's value
-        foreach( uniform; __traits(allMembers,ShaderUniform ) )
+        foreach( uniform; __traits( allMembers, ShaderUniform ) )
         {
             mixin(uniform) = glGetUniformLocation( programID, mixin("ShaderUniform." ~ uniform).ptr );
         }
@@ -300,6 +301,11 @@ public:
      * Binds diffuse, normal, and specular textures to the shader
      */
     final void bindMaterial( Material material )
+    in
+    {
+        assert( material, "Cannot bind null material." );
+    }
+    body
     {
         //This is finding the uniform for the given texture, and setting that texture to the appropriate one for the object
         glUniform1i( DiffuseTexture, 0 );
@@ -340,6 +346,7 @@ public:
     {
         bindUniform3f( LightDirection, light.direction);
         bindUniform3f( LightColor, light.color );
+        bindUniform1f( LightShadowless, cast(float)(!light.castShadows) );
     }
 
     /**
@@ -349,6 +356,7 @@ public:
     {
         bindUniform3f( LightDirection, ( transform * vec4( light.direction, 0.0f ) ).xyz );
         bindUniform3f( LightColor, light.color );
+        bindUniform1f( LightShadowless, cast(float)(!light.castShadows) );
     }
 
     /**

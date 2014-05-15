@@ -7,40 +7,45 @@ import utility, core, graphics;
 import yaml, gl3n.linalg;
 import derelict.opengl3.gl3;
 import core.sync.mutex;
-import std.typecons, std.conv;
+import std.typecons, std.conv, std.traits;
 
 /**
  * Manages all input events.
  */
 final abstract class Input
 {
-public static:
-    /**
-     * Function called when key event triggers.
-     */
-    alias void delegate( uint, bool ) KeyEvent;
-    /// ditto
-    alias void delegate( uint ) KeyStateEvent;
-    /**
-     * Function called when key event triggers.
-     */
-    alias void delegate( uint, float ) AxisEvent;
+private:
+    enum passThrough( string functionName, string args ) = q{
+        void $functionName( string inputName, void delegate( $args ) func )
+        {
+            bool eventAdded = false;
+            try
+            {
+                Keyboard.$functionName( inputName, cast(ParameterTypeTuple!(__traits(getMember, Keyboard, "$functionName"))[ 1 ])func );
+                eventAdded = true;
+            }
+            catch( Exception e ) { }
+            try
+            {
+                Mouse.$functionName( inputName, cast(ParameterTypeTuple!(__traits(getMember, Mouse, "$functionName"))[ 1 ])func );
+                eventAdded = true;
+            }
+            catch( Exception e ) { }
 
+            if( !eventAdded )
+                throw new Exception( "Name " ~ inputName ~ " not bound." );
+        }
+    }.replaceMap( [ "$functionName": functionName, "$args": args ] );
+public static:
     /**
      * Processes Config/Input.yml and pulls input string bindings.
      */
-    final void initialize()
+    void initialize()
     {
-        auto bindings = FilePath.Resources.InputBindings.loadYamlFile();
+        auto bindings = Resources.InputBindings.loadYamlFile();
 
-        foreach( key; keyBindings.keys )
-            keyBindings.remove( key );
-
-        foreach( key; keyEvents.keys )
-            keyEvents.remove( key );
-
-        foreach( key; axisEvents.keys )
-            axisEvents.remove( key );
+        Keyboard.initialize();
+        Mouse.initialize();
 
         foreach( string name, Node bind; bindings )
         {
@@ -48,23 +53,44 @@ public static:
             {
                 foreach( string type, Node value; bind )
                 {
-                    enum parseType( string type, string enumName = type ) = q{
+                    enum parseType( string type ) = q{
                         case "$type":
-                            try
+                            if( value.isScalar )
                             {
-                                keyBindings[ name ] ~= value.get!string.to!$enumName;
+                                try
+                                {
+                                    $type.buttonBindings[ name ] ~= value.get!string.to!($type.Buttons);
+                                }
+                                catch( Exception e )
+                                {
+                                    logFatal( "Failed to parse keybinding for input ", name, ": ", e.msg );
+                                }
                             }
-                            catch( Exception e )
+                            else if( value.isSequence )
                             {
-                                logFatal( "Failed to parse keybinding for input ", name, ": ", e.msg );
+                                foreach( Node element; value )
+                                {
+                                    try
+                                    {
+                                        $type.buttonBindings[ name ] ~= element.get!string.to!($type.Buttons);
+                                    }
+                                    catch( Exception e )
+                                    {
+                                        logFatal( "Failed to parse keybinding for input ", name, ": ", e.msg );
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                logFatal( "Failed to parse keybinding for input ", name, ": Mappings not allowed." );
                             }
                             break;
-                    }.replaceMap( [ "$type": type, "$enumName": enumName ] );
+                    }.replaceMap( [ "$type": type ] );
 
                     final switch( type )
                     {
-                        mixin( parseType!"Keyboard" );
-                        mixin( parseType!( "Axis", q{Axes} ) );
+                        mixin( parseType!q{Keyboard} );
+                        mixin( parseType!q{Mouse} );
                     }
                 }
             }
@@ -78,213 +104,10 @@ public static:
     /**
      * Updates the key states, and calls all key events.
      */
-    final void update()
+    void update()
     {
-        auto diffKeys = stagingKeys - currentKeys;
-        previousKeys = currentKeys;
-        currentKeys = stagingKeys;
-
-        auto diffAxis = stagingAxis - currentAxis;
-        previousAxis = currentAxis;
-        currentAxis = stagingAxis;
-
-        foreach( state; diffKeys )
-            if( auto keyEvent = state[ 0 ] in keyEvents )
-                foreach( event; *keyEvent )
-                    event( state[ 0 ], state[ 1 ] );
-
-        foreach( state; diffAxis )
-            if( auto axisEvent = state[ 0 ] in axisEvents )
-                foreach( event; *axisEvent )
-                    event( state[ 0 ], state[ 1 ] );
-    }
-
-    /**
-     * Add an event to be fired when the given key changes.
-     *
-     * Params:
-     *      keyCode =   The code of the key to add the event to.
-     *      func =      The function to call when the key state changes.
-     */
-    final void addKeyEvent( uint keyCode, KeyEvent func )
-    {
-        keyEvents[ keyCode ] ~= func;
-    }
-    unittest
-    {
-        import std.stdio;
-        writeln( "Dash Input addKeyEvent unittest" );
-
-        Config.initialize();
-        Input.initialize();
-
-        bool keyDown;
-        Input.addKeyEvent( Keyboard.Space, ( uint keyCode, bool newState )
-        {
-            keyDown = newState;
-        } );
-
-        Input.setKeyState( Keyboard.Space, true );
-        Input.update();
-        assert( keyDown );
-
-        Input.setKeyState( Keyboard.Space, false );
-        Input.update();
-        assert( !keyDown );
-    }
-
-    /**
-     * Add an event to be fired when the given key changes.
-     *
-     * Params:
-     *      inputName = The name of the input to add the event to.
-     *      func =      The function to call when the key state changes.
-     */
-    final void addKeyEvent( string inputName, KeyEvent func )
-    {
-        if( auto keys = inputName in keyBindings )
-            foreach( key; *keys )
-                addKeyEvent( key, func );
-    }
-
-    /**
-     * Add a key event only when the key is down.
-     */
-    final void addKeyDownEvent( uint keyCode, KeyStateEvent func )
-    {
-        addKeyEvent( keyCode, ( uint keyCode, bool newState ) { if( newState ) func( newState ); } );
-    }
-
-    /**
-     * Add a key event only when the key is down.
-     */
-    final void addKeyDownEvent( string inputName, KeyStateEvent func )
-    {
-        if( auto keys = inputName in keyBindings )
-            foreach( key; *keys )
-                addKeyEvent( key, ( uint keyCode, bool newState ) { if( newState ) func( keyCode ); } );
-    }
-
-    /**
-     * Add a key event only when the key is up.
-     */
-    final void addKeyUpEvent( uint keyCode, KeyStateEvent func )
-    {
-        addKeyEvent( keyCode, ( uint keyCode, bool newState ) { if( !newState ) func( keyCode ); } );
-    }
-
-    /**
-     * Add a key event only when the key is up.
-     */
-    final void addKeyUpEvent( string inputName, KeyStateEvent func )
-    {
-        if( auto keys = inputName in keyBindings )
-            foreach( key; *keys )
-                addKeyEvent( key, ( uint keyCode, bool newState ) { if( !newState ) func( keyCode ); } );
-    }
-
-    /**
-     * Add an event to be fired when the given axis changes.
-     *
-     * Params:
-     *      inputName = The name of the input to add the event to.
-     *      func =      The function to call when the key state changes.
-     */
-    final void addAxisEvent( uint keyCode, AxisEvent func )
-    {
-        axisEvents[ keyCode ] ~= func;
-    }
-
-    /**
-     * Check if a given key is down.
-     *
-     * Params:
-     *      keyCode =       The code of the key to check.
-     *      checkPrevious = Whether or not to make sure the key was down last frame.
-     */
-    final bool isKeyDown( uint keyCode, bool checkPrevious = false )
-    {
-        return currentKeys[ keyCode ] && ( !checkPrevious || !previousKeys[ keyCode ] );
-    }
-    unittest
-    {
-        import std.stdio;
-        writeln( "Dash Input isKeyDown unittest" );
-
-        Config.initialize();
-        Input.initialize();
-        Input.setKeyState( Keyboard.Space, true );
-
-        Input.update();
-        assert( Input.isKeyDown( Keyboard.Space, true ) );
-        assert( Input.isKeyDown( Keyboard.Space, false ) );
-
-        Input.update();
-        assert( !Input.isKeyDown( Keyboard.Space, true ) );
-        assert( Input.isKeyDown( Keyboard.Space, false ) );
-    }
-
-    /**
-     * Check if a given key is up.
-     *
-     * Params:
-     *      keyCode =       The code of the key to check.
-     *      checkPrevious = Whether or not to make sure the key was up last frame.
-     */
-    final bool isKeyUp( uint keyCode, bool checkPrevious = false )
-    {
-        return !currentKeys[ keyCode ] && ( !checkPrevious || previousKeys[ keyCode ] );
-    }
-    unittest
-    {
-        import std.stdio;
-        writeln( "Dash Input isKeyUp unittest" );
-
-        Config.initialize();
-        Input.initialize();
-        Input.setKeyState( Keyboard.Space, true );
-
-        Input.update();
-        Input.setKeyState( Keyboard.Space, false );
-
-        Input.update();
-        assert( Input.isKeyUp( Keyboard.Space, true ) );
-        assert( Input.isKeyUp( Keyboard.Space, false ) );
-
-        Input.update();
-        assert( !Input.isKeyUp( Keyboard.Space, true ) );
-        assert( Input.isKeyUp( Keyboard.Space, false ) );
-    }
-
-    /**
-     * Get the state of a given access
-     *
-     * Params:
-     *  axisCod =       The axis to get the state of.
-     *
-     * Returns: The value of axis.
-     */
-    final float getAxisState( uint axisCode )
-    {
-        return currentAxis[ axisCode ];
-    }
-
-    /**
-     * Sets the state of the key to be assigned at the beginning of next frame.
-     * Should only be called from a window controller.
-     */
-    final void setKeyState( uint keyCode, bool newState )
-    {
-        stagingKeys[ keyCode ] = newState;
-    }
-
-    /**
-     * Sets the state of the axis to be assigned at the beginning of next frame.
-     * Should only be called from a window controller.
-     */
-    final void setAxisState( uint axisCode, float newState )
-    {
-        stagingAxis[ axisCode ] = newState;
+        Keyboard.update();
+        Mouse.update();
     }
 
     /**
@@ -294,36 +117,71 @@ public static:
      *      input =         The input to check for.
      *      checkPrevious = Whether or not to make sure the key was up last frame.
      */
-    final T getState( T = bool )( string input, bool checkPrevious = false ) if( is( T == bool ) /*|| is( T == float )*/ )
+    T getState( T = bool )( string input, bool checkPrevious = false ) if( is( T == bool ) || is( T == float ) )
     {
         static if( is( T == bool ) )
         {
-            bool result = false;
-
-            if( auto keys = input in keyBindings )
+            if( input in Keyboard.buttonBindings )
             {
-                foreach( key; *keys )
-                    result = result || isKeyDown( key, checkPrevious );
-
-                return result;
+                return Keyboard.isButtonDown( input, checkPrevious );
             }
-            else
+            else if( input in Mouse.buttonBindings )
             {
-                throw new Exception( "Input " ~ input ~ " not bound." );
+                return Mouse.isButtonDown( input, checkPrevious );
             }
         }
-        /*else static if( is( T == float ) )
+        else static if( is( T == float ) )
         {
+            if( input in Keyboard.axisBindings )
+            {
+                return Keyboard.getAxisState( input );
+            }
+            else if( input in Mouse.axisBindings )
+            {
+                return Mouse.getAxisState( input );
+            }
+        }
 
-        }*/
+        throw new Exception( "Input " ~ input ~ " not bound." );
     }
+
+    /**
+     * Check if a given button is down.
+     *
+     * Params:
+     *      buttonCode =        The code of the button to check.
+     *      checkPrevious =     Whether or not to make sure the button was down last frame.
+     */
+    bool isButtonDown( string buttonName, bool checkPrevious = false )
+    {
+        return Keyboard.isButtonDown( buttonName, checkPrevious ) || Mouse.isButtonDown( buttonName, checkPrevious );
+    }
+
+    /**
+     * Add an event to be fired when the given button changes.
+     *
+     * Params:
+     *      inputName =     The name of the input to add the event to.
+     *      func =          The function to call when the button state changes.
+     */
+    mixin( passThrough!( "addButtonEvent", "uint, bool" ) );
+
+    /**
+     * Add a button event only when the button is down.
+     */
+    mixin( passThrough!( "addButtonDownEvent", "uint" ) );
+
+    /**
+     * Add a button event only when the button is up.
+     */
+    mixin( passThrough!( "addButtonUpEvent", "uint" ) );
 
     /**
      * Gets the position of the cursor.
      *
      * Returns:     The position of the mouse cursor.
      */
-    final @property vec2 mousePos()
+    vec2 mousePos()
     {
         version( Windows )
         {
@@ -353,7 +211,7 @@ public static:
      *
      * Returns:     The position of the mouse cursor in world space.
      */
-    final @property vec3 mousePosView()
+    vec3 mousePosView()
     {
         if( !DGame.instance.activeScene )
         {
@@ -400,7 +258,7 @@ public static:
      *
      * Returns:     The position of the mouse cursor in world space.
      */
-    final @property vec3 mousePosWorld()
+    vec3 mousePosWorld()
     {
         return (DGame.instance.activeScene.camera.inverseViewMatrix * vec4( mousePosView(), 1.0f )).xyz;
     }
@@ -410,7 +268,7 @@ public static:
      *
      * Returns:     The GameObject located at the current mouse Position
      */
-    final @property GameObject mouseObject()
+    GameObject mouseObject()
     {
         if( !DGame.instance.activeScene )
         {
@@ -435,7 +293,7 @@ public static:
         {
             glBindFramebuffer( GL_FRAMEBUFFER, Graphics.deferredFrameBuffer );
             glReadBuffer( GL_COLOR_ATTACHMENT1 );
-            glReadPixels( x, y, 1, 1, GL_BLUE, GL_FLOAT, &fId);
+            glReadPixels( x, y, 1, 1, GL_ALPHA, GL_FLOAT, &fId);
 
             uint id = cast(int)(fId);
             glBindFramebuffer( GL_FRAMEBUFFER, 0 );
@@ -446,75 +304,455 @@ public static:
 
         return null;
     }
+}
+
+alias Keyboard  = InputSystem!( KeyboardButtons, void );
+alias Mouse     = InputSystem!( MouseButtons, MouseAxes );
 
 private:
-    uint[][ string ] keyBindings;
+/**
+ * Defines a system of inputs, buttons, axes or both.
+ *
+ * Params:
+ *  ButtonEnum =        The enum of buttons for this system.
+ *  AxisEnum =          The enum of axes for this system.
+ */
+final abstract class InputSystem( ButtonEnum, AxisEnum )
+{
+static:
+public:
+    /// Whether or not the system has buttons.
+    enum HasButtons = !is( ButtonEnum == void );
+    /// Whether or not the system has axes.
+    enum HasAxes    = !is( AxisEnum == void );
 
-    KeyEvent[][ uint ] keyEvents;
-    AxisEvent[][ uint ] axisEvents;
-
-    State!( bool, 256 ) currentKeys;
-    State!( bool, 256 ) previousKeys;
-    State!( bool, 256 ) stagingKeys;
-
-    State!( float, 2 ) currentAxis;
-    State!( float, 2 ) previousAxis;
-    State!( float, 2 ) stagingAxis;
-
-    static this()
+private:
+    /**
+     * Initialize all states and events.
+     */
+    void initialize()
     {
-        currentAxis.reset();
-        previousAxis.reset();
-        stagingAxis.reset();
+        static if( HasButtons )
+        {
+            buttonCurrent.reset();
+            buttonPrevious.reset();
+            buttonStaging.reset();
+
+            foreach( key; buttonEvents.keys )
+                buttonEvents.remove( key );
+
+            foreach( key; buttonBindings.keys )
+                buttonBindings.remove( key );
+        }
+        static if( HasAxes )
+        {
+            axisCurrent.reset();
+            axisStaging.reset();
+
+            foreach( key; axisEvents.keys )
+                axisEvents.remove( key );
+
+            foreach( key; axisBindings.keys )
+                axisBindings.remove( key );
+        }
     }
 
-    struct State( T, uint totalSize )
+    /**
+     * Update all events and states.
+     */
+    void update()
     {
-    public:
-        T[ totalSize ] keys;
-
-        ref State!( T, totalSize ) opAssign( const ref State!( T, totalSize ) other )
+        static if( HasButtons )
         {
-            for( uint ii = 0; ii < other.keys.length; ++ii )
-                keys[ ii ] = other.keys[ ii ];
+            auto diffButtons = buttonStaging - buttonCurrent;
+            buttonPrevious = buttonCurrent;
+            buttonCurrent = buttonStaging;
 
-            return this;
+            foreach( state; diffButtons )
+                if( auto buttonEvent = state[ 0 ] in buttonEvents )
+                    foreach( event; *buttonEvent )
+                        event( state[ 0 ], state[ 1 ] );
         }
-
-        T opIndex( size_t keyCode ) const
+        static if( HasAxes )
         {
-            return keys[ keyCode ];
-        }
+            auto diffAxis = axisStaging - axisCurrent;
+            axisCurrent = axisStaging;
 
-        T opIndexAssign( T newValue, size_t keyCode )
+            foreach( state; diffAxis )
+                if( auto axisEvent = state[ 0 ] in axisEvents )
+                    foreach( event; *axisEvent )
+                        event( state[ 0 ], state[ 1 ] );
+        }
+    }
+
+// If we have buttons
+static if( HasButtons )
+{
+public:
+    /// The enum of buttons that the input system has.
+    alias Buttons           = ButtonState.Inputs;
+    /// The type each button is stored as.
+    alias ButtonStorageType = bool;
+    /// A delegate that takes the changed button and the new state.
+    alias ButtonEvent       = void delegate( Buttons, ButtonStorageType );
+    /// A delegate that takes the changed button.
+    alias ButtonStateEvent  = void delegate( Buttons );
+
+    /**
+     * Check if a given button is down.
+     *
+     * Params:
+     *  buttonCode =        The button to check.
+     *  checkPrevious =     Whether or not to make sure the button was down last frame.
+     *
+     * Returns: The state of the button.
+     */
+    ButtonStorageType getButtonState( Buttons buttonCode )
+    {
+        return buttonCurrent[ buttonCode ];
+    }
+
+    /**
+     * Get the state of a given button.
+     *
+     * Params:
+     *  buttonName =        The button to get the state of.
+     *
+     * Returns: The state of the button.
+     */
+    ButtonStorageType getButtonState( string buttonName )
+    {
+        if( auto button = buttonName in buttonBindings )
         {
-            keys[ keyCode ] = newValue;
-            return newValue;
-        }
+            foreach( binding; *button )
+                if( buttonCurrent[ binding ] != false )
+                    return buttonCurrent[ binding ];
 
-        Tuple!( uint, T )[] opBinary( string Op : "-" )( const ref State!( T, totalSize ) other )
+            return false;
+        }
+        else
         {
-            Tuple!( uint, T )[] differences;
-
-            for( uint ii = 0; ii < keys.length; ++ii )
-                if( this[ ii ] != other[ ii ] )
-                    differences ~= tuple( ii, this[ ii ] );
-
-            return differences;
+            throw new Exception( "Input " ~ buttonName ~ " not bound." );
         }
+    }
 
-        void reset()
+    /**
+     * Check if a given button is down.
+     *
+     * Params:
+     *  buttonCode =        The code of the button to check.
+     *  checkPrevious =     Whether or not to make sure the button was down last frame.
+     *
+     * Returns: The state of the button.
+     */
+    ButtonStorageType isButtonDown( Buttons buttonCode, bool checkPrevious = false )
+    {
+        return buttonCurrent[ buttonCode ] && ( !checkPrevious || !buttonCurrent[ buttonCode ] );
+    }
+
+    /**
+     * Check if a given button is down.
+     *
+     * Params:
+     *  buttonName =        The button to get the state of.
+     *  checkPrevious =     Whether or not to make sure the button was down last frame.
+     *
+     * Returns: The state of the button.
+     */
+    ButtonStorageType isButtonDown( string buttonName, bool checkPrevious = false )
+    {
+        if( auto button = buttonName in buttonBindings )
         {
-            for( uint ii = 0; ii < keys.length; ++ii )
-                keys[ ii ] = 0;
+            foreach( binding; *button )
+                if( isButtonDown( binding, checkPrevious ) != false )
+                    return isButtonDown( binding, checkPrevious );
+
+            return false;
         }
+        else
+        {
+            throw new Exception( "Input " ~ buttonName ~ " not bound." );
+        }
+    }
+
+    /**
+     * Check if a given button is up.
+     *
+     * Params:
+     *      buttonCode =        The code of the button to check.
+     *      checkPrevious =     Whether or not to make sure the button was up last frame.
+     *
+     * Returns: The state of the button.
+     */
+    ButtonStorageType isButtonUp( Buttons buttonCode, bool checkPrevious = false )
+    {
+        return !buttonCurrent[ buttonCode ] && ( !checkPrevious || buttonCurrent[ buttonCode ] );
+    }
+
+    /**
+     * Check if a given button is up.
+     *
+     * Params:
+     *  buttonName =        The button to get the state of.
+     *  checkPrevious =     Whether or not to make sure the button was down last frame.
+     *
+     * Returns: The state of the button.
+     */
+    ButtonStorageType isButtonUp( string buttonName, bool checkPrevious = false )
+    {
+        if( auto button = buttonName in buttonBindings )
+        {
+            foreach( binding; *button )
+                if( isButtonUp( binding, checkPrevious ) != false )
+                    return isButtonUp( binding, checkPrevious );
+
+            return false;
+        }
+        else
+        {
+            throw new Exception( "Input " ~ buttonName ~ " not bound." );
+        }
+    }
+
+    /**
+     * Add an event to be fired when the given button changes.
+     *
+     * Params:
+     *      buttonCode =    The code of the button to add the event to.
+     *      func =          The function to call when the button state changes.
+     */
+    void addButtonEvent( Buttons buttonCode, ButtonEvent func )
+    {
+        buttonEvents[ buttonCode ] ~= func;
+    }
+
+    /**
+     * Add an event to be fired when the given button changes.
+     *
+     * Params:
+     *      inputName =     The name of the input to add the event to.
+     *      func =          The function to call when the button state changes.
+     */
+    void addButtonEvent( string inputName, ButtonEvent func )
+    {
+        if( auto buttons = inputName in buttonBindings )
+            foreach( button; *buttons )
+                addButtonEvent( button, func );
+    }
+
+    /**
+     * Add a button event only when the button is down.
+     */
+    void addButtonDownEvent( Buttons buttonCode, ButtonStateEvent func )
+    {
+        addButtonEvent( buttonCode, ( Buttons buttonCode, ButtonStorageType newState ) { if( newState ) func( buttonCode ); } );
+    }
+
+    /**
+     * Add a button event only when the button is down.
+     */
+    void addButtonDownEvent( string inputName, ButtonStateEvent func )
+    {
+        addButtonEvent( inputName, ( Buttons buttonCode, ButtonStorageType newState ) { if( newState ) func( buttonCode ); } );
+    }
+
+    /**
+     * Add a button event only when the button is up.
+     */
+    void addButtonUpEvent( Buttons buttonCode, ButtonStateEvent func )
+    {
+        addButtonEvent( buttonCode, ( Buttons buttonCode, ButtonStorageType newState ) { if( !newState ) func( buttonCode ); } );
+    }
+
+    /**
+     * Add a button event only when the button is up.
+     */
+    void addButtonUpEvent( string inputName, ButtonStateEvent func )
+    {
+        addButtonEvent( inputName, ( Buttons buttonCode, ButtonStorageType newState ) { if( !newState ) func( buttonCode ); } );
+    }
+
+    /**
+     * Sets the state of the button to be assigned at the beginning of next frame.
+     * Should only be called from a window controller.
+     */
+    void setButtonState( Buttons buttonCode, ButtonStorageType newState )
+    {
+        buttonStaging[ buttonCode ] = newState;
+    }
+
+private:
+    /// The struct storing the state of the buttons.
+    alias ButtonState       = State!( ButtonStorageType, ButtonEnum );
+
+    /// The state of the buttons as of the beginning of the current frame.
+    ButtonState buttonCurrent;
+    /// The state of the buttons for the last frame.
+    ButtonState buttonPrevious;
+    /// The state of the buttons that has not been applied yet.
+    ButtonState buttonStaging;
+
+    /// The events tied to the buttons of this system.
+    ButtonEvent[][ Buttons ] buttonEvents;
+    /// Bindings from strings to buttons.
+    Buttons[][ string ] buttonBindings;
+}
+
+// If we have axes
+static if( HasAxes )
+{
+public:
+    /// The enum of axes that the input system has.
+    alias Axes              = AxisState.Inputs;
+    /// The type each axis is stored as.
+    alias AxisStorageType   = float;
+    /// A delegate that takes the changed axis and the new state.
+    alias AxisEvent         = void delegate( Axes, AxisStorageType );
+
+    /**
+     * Get the state of a given axis.
+     *
+     * Params:
+     *  axis =          The axis to get the state of.
+     *
+     * Returns: The state of the axis.
+     */
+    AxisStorageType getAxisState( Axes axis )
+    {
+        return axisCurrent[ axis ];
+    }
+
+    /**
+     * Get the state of a given axis.
+     *
+     * Params:
+     *  axisName =      The button to get the state of.
+     *
+     * Returns: The state of this axis.
+     */
+    AxisStorageType getAxisState( string axisName )
+    {
+        if( auto axis = axisName in axisBindings )
+        {
+            foreach( binding; *axis )
+                if( buttonCurrent[ binding ] != 0 )
+                    return buttonCurrent[ binding ];
+
+            return 0;
+        }
+        else
+        {
+            throw new Exception( "Input " ~ axisName ~ " not bound." );
+        }
+    }
+
+    /**
+     * Add an event to be fired when the given axis changes.
+     *
+     * Params:
+     *      axis =      The name of the input to add the event to.
+     *      event =     The event to trigger when the axis state changes.
+     */
+    void addAxisEvent( Axes axis, AxisEvent event )
+    {
+        axisEvents[ axis ] ~= event;
+    }
+
+    /**
+     * Sets the state of the axis to be assigned at the beginning of next frame.
+     * Should only be called from a window controller.
+     */
+    void setAxisState( Axes axisCode, AxisStorageType newState )
+    {
+        axisStaging[ axisCode ] = newState;
+    }
+
+private:
+    /// The struct storing the state of the axes.
+    alias AxisState         = State!( AxisStorageType, AxisEnum );
+    /// The state of the axes as of the beginning of the current frame.
+    AxisState axisCurrent;
+    /// The state of the axes that has not been applied yet.
+    AxisState axisStaging;
+
+    /// The events tied to the axes of this system.
+    AxisEvent[][ Axes ] axisEvents;
+    /// Bindings from strings to axes.
+    Buttons[][ string ] axisBindings;
+}
+}
+
+/**
+ * Represents the state of an input method (ie. keyboard, gamepad, etc.).
+ *
+ * Params:
+ *  T =                 The type being stored (ie. bool for keys, floats for axes, etc.).
+ *  totalSize =         The number of inputs to store.
+ */
+struct State( T, InputEnum ) if( is( InputEnum == enum ) )
+{
+private:
+    enum totalSize = Inputs.END;
+    alias StorageType = T;
+    alias Inputs = InputEnum;
+public:
+    T[ totalSize ] keys;
+
+    ref typeof(this) opAssign( const ref typeof(this) other )
+    {
+        for( uint ii = 0; ii < other.keys.length; ++ii )
+            keys[ ii ] = other.keys[ ii ];
+
+        return this;
+    }
+
+    T opIndex( size_t keyCode ) const
+    {
+        return keys[ keyCode ];
+    }
+
+    T opIndexAssign( T newValue, size_t keyCode )
+    {
+        keys[ keyCode ] = newValue;
+        return newValue;
+    }
+
+    Tuple!( InputEnum, T )[] opBinary( string Op : "-" )( const ref typeof(this) other )
+    {
+        Tuple!( InputEnum, T )[] differences;
+
+        for( uint ii = 0; ii < keys.length; ++ii )
+            if( this[ ii ] != other[ ii ] )
+                differences ~= tuple( cast(InputEnum)ii, this[ ii ] );
+
+        return differences;
+    }
+
+    void reset()
+    {
+        for( uint ii = 0; ii < keys.length; ++ii )
+            keys[ ii ] = 0;
     }
 }
 
-/// Axes of input
-enum Axes: uint
+// Enums of inputs
+enum MouseButtons
 {
-    MouseScroll,
+    Left   = 0x01, /// Left mouse button
+    Right  = 0x02, /// Right mouse button
+    Middle = 0x04, /// Middle mouse button
+    X1    = 0x05, /// X1 mouse button
+    X2    = 0x06, /// X2 mouse button
+    END,
+}
+
+/// Axes of input for the mouse.
+enum MouseAxes
+{
+    ScrollWheel,
+    XPos,
+    YPos,
+    END,
 }
 
 /**
@@ -522,14 +760,9 @@ enum Axes: uint
  *
  * From: http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
  */
-enum Keyboard: uint
+enum KeyboardButtons: uint
 {
-    MouseLeft   = 0x01, /// Left mouse button
-    MouseRight  = 0x02, /// Right mouse button
     Cancel      = 0x03, /// Control-break
-    MouseMiddle = 0x04, /// Middle mouse button
-    XButton1    = 0x05, /// X1 mouse button
-    XButton2    = 0x06, /// X2 mouse button
     //Unused    = 0x07,
     Backspace   = 0x08, /// Backspace key
     Tab         = 0x09, /// Tab key
@@ -654,4 +887,67 @@ enum Keyboard: uint
     ControlRight= 0xA3, /// Right control key
     AltLeft     = 0xA4, /// Left Alt key
     AltRight    = 0xA5, /// Right Alt key
+    END,
+}
+
+unittest
+{
+    import std.stdio;
+    writeln( "Dash Input isKeyUp unittest" );
+
+    Config.initialize();
+    Input.initialize();
+    Keyboard.setButtonState( Keyboard.Buttons.Space, true );
+
+    Keyboard.update();
+    Keyboard.setButtonState( Keyboard.Buttons.Space, false );
+
+    Keyboard.update();
+    assert( Keyboard.isButtonUp( Keyboard.Buttons.Space, true ) );
+    assert( Keyboard.isButtonUp( Keyboard.Buttons.Space, false ) );
+
+    Keyboard.update();
+    assert( !Keyboard.isButtonUp( Keyboard.Buttons.Space, true ) );
+    assert( Keyboard.isButtonUp( Keyboard.Buttons.Space, false ) );
+}
+
+unittest
+{
+    import std.stdio;
+    writeln( "Dash Input addKeyEvent unittest" );
+
+    Config.initialize();
+    Input.initialize();
+
+    bool keyDown;
+    Keyboard.addButtonEvent( Keyboard.Buttons.Space, ( keyCode, newState )
+    {
+        keyDown = newState;
+    } );
+
+    Keyboard.setButtonState( Keyboard.Buttons.Space, true );
+    Input.update();
+    assert( keyDown );
+
+    Keyboard.setButtonState( Keyboard.Buttons.Space, false );
+    Input.update();
+    assert( !keyDown );
+}
+
+unittest
+{
+    import std.stdio;
+    writeln( "Dash Input isKeyDown unittest" );
+
+    Config.initialize();
+    Input.initialize();
+    Keyboard.setButtonState( Keyboard.Buttons.Space, true );
+
+    Input.update();
+    assert( Keyboard.isButtonDown( Keyboard.Buttons.Space, true ) );
+    assert( Keyboard.isButtonDown( Keyboard.Buttons.Space, false ) );
+
+    Input.update();
+    assert( !Keyboard.isButtonDown( Keyboard.Buttons.Space, true ) );
+    assert( Keyboard.isButtonDown( Keyboard.Buttons.Space, false ) );
 }

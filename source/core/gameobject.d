@@ -173,7 +173,6 @@ public:
                 logWarning( "Unknown key: ", key );
         }
 
-        //obj.behaviors.onInitialize();
         foreach( comp; obj.componentList )
             comp.initialize();
 
@@ -203,9 +202,6 @@ public:
      */
     final void update()
     {
-        /*if( stateFlags.updateBehaviors )
-            behaviors.onUpdate();*/
-
         if( stateFlags.updateComponents )
             foreach( ci, component; componentList )
                 component.update();
@@ -220,7 +216,8 @@ public:
      */
     final void draw()
     {
-        //behaviors.onDraw();
+		foreach( component; componentList )
+			component.draw();
 
         foreach( obj; children )
             obj.draw();
@@ -231,7 +228,8 @@ public:
      */
     final void shutdown()
     {
-        //behaviors.onShutdown();
+		foreach( component; componentList )
+			component.shutdown();
 
         foreach( obj; children )
             obj.shutdown();

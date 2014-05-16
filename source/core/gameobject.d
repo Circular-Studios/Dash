@@ -211,6 +211,20 @@ public:
     }
 
     /**
+     * Allows you to create an object with a set list of components you already have.
+     *
+     * Params:
+     *  newComponents =     The list of components to add.
+     */
+    this( Component[] newComponents... )
+    {
+        this();
+
+        foreach( comp; newComponents )
+            addComponent( comp );
+    }
+
+    /**
      * Called once per frame to update all children and components.
      */
     final void update()

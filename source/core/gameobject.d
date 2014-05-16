@@ -7,7 +7,7 @@ import core, components, graphics, utility;
 import yaml;
 import gl3n.linalg, gl3n.math;
 
-import std.conv, std.variant, std.array, std.algorithm, std.typecons, std.range;
+import std.conv, std.variant, std.array, std.algorithm, std.typecons, std.range, std.string;
 
 enum AnonymousName = "__anonymous";
 
@@ -50,11 +50,6 @@ final class GameObject
 {
 private:
     Transform _transform;
-    Material _material;
-    Mesh _mesh;
-    Animation _animation;
-    Light _light;
-    Camera _camera;
     GameObject _parent;
     GameObject[] _children;
     Component[TypeInfo] componentList;
@@ -64,22 +59,40 @@ private:
     Node _yaml;
     static uint nextId = 1;
 
+    enum componentProperty( Type ) = q{
+        @property $type $property() { return getComponent!$type; }
+        @property void $property( $type v ) { addComponent( v ); }
+    }.replaceMap( [ "$property": Type.stringof.toLower, "$type": Type.stringof ] );
+
 package:
     Scene scene;
 
 public:
     /// The current transform of the object.
     mixin( RefGetter!_transform );
-    /// The Material belonging to the object.
-    mixin( Property!_material );
-    /// The Mesh belonging to the object.
-    mixin( Property!_mesh );
-    /// The animation on the object.
-    mixin( Property!_animation );
     /// The light attached to this object.
-    mixin( Property!_light );
+    @property void light( Light v ) { addComponent( v ); }
+    /// ditto
+    @property Light light()
+    {
+        enum get( Type ) = q{
+            if( auto l = getComponent!$type )
+                return l;
+        }.replace( "$type", Type.stringof );
+        mixin( get!AmbientLight );
+        mixin( get!DirectionalLight );
+        mixin( get!PointLight );
+        mixin( get!SpotLight );
+        return null;
+    }
+    /// The Mesh belonging to the object.
+    mixin( componentProperty!Mesh );
+    /// The Material belonging to the object.
+    mixin( componentProperty!Material );
+    /// The animation on the object.
+    mixin( componentProperty!Animation );
     /// The camera attached to this object.
-    mixin( Property!_camera );
+    mixin( componentProperty!Camera );
     /// The object that this object belongs to.
     mixin( Property!_parent );
     /// All of the objects which list this as parent
@@ -311,30 +324,12 @@ public:
         {
             componentList[ typeid(newComponent) ] = newComponent;
 
-            enum setProperty( string prop ) = q{
-                if( typeid(newComponent) == typeid(typeof($prop)) )
-                {
-                    $prop = cast(typeof($prop))newComponent;
-                    return;
-                }
-            }.replace( "$prop", prop );
-
-            mixin( setProperty!q{_material} );
-            mixin( setProperty!q{_camera} );
-            mixin( setProperty!q{_animation} );
             if( typeid(newComponent) == typeid(Mesh) )
             {
-                _mesh = cast(Mesh)newComponent;
+                auto mesh = cast(Mesh)newComponent;
 
-                if( _mesh.animated )
-                    addComponent( _mesh.animationData.getComponent() );
-
-                return;
-            }
-            else if( typeid(newComponent) == typeid(Light) || typeid(newComponent).base == typeid(Light) )
-            {
-                _light = cast(Light)newComponent;
-                return;
+                if( mesh.animated )
+                    addComponent( mesh.animationData.getComponent() );
             }
         }
     }

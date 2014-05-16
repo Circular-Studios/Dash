@@ -338,6 +338,8 @@ public:
         {
             componentList[ typeid(newComponent) ] = newComponent;
 
+            newComponent.owner = this;
+
             if( typeid(newComponent) == typeid(Mesh) )
             {
                 auto mesh = cast(Mesh)newComponent;

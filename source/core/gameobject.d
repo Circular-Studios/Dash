@@ -57,11 +57,11 @@ private:
     Camera _camera;
     GameObject _parent;
     GameObject[] _children;
-    IComponent[TypeInfo] componentList;
+    Component[TypeInfo] componentList;
     string _name;
     ObjectStateFlags* _stateFlags;
     bool canChangeName;
-    Behaviors _behaviors;
+    Node _yaml;
     static uint nextId = 1;
 
 package:
@@ -69,27 +69,27 @@ package:
 
 public:
     /// The current transform of the object.
-    mixin( RefGetter!( _transform, AccessModifier.Public ) );
+    mixin( RefGetter!_transform );
     /// The Material belonging to the object.
-    mixin( Property!( _material, AccessModifier.Public ) );
+    mixin( Property!_material );
     /// The Mesh belonging to the object.
-    mixin( Property!( _mesh, AccessModifier.Public ) );
+    mixin( Property!_mesh );
     /// The animation on the object.
-    mixin( Property!( _animation, AccessModifier.Public ) );
+    mixin( Property!_animation );
     /// The light attached to this object.
-    mixin( Property!( _light, AccessModifier.Public ) );
+    mixin( Property!_light );
     /// The camera attached to this object.
-    mixin( Property!( _camera, AccessModifier.Public ) );
+    mixin( Property!_camera );
     /// The object that this object belongs to.
-    mixin( Property!( _parent, AccessModifier.Public ) );
+    mixin( Property!_parent );
     /// All of the objects which list this as parent
-    mixin( Property!( _children, AccessModifier.Public ) );
+    mixin( Property!_children );
+    /// The yaml node that created the object.
+    mixin( RefGetter!_yaml );
     /// The current update settings
     mixin( Property!( _stateFlags, AccessModifier.Public ) );
     /// The name of the object.
     mixin( Getter!_name );
-    /// The scripts this object owns.
-    mixin( RefGetter!_behaviors );
     /// ditto
     mixin( ConditionalSetter!( _name, q{canChangeName}, AccessModifier.Public ) );
     /// The ID of the object.
@@ -137,27 +137,6 @@ public:
                 obj.transform.rotation = quat.identity.rotatex( transVec.x.radians ).rotatey( transVec.y.radians ).rotatez( transVec.z.radians );
         }
 
-        if( yamlObj.tryFind( "Behaviors", innerNode ) )
-        {
-            if( !innerNode.isSequence )
-            {
-                logWarning( "Behaviors tag of ", obj.name, " must be a sequence." );
-            }
-            else
-            {
-                foreach( Node behavior; innerNode )
-                {
-                    string className;
-                    Node fields;
-                    if( !behavior.tryFind( "Class", className ) )
-                        logFatal( "Behavior element in ", obj.name, " must have a Class value." );
-                    if( !behavior.tryFind( "Fields", fields ) )
-                        fields = Node( YAMLNull() );
-                    obj.behaviors.createBehavior( className, fields );
-                }
-            }
-        }
-
         if( yamlObj.tryFind( "Children", innerNode ) )
         {
             if( innerNode.isSequence )
@@ -181,35 +160,23 @@ public:
         // Init components
         foreach( string key, Node componentNode; yamlObj )
         {
-            if( key == "Name" || key == "InstanceOf" || key == "Transform" || key == "Children" || key == "Behaviors" )
+            if( key == "Name" || key == "InstanceOf" || key == "Transform" || key == "Children" )
                 continue;
 
-            if( auto init = key in IComponent.initializers )
-                obj.addComponent( (*init)( componentNode, obj ) );
+            if( auto init = key in createYamlComponent )
+            {
+                auto newComp = cast(Component)(*init)( componentNode );
+                obj.addComponent( newComp );
+                newComp.owner = obj;
+            }
             else
                 logWarning( "Unknown key: ", key );
         }
 
-        obj.behaviors.onInitialize();
+        foreach( comp; obj.componentList )
+            comp.initialize();
 
         return obj;
-    }
-    /**
-     * Create a GameObject from a Yaml node.
-     *
-     * Params:
-     *  fields =            The YAML node to pull info from.
-     *
-     * Returns:
-     *  A tuple of the object created at index 0, and the behavior at index 1.
-     */
-    static auto createWithBehavior( BehaviorT )( Node fields = Node( YAMLNull() ) )
-    {
-        auto newObj = new GameObject;
-
-        newObj.behaviors.createBehavior!BehaviorT( fields );
-
-        return tuple( newObj, newObj.behaviors.get!BehaviorT );
     }
 
     /**
@@ -218,7 +185,6 @@ public:
     this()
     {
         _transform = Transform( this );
-        _behaviors = Behaviors( this );
 
         // Create default material
         material = new Material( "default" );
@@ -236,9 +202,6 @@ public:
      */
     final void update()
     {
-        if( stateFlags.updateBehaviors )
-            behaviors.onUpdate();
-
         if( stateFlags.updateComponents )
             foreach( ci, component; componentList )
                 component.update();
@@ -253,7 +216,8 @@ public:
      */
     final void draw()
     {
-        behaviors.onDraw();
+		foreach( component; componentList )
+			component.draw();
 
         foreach( obj; children )
             obj.draw();
@@ -264,7 +228,8 @@ public:
      */
     final void shutdown()
     {
-        behaviors.onShutdown();
+		foreach( component; componentList )
+			component.shutdown();
 
         foreach( obj; children )
             obj.shutdown();
@@ -278,14 +243,21 @@ public:
      */
     final void refresh( Node node )
     {
-        foreach( string name, Node component; node )
+        // Update components
+        foreach( type; componentList.keys )
         {
-            if( auto refresher = name in IComponent.refreshers )
+            if( auto refresher = type in refreshYamlObject )
             {
-                ( *refresher )( component, this );
+                ( *refresher )( componentList[ type ], node );
+                componentList[ type ].refresh();
+            }
+            else
+            {
+                componentList.remove( type );
             }
         }
 
+        // Update children
         Node yamlChildren;
         if( node.tryFind( "Children", yamlChildren ) && yamlChildren.isSequence )
         {
@@ -328,26 +300,54 @@ public:
                 removeChild( child );
             }
         }
-
-        behaviors.onRefresh();   
     }
 
     /**
      * Adds a component to the object.
      */
-    final void addComponent( T )( T newComponent ) if( is( T : IComponent ) )
+    final void addComponent( Component newComponent )
     {
         if( newComponent )
-            componentList[ typeid(T) ] = newComponent;
+        {
+            componentList[ typeid(newComponent) ] = newComponent;
+
+            enum setProperty( string prop ) = q{
+                if( typeid(newComponent) == typeid(typeof($prop)) )
+                {
+                    $prop = cast(typeof($prop))newComponent;
+                    return;
+                }
+            }.replace( "$prop", prop );
+
+            mixin( setProperty!q{_material} );
+            mixin( setProperty!q{_camera} );
+            mixin( setProperty!q{_animation} );
+            if( typeid(newComponent) == typeid(Mesh) )
+            {
+                _mesh = cast(Mesh)newComponent;
+
+                if( _mesh.animated )
+                    addComponent( _mesh.animationData.getComponent() );
+
+                return;
+            }
+            else if( typeid(newComponent) == typeid(Light) || typeid(newComponent).base == typeid(Light) )
+            {
+                _light = cast(Light)newComponent;
+                return;
+            }
+        }
     }
 
     /**
      * Gets a component of the given type.
      */
-    deprecated( "Make properties for any component being accessed." )
-    final T getComponent( T )() if( is( T : IComponent ) )
+    final T getComponent( T )() if( is( T : Component ) )
     {
-        return componentList[ typeid(T) ];
+        if( auto comp = typeid(T) in componentList )
+            return cast(T)*comp;
+        else
+            return null;
     }
 
     /**

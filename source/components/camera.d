@@ -7,15 +7,18 @@ import core, components, graphics, utility;
 import gl3n.linalg;
 import std.conv;
 
+mixin( registerComponents!q{components.camera} );
+
 /**
  * Camera manages a view and projection matrix.
  */
-final class Camera : IComponent, IDirtyable
+@yamlComponent( "Camera" )
+final class Camera : Component, IDirtyable
 {
 private:
     float _prevFov, _prevNear, _prevFar, _prevWidth, _prevHeight;
 
-    float _fov, _near, _far;
+
     vec2 _projectionConstants; // For rebuilding linear Z in shaders
     mat4 _prevLocalMatrix;
     mat4 _viewMatrix;
@@ -26,20 +29,17 @@ private:
     mat4 _inverseOrthogonalMatrix;
 
 public:
-    override void update() { }
-    override void shutdown() { }
-
     /// TODO
     mixin( ThisDirtyGetter!( _viewMatrix, updateViewMatrix ) );
     /// TODO
     mixin( ThisDirtyGetter!( _inverseViewMatrix, updateViewMatrix ) );
-    /// TODO
-    mixin( Property!( _fov, AccessModifier.Public ) );
-    /// TODO
-    mixin( Property!( _near, AccessModifier.Public ) );
-    /// TODO
-    mixin( Property!( _far, AccessModifier.Public ) );
-    
+    @field( "FOV" )
+    float fov;
+    @field( "Near" )
+    float near;
+    @field( "Far" )
+    float far;
+
     /**
      * TODO
      *
@@ -159,7 +159,7 @@ public:
         _viewMatrix[ 1 ] = yaxis.vector ~ -( yaxis * owner.transform.position );
         _viewMatrix[ 2 ] = zaxis.vector ~ -( zaxis * owner.transform.position );
         _viewMatrix[ 3 ] = [ 0, 0, 0, 1 ];
-        
+
         _inverseViewMatrix = _viewMatrix.inverse();
     }
 
@@ -171,7 +171,7 @@ public:
      *  cameraPos = The camera's position.
      *  worldUp = The up direction in the world.
      *
-     * Returns: 
+     * Returns:
      * A right handed view matrix for the given params.
      */
     final static shared(mat4) lookAt( vec3 targetPos, vec3 cameraPos, vec3 worldUp = vec3(0,1,0) )
@@ -200,8 +200,6 @@ public:
         return result.transposed;
     }
 
-
-
     /**
      * TODO
      *
@@ -225,9 +223,9 @@ private:
      */
     final bool projectionDirty()
     {
-        return _fov != _prevFov ||
-            _far != _prevFar ||
-            _near != _prevNear ||
+        return fov != _prevFov ||
+            far != _prevFar ||
+            near != _prevNear ||
             cast(float)Graphics.width != _prevWidth ||
             cast(float)Graphics.height != _prevHeight;
     }
@@ -237,8 +235,8 @@ private:
      */
     final void updatePerspective()
     {
-        _projectionConstants = vec2( ( -_far * _near ) / ( _far - _near ), _far / ( _far - _near ) );
-        _perspectiveMatrix = mat4.perspective( cast(float)Graphics.width, cast(float)Graphics.height, _fov, _near, _far );
+        _projectionConstants = vec2( ( -far * near ) / ( far - near ), far / ( far - near ) );
+        _perspectiveMatrix = mat4.perspective( cast(float)Graphics.width, cast(float)Graphics.height, fov, near, far );
         _inversePerspectiveMatrix = _perspectiveMatrix.inverse();
     }
 
@@ -249,7 +247,7 @@ private:
     {
         _orthogonalMatrix = mat4.identity;
 
-        _orthogonalMatrix[0][0] = 2.0f / Graphics.width; 
+        _orthogonalMatrix[0][0] = 2.0f / Graphics.width;
         _orthogonalMatrix[1][1] = 2.0f / Graphics.height;
         _orthogonalMatrix[2][2] = -2.0f / (far - near);
         _orthogonalMatrix[3][3] = 1.0f;
@@ -262,34 +260,10 @@ private:
      */
     final void updateProjectionDirty()
     {
-        _prevFov = _fov;
-        _prevFar = _far;
-        _prevNear = _near;
+        _prevFov = fov;
+        _prevFar = far;
+        _prevNear = near;
         _prevWidth = cast(float)Graphics.width;
         _prevHeight = cast(float)Graphics.height;
     }
-}
-
-static this()
-{
-    import yaml;
-    IComponent.initializers[ "Camera" ] = ( Node yml, GameObject obj )
-    {
-        obj.camera = new Camera;
-        obj.camera.owner = obj;
-
-        //float fromYaml;
-        if( !yml.tryFind( "FOV", obj.camera._fov ) )
-            logFatal( obj.name, " is missing FOV value for its camera. ");
-        if( !yml.tryFind( "Near", obj.camera._near ) )
-            logFatal( obj.name, " is missing near plane value for its camera. ");
-        if( !yml.tryFind( "Far", obj.camera._far ) )
-            logFatal( obj.name, " is missing Far plane value for its camera. ");
-
-        obj.camera.updatePerspective();
-        obj.camera.updateOrthogonal();
-        obj.camera.updateProjectionDirty();
-
-        return obj.camera;
-    };
 }

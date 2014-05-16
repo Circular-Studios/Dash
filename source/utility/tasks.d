@@ -343,7 +343,7 @@ void scheduleIntervaledTask( Duration interval, uint numExecutions, bool delegat
 void executeTasks()
 {
     size_t[] toRemove;    // Indicies of tasks which are done
-    foreach( i, task; parallel( scheduledTasks ) )
+    foreach( i, task; scheduledTasks/*.parallel*/ )
     {
         if( task() )
             synchronized toRemove ~= i;

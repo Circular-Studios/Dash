@@ -3,7 +3,7 @@
  */
 module components.animation;
 import core.properties;
-import components.icomponent;
+import components.component;
 import utility;
 
 import derelict.assimp3.assimp;
@@ -12,7 +12,7 @@ import gl3n.linalg;
 /**
  * Animation object which handles all animation specific to the gameobject
  */
-class Animation : IComponent
+class Animation : Component
 {
 private:
     /// Asset animation that the gameobject is animating based off of
@@ -26,10 +26,6 @@ private:
     /// If the gameobject should be animating
     bool _animating;
 
-public:
-    /// Bone transforms for the current pose (Passed to the shader)
-    mixin( Property!_currBoneTransforms );
-
     /**
      * Create animation object based on asset animation
      */
@@ -40,6 +36,10 @@ public:
         _animationData = assetAnimation;
         _animating = true;
     }
+
+public:
+    /// Bone transforms for the current pose (Passed to the shader)
+    mixin( Property!_currBoneTransforms );
 
     /**
      * Updates the animation, updating time and getting a pose based on time
@@ -150,6 +150,14 @@ public:
 
         for( int ii = 0; ii < numAnimations; ii++)
             addAnimationSet( animations[ ii ], 24 );
+    }
+
+    /**
+     * Returns the animation as an addible component.
+     */
+    Animation getComponent()
+    {
+        return new Animation( this );
     }
 
     /**

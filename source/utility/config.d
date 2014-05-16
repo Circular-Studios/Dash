@@ -2,14 +2,15 @@
  * Defines the static class Config, which handles all configuration options.
  */
 module utility.config;
+import components.component;
 import utility.resources, utility.output;
 
 public import yaml;
 
 import std.variant, std.algorithm, std.traits, std.range,
-       std.array, std.conv, std.file, std.typecons;
+       std.array, std.conv, std.file, std.typecons, std.path;
 
-private string fileToYaml( string filePath ) { return filePath.replace( "\\", "/" ).replace( "../", "" ).replace( "/", "." ).replace( ".yml", "" ); }
+private string fileToYaml( string filePath ) { return filePath.relativePath( getcwd() ).replace( "\\", "/" ).replace( "../", "" ).replace( "/", "." ).replace( ".yml", "" ); }
 
 /**
  * Place this mixin anywhere in your game code to allow the Content.yml file
@@ -85,31 +86,6 @@ static this()
         result.w = vals[ 3 ].to!float;
         return result;
     } );
-    constructor.addConstructorMapping( "!Light-Directional", ( ref Node node )
-    {
-        vec3 color;
-        vec3 dir;
-        bool shadows = false;
-        node.tryFind( "Color", color );
-        node.tryFind( "Direction", dir );
-        node.tryFind( "CastShadows", shadows );
-        return cast(Light)new DirectionalLight( color, dir, shadows );
-    } );
-    constructor.addConstructorMapping( "!Light-Ambient", ( ref Node node )
-    {
-        vec3 color;
-        node.tryFind( "Color", color );
-        return cast(Light)new AmbientLight( color );
-    } );
-    constructor.addConstructorMapping( "!Light-Point", ( ref Node node )
-    {
-        vec3 color;
-        float radius, falloffRate;
-        node.tryFind( "Color", color );
-        node.tryFind( "Radius", radius );
-        node.tryFind( "FalloffRate", falloffRate );
-        return cast(Light)new PointLight( color, radius, falloffRate );
-    } );
     constructor.addConstructorScalar( "!Verbosity", &constructConv!Verbosity );
     constructor.addConstructorScalar( "!Shader", ( ref Node node ) => Shaders.get( node.get!string ) );
     //constructor.addConstructorScalar( "!Texture", ( ref Node node ) => Assets.get!Texture( node.get!string ) );
@@ -119,7 +95,7 @@ static this()
 
 /**
  * Process all yaml files in a directory.
- * 
+ *
  * Params:
  *  folder =                The folder to iterate over.
  */
@@ -158,11 +134,11 @@ Tuple!( Node, Resource )[] loadYamlFiles( string folder )
             if( fileContent.isSequence )
             {
                 foreach( Node childChild; fileContent )
-                    nodes ~= tuple( childChild, Resource( "" ) );
+                    nodes ~= tuple( childChild, configFile );
             }
-            else
+            else if( fileContent.isMapping )
             {
-                nodes ~= tuple( fileContent, Resource( "" ) );
+                nodes ~= tuple( fileContent, configFile );
             }
         }
     }
@@ -172,7 +148,7 @@ Tuple!( Node, Resource )[] loadYamlFiles( string folder )
 
 /**
  * Process all documents files in a directory.
- * 
+ *
  * Params:
  *  folder =                The folder to iterate over.
  */
@@ -183,7 +159,7 @@ Node[] loadYamlDocuments( string path )
 
 /**
  * Processes all yaml files in a directory, and converts each document into an object of type T.
- * 
+ *
  * Params:
  *  folder =            The folder to look in.
  */
@@ -194,7 +170,7 @@ T[] loadYamlObjects( T )( string folder )
 
 /**
  * Load a yaml file with the engine-specific mappings.
- * 
+ *
  * Params:
  *  filePath =              The path to file to load.
  */
@@ -212,7 +188,7 @@ Node loadYamlFile( string filePath )
         {
             logFatal( "Error parsing file ", Resource( filePath ).baseFileName, ": ", e.msg );
             return Node();
-        }  
+        }
     }
     else
     {
@@ -222,7 +198,7 @@ Node loadYamlFile( string filePath )
 
 /**
  * Load a yaml file with the engine-specific mappings.
- * 
+ *
  * Params:
  *  filePath =              The path to file to load.
  */
@@ -243,7 +219,7 @@ Node[] loadAllDocumentsInYamlFile( string filePath )
         {
             logFatal( "Error parsing file ", Resource( filePath ).baseFileName, ": ", e.msg );
             return [];
-        }  
+        }
     }
     else
     {
@@ -257,12 +233,16 @@ Node[] loadAllDocumentsInYamlFile( string filePath )
  * Params:
  *  createFunc =        The function used to create a new object of type ObjectType.
  *  existsFunc =        The function that checks if a node is already stored. Returns a pointer to the object.
- *  addToResourcesFunc =Adds the 
+ *  addToResourcesFunc =Adds the
  *  ObjectType =        The type of object stored in YAML.
  *  objectResources =   The map of files to the objects they store.
  */
 void refreshYamlObjects( alias createFunc, alias existsFunc, alias addToResourcesFunc, alias removeFunc, ObjectType )( ref ObjectType[][Resource] objectResources )
 {
+    // Disable refreshing YAML from a single file.
+    if( !contentNode.isNull )
+        return;
+
     // Iterate over each file, and it's objects
     foreach( file, ref objs; objectResources.dup )
     {
@@ -299,7 +279,15 @@ void refreshYamlObjects( alias createFunc, alias existsFunc, alias addToResource
                     else
                         auto mat = oldMat;
 
-                    mat.refresh( node );
+                    if( mat.yaml != node )
+                    {
+                        static if( __traits( compiles, mat.refresh( node ) ) )
+                            mat.refresh( node );
+                        else
+                            refreshYamlObject[ typeid(mat) ]( mat, node );
+                        mat.yaml = node;
+                    }
+
                     objsFound[ mat ] = true;
                     objectResources[ file ] ~= mat;
                 }
@@ -342,7 +330,7 @@ unittest
 {
     import std.stdio;
     import std.exception;
-    
+
     writeln( "Dash Config find unittest" );
 
     auto n1 = Node( [ "test1": 10 ] );
@@ -350,13 +338,13 @@ unittest
     assert( n1.find!int( "test1" ) == 10, "Config.find error." );
 
     assertThrown!YAMLException(n1.find!int( "dontexist" ));
-    
+
     // nested test
     auto n2 = Node( ["test2": n1] );
     auto n3 = Node( ["test3": n2] );
-    
+
     assert( n3.find!int( "test3.test2.test1" ) == 10, "Config.find nested test failed");
-    
+
     auto n4 = Loader.fromString(
         "test3:\n"
         "   test2:\n"
@@ -390,6 +378,10 @@ final bool tryFind( T )( Node node, string path, ref T result ) nothrow @safe
 
             foreach( Node element; res )
                 result ~= element.get!U;
+        }
+        else static if( __traits( compiles, res.getObject!T ) )
+        {
+            result = res.getObject!T;
         }
         else
         {
@@ -549,7 +541,7 @@ final T getObject( T )( Node node )
             }
         }
     }
-    
+
     return toReturn;
 }
 unittest
@@ -599,6 +591,7 @@ public static:
             if( exists( Resources.CompactContentFile ) )
             {
                 logDebug( "Using Content.yml file." );
+                configFile = Resource( Resources.CompactContentFile );
                 contentNode = Resources.CompactContentFile.loadYamlFile();
             }
             else
@@ -608,27 +601,30 @@ public static:
             }
         }
 
-        config = configFile.fullPath.loadYamlFile();
+        config = Resources.ConfigFile.loadYamlFile();
     }
 
     void refresh()
     {
-        version( EmbedContent )
-        {
-            initialize();
-        }
+        // No need to refresh, there can be no changes.
+        version( EmbedContent ) { }
         else
         {
-            if( exists( Resources.CompactContentFile ~ ".yml" ) )
+            if( exists( Resources.CompactContentFile ) )
             {
                 logDebug( "Using Content.yml file." );
-                contentNode = Resources.CompactContentFile.loadYamlFile();
+                if( configFile.needsRefresh )
+                {
+                    contentNode = Node( YAMLNull() );
+                    contentNode = Resources.CompactContentFile.loadYamlFile();
+                    config = Resources.ConfigFile.loadYamlFile();
+                }
             }
             else
             {
                 logDebug( "Using normal content directory." );
                 if( configFile.needsRefresh )
-                    config = configFile.fullPath.loadYamlFile();
+                    config = Resources.ConfigFile.loadYamlFile();
             }
         }
     }

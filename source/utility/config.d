@@ -239,6 +239,10 @@ Node[] loadAllDocumentsInYamlFile( string filePath )
  */
 void refreshYamlObjects( alias createFunc, alias existsFunc, alias addToResourcesFunc, alias removeFunc, ObjectType )( ref ObjectType[][Resource] objectResources )
 {
+    // Disable refreshing YAML from a single file.
+    if( !contentNode.isNull )
+        return;
+
     // Iterate over each file, and it's objects
     foreach( file, ref objs; objectResources.dup )
     {

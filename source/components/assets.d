@@ -115,7 +115,7 @@ public:
 
         foreach( objFile; loadYamlFiles( Resources.Materials ) )
         {
-            auto object = objFile[ 0 ];
+            Node object = objFile[ 0 ];
             auto name = object[ "Name" ].as!string;
 
             if( name in materials )

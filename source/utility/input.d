@@ -713,7 +713,9 @@ public:
 
     T opIndexAssign( T newValue, size_t keyCode )
     {
-        keys[ keyCode ] = newValue;
+		if( keyCode < totalSize )
+			keys[ keyCode ] = newValue;
+
         return newValue;
     }
 

@@ -7,7 +7,16 @@ import core, components, graphics, utility;
 import derelict.opengl3.gl3, derelict.assimp3.assimp;
 import gl3n.linalg, gl3n.aabb;
 
-import std.stdio, std.stream, std.format, std.math;
+import std.stdio, std.stream, std.format, std.math, std.string;
+
+mixin( registerComponents!q{components.mesh} );
+
+/*Mesh getMesh( string name )
+{
+    auto mesh = Assets.get!Mesh( yml.get!string );
+
+    return mesh;
+}*/
 
 /**
  * Loads and manages meshes into OpenGL.
@@ -48,13 +57,14 @@ import std.stdio, std.stream, std.format, std.math;
  *  Ogre XML
  *  Q3D
  */
-class Mesh : IComponent
+@yamlComponent!( q{name => Assets.get!Mesh( name )} )()
+class Mesh : Asset
 {
 private:
     uint _glVertexArray, _numVertices, _numIndices, _glIndexBuffer, _glVertexBuffer;
     bool _animated;
-    bool _isUsed;
     AABB _boundingBox;
+    AssetAnimation _animationData;
 
 public:
     /// TODO
@@ -69,10 +79,10 @@ public:
     mixin( Property!_glVertexBuffer );
     /// TODO
     mixin( Property!_animated );
+    /// Stores all data about animations on the mesh.
+    mixin( Property!( _animationData, AccessModifier.Package ) );
     /// The bounding box of the mesh.
     mixin( RefGetter!_boundingBox );
-    /// Whether or not the material is actually used.
-    mixin( Property!( _isUsed, AccessModifier.Package ) );
 
     /**
      * Creates a mesh.
@@ -83,11 +93,13 @@ public:
      */
     this( string filePath, const(aiMesh*) mesh )
     {
+        super( Resource( filePath ) );
         int floatsPerVertex, vertexSize;
         float[] outputData;
         uint[] indices;
         animated = false;
         boundingBox = AABB.from_points( [] );
+
         if( mesh )
         {
             // If there is animation data
@@ -284,7 +296,45 @@ public:
         glBindVertexArray( 0 );
     }
 
-    override void update() { }
+    /**
+     * Refresh the asset.
+     */
+    override void refresh()
+    {
+        shutdown();
+
+        // Load mesh
+        const aiScene* scene = aiImportFile( resource.fullPath.toStringz,
+                                             aiProcess_CalcTangentSpace | aiProcess_Triangulate | 
+                                             aiProcess_JoinIdenticalVertices | aiProcess_SortByPType );
+        assert( scene, "Failed to load scene file '" ~ resource.fullPath ~ "' Error: " ~ aiGetErrorString().fromStringz );
+
+        // Add mesh
+        if( scene.mNumMeshes > 0 )
+        {
+            Mesh tempMesh = new Mesh( resource.fullPath, scene.mMeshes[ 0 ] );
+
+            if( scene.mNumAnimations > 0 )
+                tempMesh.animationData = new AssetAnimation( scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
+
+            // Copy attributes
+            _glVertexArray = tempMesh._glVertexArray;
+            _numVertices = tempMesh._numVertices;
+            _numIndices = tempMesh._numIndices;
+            _glIndexBuffer = tempMesh._glIndexBuffer;
+            _glVertexBuffer = tempMesh._glVertexBuffer;
+            _animated = tempMesh._animated;
+            _boundingBox = tempMesh._boundingBox;
+        }
+        else
+        {
+            logWarning( "Assimp did not contain mesh data, ensure you are loading a valid mesh." );
+            return;
+        }
+
+        // Release mesh
+        aiReleaseImport( scene );
+    }
 
     /**
      * Deletes mesh data stored on the GPU.
@@ -295,7 +345,6 @@ public:
         glDeleteBuffers( 1, &_glVertexArray );
     }
 }
-
 
 /**
  * Helper function that calculates a modifier for the reconstructed bitangent based on regenerating them
@@ -315,23 +364,4 @@ private float calcTangentHandedness( aiVector3D nor, aiVector3D tan, aiVector3D 
     t = (t - n * dot( n, t )).normalized();
 
     return (dot(cross(n,t),b) > 0.0f) ? -1.0f : 1.0f;
-}
-
-static this()
-{
-    import yaml;
-    IComponent.initializers[ "Mesh" ] = ( Node yml, GameObject obj )
-    {
-        obj.mesh = Assets.get!Mesh( yml.get!string );
-        
-        // If the mesh has animation also add animation component
-        if( obj.mesh.animated )
-        {
-            auto anim = new Animation( Assets.get!AssetAnimation( yml.get!string ) );
-            obj.addComponent( anim );
-            obj.animation = anim;
-        }
-
-        return obj.mesh;
-    };
 }

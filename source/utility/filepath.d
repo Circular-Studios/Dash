@@ -7,6 +7,8 @@ import utility.output;
 static import std.file, std.path;
 import std.stdio, std.array;
 
+deprecated( "Use utility.filesystem instead." ):
+
 /**
  * A class which stores default resource paths, and handles path manipulation.
  */

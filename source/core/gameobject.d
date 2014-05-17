@@ -7,7 +7,7 @@ import core, components, graphics, utility;
 import yaml;
 import gl3n.linalg, gl3n.math;
 
-import std.conv, std.variant, std.array, std.algorithm, std.typecons;
+import std.conv, std.variant, std.array, std.algorithm, std.typecons, std.range, std.string;
 
 enum AnonymousName = "__anonymous";
 
@@ -50,46 +50,59 @@ final class GameObject
 {
 private:
     Transform _transform;
-    Material _material;
-    Mesh _mesh;
-    Animation _animation;
-    Light _light;
-    Camera _camera;
     GameObject _parent;
     GameObject[] _children;
-    IComponent[TypeInfo] componentList;
+    Component[TypeInfo] componentList;
     string _name;
     ObjectStateFlags* _stateFlags;
     bool canChangeName;
-    Behaviors _behaviors;
+    Node _yaml;
     static uint nextId = 1;
+
+    enum componentProperty( Type ) = q{
+        @property $type $property() { return getComponent!$type; }
+        @property void $property( $type v ) { addComponent( v ); }
+    }.replaceMap( [ "$property": Type.stringof.toLower, "$type": Type.stringof ] );
 
 package:
     Scene scene;
 
 public:
     /// The current transform of the object.
-    mixin( RefGetter!( _transform, AccessModifier.Public ) );
-    /// The Material belonging to the object.
-    mixin( Property!( _material, AccessModifier.Public ) );
-    /// The Mesh belonging to the object.
-    mixin( Property!( _mesh, AccessModifier.Public ) );
-    /// The animation on the object.
-    mixin( Property!( _animation, AccessModifier.Public ) );
+    mixin( RefGetter!_transform );
     /// The light attached to this object.
-    mixin( Property!( _light, AccessModifier.Public ) );
+    @property void light( Light v ) { addComponent( v ); }
+    /// ditto
+    @property Light light()
+    {
+        enum get( Type ) = q{
+            if( auto l = getComponent!$type )
+                return l;
+        }.replace( "$type", Type.stringof );
+        mixin( get!AmbientLight );
+        mixin( get!DirectionalLight );
+        mixin( get!PointLight );
+        mixin( get!SpotLight );
+        return null;
+    }
+    /// The Mesh belonging to the object.
+    mixin( componentProperty!Mesh );
+    /// The Material belonging to the object.
+    mixin( componentProperty!Material );
+    /// The animation on the object.
+    mixin( componentProperty!Animation );
     /// The camera attached to this object.
-    mixin( Property!( _camera, AccessModifier.Public ) );
+    mixin( componentProperty!Camera );
     /// The object that this object belongs to.
-    mixin( Property!( _parent, AccessModifier.Public ) );
+    mixin( Property!_parent );
     /// All of the objects which list this as parent
-    mixin( Property!( _children, AccessModifier.Public ) );
+    mixin( Property!_children );
+    /// The yaml node that created the object.
+    mixin( RefGetter!_yaml );
     /// The current update settings
     mixin( Property!( _stateFlags, AccessModifier.Public ) );
     /// The name of the object.
     mixin( Getter!_name );
-    /// The scripts this object owns.
-    mixin( RefGetter!_behaviors );
     /// ditto
     mixin( ConditionalSetter!( _name, q{canChangeName}, AccessModifier.Public ) );
     /// The ID of the object.
@@ -137,27 +150,6 @@ public:
                 obj.transform.rotation = quat.identity.rotatex( transVec.x.radians ).rotatey( transVec.y.radians ).rotatez( transVec.z.radians );
         }
 
-        if( yamlObj.tryFind( "Behaviors", innerNode ) )
-        {
-            if( !innerNode.isSequence )
-            {
-                logWarning( "Behaviors tag of ", obj.name, " must be a sequence." );
-            }
-            else
-            {
-                foreach( Node behavior; innerNode )
-                {
-                    string className;
-                    Node fields;
-                    if( !behavior.tryFind( "Class", className ) )
-                        logFatal( "Behavior element in ", obj.name, " must have a Class value." );
-                    if( !behavior.tryFind( "Fields", fields ) )
-                        fields = Node( YAMLNull() );
-                    obj.behaviors.createBehavior( className, fields );
-                }
-            }
-        }
-
         if( yamlObj.tryFind( "Children", innerNode ) )
         {
             if( innerNode.isSequence )
@@ -181,35 +173,23 @@ public:
         // Init components
         foreach( string key, Node componentNode; yamlObj )
         {
-            if( key == "Name" || key == "InstanceOf" || key == "Transform" || key == "Children" || key == "Behaviors" )
+            if( key == "Name" || key == "InstanceOf" || key == "Transform" || key == "Children" )
                 continue;
 
-            if( auto init = key in IComponent.initializers )
-                obj.addComponent( (*init)( componentNode, obj ) );
+            if( auto init = key in createYamlComponent )
+            {
+                auto newComp = cast(Component)(*init)( componentNode );
+                obj.addComponent( newComp );
+                newComp.owner = obj;
+            }
             else
                 logWarning( "Unknown key: ", key );
         }
 
-        obj.behaviors.onInitialize();
+        foreach( comp; obj.componentList )
+            comp.initialize();
 
         return obj;
-    }
-    /**
-     * Create a GameObject from a Yaml node.
-     *
-     * Params:
-     *  fields =            The YAML node to pull info from.
-     *
-     * Returns:
-     *  A tuple of the object created at index 0, and the behavior at index 1.
-     */
-    static auto createWithBehavior( BehaviorT )( Node fields = Node( YAMLNull() ) )
-    {
-        auto newObj = new GameObject;
-
-        newObj.behaviors.createBehavior!BehaviorT( fields );
-
-        return tuple( newObj, newObj.behaviors.get!BehaviorT );
     }
 
     /**
@@ -218,10 +198,9 @@ public:
     this()
     {
         _transform = Transform( this );
-        _behaviors = Behaviors( this );
 
         // Create default material
-        material = new Material();
+        material = new Material( "default" );
         id = nextId++;
 
         stateFlags = new ObjectStateFlags;
@@ -232,13 +211,24 @@ public:
     }
 
     /**
+     * Allows you to create an object with a set list of components you already have.
+     *
+     * Params:
+     *  newComponents =     The list of components to add.
+     */
+    this( Component[] newComponents... )
+    {
+        this();
+
+        foreach( comp; newComponents )
+            addComponent( comp );
+    }
+
+    /**
      * Called once per frame to update all children and components.
      */
     final void update()
     {
-        if( stateFlags.updateBehaviors )
-            behaviors.onUpdate();
-
         if( stateFlags.updateComponents )
             foreach( ci, component; componentList )
                 component.update();
@@ -253,7 +243,8 @@ public:
      */
     final void draw()
     {
-        behaviors.onDraw();
+		foreach( component; componentList )
+			component.draw();
 
         foreach( obj; children )
             obj.draw();
@@ -264,28 +255,110 @@ public:
      */
     final void shutdown()
     {
-        behaviors.onShutdown();
+		foreach( component; componentList )
+			component.shutdown();
 
         foreach( obj; children )
             obj.shutdown();
     }
 
     /**
+     * Refreshes the object with the given YAML node.
+     *
+     * Params:
+     *  node =          The node to refresh the object with.
+     */
+    final void refresh( Node node )
+    {
+        // Update components
+        foreach( type; componentList.keys )
+        {
+            if( auto refresher = type in refreshYamlObject )
+            {
+                ( *refresher )( componentList[ type ], node );
+                componentList[ type ].refresh();
+            }
+            else
+            {
+                componentList.remove( type );
+            }
+        }
+
+        // Update children
+        Node yamlChildren;
+        if( node.tryFind( "Children", yamlChildren ) && yamlChildren.isSequence )
+        {
+            auto childNames = children.map!( child => child.name );
+            bool[string] childFound = childNames.zip( false.repeat( childNames.length ) ).assocArray();
+
+            foreach( Node yamlChild; yamlChildren )
+            {
+                // Find 0 based index of child in yamlChildren
+                if( auto index = childNames.countUntil( yamlChild[ "Name" ].get!string ) + 1 )
+                {
+                    // Refresh with YAML node.
+                    children[ index - 1 ].refresh( yamlChild );
+                    childFound[ yamlChild[ "Name" ].get!string ] = true;
+                }
+                // If not in children, add it.
+                else
+                {
+                    addChild( GameObject.createFromYaml( yamlChild ) );
+                }
+            }
+
+            // Filter out found children's names, and then get the objects.
+            auto unfoundChildren = childFound.keys
+                                        .filter!( name => !childFound[ name ] )
+                                        .map!( name => children[ childNames.countUntil( name ) ] );
+            foreach( unfound; unfoundChildren )
+            {
+                logDebug( "Removing child ", unfound.name, " from ", name, "." );
+                unfound.shutdown();
+                removeChild( unfound );
+            }
+        }
+        // Remove all children
+        else
+        {
+            foreach( child; children )
+            {
+                child.shutdown();
+                removeChild( child );
+            }
+        }
+    }
+
+    /**
      * Adds a component to the object.
      */
-    final void addComponent( T )( T newComponent ) if( is( T : IComponent ) )
+    final void addComponent( Component newComponent )
     {
         if( newComponent )
-            componentList[ typeid(T) ] = newComponent;
+        {
+            componentList[ typeid(newComponent) ] = newComponent;
+
+            newComponent.owner = this;
+
+            if( typeid(newComponent) == typeid(Mesh) )
+            {
+                auto mesh = cast(Mesh)newComponent;
+
+                if( mesh.animated )
+                    addComponent( mesh.animationData.getComponent() );
+            }
+        }
     }
 
     /**
      * Gets a component of the given type.
      */
-    deprecated( "Make properties for any component being accessed." )
-    final T getComponent( T )() if( is( T : IComponent ) )
+    final T getComponent( T )() if( is( T : Component ) )
     {
-        return componentList[ typeid(T) ];
+        if( auto comp = typeid(T) in componentList )
+            return cast(T)*comp;
+        else
+            return null;
     }
 
     /**
@@ -311,24 +384,24 @@ public:
         GameObject par;
         for( par = this; par.parent; par = par.parent ) { }
 
-        GameObject[] objectChildren;
-        {
-            GameObject[] objs;
-            objs ~= newChild;
-
-            while( objs.length )
-            {
-                auto obj = objs[ 0 ];
-                objs = objs[ 1..$ ];
-                objectChildren ~= obj;
-
-                foreach( child; obj.children )
-                    objs ~= child;
-            }
-        }
-
         if( par.scene )
         {
+            GameObject[] objectChildren;
+            {
+                GameObject[] objs;
+                objs ~= newChild;
+
+                while( objs.length )
+                {
+                    auto obj = objs[ 0 ];
+                    objs = objs[ 1..$ ];
+                    objectChildren ~= obj;
+
+                    foreach( child; obj.children )
+                        objs ~= child;
+                }
+            }
+
             // If adding to the scene, make sure all new children are in.
             foreach( child; objectChildren )
             {
@@ -351,6 +424,17 @@ public:
 
         oldChild.canChangeName = true;
         oldChild.parent = null;
+
+        // Get root object
+        GameObject par;
+        for( par = this; par.parent; par = par.parent ) { }
+
+        // Remove from scene.
+        if( par.scene )
+        {
+            par.scene.objectById.remove( oldChild.id );
+            par.scene.idByName.remove( oldChild.name );
+        }
     }
 }
 

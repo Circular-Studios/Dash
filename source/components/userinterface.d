@@ -39,7 +39,10 @@ public:
         _scaleMat[1][1] = cast(float)h/2.0f;
         _height = h;
         _width = w;
-        _view = new AwesomiumView( w, h, filePath, null );
+        version(Windows)
+        {
+            _view = new AwesomiumView( w, h, filePath, null );
+        }
         logDebug( "UI File: ", filePath );
     }
 
@@ -49,14 +52,14 @@ public:
     void update()
     {
         /// TODO: Check for mouse & keyboard input
+        version(Windows)
+        {
+            // Send mouse pos to awesomium
+            auto mousePos = Input.mousePos();
+            awe_webview_inject_mouse_move( _view.webView, cast(int)mousePos.x,cast(int)( Graphics.height - mousePos.y ) );
 
-        // Send mouse pos to awesomium
-        auto mousePos = Input.mousePos();
-        awe_webview_inject_mouse_move( _view.webView, cast(int)mousePos.x,cast(int)( Graphics.height - mousePos.y ) );
-
-        _view.update();
-
-        return;
+            _view.update();
+        }
     }
 
     /**
@@ -72,6 +75,7 @@ public:
      */
     void shutdown()
     {
+        version(Windows)
         // Try to clean up gl buffers
         _view.shutdown();
         // Clean up mesh, material, and view
@@ -87,42 +91,38 @@ public:
      */
     void callJSFunction( string funcName, int[] args, string object = "" )
     {
-        // Convert params to awe_js objects
-        awe_string* funcStr = awe_string_create_from_ascii( funcName.toStringz(), funcName.length );
-        awe_string* objectStr = awe_string_create_from_ascii( object.toStringz(), object.length );
-        awe_string* frameStr = awe_string_create_from_ascii( "".toStringz(), 1 );
-
-        // Build array of js ints
-        awe_jsvalue*[] jsArgs = new awe_jsvalue*[ args.length ];
-
-        for( int i = 0; i < args.length; i++ )
+        version(Windows)
         {
-            jsArgs[i] = awe_jsvalue_create_integer_value( args[i] );
+            // Convert params to awe_js objects
+            awe_string* funcStr = awe_string_create_from_ascii( funcName.toStringz(), funcName.length );
+            awe_string* objectStr = awe_string_create_from_ascii( object.toStringz(), object.length );
+            awe_string* frameStr = awe_string_create_from_ascii( "".toStringz(), 1 );
+
+            // Build array of js ints
+            awe_jsvalue*[] jsArgs = new awe_jsvalue*[ args.length ];
+
+            for( int i = 0; i < args.length; i++ )
+            {
+                jsArgs[i] = awe_jsvalue_create_integer_value( args[i] );
+            }
+
+            awe_jsarray* argArr = awe_jsarray_create( jsArgs.ptr, args.length );
+
+
+
+            // Execute call
+            awe_webview_call_javascript_function( _view.webView, objectStr, funcStr, argArr, frameStr );
+
+            
+            // Clean up js objects
+            for( int i = 0; i < args.length; i++ )
+            {
+                awe_jsvalue_destroy( jsArgs[i] );
+            }
+            awe_jsarray_destroy( argArr );
         }
-
-        awe_jsarray* argArr = awe_jsarray_create( jsArgs.ptr, args.length );
-
-
-
-        // Execute call
-        awe_webview_call_javascript_function( _view.webView, objectStr, funcStr, argArr, frameStr );
-
-        
-        // Clean up js objects
-        for( int i = 0; i < args.length; i++ )
-        {
-            awe_jsvalue_destroy( jsArgs[i] );
-        }
-        awe_jsarray_destroy( argArr );
         
     }
-
-    /*
-    void keyPress(int key)
-    {
-
-    }
-    */
 
     /**
      * Initializes Awesomium singleton
@@ -133,7 +133,7 @@ public:
         {
             // Webcore setup
             awe_webcore_initialize_default();
-            string baseDir = FilePath.Resources.UI;
+            string baseDir = Resources.UI;
             awe_string* aweBaseDir = awe_string_create_from_ascii( baseDir.toStringz(), baseDir.length );
             awe_webcore_set_base_directory( aweBaseDir );
             awe_string_destroy( aweBaseDir );
@@ -163,7 +163,7 @@ public:
 /**
  * Creates an Awesomium web view texture
  */
-class AwesomiumView : Texture, IComponent
+class AwesomiumView : Texture
 {
 private:
     version( Windows )

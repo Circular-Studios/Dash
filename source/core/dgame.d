@@ -11,6 +11,8 @@ enum EngineState
 {
     /// The main game state.
     Run,
+    /// Refresh changed assets, but don't reset state.
+    Refresh,
     /// Reload all assets at the beginning of the next cycle.
     Reset,
     /// Quit the game and the end of this cycle.
@@ -88,7 +90,14 @@ public:
         while( currentState != EngineState.Quit )
         {
             if( currentState == EngineState.Reset )
-                reload();
+            {
+                stop();
+                start();
+            }
+            else if( currentState == EngineState.Refresh )
+            {
+                refresh();
+            }
 
             //////////////////////////////////////////////////////////////////////////
             // Update
@@ -140,6 +149,8 @@ public:
 
             // End drawing
             Graphics.endDraw();
+
+            //break;
         }
 
         stop();
@@ -162,6 +173,10 @@ protected:
      * To be overridden, called when the came is closing.
      */
     void onShutdown() { }
+    /**
+     * To be overridden, called when refreshing content.
+     */
+    void onRefresh() { }
     /**
      * To be overridden, called when resetting and the state must be saved.
      */
@@ -187,6 +202,8 @@ private:
         bench!( { Prefabs.initialize(); } )( "Prefabs init" );
         bench!( { UserInterface.initializeAwesomium(); } )( "UI init" );
         bench!( { DGame.instance.onInitialize(); } )( "Game init" );
+
+        debug scheduleIntervaledTask( 1.seconds, { currentState = EngineState.Refresh; return false; } );
     }
 
     /**
@@ -204,11 +221,22 @@ private:
     /**
      * Reloads content and yaml.
      */
-    final void reload()
+    final void refresh()
     {
-        stop();
+        // Refresh
+        Config.refresh();
+        Assets.refresh();
+        Graphics.refresh();
+        Prefabs.refresh();
+        activeScene.refresh();
+        // Need to refresh key events.
+        //Input.initialize();
 
-        start();
+        // Restart
+        currentState = EngineState.Run;
+
+        // Refresh game.
+        onRefresh();
     }
 
     /**

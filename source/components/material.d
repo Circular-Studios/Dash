@@ -8,88 +8,71 @@ import yaml;
 import derelict.opengl3.gl3, derelict.freeimage.freeimage;
 import std.variant, std.conv, std.string;
 
+mixin( registerComponents!q{components.material} );
+
 /**
  * A collection of textures that serve different purposes in the rendering pipeline.
  */
-final class Material
+@yamlComponent!( q{name => Assets.get!Material( name )} )()
+@yamlObject()
+final class Material : Asset
 {
-private:
-    Texture _diffuse, _normal, _specular;
-    bool _isUsed;
+package:
+    @field( "Name" )
+    string _name;
 
 public:
     /// The diffuse (or color) map.
-    mixin( Property!(_diffuse, AccessModifier.Public) );
+    @field( "Diffuse" )
+    Texture diffuse;
     /// The normal map, which specifies which way a face is pointing at a given pixel.
-    mixin( Property!(_normal, AccessModifier.Public) );
+    @field( "Normal" )
+    Texture normal;
     /// The specular map, which specifies how shiny a given point is.
-    mixin( Property!(_specular, AccessModifier.Public) );
-    /// Whether or not the material is actually used.
-    mixin( Property!( _isUsed, AccessModifier.Package ) );
+    @field( "Specular" )
+    Texture specular;
+    /// The name of the material.
+    mixin( Getter!_name );
 
     /**
      * Default constructor, makes sure everything is initialized to default.
      */
-    this()
+    this( string name = "" )
     {
-        _diffuse = _specular = defaultTex;
-        _normal = defaultNormal;
-    }
-
-    /**
-     * Create a Material from a Yaml node.
-     *
-     * Params:
-     *  yamlObj =           The YAML object to pull the data from.
-     *
-     * Returns: A new material with specified maps.
-     */
-    static Material createFromYaml( Node yamlObj )
-    {
-        auto obj = new Material;
-        string prop;
-
-        if( yamlObj.tryFind( "Diffuse", prop ) )
-            obj.diffuse = Assets.get!Texture( prop );
-
-        if( yamlObj.tryFind( "Normal", prop ) )
-            obj.normal = Assets.get!Texture( prop );
-
-        if( yamlObj.tryFind( "Specular", prop ) )
-            obj.specular = Assets.get!Texture( prop );
-
-        return obj;
+        super( Resource( "" ) );
+        diffuse = specular = defaultTex;
+        normal = defaultNormal;
+        _name = name;
     }
 
     /**
      * Shuts down the material, making sure all references are released.
      */
-    void shutdown()
+    override void shutdown()
     {
-        _diffuse = _specular = _normal = null;
+        diffuse = specular = normal = null;
     }
 }
 
 /**
  * TODO
  */
-class Texture
+@yamlComponent!( q{name => Assets.get!Texture( name )} )()
+class Texture : Asset
 {
 protected:
     uint _width = 1;
     uint _height = 1;
     uint _glID;
-    bool _isUsed;
 
     /**
      * TODO
      *
      * Params:
-     *
-     * Returns:
      */
-    this( ubyte* buffer )
+    this( ubyte* buffer, string filePath = "" )
     {
+        super( Resource( filePath ) );
         glGenTextures( 1, &_glID );
         glBindTexture( GL_TEXTURE_2D, glID );
         updateBuffer( buffer );
@@ -99,8 +82,6 @@ protected:
      * TODO
      *
      * Params:
-     *
-     * Returns:
      */
     void updateBuffer( const ubyte* buffer )
     {
@@ -121,40 +102,52 @@ public:
     mixin( Property!_height );
     /// TODO
     mixin( Property!_glID );
-    /// Whether or not the texture is actually used.
-    mixin( Property!( _isUsed, AccessModifier.Package ) );
 
     /**
      * TODO
      *
      * Params:
-     *
-     * Returns:
      */
     this( string filePath )
     {
-        filePath ~= "\0";
-        auto imageData = FreeImage_ConvertTo32Bits( FreeImage_Load( FreeImage_GetFileType( filePath.ptr, 0 ), filePath.ptr, 0 ) );
+        auto imageData = loadFreeImage( filePath );
 
-        width = FreeImage_GetWidth( imageData );
-        height = FreeImage_GetHeight( imageData );
+        this( cast(ubyte*)FreeImage_GetBits( imageData ), filePath );
 
-        this( cast(ubyte*)FreeImage_GetBits( imageData ) );
+        FreeImage_Unload( imageData );
+    }
+
+    /**
+     * Refresh the asset.
+     */
+    override void refresh()
+    {
+        auto imageData = loadFreeImage( resource.fullPath );
+
+        updateBuffer( cast(ubyte*)FreeImage_GetBits( imageData ) );
 
         FreeImage_Unload( imageData );
     }
 
     /**
      * TODO
-     *
-     * Params:
-     *
-     * Returns:
      */
-    void shutdown()
+    override void shutdown()
     {
         glBindTexture( GL_TEXTURE_2D, 0 );
         glDeleteBuffers( 1, &_glID );
+    }
+
+private:
+    auto loadFreeImage( string filePath )
+    {
+        filePath ~= '\0';
+        auto imageData = FreeImage_ConvertTo32Bits( FreeImage_Load( FreeImage_GetFileType( filePath.ptr, 0 ), filePath.ptr, 0 ) );
+
+        width = FreeImage_GetWidth( imageData );
+        height = FreeImage_GetHeight( imageData );
+
+        return imageData;
     }
 }
 
@@ -182,13 +175,4 @@ public:
         def = new Texture( [cast(ubyte)255, cast(ubyte)127, cast(ubyte)127, cast(ubyte)255].ptr );
 
     return def;
-}
-
-static this()
-{
-    IComponent.initializers[ "Material" ] = ( Node yml, GameObject obj )
-    {
-        obj.material = Assets.get!Material( yml.get!string );
-        return null;
-    };
 }

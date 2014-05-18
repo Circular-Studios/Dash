@@ -5,7 +5,7 @@ module components.component;
 import core, components, graphics, utility;
 
 import yaml;
-import std.array, std.string, std.traits;
+import std.array, std.string, std.traits, std.conv;
 
 /// Tests if a type can be created from yaml.
 enum isYamlObject(T) = __traits( compiles, { T obj; obj.yaml = Node( YAMLNull() ); } );
@@ -258,8 +258,22 @@ void registerYamlObjects( Base )( string yamlName, YamlType type ) if( is( Base 
                             // Else just try to parse the yaml.
                             else
                             {
-                                typeof( __traits( getMember, b, memberName ) ) val;
-                                if( node.tryFind( yamlFieldName, val ) )
+								typeof( __traits( getMember, b, memberName ) ) val;
+
+								static if( is( typeof( __traits( getMember, b, memberName ) ) == enum ) )
+								{
+									string valName;
+									bool result = node.tryFind( yamlFieldName, valName );
+
+									if( result )
+										val = valName.to!( typeof( mixin( "b." ~ memberName ) ) );
+								}
+								else
+								{
+									bool result = node.tryFind( yamlFieldName, val );
+								}
+
+                                if( result )
                                 {
                                     // If value hasn't changed, ignore.
                                     typeof( __traits( getMember, b, memberName ) ) oldVal;

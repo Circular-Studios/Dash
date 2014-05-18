@@ -27,6 +27,7 @@ struct GameStateFlags
     bool updateScene;
     bool updateUI;
     bool updateTasks;
+	bool autoRefresh;
     //bool updatePhysics;
 
     /**
@@ -203,7 +204,7 @@ private:
         bench!( { UserInterface.initializeAwesomium(); } )( "UI init" );
         bench!( { DGame.instance.onInitialize(); } )( "Game init" );
 
-        debug scheduleIntervaledTask( 1.seconds, { currentState = EngineState.Refresh; return false; } );
+        debug scheduleIntervaledTask( 1.seconds, { if( stateFlags.autoRefresh ) currentState = EngineState.Refresh; return false; } );
     }
 
     /**

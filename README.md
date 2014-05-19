@@ -14,7 +14,7 @@ Great! We'd love to have your support/input/code. Check out [CONTRIBUTING.md](ht
 
 #### I have no idea what this is, I just want to see it running:
 
-The easiest way to get Dash running (on Windows) is to head over to our [Releases](https://github.com/Circular-Studios/Dash/releases) page and download the most recent `dash-game.zip`, and double clicking on `Dash Game`. On Linux, you'll want to check out the simple instructions at [Setting up Your Environment page](https://github.com/Circular-Studios/Dash/wiki/Setting-Up-Your-Environment-(Engine)).
+The easiest way to get Dash running (on Windows) is to head over to our [Releases](https://github.com/Circular-Studios/Dash/releases) page and download the most recent `dash-game.zip`, and double clicking on `Dash Game`. On Linux, you'll want to check out the simple instructions at [Setting up Your Environment page](https://github.com/Circular-Studios/Dash/wiki/Setting-Up-Your-Environment).
 
 ### Contact Us
 

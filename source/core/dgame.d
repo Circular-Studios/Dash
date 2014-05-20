@@ -3,6 +3,7 @@
  */
 module core.dgame;
 import core, components, graphics, utility, utility.awesomium;
+import core.memory;
 
 /**
  * The states the game can be in.
@@ -87,6 +88,8 @@ public:
         //TaskManager.initialize();
         start();
 
+        GC.collect();
+
         // Loop until there is a quit message from the window or the user.
         while( currentState != EngineState.Quit )
         {
@@ -94,6 +97,7 @@ public:
             {
                 stop();
                 start();
+                GC.collect();
             }
             else if( currentState == EngineState.Refresh )
             {

@@ -51,7 +51,6 @@ public:
         mixin( get!( Mesh, q{meshes} ) );
         mixin( get!( Texture, q{textures} ) );
         mixin( get!( Material, q{materials} ) );
-        mixin( get!( AssetAnimation, q{animations} ) );
     }
 
     /**

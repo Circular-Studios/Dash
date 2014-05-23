@@ -258,20 +258,20 @@ void registerYamlObjects( Base )( string yamlName, YamlType type ) if( is( Base 
                             // Else just try to parse the yaml.
                             else
                             {
-								typeof( __traits( getMember, b, memberName ) ) val;
+                                typeof( __traits( getMember, b, memberName ) ) val;
 
-								static if( is( typeof( __traits( getMember, b, memberName ) ) == enum ) )
-								{
-									string valName;
-									bool result = node.tryFind( yamlFieldName, valName );
+                                static if( is( typeof( __traits( getMember, b, memberName ) ) == enum ) )
+                                {
+                                    string valName;
+                                    bool result = node.tryFind( yamlFieldName, valName );
 
-									if( result )
-										val = valName.to!( typeof( mixin( "b." ~ memberName ) ) );
-								}
-								else
-								{
-									bool result = node.tryFind( yamlFieldName, val );
-								}
+                                    if( result )
+                                        val = valName.to!( typeof( mixin( "b." ~ memberName ) ) );
+                                }
+                                else
+                                {
+                                    bool result = node.tryFind( yamlFieldName, val );
+                                }
 
                                 if( result )
                                 {

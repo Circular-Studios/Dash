@@ -46,7 +46,7 @@ unittest
  *
  * Returns: The updated string.
  */
-T replaceMap( T, TKey, TValue )( T base, TKey[TValue] replaceMap ) pure @safe nothrow
+T replaceMap( T, TKey, TValue )( T base, TKey[TValue] replaceMap )
     if( isSomeString!T && isSomeString!TKey && isSomeString!TValue )
 {
     scope(failure) return "";

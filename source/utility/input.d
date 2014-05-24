@@ -200,7 +200,7 @@ public static:
 
             return vec2( cast(float)i.x, Graphics.height - cast(float)i.y );
         }
-        else version( linux )
+        else
         {
             return vec2();
         }

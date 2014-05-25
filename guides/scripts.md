@@ -4,6 +4,7 @@ title: Scripts
 section: guides/scripts
 ---
 # Scripts
+---
 
 ### The Game Script
 

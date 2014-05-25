@@ -33,7 +33,7 @@ as a blank game script. Here's what all the folders are for:
 | Materials | This is where your materials go. These are YAML objects which define what textures to place on objects for which role. You can learn about them [here](TODO).
 | Meshes    | This is where all of your exported meshes go. You can find a list of supported formats [here](TODO).
 | Objects   | This is where all of your object definitions go. These are YAML objects that place things in your world. You can learn more about them [here](TODO).
-| Prefabs   | This is where all of your prefab definitions go. These are YAML objects that allow you to create `GameObject`s much more easily. You can learn more about them [here](TODO).
+| Prefabs   | This is where all of your prefab definitions go. These are YAML objects that allow you to create `GameObject`s much more easily. You can learn more about them [here]({{ site.url }}/guides/prefabs).
 | Scripts   | This is where all of your scripts go. You should have one that manages the game itself, and then one for every component you define. You can learn more about them [here](TODO).
 | Textures  | This is where all of your textures go. You can fine a list of supported formats [here](TODO).
 | UI        | This is where all of your UI files go. You can learn more about UIs [here](TODO).

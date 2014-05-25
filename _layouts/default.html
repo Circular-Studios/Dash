@@ -44,7 +44,7 @@
             <li data-section=""><a href="{{ site.url }}/">Home</a></li>
             <li class="nav-header">GUIDES</li>
             <li data-section="guides/gettingstarted"><a href="{{ site.url }}/guides/gettingstarted.html">Getting Started</a></li>
-            <!-- <li data-section="guides/components"><a href="{{ site.url }}/guides/components.html">Components</a></li> -->
+            <li data-section="guides/prefabs"><a href="{{ site.url }}/guides/prefabs.html">Prefabs</a></li>
           </ul>
         </div>
         <div class="span9">
@@ -56,7 +56,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="{{ site.url }}/assets/js/bootstrap.js"></script>
     <script>
-      $('#menu [data-section="{{page.section}}"]').addClass('active');
+      $( '#menu [data-section="{{ page.section }}"]' ).addClass( 'active' );
     </script>
   </body>
 </html>

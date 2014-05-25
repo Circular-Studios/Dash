@@ -51,7 +51,7 @@ Mesh: MyMesh8
 
 To create an instance of a prefab from inside your D scripts, import
 `core.prefabs` (or just `core`), and call to
-[`Prefab.createInstance`]({{site.url }}/api/latest/core/prefabs/Prefab.createInstance.html).
+[`Prefab.createInstance`]({{ site.api }}/core/prefabs/Prefab.createInstance.html).
 An example script may look like this:
 
 ```d

@@ -1,3 +1,4 @@
 markdown: kramdown
 highlighter: pygments
 url:
+api: /api/latest/

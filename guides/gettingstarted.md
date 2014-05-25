@@ -4,7 +4,7 @@ title: Getting Started
 section: guides/gettingstarted
 ---
 # Getting Started
-~~~
+---
 
 ### Installation and Setup
 

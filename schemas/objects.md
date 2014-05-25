@@ -4,7 +4,7 @@ title: Objects Schema
 section: schemas/objects
 ---
 # Game Object Schema
-~~~
+---
 
 | Field      | Type           | Optional | Description
 |:-----------|:--------------:|:--------:|:-----------

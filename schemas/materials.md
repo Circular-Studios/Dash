@@ -4,7 +4,7 @@ title: Material Schema
 section: schemas/materials
 ---
 # Material Schemas
-~~~
+---
 
 | Field    | Type     | Optional | Description
 |:---------|:--------:|:--------:|:-----------

@@ -1,4 +1,3 @@
 markdown: kramdown
 highlighter: pygments
-permalink: /:title
-url: 
+url:

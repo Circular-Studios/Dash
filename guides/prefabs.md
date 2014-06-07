@@ -15,6 +15,7 @@ and they may have any property that an object definition can have. An example
 prefab file may look like this:
 
 `prefab1.yml`
+
 ```yaml
 ---
 Name: Prefab1
@@ -38,6 +39,7 @@ in a prefab and an object will be overridden by the object. An example may look
 like this:
 
 `object1.yml`
+
 ```yaml
 ---
 Name: Object1

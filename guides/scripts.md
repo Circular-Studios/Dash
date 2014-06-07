@@ -37,6 +37,7 @@ The template parameter is the [loader](#loaders) you want to use for the paramet
 which overrides the loader (if there is one) for the type of the field.
 
 An example script might look like this:
+
 ```d
 import dash.components, dash.utility;
 
@@ -56,6 +57,7 @@ class MyComponent : Component
 ```
 
 An object definition that uses it might look like this:
+
 ```yaml
 ---
 Name: Object3
@@ -75,6 +77,7 @@ exist so that you may add a field or component to an object that has already
 been created. A good example is [`Mesh`]({{ site.api }}/components/mesh/Mesh.html)es,
 which rely on loaders because they are not created from YAML, but instead from
 files. They're annotation looks something like this:
+
 ```d
 @yamlComponent!( q{name => Assets.get!Mesh( name )} )()
 class Mesh : Asset { ... }

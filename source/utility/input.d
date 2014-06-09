@@ -16,36 +16,36 @@ final abstract class Input
 {
 static:
 private:
-	struct Binding
-	{
-	public:
-		string name;
-		Keyboard.Buttons[] KeyboardButtons;
-		Mouse.Buttons[] MouseButtons;
-		//Mouse.Axes[] MouseAxes;
+    struct Binding
+    {
+    public:
+        string name;
+        Keyboard.Buttons[] KeyboardButtons;
+        Mouse.Buttons[] MouseButtons;
+        //Mouse.Axes[] MouseAxes;
 
-		this( string bind )
-		{
-			name = bind;
-		}
-	}
-	Binding[string] inputBindings;
+        this( string bind )
+        {
+            name = bind;
+        }
+    }
+    Binding[string] inputBindings;
 
     enum passThrough( string functionName, string args ) = q{
         void $functionName( string inputName, void delegate( $args ) func )
         {
-			if( auto binding = inputName in inputBindings )
-			{
-				foreach( key; binding.KeyboardButtons )
-					Keyboard.$functionName( key, cast(ParameterTypeTuple!(__traits(getMember, Keyboard, "$functionName"))[ 1 ])func );
-				
-				foreach( mb; binding.MouseButtons )
-					Mouse.$functionName( mb, cast(ParameterTypeTuple!(__traits(getMember, Mouse, "$functionName"))[ 1 ])func );
-			}
-			else
-			{
-				throw new Exception( "Name " ~ inputName ~ " not bound." );
-			}
+            if( auto binding = inputName in inputBindings )
+            {
+                foreach( key; binding.KeyboardButtons )
+                    Keyboard.$functionName( key, cast(ParameterTypeTuple!(__traits(getMember, Keyboard, "$functionName"))[ 1 ])func );
+
+                foreach( mb; binding.MouseButtons )
+                    Mouse.$functionName( mb, cast(ParameterTypeTuple!(__traits(getMember, Mouse, "$functionName"))[ 1 ])func );
+            }
+            else
+            {
+                throw new Exception( "Name " ~ inputName ~ " not bound." );
+            }
         }
     }.replaceMap( [ "$functionName": functionName, "$args": args ] );
 public:
@@ -63,11 +63,11 @@ public:
         {
             if( !bind.isMapping )
             {
-				logWarning( "Unsupported input format for ", name, "." );
-				continue;
-			}
+                logWarning( "Unsupported input format for ", name, "." );
+                continue;
+            }
 
-			inputBindings[ name ] = Binding( name );
+            inputBindings[ name ] = Binding( name );
 
             foreach( string type, Node value; bind )
             {
@@ -90,7 +90,7 @@ public:
                             {
                                 try
                                 {
-									inputBindings[ name ].$typeButtons ~= element.get!string.to!($type.Buttons);
+                                    inputBindings[ name ].$typeButtons ~= element.get!string.to!($type.Buttons);
                                 }
                                 catch( Exception e )
                                 {
@@ -136,15 +136,15 @@ public:
         {
             if( auto binding = input in inputBindings )
             {
-				foreach( key; binding.KeyboardButtons )
-					if( Keyboard.isButtonDown( key, checkPrevious ) )
-						return true;
-				foreach( mb; binding.MouseButtons )
-					if( Mouse.isButtonDown( mb, checkPrevious ) )
-						return true;
+                foreach( key; binding.KeyboardButtons )
+                    if( Keyboard.isButtonDown( key, checkPrevious ) )
+                        return true;
+                foreach( mb; binding.MouseButtons )
+                    if( Mouse.isButtonDown( mb, checkPrevious ) )
+                        return true;
 
-				return false;
-			}
+                return false;
+            }
         }
         /*else static if( is( T == float ) )
         {
@@ -170,18 +170,18 @@ public:
      */
     bool isButtonDown( string buttonName, bool checkPrevious = false )
     {
-		if( auto binding = buttonName in inputBindings )
-		{
-			foreach( key; binding.KeyboardButtons )
-				if( Keyboard.isButtonDown( key, checkPrevious ) )
-					return true;
+        if( auto binding = buttonName in inputBindings )
+        {
+            foreach( key; binding.KeyboardButtons )
+                if( Keyboard.isButtonDown( key, checkPrevious ) )
+                    return true;
 
-			foreach( mb; binding.MouseButtons )
-				if( Mouse.isButtonDown( mb, checkPrevious ) )
-					return true;
-		}
+            foreach( mb; binding.MouseButtons )
+                if( Mouse.isButtonDown( mb, checkPrevious ) )
+                    return true;
+        }
 
-		return false;
+        return false;
     }
 
     /**
@@ -444,7 +444,7 @@ public:
      */
     ButtonStorageType isButtonDown( Buttons buttonCode, bool checkPrevious = false )
     {
-		return buttonCurrent[ buttonCode ] && ( !checkPrevious || !buttonPrevious[ buttonCode ] );
+        return buttonCurrent[ buttonCode ] && ( !checkPrevious || !buttonPrevious[ buttonCode ] );
     }
 
     /**
@@ -458,8 +458,8 @@ public:
      */
     ButtonStorageType isButtonUp( Buttons buttonCode, bool checkPrevious = false )
     {
-		return !buttonCurrent[ buttonCode ] && ( !checkPrevious || buttonPrevious[ buttonCode ] );
-	}
+        return !buttonCurrent[ buttonCode ] && ( !checkPrevious || buttonPrevious[ buttonCode ] );
+    }
 
     /**
      * Add an event to be fired when the given button changes.
@@ -602,8 +602,8 @@ public:
 
     T opIndexAssign( T newValue, size_t keyCode )
     {
-		if( keyCode < totalSize )
-			keys[ keyCode ] = newValue;
+        if( keyCode < totalSize )
+            keys[ keyCode ] = newValue;
 
         return newValue;
     }

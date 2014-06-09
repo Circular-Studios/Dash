@@ -11,6 +11,8 @@ import gl3n.interpolate: lerp;
 import core.time;
 import std.algorithm: min;
 import std.parallelism: parallel;
+import std.uuid: UUID, randomUUID;
+import std.typecons;
 
 public:
 /**
@@ -18,10 +20,14 @@ public:
  *
  * Params:
  *  dg =                The task to execute.
+ *
+ * Returns: The ID of the task.
  */
-void scheduleTask( bool delegate() dg )
+UUID scheduleTask( bool delegate() dg )
 {
-    scheduledTasks ~= dg;
+ 	auto id = randomUUID();
+    scheduledTasks ~= tuple( dg, id );
+    return id;
 }
 
 /**
@@ -34,15 +40,17 @@ void scheduleTask( bool delegate() dg )
  *  end =               The target value for interpolation.
  *  interpFunc =        [default=lerp] The function to use for interpolation.
  *
+ * Returns: The ID of the task.
+ *
  * Example:
  * ---
  * scheduleInterpolateTask( position, startNode, endNode, 100.msecs );
  * ---
  */
-void scheduleInterpolateTask(T)( ref T val, T start, T end, Duration duration, T function( T, T, float ) interpFunc = &lerp!T ) if( is_vector!T || is_quaternion!T )
+UUID scheduleInterpolateTask(T)( ref T val, T start, T end, Duration duration, T function( T, T, float ) interpFunc = &lerp!T ) if( is_vector!T || is_quaternion!T )
 {
     auto startTime = Time.totalTime;
-    scheduleTimedTask( duration, ( elapsed )
+    return scheduleTimedTask( duration, ( elapsed )
     {
         val = interpFunc( start, end, elapsed / duration.toSeconds );
     } );
@@ -78,16 +86,18 @@ unittest
  *  end =               The target value for interpolation.
  *  interpFunc =        [default=lerp] The function to use for interpolation.
  *
+ * Returns: The ID of the task.
+ *
  * Example:
  * ---
  * scheduleInterpolateTask!q{position}( transform, startNode, endNode, 100.msecs );
  * ---
  */
-void scheduleInterpolateTask( string prop, T, Owner )( ref Owner own, T start, T end, Duration duration, T function( T, T, float ) interpFunc = &lerp!T )
+UUID scheduleInterpolateTask( string prop, T, Owner )( ref Owner own, T start, T end, Duration duration, T function( T, T, float ) interpFunc = &lerp!T )
     if( ( is_vector!T || is_quaternion!T ) && __traits( compiles, mixin( "own." ~ prop ) ) )
 {
     auto startTime = Time.totalTime;
-    scheduleTimedTask( duration, ( elapsed )
+    return scheduleTimedTask( duration, ( elapsed )
     {
         mixin( "own." ~ prop ~ " = interpFunc( start, end, elapsed / duration.toSeconds );" );
     } );
@@ -127,41 +137,43 @@ class TestPropertyInterpolate
  * Params:
  *  duration =          The duration to execute the task for.
  *  dg =                The task to execute.
+ *
+ * Returns: The ID of the task.
  */
-void scheduleTimedTask( Duration duration, void delegate() dg )
+UUID scheduleTimedTask( Duration duration, void delegate() dg )
 {
     auto startTime = Time.totalTime;
-    scheduleTask( {
+    return scheduleTask( {
         dg();
         return Time.totalTime >= startTime + duration.toSeconds;
     } );
 }
 
 /// ditto
-void scheduleTimedTask( Duration duration, void delegate( float ) dg )
+UUID scheduleTimedTask( Duration duration, void delegate( float ) dg )
 {
     auto startTime = Time.totalTime;
-    scheduleTask( {
+    return scheduleTask( {
         dg( min( Time.totalTime - startTime, duration.toSeconds ) );
         return Time.totalTime >= startTime + duration.toSeconds;
     } );
 }
 
 /// ditto
-void scheduleTimedTask( Duration duration, void delegate( float, float ) dg )
+UUID scheduleTimedTask( Duration duration, void delegate( float, float ) dg )
 {
     auto startTime = Time.totalTime;
-    scheduleTask( {
+    return scheduleTask( {
         dg( min( Time.totalTime - startTime, duration.toSeconds ), duration.toSeconds );
         return Time.totalTime >= startTime + duration.toSeconds;
     } );
 }
 
 /// ditto
-void scheduleTimedTask( Duration duration, bool delegate() dg )
+UUID scheduleTimedTask( Duration duration, bool delegate() dg )
 {
     auto startTime = Time.totalTime;
-    scheduleTask( {
+    return scheduleTask( {
         if( dg() )
             return true;
         else
@@ -170,10 +182,10 @@ void scheduleTimedTask( Duration duration, bool delegate() dg )
 }
 
 /// ditto
-void scheduleTimedTask( Duration duration, bool delegate( float ) dg )
+UUID scheduleTimedTask( Duration duration, bool delegate( float ) dg )
 {
     auto startTime = Time.totalTime;
-    scheduleTask( {
+    return scheduleTask( {
         if( dg( min( Time.totalTime - startTime, duration.toSeconds ) ) )
             return true;
         else
@@ -182,10 +194,10 @@ void scheduleTimedTask( Duration duration, bool delegate( float ) dg )
 }
 
 /// ditto
-void scheduleTimedTask( Duration duration, bool delegate( float, float ) dg )
+UUID scheduleTimedTask( Duration duration, bool delegate( float, float ) dg )
 {
     auto startTime = Time.totalTime;
-    scheduleTask( {
+    return scheduleTask( {
         if( dg( min( Time.totalTime - startTime, duration.toSeconds ), duration.toSeconds ) )
             return true;
         else
@@ -194,57 +206,18 @@ void scheduleTimedTask( Duration duration, bool delegate( float, float ) dg )
 }
 
 /**
- * Schedule a task to be executed until the duration expires.
- *
- * Params:
- *  dg =                The task to execute.
- *  duration =          The duration to execute the task for.
- */
-deprecated( "Use version with duration as first parameter." )
-void scheduleTimedTask( void delegate() dg, Duration duration )
-{
-    auto startTime = Time.totalTime;
-    scheduleTask( {
-        dg();
-        return Time.totalTime >= startTime + duration.toSeconds;
-    } );
-}
-
-/**
  * Schedule a task to be execuated after the specified amount of time.
  *
  * Params:
  *  delay =             The ammount of time to wait before executing.
  *  dg =                The task to execute.
- */
-void scheduleDelayedTask( Duration delay, void delegate() dg )
-{
-    auto startTime = Time.totalTime;
-    scheduleTask( {
-        if( Time.totalTime - startTime >= delay.toSeconds )
-        {
-            dg();
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    } );
-}
-
-/**
- * Schedule a task to be execuated after the specified amount of time.
  *
- * Params:
- *  dg =                The task to execute.
- *  delay =             The ammount of time to wait before executing.
+ * Returns: The ID of the task.
  */
-deprecated( "Use version with delay as first parameter." )
-void scheduleDelayedTask( void delegate() dg, Duration delay )
+UUID scheduleDelayedTask( Duration delay, void delegate() dg )
 {
     auto startTime = Time.totalTime;
-    scheduleTask( {
+    return scheduleTask( {
         if( Time.totalTime - startTime >= delay.toSeconds )
         {
             dg();
@@ -263,12 +236,14 @@ void scheduleDelayedTask( void delegate() dg, Duration delay )
  * Params:
  *  interval =          The interval on which to call this task.
  *  dg =                The task to execute.
+ *
+ * Returns: The ID of the task.
  */
-void scheduleIntervaledTask( Duration interval, bool delegate() dg )
+UUID scheduleIntervaledTask( Duration interval, bool delegate() dg )
 {
     auto startTime = Time.totalTime;
     auto timeTilExe = interval.toSeconds;
-    scheduleTask( {
+    return scheduleTask( {
         timeTilExe -= Time.deltaTime;
         if( timeTilExe <= 0 )
         {
@@ -289,13 +264,15 @@ void scheduleIntervaledTask( Duration interval, bool delegate() dg )
  *  interval =          The interval on which to call this task.
  *  numExecutions =     The number of time to execute the task.
  *  dg =                The task to execute.
+ *
+ * Returns: The ID of the task.
  */
-void scheduleIntervaledTask( Duration interval, uint numExecutions, void delegate() dg )
+UUID scheduleIntervaledTask( Duration interval, uint numExecutions, void delegate() dg )
 {
     auto startTime = Time.totalTime;
     auto timeTilExe = interval.toSeconds;
     uint executedTimes = 0;
-    scheduleTask( {
+    return scheduleTask( {
         timeTilExe -= Time.deltaTime;
         if( timeTilExe <= 0 )
         {
@@ -316,13 +293,15 @@ void scheduleIntervaledTask( Duration interval, uint numExecutions, void delegat
  *  interval =          The interval on which to call this task.
  *  numExecutions =     The number of time to execute the task.
  *  dg =                The task to execute.
+ *
+ * Returns: The ID of the task.
  */
-void scheduleIntervaledTask( Duration interval, uint numExecutions, bool delegate() dg )
+UUID scheduleIntervaledTask( Duration interval, uint numExecutions, bool delegate() dg )
 {
     auto startTime = Time.totalTime;
     auto timeTilExe = interval.toSeconds;
     uint executedTimes = 0;
-    scheduleTask( {
+    return scheduleTask( {
         timeTilExe -= Time.deltaTime;
         if( timeTilExe <= 0 )
         {
@@ -342,10 +321,10 @@ void scheduleIntervaledTask( Duration interval, uint numExecutions, bool delegat
  */
 void executeTasks()
 {
-    size_t[] toRemove;    // Indicies of tasks which are done
+ 	size_t[] toRemove;
     foreach( i, task; scheduledTasks/*.parallel*/ )
     {
-        if( task() )
+        if( task[ 0 ]() )
             synchronized toRemove ~= i;
     }
     foreach_reverse( i; toRemove )
@@ -360,6 +339,26 @@ void executeTasks()
 }
 
 /**
+ * Cancels the given task from executing.
+ *
+ * Params:
+ *  id =				The id of the task to cancel.
+ */
+void cancelTask( UUID id )
+{
+    import std.algorithm;
+
+    auto i = scheduledTasks.countUntil!( tup => tup[ 1 ] == id );
+
+    // Get tasks after one being removed.s
+    auto end = scheduledTasks[ i+1..$ ];
+    // Get tasks before one being removed.
+    scheduledTasks = scheduledTasks[ 0..i ];
+    // Add end back.
+    scheduledTasks ~= end;
+}
+
+/**
  * Cancels all running tasks.
  */
 void resetTasks()
@@ -369,4 +368,4 @@ void resetTasks()
 
 private:
 /// The tasks that have been scheduled
-bool delegate()[] scheduledTasks;
+Tuple!( bool delegate(), UUID )[] scheduledTasks;

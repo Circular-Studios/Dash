@@ -7,36 +7,48 @@ import utility, core, graphics;
 import yaml, gl3n.linalg;
 import derelict.opengl3.gl3;
 import core.sync.mutex;
-import std.typecons, std.conv, std.traits;
+import std.typecons, std.conv, std.traits, std.uuid;
 
 /**
  * Manages all input events.
  */
 final abstract class Input
 {
+static:
 private:
+	struct Binding
+	{
+	public:
+		string name;
+		Keyboard.Buttons[] KeyboardButtons;
+		Mouse.Buttons[] MouseButtons;
+		//Mouse.Axes[] MouseAxes;
+
+		this( string bind )
+		{
+			name = bind;
+		}
+	}
+	Binding[string] inputBindings;
+
     enum passThrough( string functionName, string args ) = q{
         void $functionName( string inputName, void delegate( $args ) func )
         {
-            bool eventAdded = false;
-            try
-            {
-                Keyboard.$functionName( inputName, cast(ParameterTypeTuple!(__traits(getMember, Keyboard, "$functionName"))[ 1 ])func );
-                eventAdded = true;
-            }
-            catch( Exception e ) { }
-            try
-            {
-                Mouse.$functionName( inputName, cast(ParameterTypeTuple!(__traits(getMember, Mouse, "$functionName"))[ 1 ])func );
-                eventAdded = true;
-            }
-            catch( Exception e ) { }
-
-            if( !eventAdded )
-                throw new Exception( "Name " ~ inputName ~ " not bound." );
+			if( auto binding = inputName in inputBindings )
+			{
+				foreach( key; binding.KeyboardButtons )
+					Keyboard.$functionName( key, cast(ParameterTypeTuple!(__traits(getMember, Keyboard, "$functionName"))[ 1 ])func );
+				
+				foreach( mb; binding.MouseButtons )
+					Mouse.$functionName( mb, cast(ParameterTypeTuple!(__traits(getMember, Mouse, "$functionName"))[ 1 ])func );
+			}
+			else
+			{
+				throw new Exception( "Name " ~ inputName ~ " not bound." );
+			}
         }
     }.replaceMap( [ "$functionName": functionName, "$args": args ] );
-public static:
+public:
     /**
      * Processes Config/Input.yml and pulls input string bindings.
      */
@@ -49,54 +61,55 @@ public static:
 
         foreach( string name, Node bind; bindings )
         {
-            if( bind.isMapping )
+            if( !bind.isMapping )
             {
-                foreach( string type, Node value; bind )
-                {
-                    enum parseType( string type ) = q{
-                        case "$type":
-                            if( value.isScalar )
+				logWarning( "Unsupported input format for ", name, "." );
+				continue;
+			}
+
+			inputBindings[ name ] = Binding( name );
+
+            foreach( string type, Node value; bind )
+            {
+                enum parseType( string type ) = q{
+                    case "$type":
+                        if( value.isScalar )
+                        {
+                            try
+                            {
+                                inputBindings[ name ].$typeButtons ~= value.get!string.to!($type.Buttons);
+                            }
+                            catch( Exception e )
+                            {
+                                logFatal( "Failed to parse keybinding for input ", name, ": ", e.msg );
+                            }
+                        }
+                        else if( value.isSequence )
+                        {
+                            foreach( Node element; value )
                             {
                                 try
                                 {
-                                    $type.buttonBindings[ name ] ~= value.get!string.to!($type.Buttons);
+									inputBindings[ name ].$typeButtons ~= element.get!string.to!($type.Buttons);
                                 }
                                 catch( Exception e )
                                 {
                                     logFatal( "Failed to parse keybinding for input ", name, ": ", e.msg );
                                 }
                             }
-                            else if( value.isSequence )
-                            {
-                                foreach( Node element; value )
-                                {
-                                    try
-                                    {
-                                        $type.buttonBindings[ name ] ~= element.get!string.to!($type.Buttons);
-                                    }
-                                    catch( Exception e )
-                                    {
-                                        logFatal( "Failed to parse keybinding for input ", name, ": ", e.msg );
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                logFatal( "Failed to parse keybinding for input ", name, ": Mappings not allowed." );
-                            }
-                            break;
-                    }.replaceMap( [ "$type": type ] );
+                        }
+                        else
+                        {
+                            logFatal( "Failed to parse $type binding for input ", name, ": Mappings not allowed." );
+                        }
+                        break;
+                }.replaceMap( [ "$type": type ] );
 
-                    final switch( type )
-                    {
-                        mixin( parseType!q{Keyboard} );
-                        mixin( parseType!q{Mouse} );
-                    }
+                final switch( type )
+                {
+                    mixin( parseType!q{Keyboard} );
+                    mixin( parseType!q{Mouse} );
                 }
-            }
-            else
-            {
-                logWarning( "Unsupported input format for ", name, "." );
             }
         }
     }
@@ -121,16 +134,19 @@ public static:
     {
         static if( is( T == bool ) )
         {
-            if( input in Keyboard.buttonBindings )
+            if( auto binding = input in inputBindings )
             {
-                return Keyboard.isButtonDown( input, checkPrevious );
-            }
-            else if( input in Mouse.buttonBindings )
-            {
-                return Mouse.isButtonDown( input, checkPrevious );
-            }
+				foreach( key; binding.KeyboardButtons )
+					if( Keyboard.isButtonDown( key, checkPrevious ) )
+						return true;
+				foreach( mb; binding.MouseButtons )
+					if( Mouse.isButtonDown( mb, checkPrevious ) )
+						return true;
+
+				return false;
+			}
         }
-        else static if( is( T == float ) )
+        /*else static if( is( T == float ) )
         {
             if( input in Keyboard.axisBindings )
             {
@@ -140,7 +156,7 @@ public static:
             {
                 return Mouse.getAxisState( input );
             }
-        }
+        }*/
 
         throw new Exception( "Input " ~ input ~ " not bound." );
     }
@@ -149,12 +165,23 @@ public static:
      * Check if a given button is down.
      *
      * Params:
-     *      buttonCode =        The code of the button to check.
+     *      buttonName =        The name of the button to check.
      *      checkPrevious =     Whether or not to make sure the button was down last frame.
      */
     bool isButtonDown( string buttonName, bool checkPrevious = false )
     {
-        return Keyboard.isButtonDown( buttonName, checkPrevious ) || Mouse.isButtonDown( buttonName, checkPrevious );
+		if( auto binding = buttonName in inputBindings )
+		{
+			foreach( key; binding.KeyboardButtons )
+				if( Keyboard.isButtonDown( key, checkPrevious ) )
+					return true;
+
+			foreach( mb; binding.MouseButtons )
+				if( Mouse.isButtonDown( mb, checkPrevious ) )
+					return true;
+		}
+
+		return false;
     }
 
     /**
@@ -340,9 +367,6 @@ private:
 
             foreach( key; buttonEvents.keys )
                 buttonEvents.remove( key );
-
-            foreach( key; buttonBindings.keys )
-                buttonBindings.remove( key );
         }
         static if( HasAxes )
         {
@@ -351,9 +375,6 @@ private:
 
             foreach( key; axisEvents.keys )
                 axisEvents.remove( key );
-
-            foreach( key; axisBindings.keys )
-                axisBindings.remove( key );
         }
     }
 
@@ -413,30 +434,6 @@ public:
     }
 
     /**
-     * Get the state of a given button.
-     *
-     * Params:
-     *  buttonName =        The button to get the state of.
-     *
-     * Returns: The state of the button.
-     */
-    ButtonStorageType getButtonState( string buttonName )
-    {
-        if( auto button = buttonName in buttonBindings )
-        {
-            foreach( binding; *button )
-                if( buttonCurrent[ binding ] != false )
-                    return buttonCurrent[ binding ];
-
-            return false;
-        }
-        else
-        {
-            throw new Exception( "Input " ~ buttonName ~ " not bound." );
-        }
-    }
-
-    /**
      * Check if a given button is down.
      *
      * Params:
@@ -447,32 +444,7 @@ public:
      */
     ButtonStorageType isButtonDown( Buttons buttonCode, bool checkPrevious = false )
     {
-        return buttonCurrent[ buttonCode ] && ( !checkPrevious || !buttonCurrent[ buttonCode ] );
-    }
-
-    /**
-     * Check if a given button is down.
-     *
-     * Params:
-     *  buttonName =        The button to get the state of.
-     *  checkPrevious =     Whether or not to make sure the button was down last frame.
-     *
-     * Returns: The state of the button.
-     */
-    ButtonStorageType isButtonDown( string buttonName, bool checkPrevious = false )
-    {
-        if( auto button = buttonName in buttonBindings )
-        {
-            foreach( binding; *button )
-                if( isButtonDown( binding, checkPrevious ) != false )
-                    return isButtonDown( binding, checkPrevious );
-
-            return false;
-        }
-        else
-        {
-            throw new Exception( "Input " ~ buttonName ~ " not bound." );
-        }
+		return buttonCurrent[ buttonCode ] && ( !checkPrevious || !buttonPrevious[ buttonCode ] );
     }
 
     /**
@@ -486,33 +458,8 @@ public:
      */
     ButtonStorageType isButtonUp( Buttons buttonCode, bool checkPrevious = false )
     {
-        return !buttonCurrent[ buttonCode ] && ( !checkPrevious || buttonCurrent[ buttonCode ] );
-    }
-
-    /**
-     * Check if a given button is up.
-     *
-     * Params:
-     *  buttonName =        The button to get the state of.
-     *  checkPrevious =     Whether or not to make sure the button was down last frame.
-     *
-     * Returns: The state of the button.
-     */
-    ButtonStorageType isButtonUp( string buttonName, bool checkPrevious = false )
-    {
-        if( auto button = buttonName in buttonBindings )
-        {
-            foreach( binding; *button )
-                if( isButtonUp( binding, checkPrevious ) != false )
-                    return isButtonUp( binding, checkPrevious );
-
-            return false;
-        }
-        else
-        {
-            throw new Exception( "Input " ~ buttonName ~ " not bound." );
-        }
-    }
+		return !buttonCurrent[ buttonCode ] && ( !checkPrevious || buttonPrevious[ buttonCode ] );
+	}
 
     /**
      * Add an event to be fired when the given button changes.
@@ -527,20 +474,6 @@ public:
     }
 
     /**
-     * Add an event to be fired when the given button changes.
-     *
-     * Params:
-     *      inputName =     The name of the input to add the event to.
-     *      func =          The function to call when the button state changes.
-     */
-    void addButtonEvent( string inputName, ButtonEvent func )
-    {
-        if( auto buttons = inputName in buttonBindings )
-            foreach( button; *buttons )
-                addButtonEvent( button, func );
-    }
-
-    /**
      * Add a button event only when the button is down.
      */
     void addButtonDownEvent( Buttons buttonCode, ButtonStateEvent func )
@@ -549,27 +482,11 @@ public:
     }
 
     /**
-     * Add a button event only when the button is down.
-     */
-    void addButtonDownEvent( string inputName, ButtonStateEvent func )
-    {
-        addButtonEvent( inputName, ( Buttons buttonCode, ButtonStorageType newState ) { if( newState ) func( buttonCode ); } );
-    }
-
-    /**
      * Add a button event only when the button is up.
      */
     void addButtonUpEvent( Buttons buttonCode, ButtonStateEvent func )
     {
         addButtonEvent( buttonCode, ( Buttons buttonCode, ButtonStorageType newState ) { if( !newState ) func( buttonCode ); } );
-    }
-
-    /**
-     * Add a button event only when the button is up.
-     */
-    void addButtonUpEvent( string inputName, ButtonStateEvent func )
-    {
-        addButtonEvent( inputName, ( Buttons buttonCode, ButtonStorageType newState ) { if( !newState ) func( buttonCode ); } );
     }
 
     /**
@@ -594,8 +511,6 @@ private:
 
     /// The events tied to the buttons of this system.
     ButtonEvent[][ Buttons ] buttonEvents;
-    /// Bindings from strings to buttons.
-    Buttons[][ string ] buttonBindings;
 }
 
 // If we have axes
@@ -620,30 +535,6 @@ public:
     AxisStorageType getAxisState( Axes axis )
     {
         return axisCurrent[ axis ];
-    }
-
-    /**
-     * Get the state of a given axis.
-     *
-     * Params:
-     *  axisName =      The button to get the state of.
-     *
-     * Returns: The state of this axis.
-     */
-    AxisStorageType getAxisState( string axisName )
-    {
-        if( auto axis = axisName in axisBindings )
-        {
-            foreach( binding; *axis )
-                if( buttonCurrent[ binding ] != 0 )
-                    return buttonCurrent[ binding ];
-
-            return 0;
-        }
-        else
-        {
-            throw new Exception( "Input " ~ axisName ~ " not bound." );
-        }
     }
 
     /**
@@ -677,8 +568,6 @@ private:
 
     /// The events tied to the axes of this system.
     AxisEvent[][ Axes ] axisEvents;
-    /// Bindings from strings to axes.
-    Buttons[][ string ] axisBindings;
 }
 }
 

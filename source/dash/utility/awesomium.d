@@ -3,9 +3,9 @@ module dash.utility.awesomium;
 version( Windows ):
 
 public {
-    import dash.core.stdc.stddef;
+    import core.stdc.stddef;
     version(Windows) {
-        import dash.core.sys.windows.windows;
+        import core.sys.windows.windows;
     }
 }
 
@@ -39,49 +39,49 @@ struct awe_string {}
 struct awe_history_query_result {}
 /// HistoryEntry instance
 struct awe_history_entry {}
-    
+
 enum awe_loglevel
 {
     AWE_LL_NONE,
     AWE_LL_NORMAL,
     AWE_LL_VERBOSE
 }
-    
+
 enum awe_mousebutton
 {
     AWE_MB_LEFT,
     AWE_MB_MIDDLE,
     AWE_MB_RIGHT
 }
-    
+
 enum awe_url_filtering_mode
 {
     AWE_UFM_NONE,
     AWE_UFM_BLACKLIST,
     AWE_UFM_WHITELIST
 }
-    
+
 enum awe_webkey_type
 {
     AWE_WKT_KEYDOWN,
     AWE_WKT_KEYUP,
     AWE_WKT_CHAR
 }
-    
+
 enum awe_webkey_modifiers
 {
     /// Whether or not a Shift key is down
-    AWE_WKM_SHIFT_KEY       = 1 << 0, 
+    AWE_WKM_SHIFT_KEY       = 1 << 0,
     /// Whether or not a Control key is down
     AWE_WKM_CONTROL_KEY     = 1 << 1,
     /// Whether or not an ALT key is down
-    AWE_WKM_ALT_KEY         = 1 << 2, 
+    AWE_WKM_ALT_KEY         = 1 << 2,
     /// Whether or not a meta key (Command-key on Mac, Windows-key on Windows) is down
-    AWE_WKM_META_KEY        = 1 << 3, 
+    AWE_WKM_META_KEY        = 1 << 3,
     /// Whether or not the key pressed is on the keypad
     AWE_WKM_IS_KEYPAD       = 1 << 4,
     /// Whether or not the character input is the result of an auto-repeat timer.
-    AWE_WKM_IS_AUTOREPEAT   = 1 << 5, 
+    AWE_WKM_IS_AUTOREPEAT   = 1 << 5,
 }
 
 enum awe_cursor_type
@@ -175,7 +175,7 @@ enum awe_dialog_flags
     AWE_DIALOG_HAS_PROMPT_FIELD = 0x4,
     AWE_DIALOG_HAS_MESSAGE = 0x8
 }
-    
+
 struct awe_webkeyboardevent
 {
     awe_webkey_type type;
@@ -186,7 +186,7 @@ struct awe_webkeyboardevent
     wchar16[4] unmodified_text = [0, 0, 0, 0];
     bool is_system_key;
 }
-    
+
 struct awe_rect
 {
     int x, y, width, height;
@@ -203,19 +203,19 @@ version(Windows) {
 
     int awe_child_process_main(int argc, char** argv);
 }
-    
-    
+
+
 /*****************************
  * UTF-16 String Definitions *
  *****************************/
-    
+
 /**
  * Get an instance of an empty string. This is a convenience method to
  * quickly pass an empty string to the C API-- you should not destroy
  * this string yourself.
  */
 const(awe_string)* awe_string_empty();
-    
+
 /**
  * Create a string from an ASCII string. You must call awe_string_destroy
  * with the returned instance once you're done using it.
@@ -226,7 +226,7 @@ const(awe_string)* awe_string_empty();
  */
 awe_string* awe_string_create_from_ascii(const(char)* str,
                                          size_t len);
-    
+
 /**
  * Create a string from a Wide string. You must call awe_string_destroy
  * with the returned instance once you're done using it.
@@ -237,7 +237,7 @@ awe_string* awe_string_create_from_ascii(const(char)* str,
  */
 awe_string* awe_string_create_from_wide(const(wchar_t)* str,
                                                    size_t len);
-    
+
 /**
  * Create a string from a UTF-8 string. You must call awe_string_destroy
  * with the returned instance once you're done using it.
@@ -259,14 +259,14 @@ awe_string* awe_string_create_from_utf8(const(char)* str,
  */
 awe_string* awe_string_create_from_utf16(const(wchar16)* str,
                                                    size_t len);
-    
+
 /**
  * Destroys a string instance created with one of the above functions.
  *
  * @param   str The instance to destroy.
  */
 void awe_string_destroy(awe_string* str);
-    
+
 /**
  * Gets the length of a string.
  *
@@ -275,7 +275,7 @@ void awe_string_destroy(awe_string* str);
  * @return  The length of the string.
  */
 size_t awe_string_get_length(const(awe_string)* str);
-    
+
 /**
  * Get a pointer to the actual internal UTF-16 bytes of a string.
  *
@@ -287,7 +287,7 @@ const(wchar16)* awe_string_get_utf16(const(awe_string)* str);
 
 /**
  * Converts a string to a wide string by copying to the destination buffer.
- * 
+ *
  * @param   str The source string instance
  *
  * @param   dest    The destination buffer to copy to.
@@ -301,12 +301,12 @@ const(wchar16)* awe_string_get_utf16(const(awe_string)* str);
  *          convert the string.
  */
 int awe_string_to_wide(const(awe_string)* str,
-                                  wchar_t* dest, 
+                                  wchar_t* dest,
                                   size_t len);
 
 /**
  * Converts a string to a UTF-8 string by copying to the destination buffer.
- * 
+ *
  * @param   str The source string instance
  *
  * @param   dest    The destination buffer to copy to.
@@ -320,13 +320,13 @@ int awe_string_to_wide(const(awe_string)* str,
  *          convert the string.
  */
 int awe_string_to_utf8(const(awe_string)* str,
-                                  char* dest, 
+                                  char* dest,
                                   size_t len);
 
 /***********************
  * Web Core Functions  *
  ***********************/
-    
+
 /**
  * Instantiates the WebCore singleton with a set of configuration
  * parameters.
@@ -380,29 +380,29 @@ void awe_webcore_initialize(bool enable_plugins,
                                        bool disable_same_origin_policy,
                                        bool disable_win_message_pump,
                                        const(awe_string)* custom_css);
-    
+
 /**
  * Instantiates the WebCore singleton with the default parameters
  * specified in the method above.
  */
 void awe_webcore_initialize_default();
-    
+
 /**
  * Destroys the WebCore singleton and destroys any remaining WebViews.
  */
 void awe_webcore_shutdown();
-    
+
 /**
  * Sets the base directory.
  *
- * @param   base_dir_path   The absolute path to your base directory. 
+ * @param   base_dir_path   The absolute path to your base directory.
  *                          The base directory is a location that holds
- *                          all of your local assets. It will be used 
+ *                          all of your local assets. It will be used
  *                          for WebView::loadFile and WebView::loadHTML
  *                          (to resolve relative URLs).
  */
 void awe_webcore_set_base_directory(const(awe_string)* base_dir_path);
-    
+
 /**
  * Creates a new WebView.
  *
@@ -416,12 +416,12 @@ void awe_webcore_set_base_directory(const(awe_string)* base_dir_path);
  */
 awe_webview* awe_webcore_create_webview(int width, int height,
                                                    bool view_source);
-    
+
 /**
- * Sets a custom response page to use when a WebView encounters a 
+ * Sets a custom response page to use when a WebView encounters a
  * certain HTML status code from the server (like '404 - File not found').
  *
- * @param   status_code The status code this response page should be 
+ * @param   status_code The status code this response page should be
  *                      associated with.
  *                      See <http://en.wikipedia.org/wiki/List_of_HTTP_status_codes>
  *
@@ -430,7 +430,7 @@ awe_webview* awe_webcore_create_webview(int width, int height,
  */
 void awe_webcore_set_custom_response_page(int status_code,
                                                      const(awe_string)* file_path);
-    
+
 /**
  * Updates the WebCore and allows it to conduct various operations such
  * as updating the render buffer of each WebView, destroying any
@@ -438,33 +438,33 @@ void awe_webcore_set_custom_response_page(int status_code,
  * callback events.
  */
 void awe_webcore_update();
-    
+
 /**
  * Retrieves the base directory.
  *
- * @return  Returns a string instance representing the current 
+ * @return  Returns a string instance representing the current
  *          base directory. (You do not need to destroy this instance)
  */
 const(awe_string)* awe_webcore_get_base_directory();
-    
+
 /**
  * Returns whether or not plugins are enabled.
  */
 bool awe_webcore_are_plugins_enabled();
-    
+
 /**
  * Clear the disk cache and media cache.
  */
 void awe_webcore_clear_cache();
-    
+
 /**
  * Clear all cookies.
  */
 void awe_webcore_clear_cookies();
-    
+
 /**
  * Sets a cookie for a certain URL.
- * 
+ *
  * @param   url The URL to set the cookie on.
  *
  * @param   cookie_string   The cookie string, for example:
@@ -472,7 +472,7 @@ void awe_webcore_clear_cookies();
  *
  * @param   is_http_only    Whether or not this cookie is HTTP-only.
  *
- * @param   force_session_cookie    Whether or not to force this as a 
+ * @param   force_session_cookie    Whether or not to force this as a
  *                              session cookie.
  *
  */
@@ -480,7 +480,7 @@ void awe_webcore_set_cookie(const(awe_string)* url,
                                        const(awe_string)* cookie_string,
                                        bool is_http_only,
                                        bool force_session_cookie);
-    
+
 /**
  * Gets all cookies for a certain URL.
  *
@@ -496,14 +496,14 @@ const(awe_string)* awe_webcore_get_cookies(const(awe_string)* url,
 
 /**
  * Deletes a certain cookie on a certain URL.
- * 
+ *
  * @param   url The URL that we will be deleting cookies on.
  *
  * @param   cookie_name The name of the cookie that will be deleted.
  */
 void awe_webcore_delete_cookie(const(awe_string)* url,
                                           const(awe_string)* cookie_name);
-    
+
 
 /**
  * Set whether or not the printer dialog should be suppressed or not.
@@ -511,7 +511,7 @@ void awe_webcore_delete_cookie(const(awe_string)* url,
  * using the OS's default printer when WebView::print is called.
  * Default is "false" if you never call this.
  *
- * @param   suppress    Whether or not the printer dialog should be 
+ * @param   suppress    Whether or not the printer dialog should be
  *                      suppressed.
  */
 void awe_webcore_set_suppress_printer_dialog(bool suppress);
@@ -543,7 +543,7 @@ awe_history_query_result* awe_webcore_query_history(const(awe_string)* full_text
 /***********************
  * Web View Functions  *
  ***********************/
-    
+
 /**
  * Queue a WebView for destruction by the WebCore.
  *
@@ -551,7 +551,7 @@ awe_history_query_result* awe_webcore_query_history(const(awe_string)* full_text
  *
  */
 void awe_webview_destroy(awe_webview* webview);
-    
+
 /**
  * Loads a URL into the WebView asynchronously.
  *
@@ -559,13 +559,13 @@ void awe_webview_destroy(awe_webview* webview);
  *
  * @param   url The URL to load.
  *
- * @param   frame_name  The name of the frame to load the URL 
+ * @param   frame_name  The name of the frame to load the URL
  *                      in; leave this blank to load in the main frame.
  *
- * @param   username    If the URL requires authentication, the username 
+ * @param   username    If the URL requires authentication, the username
  *                      to authorize as, otherwise just pass an empty string.
  *
- * @param   password    If the URL requires authentication, the password 
+ * @param   password    If the URL requires authentication, the password
  *                      to use, otherwise just pass an empty string.
  */
 void awe_webview_load_url(awe_webview* webview,
@@ -573,7 +573,7 @@ void awe_webview_load_url(awe_webview* webview,
                                      const(awe_string)* frame_name,
                                      const(awe_string)* username,
                                      const(awe_string)* password);
-    
+
 /**
  * Loads a string of HTML into the WebView asynchronously.
  *
@@ -605,7 +605,7 @@ void awe_webview_load_file(awe_webview* webview,
                                       const(awe_string)* frame_name);
 
 awe_string* awe_webview_get_url(awe_webview* webview);
-    
+
 /**
  * Navigates back/forward in history via a relative offset.
  *
@@ -621,7 +621,7 @@ int awe_webview_get_history_back_count(awe_webview* webview);
 
 /// Get the number of steps forward in history we can go.
 int awe_webview_get_history_forward_count(awe_webview* webview);
-    
+
 /**
  * Stops the current navigation.
  */
@@ -633,12 +633,12 @@ void awe_webview_stop(awe_webview* webview);
 void awe_webview_reload(awe_webview* webview);
 
 /**
- * Executes a string of Javascript in the context of the current page 
+ * Executes a string of Javascript in the context of the current page
  * asynchronously.
  *
  * @param   javascript  The string of Javascript to execute.
  *
- * @param   frame_name  The name of the frame to execute in; 
+ * @param   frame_name  The name of the frame to execute in;
  *                      pass an empty string to execute in the main frame.
  */
 void awe_webview_execute_javascript(awe_webview* webview,
@@ -646,12 +646,12 @@ void awe_webview_execute_javascript(awe_webview* webview,
                                                const(awe_string)* frame_name);
 
 /**
- * Executes a string of Javascript in the context of the current page 
+ * Executes a string of Javascript in the context of the current page
  * asynchronously with a result.
  *
  * @param   javascript  The string of Javascript to execute.
  *
- * @param   frame_name  The name of the frame to execute in; 
+ * @param   frame_name  The name of the frame to execute in;
  *                      pass an empty string to execute in the main frame.
  *
  * @param   timeout_ms  The maximum amount of time (in milliseconds) to wait
@@ -670,15 +670,15 @@ awe_jsvalue* awe_webview_execute_javascript_with_result(
 /**
  * Call a certain function defined in Javascript directly.
  *
- * @param   object  The name of the object that contains the function, 
- *                  pass an empty string if the function is defined in 
+ * @param   object  The name of the object that contains the function,
+ *                  pass an empty string if the function is defined in
  *                  the global scope.
  *
  * @param   function    The name of the function.
  *
  * @param   args    The arguments to pass to the function.
  *
- * @param   frame_name  The name of the frame to execute in; 
+ * @param   frame_name  The name of the frame to execute in;
  *                      leave this blank to execute in the main frame.
  */
 void awe_webview_call_javascript_function(awe_webview* webview,
@@ -688,10 +688,10 @@ void awe_webview_call_javascript_function(awe_webview* webview,
                                                      const(awe_string)* frame_name);
 
 /**
- * Creates a new global Javascript object that will persist throughout 
- * the lifetime of this WebView. This object is managed directly by 
- * Awesomium and so you can modify its properties and bind callback 
- * functions via awe_webview_set_object_property() and 
+ * Creates a new global Javascript object that will persist throughout
+ * the lifetime of this WebView. This object is managed directly by
+ * Awesomium and so you can modify its properties and bind callback
+ * functions via awe_webview_set_object_property() and
  * awe_webview_set_object_callback(), respectively.
  *
  * @param   objectName  The name of the object.
@@ -700,7 +700,7 @@ void awe_webview_create_object(awe_webview* webview,
                                           const(awe_string)* object_name);
 
 /**
- * Destroys a Javascript object previously created by 
+ * Destroys a Javascript object previously created by
  * awe_webview_create_object
  *
  * @param   object_name The name of the object to destroy.
@@ -709,7 +709,7 @@ void awe_webview_destroy_object(awe_webview* webview,
                                            const(awe_string)* object_name);
 
 /**
- * Sets a property of a Javascript object previously created by 
+ * Sets a property of a Javascript object previously created by
  * awe_webview_create_object().
  *
  * @param   object_name The name of the Javascript object.
@@ -724,8 +724,8 @@ void awe_webview_set_object_property(awe_webview* webview,
                                                 const(awe_jsvalue)* value);
 
 /**
- * Sets a callback function of a Javascript object previously created 
- * by awe_webview_create_object(). This is very useful for passing events 
+ * Sets a callback function of a Javascript object previously created
+ * by awe_webview_create_object(). This is very useful for passing events
  * from Javascript to C. To receive notification of the callback, please
  * see awe_webview_set_callback_js_callback().
  *
@@ -745,16 +745,16 @@ void awe_webview_set_object_callback(awe_webview* webview,
 bool awe_webview_is_loading_page(awe_webview* webview);
 
 /**
- * Returns whether or not the WebView is dirty and needs to be 
+ * Returns whether or not the WebView is dirty and needs to be
  * re-rendered via awe_webview_render.
  *
- * @return  If the WebView is dirty, returns true, otherwise returns 
+ * @return  If the WebView is dirty, returns true, otherwise returns
  *          false.
  */
 bool awe_webview_is_dirty(awe_webview* webview);
 
 /**
- * Returns the bounds of the area that has changed since the last call 
+ * Returns the bounds of the area that has changed since the last call
  * to awe_webview_render.
  *
  * @return  The bounds of the dirty area.
@@ -762,7 +762,7 @@ bool awe_webview_is_dirty(awe_webview* webview);
 awe_rect awe_webview_get_dirty_bounds(awe_webview* webview);
 
 /**
- * Renders this WebView into an offscreen render buffer and clears the 
+ * Renders this WebView into an offscreen render buffer and clears the
  * dirty state.
  *
  * @return  A pointer to the internal render buffer instance that was used to
@@ -773,7 +773,7 @@ const(awe_renderbuffer)* awe_webview_render(awe_webview* webview);
 
 /**
  * All rendering is actually done asynchronously in a separate process
- * and so the page is usually continuously rendering even if you never 
+ * and so the page is usually continuously rendering even if you never
  * call awe_webview_render. Call this to temporarily pause rendering.
  */
 void awe_webview_pause_rendering(awe_webview* webview);
@@ -782,14 +782,14 @@ void awe_webview_pause_rendering(awe_webview* webview);
  * Resume rendering after all call to awe_webview_pause_rendering.
  */
 void awe_webview_resume_rendering(awe_webview* webview);
-    
+
 /**
  * Injects a mouse-move event in local coordinates.
  *
- * @param   x   The absolute x-coordinate of the mouse (localized to 
+ * @param   x   The absolute x-coordinate of the mouse (localized to
  *              the WebView).
  *
- * @param   y   The absolute y-coordinate of the mouse (localized to 
+ * @param   y   The absolute y-coordinate of the mouse (localized to
  *              the WebView).
  */
 void awe_webview_inject_mouse_move(awe_webview* webview,
@@ -803,7 +803,7 @@ void awe_webview_inject_mouse_move(awe_webview* webview,
  */
 void awe_webview_inject_mouse_down(awe_webview* webview,
                                               awe_mousebutton button);
-        
+
 /**
  * Injects a mouse-up event.
  *
@@ -811,7 +811,7 @@ void awe_webview_inject_mouse_down(awe_webview* webview,
  */
 void awe_webview_inject_mouse_up(awe_webview* webview,
                                             awe_mousebutton button);
-        
+
 /**
  * Injects a mouse-wheel event.
  *
@@ -822,7 +822,7 @@ void awe_webview_inject_mouse_up(awe_webview* webview,
 void awe_webview_inject_mouse_wheel(awe_webview* webview,
                                                int scroll_amount_vert,
                                                int scroll_amount_horz);
-        
+
 /**
  * Injects a keyboard event. You'll need to initialize the members of
  * awe_webkeyboardevent yourself.
@@ -832,7 +832,7 @@ void awe_webview_inject_mouse_wheel(awe_webview* webview,
 void awe_webview_inject_keyboard_event(awe_webview* webview,
                                                   awe_webkeyboardevent key_event);
 
-version(Windows) {      
+version(Windows) {
     /**
     * Injects a native Windows keyboard event.
     *
@@ -845,22 +845,22 @@ version(Windows) {
                                                         WPARAM wparam,
                                                         LPARAM lparam);
 }
-        
+
 /**
  * Invokes a 'cut' action using the system clipboard.
  */
 void awe_webview_cut(awe_webview* webview);
-        
+
 /**
  * Invokes a 'copy' action using the system clipboard.
  */
 void awe_webview_copy(awe_webview* webview);
-        
+
 /**
  * Invokes a 'paste' action using the system clipboard.
  */
 void awe_webview_paste(awe_webview* webview);
-        
+
 /**
  * Selects all items on the current page.
  */
@@ -870,7 +870,7 @@ void awe_webview_select_all(awe_webview* webview);
 void awe_webview_copy_image_at(awe_webview* webview,
                                           int x,
                                           int y);
-        
+
 /**
  * Zooms the page a specified percent.
  *
@@ -879,7 +879,7 @@ void awe_webview_copy_image_at(awe_webview* webview,
  */
 void awe_webview_set_zoom(awe_webview* webview,
                                      int zoom_percent);
-        
+
 /**
  * Resets the zoom level.
  */
@@ -891,7 +891,7 @@ int awe_webview_get_zoom(awe_webview* webview);
 /// Gets the zoom level for a specific hostname.
 int awe_webview_get_zoom_for_host(awe_webview* webview,
                                              const(awe_string)* host);
-        
+
 /**
  * Resizes this WebView to certain dimensions.
  *
@@ -913,7 +913,7 @@ bool awe_webview_resize(awe_webview* webview,
                                    int width,
                                    int height,
                                    bool wait_for_repaint,
-                                   int repaint_timeout_ms); 
+                                   int repaint_timeout_ms);
 
 /**
 * Checks whether or not there is a resize operation pending.
@@ -922,19 +922,19 @@ bool awe_webview_resize(awe_webview* webview,
 *           return acknowledgement of a pending resize operation.
 */
 bool awe_webview_is_resizing(awe_webview* webview);
-        
+
 /**
  * Notifies the current page that it has lost focus.
  */
 void awe_webview_unfocus(awe_webview* webview);
-        
+
 /**
  * Notifies the current page that is has gained focus. You will need
  * to call this to gain textbox focus, among other things. (If you
  * fail to ever see a blinking caret when typing text, this is why).
  */
 void awe_webview_focus(awe_webview* webview);
-        
+
 /**
  * Sets whether or not pages should be rendered with transparency
  * preserved. (ex, for pages with style="background-color:transparent")
@@ -945,7 +945,7 @@ void awe_webview_set_transparent(awe_webview* webview,
                                             bool is_transparent);
 
 bool awe_webview_is_transparent(awe_webview* webview);
-        
+
 /**
  * Sets the current URL Filtering Mode (default is AWE_UFM_NONE).
  * See awe_url_filtering_mode for more information on the modes.
@@ -954,35 +954,35 @@ bool awe_webview_is_transparent(awe_webview* webview);
  */
 void awe_webview_set_url_filtering_mode(awe_webview* webview,
                                                    awe_url_filtering_mode mode);
-        
+
 /**
  * Adds a new URL Filter rule.
  *
- * @param   filter  A string with optional wildcards that describes a 
+ * @param   filter  A string with optional wildcards that describes a
  *                  certain URL.
  *
- * @note        For example, to match all URLs from the domain 
+ * @note        For example, to match all URLs from the domain
  *              "google.com", your filter string might be:
  *                  http://google.com/*
  *
- * @note        You may also use the "local://" scheme prefix to 
- *              describe the URL to the base directory (set via 
+ * @note        You may also use the "local://" scheme prefix to
+ *              describe the URL to the base directory (set via
  *              awe_webcore_set_base_directory).
  */
 void awe_webview_add_url_filter(awe_webview* webview,
                                            const(awe_string)* filter);
-        
+
 /**
  * Clears all URL Filter rules.
  */
 void awe_webview_clear_all_url_filters(awe_webview* webview);
-        
+
 /**
  * Defines a new Header Definition or updates it if it already exists.
  *
- * @param   name    The unique name of the Header Definition; this is 
- *                  used to refer to it later in 
- *                  awe_webview_add_header_rewrite_rule and 
+ * @param   name    The unique name of the Header Definition; this is
+ *                  used to refer to it later in
+ *                  awe_webview_add_header_rewrite_rule and
  *                  related methods.
  *
  * @param   num_fields  The number of fields in the header.
@@ -996,41 +996,41 @@ void awe_webview_set_header_definition(awe_webview* webview,
                                             size_t num_fields,
                                             const(awe_string*)* field_names,
                                             const(awe_string*)* field_values);
-            
+
 /**
  * Adds a new a header re-write rule. All requests whose URL matches the
- * specified rule will have its  HTTP headers re-written with the 
+ * specified rule will have its  HTTP headers re-written with the
  * specified header definition before sending it to the server.
  *
- * @param   rule    A string with optional wildcards (*, ?) that 
- *                  matches the URL(s) that will have its headers 
+ * @param   rule    A string with optional wildcards (*, ?) that
+ *                  matches the URL(s) that will have its headers
  *                  re-written with the specified header definition.
  *
- * @param   name    The name of the header definition (specified in 
+ * @param   name    The name of the header definition (specified in
  *                  awe_webview_set_header_definition).
  *
- * @note        The case where a URL is matched by multiple rules is 
+ * @note        The case where a URL is matched by multiple rules is
  *              unsupported, only the first match will be used.
  */
 void awe_webview_add_header_rewrite_rule(awe_webview* webview,
                                                     const(awe_string)* rule,
                                                     const(awe_string)* name);
-        
+
 /**
  * Removes a header re-write rule from this WebView.
  *
- * @param   rule    The rule to remove (should match the string 
+ * @param   rule    The rule to remove (should match the string
  *                  specified in awe_webview_add_header_rewrite_rule exactly).
  */
 void awe_webview_remove_header_rewrite_rule(awe_webview* webview,
                                                        const(awe_string)* rule);
-        
+
 /**
- * Removes all header re-write rules that are using a certain header 
+ * Removes all header re-write rules that are using a certain header
  * definition.
  *
- * @param   name    The name of the header definition (specified in 
- *                  awe_webview_set_header_definition). If you specify an 
+ * @param   name    The name of the header definition (specified in
+ *                  awe_webview_set_header_definition). If you specify an
  *                  empty string, this will remove ALL header re-write rules.
  */
 void awe_webview_remove_header_rewrite_rules_by_definition_name(
@@ -1047,7 +1047,7 @@ void awe_webview_choose_file(awe_webview* webview,
 
 /**
  * Print the current page. To suppress the printer selection dialog and
- * print immediately using the operating system's defaults, see 
+ * print immediately using the operating system's defaults, see
  * awe_webcore_set_suppress_printer_dialog.
  */
 void awe_webview_print(awe_webview* webview);
@@ -1065,7 +1065,7 @@ void awe_webview_request_scroll_data(awe_webview* webview,
 /**
  * Start finding a certain string on the current web-page. All matches
  * of the string will be highlighted on the page and you can jump
- * to different instances of the string by using the 'findNext' 
+ * to different instances of the string by using the 'findNext'
  * parameter. To get actual stats about a certain query, please see
  * awe_webview_set_callback_get_find_results.
  *
@@ -1167,7 +1167,7 @@ void awe_webview_cancel_ime_composition(awe_webview* webview);
  * @param   password    The password supplied by the user.
  */
 void awe_webview_login(awe_webview* webview,
-                                  int request_id, 
+                                  int request_id,
                                   const(awe_string)* username,
                                   const(awe_string)* password);
 
@@ -1191,8 +1191,8 @@ void awe_webview_cancel_login(awe_webview* webview,
  *                      text the user entered into the textbox via this parameter.
  */
 void awe_webview_close_javascript_dialog(awe_webview* webview,
-                                                    int request_id, 
-                                                    bool was_cancelled, 
+                                                    int request_id,
+                                                    bool was_cancelled,
                                                     const(awe_string)* prompt_text);
 
 /**
@@ -1316,8 +1316,8 @@ void awe_webview_set_callback_change_target_url(
 
 /**
  * Assign a callback function to be notified when an external link is attempted
- * to be opened. An external link is any link that normally opens in a new 
- * window in a standard browser (for example, links with target="_blank", 
+ * to be opened. An external link is any link that normally opens in a new
+ * window in a standard browser (for example, links with target="_blank",
  * calls to window.open(url), and URL open events from Flash plugins).
  *
  * @param   webview     The WebView instance.
@@ -1344,7 +1344,7 @@ void awe_webview_set_callback_request_download(
                                              const(awe_string)* download) callback);
 
 /**
- * Assign a callback function to be notified when the renderer for a certain 
+ * Assign a callback function to be notified when the renderer for a certain
  * WebView (which is isolated in a separate process) crashes unexpectedly.
  *
  * @param   webview     The WebView instance.
@@ -1370,7 +1370,7 @@ void awe_webview_set_callback_plugin_crashed(
                                              const(awe_string)* plugin_name) callback);
 
 /**
- * Assign a callback function to be notified when the page requests for the 
+ * Assign a callback function to be notified when the page requests for the
  * containing window to be moved to a certain location on the screen.
  *
  * @param   webview     The WebView instance.
@@ -1384,7 +1384,7 @@ void awe_webview_set_callback_request_move(
                                              int y) callback);
 
 /**
- * Assign a callback function to be notified when the contents of the page has finished 
+ * Assign a callback function to be notified when the contents of the page has finished
  * loading. This occurs at the end of most page loads.
  *
  * @param   webview     The WebView instance.
@@ -1398,7 +1398,7 @@ void awe_webview_set_callback_get_page_contents(
                                              const(awe_string)* contents) callback);
 
 /**
- * Assign a callback function to be notified once the DOM (Document Object 
+ * Assign a callback function to be notified once the DOM (Document Object
  * Model) for a page is ready. This is very useful for executing Javascript
  * on a page before its content has finished loading.
  *
@@ -1411,11 +1411,11 @@ void awe_webview_set_callback_dom_ready(
                             void function(awe_webview* caller) callback);
 
 /**
- * Assign a callback function to be notified whenever a page requests a file 
- * chooser dialog to be displayed (usually the result of an "input" element 
+ * Assign a callback function to be notified whenever a page requests a file
+ * chooser dialog to be displayed (usually the result of an "input" element
  * with type "file" being clicked by a user). You will need to display your
  * own dialog (it does not have to be modal, this request does not block).
- * Once a file has been chosen by the user, awe_webview_choose_file or 
+ * Once a file has been chosen by the user, awe_webview_choose_file or
  * awe_webview_choose_multiple_files should be called.
  *
  * @param   webview     The WebView instance.
@@ -1445,13 +1445,13 @@ void awe_webview_set_callback_get_scroll_data(
                                              int preferredWidth,
                                              int scrollX,
                                              int scrollY) callback);
-    
+
 /**
  * Assign a callback function to be notified of any Javascript
  * console messages. (Usually Javascript errors encountered in scripts)
  *
  * @param   webview     The WebView instance
- * 
+ *
  * @param   callback    A function pointer to the callback.
  */
 void awe_webview_set_callback_js_console_message(
@@ -1466,7 +1466,7 @@ void awe_webview_set_callback_js_console_message(
  * results back from an in-page find operation (awe_webview_find).
  *
  * @param   webview     The WebView instance
- * 
+ *
  * @param   callback    A function pointer to the callback.
  */
 void awe_webview_set_callback_get_find_results(
@@ -1479,13 +1479,13 @@ void awe_webview_set_callback_get_find_results(
                                            bool finalUpdate) callback);
 
 /**
- * Assign a callback function to be notified whenever the user does 
+ * Assign a callback function to be notified whenever the user does
  * something that may change the position or visiblity of the IME Widget.
  * This callback is only active when IME is activated (please
  * see awe_webview_activate_ime).
  *
  * @param   webview     The WebView instance
- * 
+ *
  * @param   callback    A function pointer to the callback.
  */
 void awe_webview_set_callback_update_ime(
@@ -1520,7 +1520,7 @@ void awe_webview_set_callback_show_context_menu(
                                        int edit_flags) callback);
 
 /**
- * Assign a callback function to be notified whenever a page requests 
+ * Assign a callback function to be notified whenever a page requests
  * authentication from the user (ex, Basic HTTP Auth, NTLM Auth, etc.).
  * See awe_webview_login and awe_webview_cancel_login
  *
@@ -1554,8 +1554,8 @@ void awe_webview_set_callback_change_history(
                                     int forward_count) callback);
 
 /**
- * Assign a callback function to be notified whenever a WebView has 
- * finished resizing to a certain size (and has finished repainting 
+ * Assign a callback function to be notified whenever a WebView has
+ * finished resizing to a certain size (and has finished repainting
  * the RenderBuffer).
  *
  * @param   webview The WebView instance
@@ -1569,9 +1569,9 @@ void awe_webview_set_callback_finish_resize(
                                    int height) callback);
 
 /**
- * Assign a callback function to be notified whenever a WebView 
- * requests that a certain Javascript dialog be shown (eg, alert, 
- * confirm, prompt). See awe_webview_close_javascript_dialog for 
+ * Assign a callback function to be notified whenever a WebView
+ * requests that a certain Javascript dialog be shown (eg, alert,
+ * confirm, prompt). See awe_webview_close_javascript_dialog for
  * more information.
  *
  * @param   webview The WebView instance
@@ -1590,7 +1590,7 @@ void awe_webview_set_callback_show_javascript_dialog(
 /***********************
  * JS Value Functions  *
  ***********************/
-    
+
 enum awe_jsvalue_type
 {
     JSVALUE_TYPE_NULL,
@@ -1601,15 +1601,15 @@ enum awe_jsvalue_type
     JSVALUE_TYPE_OBJECT,
     JSVALUE_TYPE_ARRAY
 }
-    
+
 /**
- * Create a JSValue instance initialized as a null type. You must call 
+ * Create a JSValue instance initialized as a null type. You must call
  * awe_jsvalue_destroy with the returned instance once you're done using it.
  */
 awe_jsvalue* awe_jsvalue_create_null_value();
 
 /**
- * Create a JSValue instance initialized with a boolean type. You must call 
+ * Create a JSValue instance initialized with a boolean type. You must call
  * awe_jsvalue_destroy with the returned instance once you're done using it.
  *
  * @param   value   The initial value
@@ -1617,7 +1617,7 @@ awe_jsvalue* awe_jsvalue_create_null_value();
 awe_jsvalue* awe_jsvalue_create_bool_value(bool value);
 
 /**
- * Create a JSValue instance initialized with an integer type. You must call 
+ * Create a JSValue instance initialized with an integer type. You must call
  * awe_jsvalue_destroy with the returned instance once you're done using it.
  *
  * @param   value   The initial value
@@ -1625,7 +1625,7 @@ awe_jsvalue* awe_jsvalue_create_bool_value(bool value);
 awe_jsvalue* awe_jsvalue_create_integer_value(int value);
 
 /**
- * Create a JSValue instance initialized with a double type. You must call 
+ * Create a JSValue instance initialized with a double type. You must call
  * awe_jsvalue_destroy with the returned instance once you're done using it.
  *
  * @param   value   The initial value
@@ -1633,7 +1633,7 @@ awe_jsvalue* awe_jsvalue_create_integer_value(int value);
 awe_jsvalue* awe_jsvalue_create_double_value(double value);
 
 /**
- * Create a JSValue instance initialized with a string type. You must call 
+ * Create a JSValue instance initialized with a string type. You must call
  * awe_jsvalue_destroy with the returned instance once you're done using it.
  *
  * @param   value   The initial value
@@ -1641,7 +1641,7 @@ awe_jsvalue* awe_jsvalue_create_double_value(double value);
 awe_jsvalue* awe_jsvalue_create_string_value(const(awe_string)* value);
 
 /**
- * Create a JSValue instance initialized with an object type. You must call 
+ * Create a JSValue instance initialized with an object type. You must call
  * awe_jsvalue_destroy with the returned instance once you're done using it.
  *
  * @param   value   The initial value
@@ -1649,7 +1649,7 @@ awe_jsvalue* awe_jsvalue_create_string_value(const(awe_string)* value);
 awe_jsvalue* awe_jsvalue_create_object_value(const(awe_jsobject)* value);
 
 /**
- * Create a JSValue instance initialized with an array type. You must call 
+ * Create a JSValue instance initialized with an array type. You must call
  * awe_jsvalue_destroy with the returned instance once you're done using it.
  *
  * @param   value   The initial value
@@ -1696,11 +1696,11 @@ const(awe_jsarray)* awe_jsvalue_get_array(const(awe_jsvalue)* jsvalue);
 
 /// Returns this value as an object. Will throw an exception if not an object.
 const(awe_jsobject)* awe_jsvalue_get_object(const(awe_jsvalue)* jsvalue);
-    
+
 /****************************
  * JS Value Array Functions *
  ****************************/
-    
+
 /**
  * Create a JSValue Array.
  *
@@ -1714,23 +1714,23 @@ awe_jsarray* awe_jsarray_create(const(awe_jsvalue*)* jsvalue_array,
  * Destroys a JSValue Array created with awe_jsarray_create.
  */
 void awe_jsarray_destroy(awe_jsarray* jsarray);
-    
+
 /**
  * Get the size of a JSValue Array.
  */
 size_t awe_jsarray_get_size(const(awe_jsarray)* jsarray);
-    
+
 /**
  * Get a specific element of a JSValue Array. The Array retains ownership
  * of the returned JSValue instance (you do not need to destroy it).
  */
 const(awe_jsvalue)* awe_jsarray_get_element(const(awe_jsarray)* jsarray,
                                                        size_t index);
-    
+
 /*****************************
  * JS Value Object Functions *
  *****************************/
-    
+
 /**
  * Creates a JSValue Object.
  */
@@ -1771,7 +1771,7 @@ size_t awe_jsobject_get_size(awe_jsobject* jsobject);
  * awe_jsarray_destroy on the returned value after you're done using it.
  */
 awe_jsarray* awe_jsobject_get_keys(awe_jsobject* jsobject);
-    
+
 /***************************
  * Render Buffer Functions *
  ***************************/
@@ -1805,9 +1805,9 @@ void awe_renderbuffer_copy_to(const(awe_renderbuffer)* renderbuffer,
                                          int dest_depth,
                                          bool convert_to_rgba,
                                          bool flip_y);
-    
+
 /**
- * Copy a RenderBuffer to a pixel buffer with a floating-point pixel format 
+ * Copy a RenderBuffer to a pixel buffer with a floating-point pixel format
  * for use with game engines like Unity3D.
  */
 void awe_renderbuffer_copy_to_float(const(awe_renderbuffer)* renderbuffer,
@@ -1826,7 +1826,7 @@ bool awe_renderbuffer_save_to_png(const(awe_renderbuffer)* renderbuffer,
 bool awe_renderbuffer_save_to_jpeg(const(awe_renderbuffer)* renderbuffer,
                                               const(awe_string)* file_path,
                                               int quality);
-    
+
 /**
  * Get the alpha value at a certain point (origin is top-left). This is
  * useful for alpha-picking.
@@ -1851,9 +1851,9 @@ void awe_renderbuffer_flush_alpha(const(awe_renderbuffer)* renderbuffer);
  ************************/
 
 /**
- * Assign a callback function to intercept requests for resources. You can use 
- * this to modify requests before they are sent, respond to requests using 
- * your own custom resource-loading back-end, or to monitor requests for 
+ * Assign a callback function to intercept requests for resources. You can use
+ * this to modify requests before they are sent, respond to requests using
+ * your own custom resource-loading back-end, or to monitor requests for
  * tracking purposes.
  *
  * @param   webview     The WebView instance.
@@ -1895,10 +1895,10 @@ awe_resource_response* awe_resource_response_create(
  */
 awe_resource_response* awe_resource_response_create_from_file(
                                                   const(awe_string)* file_path);
-    
+
 /************************
  * Resource Request     *
- ************************/  
+ ************************/
 
 /// Cancel the request (this is useful for blocking a resource load).
 void awe_resource_request_cancel(awe_resource_request* request);
@@ -1916,7 +1916,7 @@ void awe_resource_request_set_method(awe_resource_request* request,
 /// Get the referrer  (You must destroy returned string)
 awe_string* awe_resource_request_get_referrer(awe_resource_request* request);
 
-/// Set the referrer    
+/// Set the referrer
 void awe_resource_request_set_referrer(awe_resource_request* request,
                                                   const(awe_string)* referrer);
 
@@ -1929,8 +1929,8 @@ awe_string* awe_resource_request_get_extra_headers(awe_resource_request* request
  * Format should be:
  *   Name: Value/r/nName: Value/r/nName: Value
  *
- * Headers should NOT end in /r/n (CRLF)     
- */ 
+ * Headers should NOT end in /r/n (CRLF)
+ */
 void awe_resource_request_set_extra_headers(awe_resource_request* request,
                                                 const(awe_string)* headers);
 
@@ -1939,37 +1939,37 @@ void awe_resource_request_set_extra_headers(awe_resource_request* request,
  *
  * @param   name    Name of the header
  * @param   value   Value of the header
- */ 
+ */
 void awe_resource_request_append_extra_header(awe_resource_request* request,
                                                          const(awe_string)* name,
                                                          const(awe_string)* value);
-    
-/// Get the number of upload elements (essentially, batches of POST data).  
+
+/// Get the number of upload elements (essentially, batches of POST data).
 size_t awe_resource_request_get_num_upload_elements(awe_resource_request* request);
 
-/// Get a certain upload element (returned instance is owned by this class) 
+/// Get a certain upload element (returned instance is owned by this class)
 const(awe_upload_element)* awe_resource_request_get_upload_element(awe_resource_request* request,
                                                                              size_t idx);
 
-/// Clear all upload elements   
+/// Clear all upload elements
 void awe_resource_request_clear_upload_elements(awe_resource_request* request);
 
-/// Append a file for POST data (adds a new UploadElement)  
+/// Append a file for POST data (adds a new UploadElement)
 void awe_resource_request_append_upload_file_path(awe_resource_request* request,
                                                              const(awe_string)* file_path);
 
-/// Append a string of bytes for POST data (adds a new UploadElement)   
+/// Append a string of bytes for POST data (adds a new UploadElement)
 void awe_resource_request_append_upload_bytes(awe_resource_request* request,
                                                          const(awe_string)* bytes);
-    
+
 /************************
  * Upload Element       *
- ************************/      
-    
-/// Whether or not this UploadElement is a file 
+ ************************/
+
+/// Whether or not this UploadElement is a file
 bool awe_upload_element_is_file_path(const(awe_upload_element)* ele);
 
-/// Whether or not this UploadElement is a string of bytes  
+/// Whether or not this UploadElement is a string of bytes
 bool awe_upload_element_is_bytes(const(awe_upload_element)* ele);
 
 /// Get the string of bytes associated with this UploadElement (You must destroy returned string)
@@ -1981,8 +1981,8 @@ awe_string* awe_upload_element_get_file_path(const(awe_upload_element)* ele);
 
 /************************
  * History Query Result *
- ************************/      
-    
+ ************************/
+
 /// Destroy the instance (you must call this once you're done using the instance)
 void awe_history_query_result_destroy(awe_history_query_result* res);
 
@@ -1996,8 +1996,8 @@ awe_history_entry* awe_history_query_result_get_entry_at_index(awe_history_query
 
 /************************
  * History Entry        *
- ************************/      
-    
+ ************************/
+
 /// Destroy the instance
 void awe_history_entry_destroy(awe_history_entry* entry);
 
@@ -2012,7 +2012,7 @@ double awe_history_entry_get_visit_time(awe_history_entry* entry);
 
 /// Get the number of times this page was visited.
 int awe_history_entry_get_visit_count(awe_history_entry* entry);
-    
+
 }
 
 /**
@@ -2020,10 +2020,10 @@ int awe_history_entry_get_visit_count(awe_history_entry* entry);
  *
  * @section intro_sec Introduction
  *
- * Hi there, welcome to the Awesomium C API docs! Awesomium is a software 
- * library that makes it easy to put the web in your applications. Whether 
- * that means embedded web browsing, rendering pages as images, streaming 
- * pages over the net, or manipulating web content live for some other 
+ * Hi there, welcome to the Awesomium C API docs! Awesomium is a software
+ * library that makes it easy to put the web in your applications. Whether
+ * that means embedded web browsing, rendering pages as images, streaming
+ * pages over the net, or manipulating web content live for some other
  * purpose, Awesomium does it all.
  *
  * Our C API provides much more compatibility than our C++ API at the cost
@@ -2040,12 +2040,12 @@ int awe_history_entry_get_visit_count(awe_history_entry* entry);
  *    awe_webview_destroy()
  * </pre>
  *
- * To avoid memory leaks, there is one major rule that you must follow in 
+ * To avoid memory leaks, there is one major rule that you must follow in
  * our C API regarding ownership of returned objects: if a function returns
  * a regular pointer to an instance, you must destroy the instance using the
  * relevant method. Otherwise, if a function returns a const pointer to an
  * instance, you should not destroy it (ownership is retained by Awesomium).
- * 
+ *
  * For example, you must destroy all strings you create in Awesomium:
  *
  * <pre>
@@ -2072,8 +2072,8 @@ int awe_history_entry_get_visit_count(awe_history_entry* entry);
  * @section usefullinks_sec Useful Links
  * - Awesomium Main: <http://www.awesomium.com>
  * - Support Home: <http://support.awesomium.com>
- * 
+ *
  * @section copyright_sec Copyright
- * This documentation is copyright (C) 2011 Khrona. All rights reserved. 
+ * This documentation is copyright (C) 2011 Khrona. All rights reserved.
  * Awesomium is a trademark of Khrona.
  */

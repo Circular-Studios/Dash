@@ -6,7 +6,6 @@ import dash.utility, dash.core, dash.graphics;
 
 import yaml, gl3n.linalg;
 import derelict.opengl3.gl3;
-import dash.core.sync.mutex;
 import std.typecons, std.conv, std.traits, std.uuid;
 
 /**

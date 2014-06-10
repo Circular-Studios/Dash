@@ -9,7 +9,7 @@ import dash.utility;
 import gl3n.linalg, gl3n.aabb;
 import derelict.opengl3.gl3;
 
-mixin( registerComponents!q{components.lights} );
+mixin( registerComponents!q{dash.components.lights} );
 
 /**
  * Base class for lights.

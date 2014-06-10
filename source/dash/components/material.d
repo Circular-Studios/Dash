@@ -8,7 +8,7 @@ import yaml;
 import derelict.opengl3.gl3, derelict.freeimage.freeimage;
 import std.variant, std.conv, std.string;
 
-mixin( registerComponents!q{components.material} );
+mixin( registerComponents!q{dash.components.material} );
 
 /**
  * A collection of textures that serve different purposes in the rendering pipeline.

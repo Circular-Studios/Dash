@@ -9,7 +9,7 @@ import gl3n.linalg, gl3n.aabb;
 
 import std.stdio, std.stream, std.format, std.math, std.string;
 
-mixin( registerComponents!q{components.mesh} );
+mixin( registerComponents!q{dash.components.mesh} );
 
 /*Mesh getMesh( string name )
 {

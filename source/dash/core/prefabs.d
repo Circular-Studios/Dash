@@ -8,7 +8,7 @@ import yaml;
 import gl3n.linalg;
 import std.variant;
 
-mixin( registerComponents!q{core.prefabs} );
+mixin( registerComponents!q{dash.core.prefabs} );
 
 /**
  * Prefabs manages prefabs and allows access to them.

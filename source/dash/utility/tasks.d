@@ -8,7 +8,7 @@ import dash.utility.time, dash.utility.output;
 import gl3n.util: is_vector, is_matrix, is_quaternion;
 import gl3n.interpolate: lerp;
 
-import dash.core.time;
+import core.time;
 import std.algorithm: min;
 import std.parallelism: parallel;
 import std.uuid: UUID, randomUUID;

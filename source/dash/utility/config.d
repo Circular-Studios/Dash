@@ -586,6 +586,12 @@ public static:
             // Null content yml so it can be collected.
             contentYML = null;
         }
+        else version( unittest )
+        {
+            auto loader = Loader.fromString( testYML );
+            loader.constructor = constructor;
+            contentNode = loader.load();
+        }
         else
         {
             if( exists( Resources.CompactContentFile ) )
@@ -643,4 +649,41 @@ T constructConv( T )( ref Node node ) if( is( T == enum ) )
     {
         throw new Exception( "Enum must be represented as a scalar." );
     }
+}
+
+version( unittest )
+{
+    import std.string;
+    /// The string to store test yaml content in.
+    string testYML = q{---
+Config:
+    Input:
+        Forward:
+            Keyboard: W
+        Backward:
+            Keyboard: S
+        Jump:
+            Keyboard: Space
+    Config:
+        Logging:
+            FilePath: "dash.log"
+            Debug:
+                OutputVerbosity: !Verbosity Debug
+                LoggingVerbosity: !Verbosity Debug
+            Release:
+                OutputVerbosity: !Verbosity Medium
+                LoggingVerbosity: !Verbosity Medium
+        Display:
+            Fullscreen: false
+            Height: 720
+            Width: 1280
+        Graphics:
+            BackfaceCulling: true
+            VSync: false
+        Physics:
+            Gravity: !Vector3 0.0 -10.0 0.0
+        UserInterface:
+            FilePath: "uitest.html"
+            Scale: !Vector2 1.0 1.0
+    };
 }

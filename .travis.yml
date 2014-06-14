@@ -7,13 +7,7 @@ install:
 - sudo apt-get update
 - sudo apt-get install dmd-bin dub libfreeimage-dev libjpeg62-dev
 - sudo dub fetch x11
-- sudo dub add-local . ~master
-- cd ../
-- sudo git clone https://github.com/Circular-Studios/Sample-Dash-Game.git
-- cd Sample-Dash-Game/
-- git branch -r | grep -q $TRAVIS_BRANCH && sudo git checkout $TRAVIS_BRANCH || true
-- sudo cp libawesomium-1.6.5.so /usr/lib/libawesomium-1.6.5.so.0
-script: sudo dub test -q
+script: sudo dub test
 notifications:
   webhooks:
     urls:

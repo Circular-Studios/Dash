@@ -25,7 +25,7 @@ public:
  */
 UUID scheduleTask( bool delegate() dg )
 {
- 	auto id = randomUUID();
+    auto id = randomUUID();
     scheduledTasks ~= tuple( dg, id );
     return id;
 }
@@ -49,7 +49,6 @@ UUID scheduleTask( bool delegate() dg )
  */
 UUID scheduleInterpolateTask(T)( ref T val, T start, T end, Duration duration, T function( T, T, float ) interpFunc = &lerp!T ) if( is_vector!T || is_quaternion!T )
 {
-    auto startTime = Time.totalTime;
     return scheduleTimedTask( duration, ( elapsed )
     {
         val = interpFunc( start, end, elapsed / duration.toSeconds );
@@ -58,6 +57,7 @@ UUID scheduleInterpolateTask(T)( ref T val, T start, T end, Duration duration, T
 ///
 unittest
 {
+    import dash.utility.time;
     import std.stdio;
     import gl3n.linalg;
 
@@ -69,7 +69,10 @@ unittest
     scheduleInterpolateTask( interpVec, start, end, 100.msecs );
 
     while( scheduledTasks.length )
+    {
+        Time.update();
         executeTasks();
+    }
 
     assert( interpVec == end );
 }
@@ -105,6 +108,7 @@ UUID scheduleInterpolateTask( string prop, T, Owner )( ref Owner own, T start, T
 ///
 unittest
 {
+    import dash.utility.time;
     import std.stdio;
     import gl3n.linalg;
 
@@ -117,7 +121,10 @@ unittest
     scheduleInterpolateTask!q{vector}( testClass, start, end, 100.msecs );
 
     while( scheduledTasks.length )
+    {
         executeTasks();
+        Time.update();
+    }
 
     assert( testClass.vector == end );
 }
@@ -321,7 +328,7 @@ UUID scheduleIntervaledTask( Duration interval, uint numExecutions, bool delegat
  */
 void executeTasks()
 {
- 	size_t[] toRemove;
+    size_t[] toRemove;
     foreach( i, task; scheduledTasks/*.parallel*/ )
     {
         if( task[ 0 ]() )

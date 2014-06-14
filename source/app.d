@@ -3,13 +3,7 @@ import dash.core.dgame;
 
 import std.stdio;
 
-version( unittest )
-{
-    void main()
-    {
-        writeln( "Finished running unit tests." );
-    }
-}
+version( unittest ) { }
 else
 {
     void main()

@@ -146,10 +146,14 @@ public:
      */
     this( string path )
     {
-        if( std.file.isFile( path ) )
-            _fullPath = std.path.buildNormalizedPath( std.path.absolutePath( path ) );
-        else
+        // Don't check validity during tests.
+        version( unittest ) { }
+        else if( !std.file.isFile( path ) )
+        {
             throw new Exception( "Invalid file name." );
+        }
+
+        _fullPath = std.path.buildNormalizedPath( std.path.absolutePath( path ) );
     }
 
     /**
@@ -166,7 +170,7 @@ unittest
     import std.stdio;
     writeln( "Dash FilePath properties unittest" );
 
-    auto fp = new FilePath( FilePath.Resources.ConfigFile );
+    auto fp = new FilePath( "../Config/Config.yml" );
 
     assert( fp.fileName == "Config.yml", "FilePath.fileName error." );
     assert( fp.baseFileName == "Config", "FilePath.baseFileName error." );

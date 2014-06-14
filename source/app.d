@@ -1,5 +1,5 @@
 module app;
-import core.dgame;
+import dash.core.dgame;
 
 import std.stdio;
 

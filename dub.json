@@ -17,6 +17,7 @@
         "derelict-gl3": "~>1.0",
         "derelict-fi": "~>1.0",
         "derelict-assimp3": "~>1.0",
+        "derelict-sdl2": "~>1.2",
         "dyaml": "~>0.5",
         "gl3n" : "~master",
         "dlogg": "~>0.3",

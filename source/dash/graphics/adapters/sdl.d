@@ -4,6 +4,7 @@ import dash.graphics.graphics;
 import dash.graphics.adapters.adapter;
 import dash.utility;
 
+import derelict.opengl3.gl3;
 import derelict.sdl2.sdl;
 import std.string;
 
@@ -11,14 +12,14 @@ class Sdl : Adapter
 {
 private:
     SDL_Window* window;
+    SDL_GLContext context;
 
 public:
     static @property Sdl get() { return cast(Sdl)Graphics.adapter; }
 
     override void initialize()
     {
-        logInfo("Initialize begin!");
-
+        DerelictGL3.load();
         DerelictSDL2.load();
         loadProperties();
 
@@ -31,11 +32,14 @@ public:
             SDL_WINDOW_OPENGL
         );
 
-        logInfo("Initialize done!");
+        context = SDL_GL_CreateContext( window );
+
+        DerelictGL3.reload();
     }
 
     override void shutdown()
     {
+        SDL_GL_DeleteContext( context );
         SDL_DestroyWindow( window );
         SDL_Quit();
     }
@@ -44,14 +48,7 @@ public:
     {
         loadProperties();
 
-        if( fullscreen )
-        {
-
-        }
-        else
-        {
-            SDL_SetWindowSize( window, width, height );
-        }
+        SDL_SetWindowSize( window, width, height );
     }
 
     override void refresh()

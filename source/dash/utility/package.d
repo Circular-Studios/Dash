@@ -1,7 +1,6 @@
 ﻿module dash.utility;
 public:
 import dash.utility.config;
-import dash.utility.filepath;
 import dash.utility.input;
 import dash.utility.output;
 import dash.utility.time;

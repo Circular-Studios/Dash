@@ -212,7 +212,7 @@ public:
         loadProperties();
 
         // Only update window position if window style changed
-        _styleChanged = ( _wasFullscreen != fullscreen);
+        _styleChanged = ( _wasFullscreen != fullscreen );
 
         if( fullscreen )
         {

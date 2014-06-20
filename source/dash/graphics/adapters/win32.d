@@ -72,6 +72,7 @@ final class Win32 : Adapter
 private:
     HWND _hWnd;
     HINSTANCE _hInstance;
+    bool _styleChanged, _wasFullscreen;
 
 public:
     /// TODO
@@ -210,6 +211,9 @@ public:
 
         loadProperties();
 
+        // Only update window position if window style changed
+        _styleChanged = ( _wasFullscreen != fullscreen);
+
         if( fullscreen )
         {
             width = screenWidth;
@@ -221,11 +225,17 @@ public:
             style |= DWS_WINDOWED;
         }
 
-        SetWindowLong( hWnd, GWL_STYLE, style );
-        SetWindowPos( hWnd, null, ( screenWidth - width ) / 2, ( screenHeight - height ) / 2,
-                      width + ( 2 * GetSystemMetrics( SM_CYBORDER ) ),
-                      height + GetSystemMetrics( SM_CYCAPTION ) + GetSystemMetrics( SM_CYBORDER ),
-                      SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED );
+        _wasFullscreen = fullscreen;
+
+        if( _styleChanged )
+        {
+            _styleChanged = false;
+            SetWindowLong( hWnd, GWL_STYLE, style );
+            SetWindowPos( hWnd, null, ( screenWidth - width ) / 2, ( screenHeight - height ) / 2,
+                          width + ( 2 * GetSystemMetrics( SM_CYBORDER ) ),
+                          height + GetSystemMetrics( SM_CYCAPTION ) + GetSystemMetrics( SM_CYBORDER ),
+                          SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED );
+        }
 
         resizeDefferedRenderBuffer();
 

@@ -122,8 +122,7 @@ public:
     static GameObject createFromYaml( Node yamlObj )
     {
         GameObject obj;
-        bool foundClassName;
-        string prop, className;
+        string prop;
         Node innerNode;
 
         if( yamlObj.tryFind( "InstanceOf", prop ) )

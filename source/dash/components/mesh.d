@@ -115,7 +115,6 @@ public:
                 float[][] vertWeights = new float[][ mesh.mNumVertices ];
                 for( int bone = 0; bone < mesh.mNumBones; bone++ )
                 {
-                    const(aiBone*) tempBone = mesh.mBones[ bone ];
                     for( int weight = 0; weight < mesh.mBones[ bone ].mNumWeights; weight++ )
                     {
                         vertBones[ cast(int)mesh.mBones[ bone ].mWeights[ weight ].mVertexId ] ~= bone;
@@ -159,7 +158,6 @@ public:
                         aiVector3D normal = mesh.mNormals[ face.mIndices[ j ] ];
                         aiVector3D tangent = mesh.mTangents[ face.mIndices[ j ] ];
                         aiVector3D bitangent = mesh.mBitangents[ face.mIndices[ j ] ];
-                        float w = calcTangentHandedness(normal, tangent, bitangent);
 
                         // Append the data
                         outputData ~= pos.x;
@@ -173,9 +171,6 @@ public:
                         outputData ~= tangent.x;
                         outputData ~= tangent.y;
                         outputData ~= tangent.z;
-                        //outputData ~= bitangent.x;
-                        //outputData ~= bitangent.y;
-                        //outputData ~= bitangent.z;
                         outputData ~= vertBones[ face.mIndices[ j ] ][0..4];
                         outputData ~= vertWeights[ face.mIndices[ j ] ][0..4];
 
@@ -204,7 +199,6 @@ public:
                         aiVector3D normal = mesh.mNormals[ face.mIndices[ j ] ];
                         aiVector3D tangent = mesh.mTangents[ face.mIndices[ j ] ];
                         aiVector3D bitangent = mesh.mBitangents[ face.mIndices[ j ] ];
-                        float w = calcTangentHandedness(normal, tangent, bitangent);
 
                         // Append the data
                         outputData ~= pos.x;

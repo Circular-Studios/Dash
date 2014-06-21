@@ -346,9 +346,9 @@ unittest
     assert( n3.find!int( "test3.test2.test1" ) == 10, "Config.find nested test failed");
 
     auto n4 = Loader.fromString(
-        "test3:\n"
-        "   test2:\n"
-        "       test1: 10").load;
+        "test3:\n" ~
+        "   test2:\n" ~
+        "       test1: 10" ).load;
     assert( n4.find!int( "test3.test2.test1" ) == 10, "Config.find nested test failed");
 }
 

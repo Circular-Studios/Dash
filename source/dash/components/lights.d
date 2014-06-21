@@ -169,11 +169,6 @@ public:
             }
         }
 
-        // build the projectionView matrix
-        mat4 bias = mat4( vec4( .5,  0,  0, .5),
-                          vec4(  0, .5,  0, .5),
-                          vec4(  0,  0, .5, .5),
-                          vec4(  0,  0,  0,  1) );
         float magicNumber = 1.5f; // literally the worst
         projView = mat4.orthographic( mins.x * magicNumber, maxes.x* magicNumber, mins.y* magicNumber , maxes.y* magicNumber, maxes.z* magicNumber, mins.z* magicNumber ) * viewMatrix;
     }

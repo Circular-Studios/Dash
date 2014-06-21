@@ -248,7 +248,6 @@ UUID scheduleDelayedTask( Duration delay, void delegate() dg )
  */
 UUID scheduleIntervaledTask( Duration interval, bool delegate() dg )
 {
-    auto startTime = Time.totalTime;
     auto timeTilExe = interval.toSeconds;
     return scheduleTask( {
         timeTilExe -= Time.deltaTime;
@@ -276,7 +275,6 @@ UUID scheduleIntervaledTask( Duration interval, bool delegate() dg )
  */
 UUID scheduleIntervaledTask( Duration interval, uint numExecutions, void delegate() dg )
 {
-    auto startTime = Time.totalTime;
     auto timeTilExe = interval.toSeconds;
     uint executedTimes = 0;
     return scheduleTask( {
@@ -305,7 +303,6 @@ UUID scheduleIntervaledTask( Duration interval, uint numExecutions, void delegat
  */
 UUID scheduleIntervaledTask( Duration interval, uint numExecutions, bool delegate() dg )
 {
-    auto startTime = Time.totalTime;
     auto timeTilExe = interval.toSeconds;
     uint executedTimes = 0;
     return scheduleTask( {

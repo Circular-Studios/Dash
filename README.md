@@ -6,7 +6,7 @@ If you're reading this page, chances are you fall into one of the following cate
 
 #### I am a game developer interested in making games with Dash:
 
-Our [readme.io page](http://dash.circularstudios.com/) has all the info you could ever want for building a game with Dash. Pro tip: you'll want to read up on [YAML](http://www.yaml.org/) and [D](http://dlang.org) before getting started.
+Our [documentation page](http://circularstudios.com/dash/) has all the info you could ever want for building a game with Dash. Pro tip: you'll want to read up on [YAML](http://www.yaml.org/) and [D](http://dlang.org) before getting started.
 
 #### I am an engine developer looking to contribute to Dash:
 

@@ -207,7 +207,7 @@ public:
      *
      * Returns:     The position of the mouse cursor.
      */
-    vec2 mousePos()
+    vec2i mousePos()
     {
         version( Windows )
         {
@@ -224,11 +224,11 @@ public:
                 i.y -= GetSystemMetrics( SM_CYBORDER );
             }
 
-            return vec2( cast(float)i.x, Graphics.height - cast(float)i.y );
+            return vec2i( i.x, Graphics.height - i.y );
         }
         else
         {
-            return vec2();
+            return vec2i();
         }
     }
 
@@ -252,10 +252,10 @@ public:
             logWarning( "No camera on active scene." );
             return vec3( 0.0f, 0.0f, 0.0f );
         }
-        vec2 mouse = mousePos;
+        vec2i mouse = mousePos();
         float depth;
-        int x = cast(int)mouse.x;
-        int y = cast(int)mouse.y;
+        int x = mouse.x;
+        int y = mouse.y;
         auto view = vec3( 0, 0, 0 );
 
         if( x >= 0 && x <= Graphics.width && y >= 0 && y <= Graphics.height )
@@ -310,22 +310,25 @@ public:
             return null;
         }
 
-        vec2 mouse = mousePos();
+        vec2i mouse = mousePos();
         float fId;
-        int x = cast(int)mouse.x;
-        int y = cast(int)mouse.y;
 
-        if( x >= 0 && x <= Graphics.width && y >= 0 && y <= Graphics.height )
+        if( mouse.x >= 0 && mouse.x <= Graphics.width && mouse.y >= 0 && mouse.y <= Graphics.height )
         {
             glBindFramebuffer( GL_FRAMEBUFFER, Graphics.deferredFrameBuffer );
             glReadBuffer( GL_COLOR_ATTACHMENT1 );
-            glReadPixels( x, y, 1, 1, GL_ALPHA, GL_FLOAT, &fId);
+            glReadPixels( mouse.x, mouse.y, 1, 1, GL_ALPHA, GL_FLOAT, &fId);
 
             uint id = cast(int)(fId);
             glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 
             if(id > 0)
+			{
+				import dash.utility.output;
+
+				logInfo( "Clicked object ID: ", id );
                 return scene[id];
+			}
         }
 
         return null;

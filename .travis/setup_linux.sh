@@ -1,4 +1,4 @@
-# Only run on OSX
+# Only run on Linux
 if [[ $TRAVIS_OS_NAME == "linux" ]]; then
     sudo wget http://netcologne.dl.sourceforge.net/project/d-apt/files/d-apt.list\
         -O/etc/apt/sources.list.d/d-apt.list;

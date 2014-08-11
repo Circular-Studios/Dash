@@ -4,7 +4,8 @@
 module dash.utility.input;
 import dash.utility, dash.core, dash.graphics;
 
-import yaml, gl3n.linalg;
+import yaml;
+import gfm.math.vector: vec2ui, vec3f, vec4f;
 import derelict.opengl3.gl3;
 import std.typecons, std.conv, std.traits, std.uuid;
 
@@ -207,7 +208,7 @@ public:
      *
      * Returns:     The position of the mouse cursor.
      */
-    vec2i mousePos()
+    vec2ui mousePos()
     {
         version( Windows )
         {
@@ -224,11 +225,11 @@ public:
                 i.y -= GetSystemMetrics( SM_CYBORDER );
             }
 
-            return vec2i( i.x, Graphics.height - i.y );
+            return vec2ui( i.x, Graphics.height - i.y );
         }
         else
         {
-            return vec2i();
+            return vec2ui();
         }
     }
 
@@ -237,7 +238,7 @@ public:
      *
      * Returns:     The position of the mouse cursor in world space.
      */
-    vec3 mousePosView()
+    vec3f mousePosView()
     {
         if( !DGame.instance.activeScene )
         {
@@ -252,7 +253,7 @@ public:
             logWarning( "No camera on active scene." );
             return vec3( 0.0f, 0.0f, 0.0f );
         }
-        vec2i mouse = mousePos();
+        vec2ui mouse = mousePos();
         float depth;
         int x = mouse.x;
         int y = mouse.y;
@@ -284,9 +285,9 @@ public:
      *
      * Returns:     The position of the mouse cursor in world space.
      */
-    vec3 mousePosWorld()
+    vec3f mousePosWorld()
     {
-        return (DGame.instance.activeScene.camera.inverseViewMatrix * vec4( mousePosView(), 1.0f )).xyz;
+        return (DGame.instance.activeScene.camera.inverseViewMatrix * vec4f( mousePosView(), 1.0f )).xyz;
     }
 
     /**

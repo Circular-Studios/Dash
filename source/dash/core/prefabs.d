@@ -5,7 +5,6 @@ module dash.core.prefabs;
 import dash.core, dash.components, dash.utility;
 
 import yaml;
-import gl3n.linalg;
 import std.variant;
 
 mixin( registerComponents!q{dash.core.prefabs} );

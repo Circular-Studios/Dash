@@ -5,7 +5,6 @@ module dash.core.gameobject;
 import dash.core, dash.components, dash.graphics, dash.utility;
 
 import yaml;
-import gl3n.linalg, gl3n.math;
 
 import std.conv, std.variant, std.array, std.algorithm, std.typecons, std.range, std.string;
 
@@ -437,6 +436,10 @@ public:
     }
 }
 
+import gfm.math.vector: vec3f;
+import gfm.math.quaternion: quaternionf;
+import gfm.math.matrix: mat4f;
+
 /**
  * Handles 3D Transformations for an object.
  * Stores position, rotation, and scale
@@ -447,10 +450,10 @@ private struct Transform
 {
 private:
     GameObject _owner;
-    vec3 _prevPos;
-    quat _prevRot;
-    vec3 _prevScale;
-    mat4 _matrix;
+    vec3f _prevPos;
+    quaternionf _prevRot;
+    vec3f _prevScale;
+    mat4f _matrix;
 
     /**
      * Default constructor, most often created by GameObjects.
@@ -461,19 +464,19 @@ private:
     this( GameObject obj )
     {
         owner = obj;
-        position = vec3(0,0,0);
-        scale = vec3(1,1,1);
-        rotation = quat.identity;
+        position = vec3f(0,0,0);
+        scale = vec3f(1,1,1);
+        rotation = quaternionf.identity;
     }
 
 public:
     // these should remain public fields, properties return copies not references
     /// The position of the object in local space.
-    vec3 position;
+    vec3f position;
     /// The rotation of the object in local space.
-    quat rotation;
+    quaternionf rotation;
     /// The absolute scale of the object. Ignores parent scale.
-    vec3 scale;
+    vec3f scale;
 
     /// The object which this belongs to.
     mixin( Property!( _owner, AccessModifier.Public ) );
@@ -488,7 +491,7 @@ public:
      *
      * Returns: The object's position relative to the world origin, not the parent.
      */
-    final @property vec3 worldPosition() @safe pure nothrow
+    final @property vec3f worldPosition() @safe pure nothrow
     {
         if( owner.parent is null )
             return position;
@@ -501,7 +504,7 @@ public:
      *
      * Returns: The object's rotation relative to the world origin, not the parent.
      */
-    final @property quat worldRotation() @safe pure nothrow
+    final @property quaternionf worldRotation() @safe pure nothrow
     {
         if( owner.parent is null )
             return rotation;
@@ -529,7 +532,7 @@ public:
      *
      * Returns: The forward axis of the current transform.
      */
-    final @property const vec3 forward()
+    final @property const vec3f forward()
     {
         return vec3( -2 * (rotation.x * rotation.z + rotation.w * rotation.y),
                             -2 * (rotation.y * rotation.z - rotation.w * rotation.x),
@@ -539,11 +542,10 @@ public:
     unittest
     {
         import std.stdio;
-        import gl3n.math;
         writeln( "Dash Transform forward unittest" );
 
         auto trans = new Transform( null );
-        auto forward = vec3( 0.0f, 1.0f, 0.0f );
+        auto forward = vec3f( 0.0f, 1.0f, 0.0f );
         trans.rotation.rotatex( 90.radians );
         assert( almost_equal( trans.forward, forward ) );
     }
@@ -553,7 +555,7 @@ public:
      *
      * Returns: The up axis of the current transform.
      */
-    final  @property const vec3 up()
+    final  @property const vec3f up()
     {
         return vec3( 2 * (rotation.x * rotation.y - rotation.w * rotation.z),
                         1 - 2 * (rotation.x * rotation.x + rotation.z * rotation.z),
@@ -563,7 +565,6 @@ public:
     unittest
     {
         import std.stdio;
-        import gl3n.math;
         writeln( "Dash Transform up unittest" );
 
         auto trans = new Transform( null );
@@ -578,7 +579,7 @@ public:
      *
      * Returns: The right axis of the current transform.
      */
-    final  @property const vec3 right()
+    final  @property const vec3f right()
     {
         return vec3( 1 - 2 * (rotation.y * rotation.y + rotation.z * rotation.z),
                         2 * (rotation.x * rotation.y + rotation.w * rotation.z),
@@ -588,7 +589,6 @@ public:
     unittest
     {
         import std.stdio;
-        import gl3n.math;
         writeln( "Dash Transform right unittest" );
 
         auto trans = new Transform( null );
@@ -607,7 +607,7 @@ public:
         _prevRot = rotation;
         _prevScale = scale;
 
-        _matrix = mat4.identity;
+        _matrix = mat4f.identity;
         // Scale
         _matrix[ 0 ][ 0 ] = scale.x;
         _matrix[ 1 ][ 1 ] = scale.y;

@@ -4,7 +4,6 @@
 module dash.graphics.adapters.adapter;
 import dash.core, dash.components, dash.graphics, dash.utility;
 
-import gl3n.linalg, gl3n.frustum, gl3n.math;
 import derelict.opengl3.gl3;
 
 import std.algorithm, std.array;

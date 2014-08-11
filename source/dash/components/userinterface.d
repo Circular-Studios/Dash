@@ -2,9 +2,10 @@
  * Handles the creation and life cycle of UI objects and webview textures
  */
 module dash.components.userinterface;
-import dash.core;
-import dash.utility.awesomium, dash.components, dash.utility, dash.graphics.graphics;
-import std.string, gl3n.linalg;
+import dash.core, dash.utility.awesomium, dash.components, dash.utility, dash.graphics.graphics;
+
+import gfm.math.matrix: mat4f;
+import std.string;
 
 /**
  * User interface objects handle drawing/updating an AwesomiumView over the screen
@@ -14,7 +15,7 @@ class UserInterface
 private:
     uint _height;
     uint _width;
-    mat4 _scaleMat;
+    mat4f _scaleMat;
     AwesomiumView _view;
     // TODO: Handle JS
 

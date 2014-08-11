@@ -4,9 +4,9 @@
 module dash.components.mesh;
 import dash.core, dash.components, dash.graphics, dash.utility;
 
+import gfm.math.vector: vec3f;
+import gfm.math.box: box3f;
 import derelict.opengl3.gl3, derelict.assimp3.assimp;
-import gl3n.linalg, gl3n.aabb;
-
 import std.stdio, std.stream, std.format, std.math, std.string;
 
 mixin( registerComponents!q{dash.components.mesh} );
@@ -63,7 +63,7 @@ class Mesh : Asset
 private:
     uint _glVertexArray, _numVertices, _numIndices, _glIndexBuffer, _glVertexBuffer;
     bool _animated;
-    AABB _boundingBox;
+    box3f _boundingBox;
     AssetAnimation _animationData;
 
 public:
@@ -98,7 +98,7 @@ public:
         float[] outputData;
         uint[] indices;
         animated = false;
-        boundingBox = AABB.from_points( [] );
+        boundingBox = box3f( vec3f( 0.0f, 0.0f, 0.0f ), vec3f( 0.0f, 0.0f, 0.0f ) );
 
         if( mesh )
         {
@@ -175,7 +175,9 @@ public:
                         outputData ~= vertWeights[ face.mIndices[ j ] ][0..4];
 
                         // Save the position in verts
-                        boundingBox.expand( vec3( pos.x, pos.y, pos.z ) );
+                        vec3f newPos = vec3f( pos.x, pos.y, pos.z );
+                        boundingBox.min = min( boundingBox.min, newPos );
+                        boundingBox.max = max( boundingBox.max, newPos );
                     }
                 }
             }
@@ -217,7 +219,9 @@ public:
                         //outputData ~= bitangent.z;
 
                         // Save the position in verts
-                        boundingBox.expand( vec3( pos.x, pos.y, pos.z ) );
+                        vec3f newPos = vec3f( pos.x, pos.y, pos.z );
+                        boundingBox.min = min( boundingBox.min, newPos );
+                        boundingBox.max = max( boundingBox.max, newPos );
                     }
                 }
             }

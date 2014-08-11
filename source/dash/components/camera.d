@@ -4,7 +4,8 @@
 module dash.components.camera;
 import dash.core, dash.components, dash.graphics, dash.utility;
 
-import gl3n.linalg;
+import gfm.math.vector: vec2f, vec3f;
+import gfm.math.matrix: mat4f;
 import std.conv;
 
 mixin( registerComponents!q{dash.components.camera} );
@@ -19,14 +20,14 @@ private:
     float _prevFov, _prevNear, _prevFar, _prevWidth, _prevHeight;
 
 
-    vec2 _projectionConstants; // For rebuilding linear Z in shaders
-    mat4 _prevLocalMatrix;
-    mat4 _viewMatrix;
-    mat4 _inverseViewMatrix;
-    mat4 _perspectiveMatrix;
-    mat4 _inversePerspectiveMatrix;
-    mat4 _orthogonalMatrix;
-    mat4 _inverseOrthogonalMatrix;
+    vec2f _projectionConstants; // For rebuilding linear Z in shaders
+    mat4f _prevLocalMatrix;
+    mat4f _viewMatrix;
+    mat4f _inverseViewMatrix;
+    mat4f _perspectiveMatrix;
+    mat4f _inversePerspectiveMatrix;
+    mat4f _orthogonalMatrix;
+    mat4f _inverseOrthogonalMatrix;
 
 public:
     /// TODO
@@ -47,7 +48,7 @@ public:
      *
      * Returns:
      */
-    final vec2 projectionConstants()
+    final vec2f projectionConstants()
     {
         if( this.projectionDirty )
         {
@@ -66,7 +67,7 @@ public:
      *
      * Returns:
      */
-    final mat4 perspectiveMatrix()
+    final mat4f perspectiveMatrix()
     {
         if( this.projectionDirty )
         {
@@ -85,7 +86,7 @@ public:
      *
      * Returns:
      */
-    final mat4 inversePerspectiveMatrix()
+    final mat4f inversePerspectiveMatrix()
     {
         if( this.projectionDirty )
         {
@@ -104,7 +105,7 @@ public:
      *
      * Returns:
      */
-    final mat4 orthogonalMatrix()
+    final mat4f orthogonalMatrix()
     {
         if( this.projectionDirty )
         {
@@ -123,7 +124,7 @@ public:
      *
      * Returns:
      */
-    final mat4 inverseOrthogonalMatrix()
+    final mat4f inverseOrthogonalMatrix()
     {
         if( this.projectionDirty )
         {
@@ -150,14 +151,14 @@ public:
         float cosYaw = cos( owner.transform.rotation.yaw );
         float sinYaw = sin( owner.transform.rotation.yaw );
 
-        vec3 xaxis = vec3( cosYaw, 0.0f, -sinYaw );
-        vec3 yaxis = vec3( sinYaw * sinPitch, cosPitch, cosYaw * sinPitch );
-        vec3 zaxis = vec3( sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw );
+        vec3f xaxis = vec3f( cosYaw, 0.0f, -sinYaw );
+        vec3f yaxis = vec3f( sinYaw * sinPitch, cosPitch, cosYaw * sinPitch );
+        vec3f zaxis = vec3f( sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw );
 
         _viewMatrix.clear( 0.0f );
-        _viewMatrix[ 0 ] = xaxis.vector ~ -( xaxis * owner.transform.position );
-        _viewMatrix[ 1 ] = yaxis.vector ~ -( yaxis * owner.transform.position );
-        _viewMatrix[ 2 ] = zaxis.vector ~ -( zaxis * owner.transform.position );
+        _viewMatrix[ 0 ] = xaxis.v ~ -( xaxis * owner.transform.position );
+        _viewMatrix[ 1 ] = yaxis.v ~ -( yaxis * owner.transform.position );
+        _viewMatrix[ 2 ] = zaxis.v ~ -( zaxis * owner.transform.position );
         _viewMatrix[ 3 ] = [ 0, 0, 0, 1 ];
 
         _inverseViewMatrix = _viewMatrix.inverse();
@@ -174,15 +175,15 @@ public:
      * Returns:
      * A right handed view matrix for the given params.
      */
-    final static mat4 lookAt( vec3 targetPos, vec3 cameraPos, vec3 worldUp = vec3(0,1,0) )
+    final static mat4f lookAt( vec3f targetPos, vec3f cameraPos, vec3f worldUp = vec3f(0,1,0) )
     {
-        vec3 zaxis = ( cameraPos - targetPos );
+        vec3f zaxis = ( cameraPos - targetPos );
         zaxis.normalize;
-        vec3 xaxis = cross( worldUp, zaxis );
+        vec3f xaxis = cross( worldUp, zaxis );
         xaxis.normalize;
-        vec3 yaxis = cross( zaxis, xaxis );
+        vec3f yaxis = cross( zaxis, xaxis );
 
-        mat4 result = mat4.identity;
+        mat4f result = mat4f.identity;
 
         result[0][0] = xaxis.x;
         result[1][0] = xaxis.y;

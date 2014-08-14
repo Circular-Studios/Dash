@@ -3,6 +3,7 @@
     "description": "A 3D game engine in dlang.",
     "copyright": "Circular Studios 2013 - 2014",
     "license": "MIT",
+    "homepage": "http://circularstudios.com",
     "authors": [
         "Colden Cullen",
         "Brandon Littell",

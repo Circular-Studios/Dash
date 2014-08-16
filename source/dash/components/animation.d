@@ -8,6 +8,8 @@ import dash.utility;
 
 import derelict.assimp3.assimp;
 import gl3n.linalg;
+import std.string: fromStringz;
+import std.conv: to;
 
 /**
  * Animation object which handles all animation specific to the gameobject
@@ -167,7 +169,7 @@ public:
     {
         for( int i = 0; i < nodeHierarchy.mNumChildren; i++)
         {
-            string name = nodeHierarchy.mChildren[ i ].mName.data.ptr.fromStringz;
+            string name = nodeHierarchy.mChildren[ i ].mName.data.ptr.fromStringz().to!string;
             if( findBoneWithName( name, mesh ) != -1 )
             {
                 boneHierarchy = makeBonesFromHierarchy( mesh, nodeHierarchy.mChildren[ i ] );
@@ -201,7 +203,7 @@ public:
         //NOTE: Currently only works if each node is a Bone, works with bones without animation b/c of storing nodeOffset
         //NOTE: Needs to be reworked to support this in the future
         Bone bone;
-        string name = currNode.mName.data.ptr.fromStringz;
+        string name = currNode.mName.data.ptr.fromStringz().to!string;
         int boneNumber = findBoneWithName( name, mesh );
 
         if( boneNumber != -1 )
@@ -214,7 +216,7 @@ public:
 
         for( int i = 0; i < currNode.mNumChildren; i++ )
         {
-            string childName = currNode.mChildren[ i ].mName.data.ptr.fromStringz;
+            string childName = currNode.mChildren[ i ].mName.data.ptr.fromStringz().to!string;
             int childBoneNumber = findBoneWithName( childName, mesh );
 
             // Ensure end nodes are bones, otherwise do not keep

@@ -190,3 +190,5 @@ test-results/
 *.lib_cv
 __dummy.html
 docs.json
+libdash.a
+__test__*__

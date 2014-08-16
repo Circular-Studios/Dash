@@ -23,6 +23,21 @@ public:
     /// Allows functions to be called on this like it were the AA.
     alias prefabs this;
 
+    // Not sure what this is all about, but opIndex no longer forwards as of 2.066.
+    static if( __VERSION__ > 2065 )
+    {
+        Prefab opIndex( string index )
+        {
+            return prefabs[ index ];
+        }
+
+        Prefab opIndexAssign( Prefab newFab, string index )
+        {
+            prefabs[ index ] = newFab;
+            return newFab;
+        }
+    }
+
     /**
      * Load and initialize all prefabs in FilePath.Resources.Prefabs.
      */
@@ -35,7 +50,7 @@ public:
         {
             auto object = objFile[0];
             auto name = object[ "Name" ].as!string;
-            
+
             //auto newFab = new Prefab( object );
             auto newFab = cast(Prefab)createYamlObject[ "Prefab" ]( object );
             newFab.name = name;

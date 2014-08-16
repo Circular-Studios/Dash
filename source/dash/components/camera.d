@@ -174,7 +174,7 @@ public:
      * Returns:
      * A right handed view matrix for the given params.
      */
-    final static shared(mat4) lookAt( vec3 targetPos, vec3 cameraPos, vec3 worldUp = vec3(0,1,0) )
+    final static mat4 lookAt( vec3 targetPos, vec3 cameraPos, vec3 worldUp = vec3(0,1,0) )
     {
         vec3 zaxis = ( cameraPos - targetPos );
         zaxis.normalize;

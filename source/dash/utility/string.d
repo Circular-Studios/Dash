@@ -5,36 +5,40 @@ module dash.utility.string;
 
 import std.array, std.traits;
 
-/**
- * Returns new string formed from C-style (null-terminated) string $(D msg). Usefull
- * when interfacing with C libraries. For D-style to C-style convertion use std.string.toStringz.
- *
- * Params:
- *  msg =                 The C string to convert.
- *
- * Authors: NCrashed
- */
-string fromStringz( const char* msg ) pure nothrow
+// std.string.fromStringz was introduced in https://github.com/D-Programming-Language/phobos/pull/1607
+static if( __VERSION__ < 2066 )
 {
-    scope(failure) return "";
-    if( msg is null ) return "";
-
-    auto buff = appender!(char[]);
-    uint i = 0;
-    while( msg[i] != cast(char)0 )
+    /**
+     * Returns new string formed from C-style (null-terminated) string $(D msg). Usefull
+     * when interfacing with C libraries. For D-style to C-style convertion use std.string.toStringz.
+     *
+     * Params:
+     *  msg =                 The C string to convert.
+     *
+     * Authors: NCrashed
+     */
+    string fromStringz( const char* msg ) pure nothrow
     {
-        buff.put(msg[i++]);
+        scope(failure) return "";
+        if( msg is null ) return "";
+
+        auto buff = appender!(char[]);
+        uint i = 0;
+        while( msg[i] != cast(char)0 )
+        {
+            buff.put(msg[i++]);
+        }
+
+        return buff.data.idup;
     }
+    /// Example
+    unittest
+    {
+        char[] cstring = "some string".dup ~ cast(char)0;
 
-    return buff.data.idup;
-}
-/// Example
-unittest
-{
-    char[] cstring = "some string".dup ~ cast(char)0;
-
-    assert(cstring.ptr.fromStringz == "some string");
-    assert(null.fromStringz == "");
+        assert(cstring.ptr.fromStringz == "some string");
+        assert(null.fromStringz == "");
+    }
 }
 
 /**

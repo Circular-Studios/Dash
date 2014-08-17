@@ -1,9 +1,13 @@
 # Only run on Linux
 if [[ $TRAVIS_OS_NAME == "linux" ]]; then
-    sudo wget http://netcologne.dl.sourceforge.net/project/d-apt/files/d-apt.list\
-        -O/etc/apt/sources.list.d/d-apt.list;
-    sudo apt-get update;
-    sudo apt-get -y --allow-unauthenticated install --reinstall d-apt-keyring;
-    sudo apt-get update;
-    sudo apt-get install dmd-bin dub libfreeimage-dev libjpeg62-dev
+    # Install DMD
+    DMD_DEB=dmd_${DMD_VER}-0_amd64.deb
+    wget ftp://ftp.dlang.org/${DMD_DEB}
+    sudo dpkg -i ${DMD_DEB} || true
+    sudo apt-get update
+    sudo apt-get install -f
+    sudo dpkg -i ${DMD_DEB}
+
+    # Install other dependencies
+    sudo apt-get install libfreeimage-dev libjpeg62-dev
 fi

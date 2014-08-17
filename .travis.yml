@@ -2,10 +2,17 @@ language: d
 os:
   - linux
   - osx
+env:
+#  - DMD_VER=2.065.0 DUB_VER=0.9.21
+  - DMD_VER=2.066.0 DUB_VER=0.9.21
 install:
-  - echo $TRAVIS_OS_NAME
   - bash .travis/setup_linux.sh
   - bash .travis/setup_osx.sh
+  # Install dub
+  - DUB_TAR=dub-${DUB_VER}-${TRAVIS_OS_NAME}-x86_64.tar.gz
+  - wget http://code.dlang.org/files/${DUB_TAR}
+  - sudo tar -C /usr/local/bin -zxf ${DUB_TAR}
+  # Install x11
   - sudo dub fetch x11
 script: sudo dub test
 notifications:

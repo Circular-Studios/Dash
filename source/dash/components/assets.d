@@ -79,7 +79,7 @@ public:
             const aiScene* scene = aiImportFile( file.fullPath.toStringz,
                                                  aiProcess_CalcTangentSpace | aiProcess_Triangulate |
                                                  aiProcess_JoinIdenticalVertices | aiProcess_SortByPType );
-            assert( scene, "Failed to load scene file '" ~ file.fullPath ~ "' Error: " ~ aiGetErrorString().fromStringz );
+            assert( scene, "Failed to load scene file '" ~ file.fullPath ~ "' Error: " ~ aiGetErrorString().fromStringz() );
 
             // If animation data, add animation
             if( file.baseFileName in meshes )

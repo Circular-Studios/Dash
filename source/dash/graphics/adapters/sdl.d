@@ -5,50 +5,62 @@ import dash.graphics.adapters.adapter;
 import dash.utility;
 
 import derelict.opengl3.gl3;
-import derelict.sdl2.sdl;
+import gfm.sdl.sdl, gfm.sdl.window;
 import std.string;
 
 class Sdl : Adapter
 {
 private:
-    SDL_Window* window;
-    SDL_GLContext context;
+    SDL2 sdl;
+    SDL2Window window;
+    SDL2GLContext glContext;
 
 public:
     static @property Sdl get() { return cast(Sdl)Graphics.adapter; }
 
     override void initialize()
     {
+        // Initialize OpenGL
         DerelictGL3.load();
-        DerelictSDL2.load();
+        // Initialize SDL
+        sdl = new SDL2( null );
+        // Load properties from config.
         loadProperties();
 
-        SDL_Init( SDL_INIT_VIDEO );
+        //SDL_Init( SDL_INIT_VIDEO );
 
-        window = SDL_CreateWindow(
+        /*window = SDL_CreateWindow(
             DGame.instance.title.toStringz(),
             SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
             width, height,
             SDL_WINDOW_OPENGL
-        );
+        );*/
+        window = new SDL2Window( sdl, ( screenWidth - width ) / 2, ( screenHeight - height ) / 2, width, height );
 
-        context = SDL_GL_CreateContext( window );
+        window.setTitle( DGame.instance.title );
+
+        //context = SDL_GL_CreateContext( window );
+        glContext = new SDL2GLContext( window );
+        glContext.makeCurrent();
 
         DerelictGL3.reload();
     }
 
     override void shutdown()
     {
-        SDL_GL_DeleteContext( context );
+        /*SDL_GL_DeleteContext( context );
         SDL_DestroyWindow( window );
-        SDL_Quit();
+        SDL_Quit();*/
+        glContext.close();
+        window.close();
+        sdl.close();
     }
 
     override void resize()
     {
         loadProperties();
 
-        SDL_SetWindowSize( window, width, height );
+        window.setSize( width, height );
     }
 
     override void refresh()
@@ -58,7 +70,7 @@ public:
 
     override void swapBuffers()
     {
-        SDL_GL_SwapWindow( window );
+        window.swapBuffers();
     }
 
     override void openWindow()

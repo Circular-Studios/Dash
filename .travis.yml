@@ -13,7 +13,7 @@ install:
   - wget http://code.dlang.org/files/${DUB_TAR}
   - sudo tar -C /usr/local/bin -zxf ${DUB_TAR}
   # Install x11
-  - sudo dub fetch x11
+  - sudo dub fetch x11 --version="~>1.0"
 script: sudo dub test
 notifications:
   webhooks:

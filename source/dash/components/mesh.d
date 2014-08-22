@@ -175,9 +175,7 @@ public:
                         outputData ~= vertWeights[ face.mIndices[ j ] ][0..4];
 
                         // Save the position in verts
-                        vec3f newPos = vec3f( pos.x, pos.y, pos.z );
-                        boundingBox.min = min( boundingBox.min, newPos );
-                        boundingBox.max = max( boundingBox.max, newPos );
+                        boundingBox.expand( vec3f( pos.x, pos.y, pos.z ) );
                     }
                 }
             }
@@ -219,9 +217,7 @@ public:
                         //outputData ~= bitangent.z;
 
                         // Save the position in verts
-                        vec3f newPos = vec3f( pos.x, pos.y, pos.z );
-                        boundingBox.min = min( boundingBox.min, newPos );
-                        boundingBox.max = max( boundingBox.max, newPos );
+                        boundingBox.expand( vec3f( pos.x, pos.y, pos.z ) );
                     }
                 }
             }

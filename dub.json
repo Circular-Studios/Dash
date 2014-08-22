@@ -18,7 +18,7 @@
         "derelict-fi": "~>1.0",
         "derelict-assimp3": "~>1.0",
         "dyaml": "~>0.5",
-        "gfm" : "~>1.1",
+        "gfm:math" : "~>1.1",
         "dlogg": "~>0.3",
         "x11": { "version": "~>1.0", "optional": true }
     },

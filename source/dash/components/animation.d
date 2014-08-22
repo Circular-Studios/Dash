@@ -353,7 +353,7 @@ public:
             }
             if( bonePose.rotationKeys.length > cast(int)time )
             {
-                boneTransform = boneTransform * bonePose.rotationKeys[ cast(int)time ].to_matrix!( 4, 4 );
+                boneTransform = boneTransform * cast(mat4f)bonePose.rotationKeys[ cast(int)time ];
             }
             if( bonePose.scaleKeys.length > cast(int)time )
             {
@@ -425,22 +425,22 @@ public:
     {
         mat4f matrix = mat4f.identity;
 
-        matrix[0][0] = aiMatrix.a1;
-        matrix[0][1] = aiMatrix.a2;
-        matrix[0][2] = aiMatrix.a3;
-        matrix[0][3] = aiMatrix.a4;
-        matrix[1][0] = aiMatrix.b1;
-        matrix[1][1] = aiMatrix.b2;
-        matrix[1][2] = aiMatrix.b3;
-        matrix[1][3] = aiMatrix.b4;
-        matrix[2][0] = aiMatrix.c1;
-        matrix[2][1] = aiMatrix.c2;
-        matrix[2][2] = aiMatrix.c3;
-        matrix[2][3] = aiMatrix.c4;
-        matrix[3][0] = aiMatrix.d1;
-        matrix[3][1] = aiMatrix.d2;
-        matrix[3][2] = aiMatrix.d3;
-        matrix[3][3] = aiMatrix.d4;
+        matrix.c[0][0] = aiMatrix.a1;
+        matrix.c[0][1] = aiMatrix.a2;
+        matrix.c[0][2] = aiMatrix.a3;
+        matrix.c[0][3] = aiMatrix.a4;
+        matrix.c[1][0] = aiMatrix.b1;
+        matrix.c[1][1] = aiMatrix.b2;
+        matrix.c[1][2] = aiMatrix.b3;
+        matrix.c[1][3] = aiMatrix.b4;
+        matrix.c[2][0] = aiMatrix.c1;
+        matrix.c[2][1] = aiMatrix.c2;
+        matrix.c[2][2] = aiMatrix.c3;
+        matrix.c[2][3] = aiMatrix.c4;
+        matrix.c[3][0] = aiMatrix.d1;
+        matrix.c[3][1] = aiMatrix.d2;
+        matrix.c[3][2] = aiMatrix.d3;
+        matrix.c[3][3] = aiMatrix.d4;
 
         return matrix;
     }

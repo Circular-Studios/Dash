@@ -6,7 +6,7 @@ module dash.components.lights;
 import dash.core, dash.components, dash.graphics;
 import dash.utility;
 
-import gfm.math.vector: vec3f;
+import gfm.math.vector: vec3f, dot;
 import gfm.math.matrix: mat4f, Matrix;
 import gfm.math.box: box3f;
 import derelict.opengl3.gl3;

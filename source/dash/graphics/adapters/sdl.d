@@ -4,8 +4,7 @@ import dash.graphics.graphics;
 import dash.graphics.adapters.adapter;
 import dash.utility;
 
-import derelict.opengl3.gl3;
-import gfm.sdl.sdl, gfm.sdl.window;
+import derelict.opengl3.gl3, gfm.sdl2;
 import std.string;
 
 class Sdl : Adapter
@@ -24,6 +23,11 @@ public:
         DerelictGL3.load();
         // Initialize SDL
         sdl = new SDL2( null );
+
+        // Get screen size.
+        screenWidth = sdl.firstDisplaySize().x;
+        screenHeight = sdl.firstDisplaySize().y;
+
         // Load properties from config.
         loadProperties();
 
@@ -35,7 +39,10 @@ public:
             width, height,
             SDL_WINDOW_OPENGL
         );*/
-        window = new SDL2Window( sdl, ( screenWidth - width ) / 2, ( screenHeight - height ) / 2, width, height );
+        window = new SDL2Window( sdl,
+            ( screenWidth - width ) / 2, ( screenHeight - height ) / 2,
+            width, height,
+            SDL_WINDOW_OPENGL );
 
         window.setTitle( DGame.instance.title );
 
@@ -85,6 +92,13 @@ public:
 
     override void messageLoop()
     {
+        SDL_Event event;
+        while( sdl.pollEvent( &event ) )
+        {
+            // Handle the messages and stuffs.
+        }
 
+        if( sdl.wasQuitRequested )
+            DGame.instance.currentState = EngineState.Quit;
     }
 }

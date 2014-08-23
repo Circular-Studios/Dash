@@ -211,6 +211,9 @@ public:
     {
         version( Windows )
         {
+            if( !Win32.get() )
+                return vec2i();
+
             import dash.graphics;
             import win32.windows;
             POINT i;

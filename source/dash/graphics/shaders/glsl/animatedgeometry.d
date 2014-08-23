@@ -2,13 +2,12 @@
 *  Geometry pash shader for bone-animated meshes.  Uses standard Geometry fragment shader
 */
 module dash.graphics.shaders.glsl.animatedgeometry;
+import dash.graphics.shaders.glsl;
 
 package:
 
 /// Animated Geometry Shader.  Transforms vertices by bone-weights
-immutable string animatedGeometryVS = q{
-    #version 400
-
+immutable string animatedGeometryVS = glslVersion ~ q{
     layout(location = 0) in vec3 vPosition_m;
     layout(location = 1) in vec2 vUV;
     layout(location = 2) in vec3 vNormal_m;

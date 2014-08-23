@@ -2,6 +2,7 @@
 * Post-Processing pass shader to render User Interfaces
 */
 module dash.graphics.shaders.glsl.userinterface;
+import dash.graphics.shaders.glsl;
 
 package:
 
@@ -9,9 +10,7 @@ package:
 /// User interface shader
 /// Just for transferring a texture (from awesomium) to the screen
 ///
-immutable string userinterfaceVS = q{
-    #version 400
-    
+immutable string userinterfaceVS = glslVersion ~ q{
     in vec3 vPosition;
     in vec2 vUV;
 
@@ -29,9 +28,7 @@ immutable string userinterfaceVS = q{
 };
 
 /// Put the texture on the screen.
-immutable string userinterfaceFS = q{
-    #version 400
-
+immutable string userinterfaceFS = glslVersion ~ q{
     in vec2 fUV;
 
     out vec4 color;

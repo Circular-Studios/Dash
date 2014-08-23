@@ -2,13 +2,12 @@
 * Shader to output depth for a shadowmap
 */
 module dash.graphics.shaders.glsl.shadowmap;
+import dash.graphics.shaders.glsl;
 
 package:
 
 /// Vertex Shader for inaminate objects
-immutable string shadowmapVS = q{
-    #version 400
-
+immutable string shadowmapVS = glslVersion ~ q{
     layout(location = 0) in vec3 vPosition_m;
 
     uniform mat4 worldViewProj;
@@ -21,9 +20,7 @@ immutable string shadowmapVS = q{
 };
 
 /// Vertex shader for animated objects
-immutable string animatedshadowmapVS = q{
-    #version 400
-
+immutable string animatedshadowmapVS = glslVersion ~ q{
     layout(location = 0) in vec3 vPosition_m;
     //layout(location = 1) in vec2 vUV;
     //layout(location = 2) in vec3 vNormal_m;
@@ -47,9 +44,7 @@ immutable string animatedshadowmapVS = q{
 };
 
 /// Fragment Shader, just output depth
-immutable string shadowmapFS = q{
-    #version 400
-
+immutable string shadowmapFS = glslVersion ~ q{
     layout(location = 0) out float fragDepth;
 
     void main() { }

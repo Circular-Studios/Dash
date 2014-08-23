@@ -1,0 +1,17 @@
+{
+	"fileVersion": 1,
+	"versions": {
+		"gl3n": "~master",
+		"logger": "0.1.0",
+		"derelict-assimp3": "1.0.0",
+		"derelict-util": "1.0.2",
+		"colorize": "1.0.4",
+		"derelict-fi": "1.0.0",
+		"gfm": "1.1.10",
+		"derelict-sdl2": "1.2.4",
+		"derelict-gl3": "1.0.6",
+		"dyaml": "0.5.0",
+		"tinyendian": "0.1.0",
+		"dlogg": "0.3.2"
+	}
+}

@@ -20,7 +20,6 @@ public static:
      */
     final void initialize()
     {
-        /*
         version( Windows )
         {
             adapter = new Win32;
@@ -31,10 +30,8 @@ public static:
         }
         else
         {
-            adapter = null;
+            adapter = new Sdl;
         }
-        */
-        adapter = new Sdl;
 
         adapter.initialize();
         adapter.initializeDeferredRendering();

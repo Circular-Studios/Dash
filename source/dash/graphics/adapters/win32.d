@@ -93,9 +93,9 @@ public:
         // Setup the window
         screenWidth = GetSystemMetrics( SM_CXSCREEN );
         screenHeight = GetSystemMetrics( SM_CYSCREEN );
-        
+
         hInstance = GetModuleHandle( null );
-        
+
         WNDCLASSEX wcex = {
             WNDCLASSEX.sizeof,
                 CS_HREDRAW | CS_VREDRAW,// | CS_OWNDC,
@@ -110,10 +110,10 @@ public:
                 DGame.instance.title.ptr,
                 null
         };
-        
+
         RegisterClassEx( &wcex );
-        
-        // Setup opengl     
+
+        // Setup opengl
         uint formatCount;
         int pixelFormat;
         PIXELFORMATDESCRIPTOR pfd;
@@ -121,13 +121,13 @@ public:
         // Check for OpenGL version
         openWindow( false );
 
-        deviceContext = GetDC( hWnd );      
+        deviceContext = GetDC( hWnd );
         SetPixelFormat( deviceContext, 1, &pfd );
         renderContext = wglCreateContext( deviceContext );
         wglMakeCurrent( deviceContext, renderContext );
-        
+
         DerelictGL3.reload();
-        
+
         if( DerelictGL3.loadedVersion < GLVersion.GL40 )
         {
             logFatal( "Your version of OpenGL is unsupported. Required: GL40 Yours: ", DerelictGL3.loadedVersion );
@@ -137,7 +137,7 @@ public:
 
         shutdown();
         openWindow();
-        
+
         // Set attributes list
         const(int)[ 19 ] attributeList = [
             WGL_SUPPORT_OPENGL_ARB, TRUE,                       // Support for OpenGL rendering
@@ -151,31 +151,31 @@ public:
             WGL_STENCIL_BITS_ARB,   8,                          // Support for 8 bit stencil buffer
             0                                                   // Null terminate
         ];
-        
+
         // Set version to 4.0
         const(int)[ 5 ] versionInfo = [
             WGL_CONTEXT_MAJOR_VERSION_ARB, 4,
             WGL_CONTEXT_MINOR_VERSION_ARB, 0,
             0
         ];
-        
+
         // Get new Device Context
         deviceContext = GetDC( hWnd );
-        
+
         // Query pixel format
         wglChoosePixelFormatARB( deviceContext, attributeList.ptr, null, 1, &pixelFormat, &formatCount );
-        
+
         // Set the pixel format
         SetPixelFormat( deviceContext, pixelFormat, &pfd );
-        
+
         // Create OpenGL rendering context
         renderContext = wglCreateContextAttribsARB( deviceContext, null, versionInfo.ptr );
-        
+
         // Set current context
         wglMakeCurrent( deviceContext, renderContext );
-        
+
         refresh();
-        
+
         HANDLE hIcon = LoadImage( null, ( Resources.Textures ~ "/icon.ico" ).ptr, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_LOADFROMFILE);
         if( hIcon )
         {
@@ -210,7 +210,7 @@ public:
         LONG style = GetWindowLong( hWnd, GWL_STYLE ) & ~( DWS_FULLSCREEN | DWS_WINDOWED );
 
         loadProperties();
-        
+
         if( fullscreen )
         {
             width = screenWidth;
@@ -229,10 +229,9 @@ public:
                           width + ( 2 * GetSystemMetrics( SM_CYBORDER ) ),
                           height + GetSystemMetrics( SM_CYCAPTION ) + GetSystemMetrics( SM_CYBORDER ),
                           SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED );
-	}
-	
-	_wasFullscreen = fullscreen;
-        
+        }
+
+        _wasFullscreen = fullscreen;
 
         resizeDefferedRenderBuffer();
 
@@ -245,14 +244,14 @@ public:
     override void refresh()
     {
         resize();
-        
+
         // Enable back face culling
         if( backfaceCulling )
         {
             glEnable( GL_CULL_FACE );
             glCullFace( GL_BACK );
         }
-        
+
         // Turn on of off the v sync
         wglSwapIntervalEXT( vsync );
     }

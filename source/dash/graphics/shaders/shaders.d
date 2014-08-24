@@ -279,7 +279,7 @@ public:
      */
     final void bindUniformMatrix4fv( uint uniform, mat4f matrix )
     {
-        glUniformMatrix4fv( uniform, 1, true, matrix.value_ptr );
+        glUniformMatrix4fv( uniform, 1, false, matrix.value_ptr );
     }
 
     /**
@@ -290,12 +290,9 @@ public:
         float[] matptr;
         foreach( matrix; matrices )
         {
-            for( int i = 0; i < 16; i++ )
-            {
-                matptr ~= matrix.value_ptr()[i];
-            }
+            matptr ~= matrix.v[];
         }
-        glUniformMatrix4fv( uniform, cast(int)matrices.length, true, matptr.ptr );
+        glUniformMatrix4fv( uniform, cast(int)matrices.length, false, matptr.ptr );
     }
 
     /**

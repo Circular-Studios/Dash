@@ -100,9 +100,77 @@ public:
         while( sdl.pollEvent( &event ) )
         {
             // Handle the messages and stuffs.
-        }
+            switch( event.type )
+            {
+                // Handle mouse interactions.
+                case SDL_MOUSEBUTTONDOWN:
+                case SDL_MOUSEBUTTONUP:
+                {
+                    Mouse.Buttons button;
+                    final switch( event.button.button )
+                    {
+                        case SDL_BUTTON_LEFT:   button = Mouse.Buttons.Left;    break;
+                        case SDL_BUTTON_MIDDLE: button = Mouse.Buttons.Middle;  break;
+                        case SDL_BUTTON_RIGHT:  button = Mouse.Buttons.Right;   break;
+                        case SDL_BUTTON_X1:     break;
+                        case SDL_BUTTON_X2:     break;
+                    }
 
-        if( sdl.wasQuitRequested )
-            DGame.instance.currentState = EngineState.Quit;
+                    Mouse.setButtonState( button, event.button.state == SDL_PRESSED );
+                    break;
+                }
+                
+                //
+                case SDL_KEYDOWN:
+                case SDL_KEYUP:
+                {
+                    break;
+                }
+
+                // Handle quitting.
+                case SDL_QUIT:
+                    DGame.instance.currentState = EngineState.Quit;
+                    break;
+
+                case SDL_APP_TERMINATING:
+                case SDL_APP_LOWMEMORY:
+                case SDL_APP_WILLENTERBACKGROUND:
+                case SDL_APP_DIDENTERBACKGROUND:
+                case SDL_APP_WILLENTERFOREGROUND:
+                case SDL_APP_DIDENTERFOREGROUND:
+                case SDL_WINDOWEVENT:
+                case SDL_SYSWMEVENT:
+                case SDL_TEXTEDITING:
+                case SDL_TEXTINPUT:
+                case SDL_MOUSEMOTION:
+                case SDL_MOUSEWHEEL:
+                case SDL_JOYAXISMOTION:
+                case SDL_JOYBALLMOTION:
+                case SDL_JOYHATMOTION:
+                case SDL_JOYBUTTONDOWN:
+                case SDL_JOYBUTTONUP:
+                case SDL_JOYDEVICEADDED:
+                case SDL_JOYDEVICEREMOVED:
+                case SDL_CONTROLLERAXISMOTION:
+                case SDL_CONTROLLERBUTTONDOWN:
+                case SDL_CONTROLLERBUTTONUP:
+                case SDL_CONTROLLERDEVICEADDED:
+                case SDL_CONTROLLERDEVICEREMOVED:
+                case SDL_CONTROLLERDEVICEREMAPPED:
+                case SDL_FINGERDOWN:
+                case SDL_FINGERUP:
+                case SDL_FINGERMOTION:
+                case SDL_DOLLARGESTURE:
+                case SDL_DOLLARRECORD:
+                case SDL_MULTIGESTURE:
+                case SDL_CLIPBOARDUPDATE:
+                case SDL_DROPFILE:
+                case SDL_RENDER_TARGETS_RESET:
+                case SDL_USEREVENT:
+                // Unknown event type
+                default:
+                    break;
+            }
+        }
     }
 }

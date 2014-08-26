@@ -20,7 +20,11 @@ public static:
      */
     final void initialize()
     {
-        version( Windows )
+        version( UseSDL2 )
+        {
+            adapter = new Sdl;
+        }
+        else version( Windows )
         {
             adapter = new Win32;
         }

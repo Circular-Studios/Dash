@@ -33,7 +33,7 @@
     "sourcePaths": [ "source/" ],
     "importPaths": [ "source/" ],
 
-    "versions": [ "VibeCustomMain" ],
+    "versions": [ "VibeCustomMain", "UseSDL2" ],
 
     "-ddoxFilterArgs": [ "--min-protection=Protected" ],
 

@@ -37,7 +37,7 @@
         "cp $PACKAGE_DIR/lib/windows/* ./ || True"
     ],
     "libs-windows": [
-        "Awesomium",
+        "Awesomium", "soloud_dll_x86",
         "gdi32", "ole32", "kernel32",
         "user32", "comctl32", "comdlg32"
     ],

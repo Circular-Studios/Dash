@@ -3,7 +3,7 @@
 	"description": "A game engine in dlang.",
 	"copyright": "2013 - 2014",
 	"license": "MIT",
-	"authors": [ 
+	"authors": [
 		"Colden Cullen",
 		"Brandon Littell",
 		"Eric Christenson",
@@ -15,7 +15,7 @@
 		"derelict-gl3": "~master",
 		"derelict-fi": "~master",
 		"derelict-assimp3": "~master",
-		"dyaml": "~master",
+		"dyaml": "==0.4.6",
 		"gl3n" : "~master",
 		"dlogg": "~>0.2.2",
 		"x11": { "version": "==1.0.0", "optional": true }

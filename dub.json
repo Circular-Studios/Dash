@@ -33,9 +33,26 @@
     "-ddoxFilterArgs": [ "--min-protection=Protected" ],
 
     "importPaths-windows": [ "third_party/DWinProgramming" ],
+    "preBuildCommands-windows": [
+        "cp $PACKAGE_DIR/lib/windows/* ./ || True"
+    ],
     "libs-windows": [
         "Awesomium",
         "gdi32", "ole32", "kernel32",
         "user32", "comctl32", "comdlg32"
+    ],
+
+    "preBuildCommands-osx": [
+        "cp $PACKAGE_DIR/lib/osx/* /usr/local/lib/ || True"
+    ],
+    "libs-osx": [
+
+    ],
+
+    "preBuildCommands-linux": [
+        "cp $PACKAGE_DIR/lib/linux/* /usr/local/lib/ || true"
+    ],
+    "libs-linux": [
+
     ]
 }

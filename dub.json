@@ -50,7 +50,7 @@
     ],
 
     "preBuildCommands-linux": [
-        "cp $PACKAGE_DIR/lib/linux/* /usr/local/lib/ || true"
+        "cp $PACKAGE_DIR/lib/linux/* /usr/lib/ || true"
     ],
     "libs-linux": [
         "soloud_x86"

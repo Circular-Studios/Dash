@@ -15,9 +15,6 @@ import std.algorithm, std.array;
 abstract class Adapter
 {
 private:
-    GLDeviceContext _deviceContext;
-    GLRenderContext _renderContext;
-
     uint _width, _screenWidth;
     uint _height, _screenHeight;
     bool _fullscreen, _backfaceCulling, _vsync;
@@ -30,11 +27,6 @@ private:
     UserInterface[] uis;
 
 public:
-    /// GL DeviceContext
-    mixin( Property!_deviceContext );
-    /// GL RenderContext
-    mixin( Property!_renderContext );
-
     /// Pixel width of the rendering area
     mixin( Property!_width );
     /// Pixel width of the actual window

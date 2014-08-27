@@ -14,9 +14,6 @@ import derelict.opengl3.gl3, derelict.opengl3.wgl, derelict.opengl3.wglext;
 enum DWS_FULLSCREEN = WS_POPUP | WS_SYSMENU;
 enum DWS_WINDOWED = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
 
-alias HGLRC GLRenderContext;
-alias HDC GLDeviceContext;
-
 /**
 * TODO
 */
@@ -73,6 +70,8 @@ private:
     HWND _hWnd;
     HINSTANCE _hInstance;
     bool _wasFullscreen;
+    HDC deviceContext;
+    HGLRC renderContext;
 
 public:
     /// TODO

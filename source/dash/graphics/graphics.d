@@ -24,10 +24,6 @@ public static:
         {
             adapter = new Win32;
         }
-        else version( OSX )
-        {
-            adapter = new Mac;
-        }
         else version( linux )
         {
             adapter = new Linux;

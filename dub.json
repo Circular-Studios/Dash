@@ -46,13 +46,13 @@
         "cp $PACKAGE_DIR/lib/osx/* /usr/local/lib/ || True"
     ],
     "libs-osx": [
-
+        "soloud_x86"
     ],
 
     "preBuildCommands-linux": [
         "cp $PACKAGE_DIR/lib/linux/* /usr/local/lib/ || true"
     ],
     "libs-linux": [
-
+        "soloud_x86"
     ]
 }

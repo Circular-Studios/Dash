@@ -32,6 +32,8 @@
     "sourcePaths": [ "source/" ],
     "importPaths": [ "source/" ],
 
+    "versions": [ "VibeCustomMain" ],
+
     "-ddoxFilterArgs": [ "--min-protection=Protected" ],
 
     "importPaths-windows": [ "third_party/DWinProgramming" ],

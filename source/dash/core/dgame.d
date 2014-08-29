@@ -144,6 +144,10 @@ public:
             // Do the updating of the child class.
             onUpdate();
 
+            // Update the editor.
+            //if( currentState == EngineState.Editor )
+            editor.update();
+
             //////////////////////////////////////////////////////////////////////////
             // Draw
             //////////////////////////////////////////////////////////////////////////
@@ -222,6 +226,7 @@ private:
     final void stop()
     {
         onShutdown();
+        editor.shutdown();
         resetTasks();
         UserInterface.shutdownAwesomium();
         Assets.shutdown();

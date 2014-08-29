@@ -1,5 +1,6 @@
 module dash.editor.editor;
 import dash.core.dgame;
+import dash.editor.websockets;
 
 import vibe.data.json;
 import std.uuid;
@@ -16,13 +17,19 @@ public:
     {
         game = instance;
 
+        server.start( this );
         registerDefaultEvents();
         onInitialize();
     }
 
     final void update()
     {
+        server.update();
+    }
 
+    final void shutdown()
+    {
+        server.stop();
     }
 
     final UUID registerEventHandler( string key, void delegate( Json ) event )
@@ -39,19 +46,20 @@ public:
         } );
     }
 
+    final void processEvents()
+    {
+        // TODO
+    }
+
 package:
     final void queueEvent( string key, Json data )
     {
         // TODO
     }
 
-    final void processEvents()
-    {
-        // TODO
-    }
-
 protected:
     DGame game;
+    WebSocketServer server;
 
     /// To be overridden
     void onInitialize() { }

@@ -9,5 +9,5 @@ if [[ $TRAVIS_OS_NAME == "linux" ]]; then
     sudo dpkg -i ${DMD_DEB}
 
     # Install other dependencies
-    sudo apt-get install libfreeimage-dev libjpeg62-dev
+    sudo apt-get install libfreeimage-dev libjpeg62-dev libevent-dev libssl-dev
 fi

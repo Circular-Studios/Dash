@@ -25,6 +25,7 @@ public:
     final void update()
     {
         server.update();
+        processEvents();
     }
 
     final void shutdown()

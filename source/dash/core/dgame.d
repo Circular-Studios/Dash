@@ -63,7 +63,7 @@ public:
     /// The instance to be running from
     static DGame instance;
 
-    /// The editor controller
+    /// The editor controller, resolved by reflection.d
     Editor editor;
 
     /// Current state of the game

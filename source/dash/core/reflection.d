@@ -6,6 +6,7 @@ import dash.core.dgame, dash.editor.editor;
  */
 static this()
 {
+    ClassInfo gameType = typeid(DGame);
     ClassInfo editorType = typeid(Editor);
 
     foreach( mod; ModuleInfo )
@@ -14,11 +15,12 @@ static this()
         {
             // Find the appropriate game loop.
             if( klass.base == typeid(DGame) )
-                DGame.instance = cast(DGame)klass.create();
+                gameType = klass;
             else if( klass.base == typeid(Editor) )
                 editorType = klass;
         }
     }
 
+    DGame.instance = cast(DGame)gameType.create();
     DGame.instance.editor = cast(Editor)editorType.create();
 }

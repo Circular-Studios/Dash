@@ -84,17 +84,17 @@ shared static this()
     buffersMutex = new shared Mutex();
 }
 
-void handleConnection( scope WebSocket sock )
+void handleConnection( scope WebSocket socket )
 {
-    while( sock.connected )
+    while( socket.connected )
     {
-        string msg = sock.receiveText();
+        string msg = socket.receiveText();
 
         synchronized( buffersMutex ) buffers ~= msg[];
 
         import std.stdio, std.conv;
         writeln( "Message received! ", msg.to!string );
 
-        sock.send( msg );
+        socket.send( msg );
     }
 }

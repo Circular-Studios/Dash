@@ -20,6 +20,7 @@
         "dyaml": "~>0.5",
         "gl3n" : "~master",
         "dlogg": "~>0.3",
+        "msgpack-d": "==0.9.2",
         "x11": { "version": "~>1.0", "optional": true }
     },
 

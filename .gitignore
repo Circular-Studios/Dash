@@ -16,7 +16,6 @@
 [Rr]elease/
 x64/
 build/
-[Bb]in/
 [Oo]bj/
 
 # MSTest test Results
@@ -186,7 +185,8 @@ test-results/
 *.exe_cv
 *.dll
 *.dll_cv
-*.lib
 *.lib_cv
 __dummy.html
 docs.json
+libdash.a
+__test__*__

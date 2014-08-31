@@ -6,7 +6,7 @@ If you're reading this page, chances are you fall into one of the following cate
 
 #### I am a game developer interested in making games with Dash:
 
-Our [readme.io page](http://dash.circularstudios.com/) has all the info you could ever want for building a game with Dash. Pro tip: you'll want to read up on [YAML](http://www.yaml.org/) and [D](http://dlang.org) before getting started.
+Our [documentation page](http://circularstudios.com/dash/) has all the info you could ever want for building a game with Dash. Pro tip: you'll want to read up on [YAML](http://www.yaml.org/) and [D](http://dlang.org) before getting started.
 
 #### I am an engine developer looking to contribute to Dash:
 
@@ -14,7 +14,7 @@ Great! We'd love to have your support/input/code. Check out [CONTRIBUTING.md](ht
 
 #### I have no idea what this is, I just want to see it running:
 
-The easiest way to get Dash running (on Windows) is to head over to our [Releases](https://github.com/Circular-Studios/Dash/releases) page and download the most recent `dash-game.zip`, and double clicking on `Dash Game`. On Linux, you'll want to check out the simple instructions at [Setting up Your Environment page](https://github.com/Circular-Studios/Dash/wiki/Setting-Up-Your-Environment-(Engine)).
+The easiest way to get Dash running (on Windows) is to head over to our [Releases](https://github.com/Circular-Studios/Dash/releases) page and download the most recent `dash-game.zip`, and double clicking on `Dash Game`. On Linux, you'll want to check out the simple instructions at [Setting up Your Environment page](https://github.com/Circular-Studios/Dash/wiki/Setting-Up-Your-Environment).
 
 ### Contact Us
 

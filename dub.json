@@ -1,37 +1,58 @@
 {
-	"name": "dash",
-	"description": "A game engine in dlang.",
-	"copyright": "2013 - 2014",
-	"license": "MIT",
-	"authors": [
-		"Colden Cullen",
-		"Brandon Littell",
-		"Eric Christenson",
-		"Tyler Wozniak",
-		"Sean Brennan",
-		"Timothy Reynolds"
-	],
-	"dependencies": {
-		"derelict-gl3": "~master",
-		"derelict-fi": "~master",
-		"derelict-assimp3": "~master",
-		"dyaml": "==0.4.6",
-		"gl3n" : "~master",
-		"dlogg": "~>0.2.2",
-		"x11": { "version": "==1.0.0", "optional": true }
-	},
-	"targetName": "dash",
-	"targetType": "library",
-	"mainSourceFile": "source/app.d",
-	"sourcePaths": [ "source/" ],
-	"importPaths": [ "source/" ],
-	"libs-windows": [
-		"Awesomium"
-	],
-	"-ddoxFilterArgs": [ "--min-protection=Protected" ],
-	"importPaths-windows": [ "third_party/DWinProgramming" ],
-	"libs-windows": [
-		"gdi32", "ole32", "kernel32",
-		"user32", "comctl32", "comdlg32"
-	]
+    "name": "dash",
+    "description": "A 3D game engine in dlang.",
+    "copyright": "Circular Studios 2013 - 2014",
+    "license": "MIT",
+    "homepage": "http://circularstudios.com",
+    "authors": [
+        "Colden Cullen",
+        "Brandon Littell",
+        "Eric Christenson",
+        "Tyler Wozniak",
+        "Sean Brennan",
+        "Timothy Reynolds"
+    ],
+
+    "dependencies": {
+        "derelict-gl3": "~>1.0",
+        "derelict-fi": "~>1.0",
+        "derelict-assimp3": "~>1.0",
+        "dyaml": "~>0.5",
+        "gl3n" : "~master",
+        "dlogg": "~>0.3",
+        "x11": { "version": "~>1.0", "optional": true }
+    },
+
+    "targetName": "dash",
+    "targetType": "library",
+
+    "mainSourceFile": "source/app.d",
+    "sourcePaths": [ "source/" ],
+    "importPaths": [ "source/" ],
+
+    "-ddoxFilterArgs": [ "--min-protection=Protected" ],
+
+    "importPaths-windows": [ "third_party/DWinProgramming" ],
+    "preBuildCommands-windows": [
+        "cp $PACKAGE_DIR/lib/windows/* ./ || True"
+    ],
+    "libs-windows": [
+        "Awesomium", "soloud_dll_x86",
+        "gdi32", "ole32", "kernel32",
+        "user32", "comctl32", "comdlg32"
+    ],
+
+    "preBuildCommands-osx": [
+        "cp $PACKAGE_DIR/lib/osx/* /usr/local/lib/ || True"
+    ],
+    "libs-osx": [
+        "soloud_x86"
+    ],
+
+    "preBuildCommands-linux": [
+        "cp $PACKAGE_DIR/lib/linux/* /usr/lib/ || true"
+    ],
+    "libs-linux": [
+        "soloud_x86"
+    ]
 }

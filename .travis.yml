@@ -1,19 +1,20 @@
 language: d
+os:
+  - linux
+  - osx
+env:
+#  - DMD_VER=2.065.0 DUB_VER=0.9.21
+  - DMD_VER=2.066.0 DUB_VER=0.9.21
 install:
-- sudo wget http://netcologne.dl.sourceforge.net/project/d-apt/files/d-apt.list -O
-  /etc/apt/sources.list.d/d-apt.list
-- sudo apt-get update
-- sudo apt-get -y --allow-unauthenticated install --reinstall d-apt-keyring
-- sudo apt-get update
-- sudo apt-get install dmd-bin dub libfreeimage-dev libjpeg62-dev
-- sudo dub fetch x11
-- sudo dub add-local . ~master
-- cd ../
-- sudo git clone https://github.com/Circular-Studios/Sample-Dash-Game.git
-- cd Sample-Dash-Game/
-- git branch -r | grep -q $TRAVIS_BRANCH && sudo git checkout $TRAVIS_BRANCH || true
-- sudo cp libawesomium-1.6.5.so /usr/lib/libawesomium-1.6.5.so.0
-script: sudo dub test -q
+  - bash .travis/setup_linux.sh
+  - bash .travis/setup_osx.sh
+  # Install dub
+  - DUB_TAR=dub-${DUB_VER}-${TRAVIS_OS_NAME}-x86_64.tar.gz
+  - wget http://code.dlang.org/files/${DUB_TAR}
+  - sudo tar -C /usr/local/bin -zxf ${DUB_TAR}
+  # Install x11
+  - sudo dub fetch x11 --version="~>1.0"
+script: sudo dub test
 notifications:
   webhooks:
     urls:

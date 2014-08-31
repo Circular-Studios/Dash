@@ -1,6 +1,6 @@
 module dash.editor.websockets;
 import dash.editor.editor;
-import dash.utility.output;
+import dash.utility.output, dash.utility.config;
 
 import vibe.core.core;
 import vibe.http.websockets, vibe.http.server, vibe.http.router;
@@ -14,11 +14,15 @@ public:
     {
         this.editor = editor;
 
+        // Default port to 8080
+        ushort bindPort = 8080;
+        config.tryFind( "Editor.Port", bindPort );
+
         auto router = new URLRouter;
         router.get( "/ws", handleWebSockets( &handleConnection ) );
 
         auto settings = new HTTPServerSettings;
-        settings.port = 8080;
+        settings.port = bindPort;
         settings.bindAddresses = [ "::1", "127.0.0.1" ];
 
         listenHTTP( settings, router );
@@ -29,37 +33,50 @@ public:
         processEvents();
 
         // Process messages
-        Json[] jsons;
-        synchronized( buffersMutex )
+        string[] jsonStrings;
+        synchronized( incomingBuffersMutex )
         {
             // Clear buffers
-            scope(exit) buffers.length = 0;
+            scope(exit) incomingBuffers.length = 0;
 
-            // Parse the jsons.
-            foreach( buffer; buffers )
+            // Copy the jsons.
+            foreach( buffer; incomingBuffers )
             {
-                string jsonStr = cast(string)buffer[];
-                jsons ~= parseJson( jsonStr );
+                string jsonString = cast(string)buffer[];
             }
         }
 
-        import std.stdio;
-        if( jsons.length )
-            writefln( "Received %s jsons.", jsons.length );
-
-        foreach( json; jsons )
+        foreach( jsonStr; jsonStrings )
         {
+            Json json;
+            try json = jsonStr.parseJson();
+            catch( JSONException e )
+            {
+                logError( "Invalid json string sent: ", jsonStr );
+                continue;
+            }
+
             string key;
             Json value;
             if( auto keyPtr = "key" in json )
+            {
                 key = keyPtr.to!string;
+            }
             else
+            {
                 logWarning( "Received a packet without a \"key.\"" );
+                continue;
+            }
 
             if( auto valuePtr = "value" in json )
+            {
                 value = *valuePtr;
+            }
             else
+            {
                 logWarning( "Received a packet without a \"value.\"" );
+                continue;
+            }
 
             editor.queueEvent( key, value );
         }
@@ -76,25 +93,31 @@ private:
 
 private:
 // Received messages to be processed
-shared string[] buffers;
+shared string[] incomingBuffers;
+shared string[] outgoingBuffers;
+
 shared class Mutex { }
-shared Mutex buffersMutex;
+shared Mutex incomingBuffersMutex;
+shared Mutex outgoingBuffersMutex;
+
 shared static this()
 {
-    buffersMutex = new shared Mutex();
+    incomingBuffersMutex = new shared Mutex();
+    outgoingBuffersMutex = new shared Mutex();
 }
 
 void handleConnection( scope WebSocket socket )
 {
     while( socket.connected )
     {
-        string msg = socket.receiveText();
-
-        synchronized( buffersMutex ) buffers ~= msg[];
-
-        import std.stdio, std.conv;
-        writeln( "Message received! ", msg.to!string );
-
-        socket.send( msg );
+        //if( socket.dataAvailableForRead )
+        {
+            string msg = socket.receiveText();
+            synchronized( incomingBuffersMutex ) incomingBuffers ~= msg[];
+        }
+        //else if( outgoingBuffers.length )
+        {
+            // TODO: Send message
+        }
     }
 }

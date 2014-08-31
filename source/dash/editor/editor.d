@@ -1,9 +1,10 @@
 module dash.editor.editor;
 import dash.core.dgame;
 import dash.editor.websockets;
+import dash.utility.output;
 
 import vibe.data.json;
-import std.uuid;
+import std.uuid, std.typecons;
 
 /**
  * The editor manager class. Handles all interactions with editors.
@@ -13,6 +14,9 @@ import std.uuid;
 class Editor
 {
 public:
+    alias JsonEventHandler = void delegate( Json );
+    alias TypedEventHandler( Type ) = void delegate( Type );
+
     final void initialize( DGame instance )
     {
         game = instance;
@@ -33,29 +37,60 @@ public:
         server.stop();
     }
 
-    final UUID registerEventHandler( string key, void delegate( Json ) event )
+    final UUID registerEventHandler( string key, JsonEventHandler event )
     {
-        // TODO
-        return randomUUID();
+        auto id = randomUUID();
+        eventHandlers[ key ] ~= EventHandlerTuple( id, event );
+        return id;
     }
 
-    final UUID registerEventHandler( DataType )( string key, void delegate( DataType ) event )
+    final UUID registerEventHandler( DataType )( string key, TypedEventHandler!DataType event )
     {
-        return registerEventHandler( key, ( json )
-        {
+        return registerEventHandler( key, ( json ) {
             deserializeJson!DataType( json );
         } );
     }
 
+    final void unregisterEventHandler( UUID id )
+    {
+        foreach( _, handlerTupArr; eventHandlers )
+        {
+            foreach( i, handlerTup; handlerTupArr )
+            {
+                if( handlerTup.id == id )
+                {
+                    auto end = handlerTupArr[ i+1..$ ];
+                    handlerTupArr = handlerTupArr[ 0..i ] ~ end;
+                }
+            }
+        }
+    }
+
     final void processEvents()
     {
-        // TODO
+        // Clear the events
+        scope(exit) pendingEvents.length = 0;
+
+        foreach( eventTup; pendingEvents )
+        {
+            if( auto handlerTupArray = eventTup.key in eventHandlers )
+            {
+                foreach( handlerTup; *handlerTupArray )
+                {
+                    handlerTup.handler( eventTup.data );
+                }
+            }
+            else
+            {
+                logWarning( "Invalid editor event received with key ", eventTup.key );
+            }
+        }
     }
 
 package:
     final void queueEvent( string key, Json data )
     {
-        // TODO
+        pendingEvents ~= EventTuple( key, data );
     }
 
 protected:
@@ -72,6 +107,12 @@ protected:
     void onStopPlay() { }
 
 private:
+    alias EventHandlerTuple = Tuple!(UUID, "id", JsonEventHandler, "handler");
+    alias EventTuple = Tuple!(string, "key", Json, "data" );
+
+    EventHandlerTuple[][string] eventHandlers;
+    EventTuple[] pendingEvents;
+
     final void registerDefaultEvents()
     {
         registerEventHandler( "dgame:refresh", ( json ) { game.currentState = EngineState.Refresh; } );

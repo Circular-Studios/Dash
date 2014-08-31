@@ -34,7 +34,7 @@
 
     "importPaths-windows": [ "third_party/DWinProgramming" ],
     "preBuildCommands-windows": [
-        "cp $PACKAGE_DIR/lib/windows/* ./ || True"
+        "robocopy $PACKAGE_DIR\\lib\\windows\\ .\\ /MIR /XX /NFL /NDL /NJH /NJS || (exit 0)"
     ],
     "libs-windows": [
         "Awesomium", "soloud_dll_x86",

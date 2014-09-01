@@ -35,16 +35,19 @@ public:
         // Process messages
         string[] jsonStrings;
 
-        synchronized( incomingBuffersMutex )
+        if( incomingBuffers.length )
         {
-            // Copy the jsons.
-            foreach( buffer; incomingBuffers )
+            synchronized( incomingBuffersMutex )
             {
-                jsonStrings ~= cast(string)buffer[];
-            }
+                // Copy the jsons.
+                foreach( buffer; incomingBuffers )
+                {
+                    jsonStrings ~= cast(string)buffer.dup;
+                }
 
-            // Clear buffers
-            incomingBuffers.length = 0;
+                // Clear buffers
+                incomingBuffers.length = 0;    
+            }
         }
 
         foreach( jsonStr; jsonStrings )
@@ -110,21 +113,32 @@ void handleConnection( scope WebSocket socket )
 
     while( socket.connected )
     {
-        //if( socket.dataAvailableForRead )
+        // If there's messages waiting
+        while( socket.waitForData( 100.msecs ) )
         {
             string msg = socket.receiveText();
-            synchronized( incomingBuffersMutex ) incomingBuffers ~= msg[];
+            synchronized( incomingBuffersMutex )
+            {
+                incomingBuffers ~= msg[];
+            }
         }
-        /*else*/ if( outgoingBuffers.length > outgoingMessagesSent )
+
+        // If we need to send a message
+        if( outgoingBuffers.length > outgoingMessagesSent )
         {
+            shared string[] myOutgoing;
             synchronized( outgoingBuffersMutex )
             {
-                foreach( i; outgoingMessagesSent..outgoingBuffers.length )
-                {
-                    socket.send( outgoingBuffers[ i ] );
-                }
-
+                // Copy the buffers to be thread local
+                myOutgoing = outgoingBuffers[ outgoingMessagesSent..outgoingBuffers.length ].dup;
+                // Update current index.
                 outgoingMessagesSent = outgoingBuffers.length;
+            }
+
+            // And send them.
+            foreach( buf; myOutgoing )
+            {
+                socket.send( buf );
             }
         }
     }

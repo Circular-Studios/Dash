@@ -109,6 +109,8 @@ shared static this()
 
 void handleConnection( scope WebSocket socket )
 {
+    size_t outgoingMessagesSent = 0;
+
     while( socket.connected )
     {
         //if( socket.dataAvailableForRead )
@@ -116,9 +118,17 @@ void handleConnection( scope WebSocket socket )
             string msg = socket.receiveText();
             synchronized( incomingBuffersMutex ) incomingBuffers ~= msg[];
         }
-        //else if( outgoingBuffers.length )
+        /*else*/ if( outgoingBuffers.length > outgoingMessagesSent )
         {
-            // TODO: Send message
+            synchronized( outgoingBuffersMutex )
+            {
+                foreach( i; outgoingMessagesSent..outgoingBuffers.length )
+                {
+                    socket.send( outgoingBuffers[ i ] );
+                }
+
+                outgoingMessagesSent = outgoingBuffers.length;
+            }
         }
     }
 }

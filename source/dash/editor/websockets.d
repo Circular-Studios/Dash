@@ -120,7 +120,7 @@ shared static this()
 
 void handleConnection( scope WebSocket socket )
 {
-    size_t outgoingMessagesSent = 0;
+    size_t outgoingMessagesSent = outgoingBuffers.length;
 
     while( socket.connected )
     {

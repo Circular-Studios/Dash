@@ -18,6 +18,10 @@ public:
     alias JsonEventHandler = void delegate( Json );
     alias TypedEventHandler( Type ) = void delegate( Type );
 
+    // Send callbacks
+    alias JsonSendCallback = void delegate( Json );
+    alias TypedSendCallback( Type ) = void delegate( Type );
+
     /**
      * Initializes the editor with a DGame instance.
      *
@@ -69,11 +73,61 @@ public:
         server.send( msg );
     }
 
+    /**
+     * Sends a message to all attached editors.
+     *
+     * Params:
+     *  key =           The key of the event.
+     *  value =         The data along side it.
+     *  cb =            The callback to call when a response is received.
+     */
+    final void send( string key, Json value, JsonSendCallback cb )
+    {
+        UUID cbId = randomUUID();
+        sendCallbacks[ cbId ] = cb;
+
+        EventMessage msg;
+        msg.key = key;
+        msg.value = value;
+        msg.callbackId = cbId.toString();
+
+        server.send( msg );
+    }
+
+    /**
+     * Sends a message to all attached editors.
+     *
+     * Params:
+     *  key =           The key of the event.
+     *  value =         The data along side it.
+     */
     final void send( DataType )( string key, DataType value )
     {
         send( key, value.serializeToJson() );
     }
 
+    /**
+     * Sends a message to all attached editors.
+     *
+     * Params:
+     *  key =           The key of the event.
+     *  value =         The data along side it.
+     *  cb =            The callback to call when a response is received.
+     */
+    final void send( ResponseType, DataType )( string key, DataType value, TypedSendCallback!ResponseType cb )
+    {
+        send( key, value.serializeToJson(), ( Json json ) { cb( json.deserializeJson!ResponseType ); } );
+    }
+
+    /**
+     * Registers an event callback, for when an event with the given key is received.
+     *
+     * Params:
+     *  key =           The key of the event.
+     *  event =         The handler to call.
+     *
+     * Returns: The ID of the event, so it can be unretistered later.
+     */
     final UUID registerEventHandler( string key, JsonEventHandler event )
     {
         auto id = randomUUID();
@@ -118,27 +172,6 @@ public:
         }
     }
 
-    final void processEvents()
-    {
-        // Clear the events
-        scope(exit) pendingEvents.length = 0;
-
-        foreach( event; pendingEvents )
-        {
-            if( auto handlerTupArray = event.key in eventHandlers )
-            {
-                foreach( handlerTup; *handlerTupArray )
-                {
-                    handlerTup.handler( event.value );
-                }
-            }
-            else
-            {
-                logWarning( "Invalid editor event received with key ", event.key );
-            }
-        }
-    }
-
 package:
     final void queueEvent( EventMessage msg )
     {
@@ -158,11 +191,54 @@ protected:
     /// ditto
     void onStopPlay() { }
 
+    /**
+     * Processes all pending events.
+     *
+     * Called by update.
+     */
+    final void processEvents()
+    {
+        // Clear the events
+        scope(exit) pendingEvents.length = 0;
+
+        foreach( event; pendingEvents )
+        {
+            // If it's a callback, dispatch it as such.
+            if( event.key == CallbackMessageKey )
+            {
+                UUID id = event.callbackId.parseUUID();
+                if( auto cb = id in sendCallbacks )
+                {
+                    (*cb)( event.value );
+                    sendCallbacks.remove( id );
+                }
+                else
+                {
+                    logFatal( "Callback reference lost: ", event.callbackId );
+                }
+            }
+            // Dispatch to handlers.
+            else if( auto handlerTupArray = event.key in eventHandlers )
+            {
+                foreach( handlerTup; *handlerTupArray )
+                {
+                    handlerTup.handler( event.value );
+                }
+            }
+            else
+            {
+                logWarning( "Invalid editor event received with key ", event.key );
+            }
+        }
+    }
+
 private:
+    enum CallbackMessageKey = "__callback__";
     alias EventHandlerTuple = Tuple!(UUID, "id", JsonEventHandler, "handler");
 
     EventHandlerTuple[][string] eventHandlers;
     EventMessage[] pendingEvents;
+    JsonSendCallback[UUID] sendCallbacks;
 
     final void registerDefaultEvents()
     {

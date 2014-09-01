@@ -100,6 +100,7 @@ struct EventMessage
 {
     string key;
     Json value;
+    string callbackId;
 }
 
 private:

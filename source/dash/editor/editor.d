@@ -16,11 +16,9 @@ class Editor
 public:
     // Event handlers
     alias JsonEventHandler = void delegate( Json );
-    alias TypedEventHandler( Type ) = void delegate( Type );
-
-    // Send callbacks
-    alias JsonSendCallback = void delegate( Json );
-    alias TypedSendCallback( Type ) = void delegate( Type );
+    alias JsonEventResponseHandler = void delegate( Json, void delegate( Json ) );
+    alias TypedEventHandler( DataType ) = void delegate( DataType );
+    alias TypedEventResponseHandler( ResponseType, DataType ) = void delegate( DataType, void delegate( ResponseType ) );
 
     /**
      * Initializes the editor with a DGame instance.
@@ -81,10 +79,10 @@ public:
      *  value =         The data along side it.
      *  cb =            The callback to call when a response is received.
      */
-    final void send( string key, Json value, JsonSendCallback cb )
+    final void send( string key, Json value, JsonEventHandler cb )
     {
         UUID cbId = randomUUID();
-        sendCallbacks[ cbId ] = cb;
+        registerCallbackHandler( cbId, msg => cb( msg.value ) );
 
         EventMessage msg;
         msg.key = key;
@@ -114,7 +112,7 @@ public:
      *  value =         The data along side it.
      *  cb =            The callback to call when a response is received.
      */
-    final void send( ResponseType, DataType )( string key, DataType value, TypedSendCallback!ResponseType cb )
+    final void send( ResponseType, DataType )( string key, DataType value, TypedEventHandler!ResponseType cb )
     {
         send( key, value.serializeToJson(), ( Json json ) { cb( json.deserializeJson!ResponseType ); } );
     }
@@ -130,9 +128,41 @@ public:
      */
     final UUID registerEventHandler( string key, JsonEventHandler event )
     {
-        auto id = randomUUID();
-        eventHandlers[ key ] ~= EventHandlerTuple( id, event );
-        return id;
+        void handler( EventMessage msg )
+        {
+            event( msg.value );
+        }
+
+        return registerInternalMessageHandler( key, &handler );
+    }
+
+    /**
+     * Registers an event callback, for when an event with the given key is received.
+     *
+     * Params:
+     *  key =           The key of the event.
+     *  event =         The handler to call.
+     *
+     * Returns: The ID of the event, so it can be unretistered later.
+     */
+    final UUID registerEventHandler( string key, JsonEventResponseHandler event )
+    {
+        void handler( EventMessage msg )
+        {
+            void writeback( Json json )
+            {
+                EventMessage newMsg;
+                newMsg.key = CallbackMessageKey;
+                newMsg.value = json;
+                newMsg.callbackId = msg.callbackId;
+
+                server.send( newMsg );
+            }
+
+            event( msg.value, &writeback );
+        }
+
+        return registerInternalMessageHandler( key, &handler );
     }
 
     /**
@@ -146,9 +176,41 @@ public:
      */
     final UUID registerEventHandler( DataType )( string key, TypedEventHandler!DataType event )
     {
-        return registerEventHandler( key, ( json ) {
-            deserializeJson!DataType( json );
-        } );
+        void handler( EventMessage msg )
+        {
+            event( msg.value.deserializeJson!DataType() );
+        }
+
+        return registerInternalMessageHandler( key, &handler );
+    }
+
+    /**
+     * Registers an event callback, for when an event with the given key is received.
+     *
+     * Params:
+     *  key =           The key of the event.
+     *  event =         The handler to call.
+     *
+     * Returns: The ID of the event, so it can be unretistered later.
+     */
+    final UUID registerEventHandler( ResponseType, DataType )( string key, TypedEventResponseHandler!( ResponseType, DataType ) event )
+    {
+        void handler( EventMessage msg )
+        {
+            void writeback( ResponseType res )
+            {
+                EventMessage newMsg;
+                newMsg.key = CallbackMessageKey;
+                newMsg.value = res.serializeToJsonString();
+                newMsg.callbackId = msg.callbackId;
+
+                server.send( newMsg );
+            }
+
+            event( messageData, &writeback );
+        }
+
+        return registerInternalMessageHandler( key, &handler );
     }
 
     /**
@@ -203,26 +265,12 @@ protected:
 
         foreach( event; pendingEvents )
         {
-            // If it's a callback, dispatch it as such.
-            if( event.key == CallbackMessageKey )
-            {
-                UUID id = event.callbackId.parseUUID();
-                if( auto cb = id in sendCallbacks )
-                {
-                    (*cb)( event.value );
-                    sendCallbacks.remove( id );
-                }
-                else
-                {
-                    logFatal( "Callback reference lost: ", event.callbackId );
-                }
-            }
             // Dispatch to handlers.
-            else if( auto handlerTupArray = event.key in eventHandlers )
+            if( auto handlerTupArray = event.key in eventHandlers )
             {
                 foreach( handlerTup; *handlerTupArray )
                 {
-                    handlerTup.handler( event.value );
+                    handlerTup.handler( event );
                 }
             }
             else
@@ -234,15 +282,47 @@ protected:
 
 private:
     enum CallbackMessageKey = "__callback__";
-    alias EventHandlerTuple = Tuple!(UUID, "id", JsonEventHandler, "handler");
+    alias InternalEventHandler = void delegate( EventMessage );
+    alias EventHandlerTuple = Tuple!(UUID, "id", InternalEventHandler, "handler");
 
-    EventHandlerTuple[][string] eventHandlers;
     EventMessage[] pendingEvents;
-    JsonSendCallback[UUID] sendCallbacks;
+    EventHandlerTuple[][string] eventHandlers;
+    InternalEventHandler[UUID] callbacks;
+
+    /// Register a 
+    final UUID registerInternalMessageHandler( string key, InternalEventHandler handler )
+    {
+        auto id = randomUUID();
+        eventHandlers[ key ] ~= EventHandlerTuple( id, handler );
+        return id;
+    }
+
+    final void registerCallbackHandler( UUID id, InternalEventHandler handler )
+    {
+        callbacks[ id ] = handler;
+    }
+
+    /// Handle an event that is a callback.
+    final void handleCallback( EventMessage msg )
+    {
+        // If it's a callback, dispatch it as such.
+        UUID id = msg.callbackId.parseUUID();
+        if( auto cb = id in callbacks )
+        {
+            (*cb)( msg );
+            callbacks.remove( id );
+        }
+        else
+        {
+            logFatal( "Callback reference lost: ", msg.callbackId );
+        }
+    }
 
     final void registerDefaultEvents()
     {
+        registerInternalMessageHandler( CallbackMessageKey, &handleCallback );
+
         registerEventHandler( "dgame:refresh", ( json ) { game.currentState = EngineState.Refresh; } );
-        registerEventHandler( "loopback", json => send( "loopback", json ) );
+        registerEventHandler( "loopback", ( json, cb ) => cb( json ) );
     }
 }

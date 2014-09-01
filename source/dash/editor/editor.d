@@ -14,9 +14,15 @@ import std.uuid, std.typecons;
 class Editor
 {
 public:
+    // Event handlers
     alias JsonEventHandler = void delegate( Json );
     alias TypedEventHandler( Type ) = void delegate( Type );
 
+    /**
+     * Initializes the editor with a DGame instance.
+     *
+     * Called by DGame.
+     */
     final void initialize( DGame instance )
     {
         game = instance;
@@ -26,17 +32,34 @@ public:
         onInitialize();
     }
 
+    /**
+     * Processes pending events.
+     *
+     * Called by DGame.
+     */
     final void update()
     {
         server.update();
         processEvents();
     }
 
+    /**
+     * Shutsdown the editor interface.
+     *
+     * Called by DGame.
+     */
     final void shutdown()
     {
         server.stop();
     }
 
+    /**
+     * Sends a message to all attached editors.
+     *
+     * Params:
+     *  key =           The key of the event.
+     *  value =         The data along side it.
+     */
     final void send( string key, Json value )
     {
         EventMessage msg;
@@ -58,6 +81,15 @@ public:
         return id;
     }
 
+    /**
+     * Registers an event callback, for when an event with the given key is received.
+     *
+     * Params:
+     *  key =           The key of the event.
+     *  event =         The handler to call.
+     *
+     * Returns: The ID of the event, so it can be unretistered later.
+     */
     final UUID registerEventHandler( DataType )( string key, TypedEventHandler!DataType event )
     {
         return registerEventHandler( key, ( json ) {
@@ -65,6 +97,12 @@ public:
         } );
     }
 
+    /**
+     * Unregisters an event callback.
+     *
+     * Params:
+     *  id =            The id of the handler to remove.
+     */
     final void unregisterEventHandler( UUID id )
     {
         foreach( _, handlerTupArr; eventHandlers )

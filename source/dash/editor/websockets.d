@@ -75,6 +75,16 @@ public:
         }
     }
 
+    void send( EventMessage msg )
+    {
+        shared string jsonStr = msg.serializeToJsonString();
+
+        synchronized( outgoingBuffersMutex )
+        {
+            outgoingBuffers ~= jsonStr;
+        }
+    }
+
     void stop()
     {
         exitEventLoop( true );

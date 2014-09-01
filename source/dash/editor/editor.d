@@ -37,6 +37,20 @@ public:
         server.stop();
     }
 
+    final void send( string key, Json value )
+    {
+        EventMessage msg;
+        msg.key = key;
+        msg.value = value;
+
+        server.send( msg );
+    }
+
+    final void send( DataType )( string key, DataType value )
+    {
+        send( key, value.serializeToJson() );
+    }
+
     final UUID registerEventHandler( string key, JsonEventHandler event )
     {
         auto id = randomUUID();
@@ -115,5 +129,6 @@ private:
     final void registerDefaultEvents()
     {
         registerEventHandler( "dgame:refresh", ( json ) { game.currentState = EngineState.Refresh; } );
+        registerEventHandler( "loopback", json => send( "loopback", json ) );
     }
 }

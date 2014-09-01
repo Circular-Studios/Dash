@@ -49,37 +49,26 @@ public:
 
         foreach( jsonStr; jsonStrings )
         {
-            Json json;
-            try json = jsonStr.parseJson();
+            EventMessage msg;
+            try msg = jsonStr.deserializeJson!EventMessage();
             catch( JSONException e )
             {
                 logError( "Invalid json string sent: ", jsonStr );
                 continue;
             }
 
-            string key;
-            Json value;
-            if( auto keyPtr = "key" in json )
-            {
-                key = keyPtr.to!string;
-            }
-            else
+            if( msg.key.length == 0 )
             {
                 logWarning( "Received a packet without a \"key.\"" );
                 continue;
             }
-
-            if( auto valuePtr = "value" in json )
-            {
-                value = *valuePtr;
-            }
-            else
+            if( msg.value.type == Json.Type.null_ || msg.value.type == Json.Type.undefined )
             {
                 logWarning( "Received a packet without a \"value.\"" );
                 continue;
             }
 
-            editor.queueEvent( key, value );
+            editor.queueEvent( msg );
         }
     }
 
@@ -90,6 +79,14 @@ public:
 
 private:
     Editor editor;
+}
+
+package:
+/// The type-safe form the cross layer communcations should take
+struct EventMessage
+{
+    string key;
+    Json value;
 }
 
 private:

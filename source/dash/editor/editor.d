@@ -71,26 +71,26 @@ public:
         // Clear the events
         scope(exit) pendingEvents.length = 0;
 
-        foreach( eventTup; pendingEvents )
+        foreach( event; pendingEvents )
         {
-            if( auto handlerTupArray = eventTup.key in eventHandlers )
+            if( auto handlerTupArray = event.key in eventHandlers )
             {
                 foreach( handlerTup; *handlerTupArray )
                 {
-                    handlerTup.handler( eventTup.data );
+                    handlerTup.handler( event.value );
                 }
             }
             else
             {
-                logWarning( "Invalid editor event received with key ", eventTup.key );
+                logWarning( "Invalid editor event received with key ", event.key );
             }
         }
     }
 
 package:
-    final void queueEvent( string key, Json data )
+    final void queueEvent( EventMessage msg )
     {
-        pendingEvents ~= EventTuple( key, data );
+        pendingEvents ~= msg;
     }
 
 protected:
@@ -108,10 +108,9 @@ protected:
 
 private:
     alias EventHandlerTuple = Tuple!(UUID, "id", JsonEventHandler, "handler");
-    alias EventTuple = Tuple!(string, "key", Json, "data" );
 
     EventHandlerTuple[][string] eventHandlers;
-    EventTuple[] pendingEvents;
+    EventMessage[] pendingEvents;
 
     final void registerDefaultEvents()
     {

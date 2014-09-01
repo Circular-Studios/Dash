@@ -34,16 +34,17 @@ public:
 
         // Process messages
         string[] jsonStrings;
+
         synchronized( incomingBuffersMutex )
         {
-            // Clear buffers
-            scope(exit) incomingBuffers.length = 0;
-
             // Copy the jsons.
             foreach( buffer; incomingBuffers )
             {
-                string jsonString = cast(string)buffer[];
+                jsonStrings ~= cast(string)buffer[];
             }
+
+            // Clear buffers
+            incomingBuffers.length = 0;
         }
 
         foreach( jsonStr; jsonStrings )

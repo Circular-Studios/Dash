@@ -12,6 +12,8 @@ enum EngineState
 {
     /// The main game state.
     Run,
+    /// In edit mode
+    Editor,
     /// Refresh changed assets, but don't reset state.
     Refresh,
     /// Reload all assets at the beginning of the next cycle.
@@ -61,6 +63,9 @@ public:
     /// The instance to be running from
     static DGame instance;
 
+    /// The editor controller, resolved by reflection.d
+    Editor editor;
+
     /// Current state of the game
     EngineState currentState;
 
@@ -83,7 +88,6 @@ public:
      */
     final void run()
     {
-
         // Init tasks
         //TaskManager.initialize();
         start();
@@ -139,6 +143,10 @@ public:
 
             // Do the updating of the child class.
             onUpdate();
+
+            // Update the editor.
+            //if( currentState == EngineState.Editor )
+            editor.update();
 
             //////////////////////////////////////////////////////////////////////////
             // Draw
@@ -206,6 +214,7 @@ private:
         bench!( { Assets.initialize(); } )( "Assets init" );
         bench!( { Prefabs.initialize(); } )( "Prefabs init" );
         bench!( { UserInterface.initializeAwesomium(); } )( "UI init" );
+        bench!( { editor.initialize( this ); } )( "Editor init" );
         bench!( { DGame.instance.onInitialize(); } )( "Game init" );
 
         debug scheduleIntervaledTask( 1.seconds, { if( stateFlags.autoRefresh ) currentState = EngineState.Refresh; return false; } );
@@ -217,6 +226,7 @@ private:
     final void stop()
     {
         onShutdown();
+        editor.shutdown();
         resetTasks();
         UserInterface.shutdownAwesomium();
         Assets.shutdown();

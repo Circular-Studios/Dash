@@ -103,6 +103,7 @@ public:
     {
         send( key, value.serializeToJson() );
     }
+    static assert(is(typeof( send!( string )( "key", "data" ) )));
 
     /**
      * Sends a message to all attached editors.
@@ -116,6 +117,7 @@ public:
     {
         send( key, value.serializeToJson(), ( Json json ) { cb( json.deserializeJson!ResponseType ); } );
     }
+    static assert(is(typeof( send!( string, string )( "key", "data", ( response ) { } ) )));
 
     /**
      * Registers an event callback, for when an event with the given key is received.
@@ -183,6 +185,7 @@ public:
 
         return registerInternalMessageHandler( key, &handler );
     }
+    static assert(is(typeof( registerEventHandler!( string )( "key", ( data ) { } ) )));
 
     /**
      * Registers an event callback, for when an event with the given key is received.
@@ -207,11 +210,12 @@ public:
                 server.send( newMsg );
             }
 
-            event( messageData, &writeback );
+            event( msg.value.deserializeJson!DataType, &writeback );
         }
 
         return registerInternalMessageHandler( key, &handler );
     }
+    static assert(is(typeof( registerEventHandler!( string, string )( "key", ( data, writeback ) { } ) )));
 
     /**
      * Unregisters an event callback.

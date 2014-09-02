@@ -124,7 +124,7 @@ public:
      *  key =           The key of the event.
      *  event =         The handler to call.
      *
-     * Returns: The ID of the event, so it can be unretistered later.
+     * Returns: The ID of the event, so it can be unregistered later.
      */
     final UUID registerEventHandler( string key, JsonEventHandler event )
     {
@@ -143,7 +143,7 @@ public:
      *  key =           The key of the event.
      *  event =         The handler to call.
      *
-     * Returns: The ID of the event, so it can be unretistered later.
+     * Returns: The ID of the event, so it can be unregistered later.
      */
     final UUID registerEventHandler( string key, JsonEventResponseHandler event )
     {
@@ -172,7 +172,7 @@ public:
      *  key =           The key of the event.
      *  event =         The handler to call.
      *
-     * Returns: The ID of the event, so it can be unretistered later.
+     * Returns: The ID of the event, so it can be unregistered later.
      */
     final UUID registerEventHandler( DataType )( string key, TypedEventHandler!DataType event )
     {
@@ -191,7 +191,7 @@ public:
      *  key =           The key of the event.
      *  event =         The handler to call.
      *
-     * Returns: The ID of the event, so it can be unretistered later.
+     * Returns: The ID of the event, so it can be unregistered later.
      */
     final UUID registerEventHandler( ResponseType, DataType )( string key, TypedEventResponseHandler!( ResponseType, DataType ) event )
     {

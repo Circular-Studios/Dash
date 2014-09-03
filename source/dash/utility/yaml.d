@@ -2,7 +2,7 @@ module dash.utility.yaml;
 
 public import yaml;
 import vibe.data.serialization;
-
+import std.traits, std.range;
 
 /**
  * Serializes the given value to YAML.

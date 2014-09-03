@@ -22,7 +22,7 @@ public static:
     {
         version( Windows )
         {
-            adapter = new Win32;
+            adapter = new Win32GL;
         }
         else version( linux )
         {
@@ -30,7 +30,7 @@ public static:
         }
         else
         {
-            adapter = null;
+            adapter = new NullAdapter;
         }
 
         adapter.initialize();

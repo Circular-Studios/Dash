@@ -1,4 +1,4 @@
-module dash.utility.yaml;
+module dash.utility.data.yaml;
 
 public import yaml;
 import vibe.data.serialization;
@@ -33,12 +33,13 @@ Node serializeToYaml( T )( T value )
 {
     return serialize!( YamlSerializer )( value );
 }
+static assert(is(typeof( serializeToYaml( "" ) )));
 
 /**
-* Deserializes a YAML value into the destination variable.
-*
-* The same types as for serializeToYaml() are supported and handled inversely.
-*/
+ * Deserializes a YAML value into the destination variable.
+ *
+ * The same types as for serializeToYaml() are supported and handled inversely.
+ */
 T deserializeYaml( T )( Node yaml )
 {
     return deserialize!( YamlSerializer, T )( yaml );
@@ -48,29 +49,22 @@ T deserializeYaml( T, R )( R input ) if ( isInputRange!R && !is( R == Node ) )
 {
     return deserialize!( YamlStringSerializer!R, T )( input );
 }
+static assert(is(typeof( deserializeYaml!string( Node( "" ) ) )));
+//static assert(is(typeof( deserializeYaml!string( "" ) )));
 
-private struct YamlSerializer
+/// Serializer for vibe.d framework.
+struct YamlSerializer
 {
 private:
-    private void enforceYaml( string file = __FILE__, size_t line = __LINE__ )( bool cond, lazy string message = "YAML exception" )
-    {
-        import std.json: JSONException;
-        import std.exception;
-        enforceEx!JSONException(cond, message, file, line);
-    }
-
-    enum isYamlBasicType( T ) = isNumeric!T || isBoolean!T || is( T == string ) || is( T == typeof(null) );
-
-    enum isSupportedValueType( T ) = isYamlBasicType!T || is( T == Node );
-
-    enum isYamlSerializable( T ) = is( typeof( T.init.toYaml() ) == Node ) && is( typeof( T.fromYaml( Node() ) ) == T );
-
     Node m_current;
     Node[] m_compositeStack;
 
 public:
-    this( Node data ) { m_current = data; }
+    enum isYamlBasicType( T ) = isNumeric!T || isBoolean!T || is( T == string ) || is( T == typeof(null) );
+    enum isSupportedValueType( T ) = isYamlBasicType!T || is( T == Node );
+    enum isYamlSerializable( T ) = is( typeof( T.init.toYaml() ) == Node ) && is( typeof( T.fromYaml( Node() ) ) == T );
 
+    this( Node data ) { m_current = data; }
     @disable this(this);
 
     //
@@ -163,4 +157,12 @@ unittest
     auto lswh = deserializeYaml!LetsSeeWhatHappens( obj );
     assert( lswh.key == "Key" );
     assert( lswh.value == "Value" );
+}
+
+private:
+void enforceYaml( string file = __FILE__, size_t line = __LINE__ )( bool cond, lazy string message = "YAML exception" )
+{
+    import std.json: JSONException;
+    import std.exception;
+    enforceEx!JSONException(cond, message, file, line);
 }

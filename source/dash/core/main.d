@@ -1,4 +1,4 @@
-module dash.core.reflection;
+module dash.core.main;
 import dash.core.dgame, dash.editor.editor;
 
 /**
@@ -23,4 +23,23 @@ static this()
 
     DGame.instance = cast(DGame)gameType.create();
     DGame.instance.editor = cast(Editor)editorType.create();
+}
+
+version( unittest ) { }
+else
+{
+    import dash.core.dgame;
+    import std.stdio;
+
+    /// Does exactly what you think it does.
+    void main()
+    {
+        if( !DGame.instance )
+        {
+            writeln( "No game supplied." );
+            return;
+        }
+
+        DGame.instance.run();
+    }
 }

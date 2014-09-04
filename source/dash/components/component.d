@@ -42,6 +42,33 @@ public:
     void draw() { }
     /// Called on shutdown.
     void shutdown() { }
+
+    // For serialization.
+    import vibe.data.bson, vibe.data.json, dash.utility.data.yaml;
+    Bson toBson()
+    {
+        return Bson();
+    }
+    static Component fromBson( Bson bson )
+    {
+        return null;
+    }
+    Json toJson()
+    {
+        return Json();
+    }
+    static Component fromJson( Json json )
+    {
+        return null;
+    }
+    Node toYaml()
+    {
+        return Node( YAMLNull() );
+    }
+    static Component fromYaml( Node node )
+    {
+        return null;
+    }
 }
 
 /**

@@ -49,7 +49,6 @@ struct ObjectStateFlags
 final class GameObject
 {
 private:
-    Transform _transform;
     GameObject _parent;
     GameObject[] _children;
     Component[TypeInfo] componentList;
@@ -68,8 +67,37 @@ package:
     Scene scene;
 
 public:
+    /**
+     * The struct that will be directly deserialized from the ddl.
+     */
+    static struct Description
+    {
+        /// The name of the object.
+        @rename( "Name" )
+        string name;
+
+        /// The name of the prefab to create from. Do you use with $(D prefab).
+        @rename( "InstanceOf" ) @optional
+        string prefabName;
+
+        /// The Prefab to create from.
+        @ignore
+        Prefab prefab;
+
+        /// The transform of the object.
+        @rename( "Transform" ) @optional
+        Transform.Description transform;
+
+        /// Children of this object.
+        @rename( "Children" ) @optional
+        Description[] children;
+
+        //@rename( "Components" ) @optional
+        Component[] component;
+    }
+
     /// The current transform of the object.
-    mixin( RefGetter!_transform );
+    Transform transform;
     /// The light attached to this object.
     @property void light( Light v ) { addComponent( v ); }
     /// ditto
@@ -192,11 +220,63 @@ public:
     }
 
     /**
+     * Create a GameObject from a description object.
+     *
+     * Params:
+     *  desc =              The description to pull info from.
+     *
+     * Returns:
+     *  A new game object with components and info pulled from yaml.
+     */
+    static GameObject create( Description desc )
+    {
+        GameObject obj;
+
+        if( desc.prefabName )
+        {
+            obj = Prefabs[ desc.prefabName ].createInstance();
+        }
+        else if( desc.prefab )
+        {
+            obj = desc.prefab.createInstance();
+        }
+        else
+        {
+            obj = new GameObject;
+        }
+
+        // Set object name
+        obj.name = desc.name;
+
+        // Init transform
+        obj.transform = desc.transform;
+
+        if( desc.children.length > 0 )
+        {
+            foreach( child; desc.children )
+            {
+                obj.addChild( GameObject.create( child ) );
+            }
+        }
+
+        // Init components
+        /*foreach( string key, Node componentNode; yamlObj )
+        {
+
+        }*/
+
+        foreach( comp; obj.componentList )
+            comp.initialize();
+
+        return obj;
+    }
+
+    /**
      * Creates basic GameObject with transform and connection to transform's emitter.
      */
     this()
     {
-        _transform = Transform( this );
+        transform = Transform( this );
 
         // Create default material
         material = new Material( "default" );
@@ -452,6 +532,13 @@ private:
     vec3 _prevScale;
     mat4 _matrix;
 
+    void opAssign( Description desc )
+    {
+        position = desc.position;
+        rotation = quat( desc.rotation.w, desc.rotation.xyz );
+        scale = desc.scale;
+    }
+
     /**
      * Default constructor, most often created by GameObjects.
      *
@@ -467,6 +554,24 @@ private:
     }
 
 public:
+    /**
+     * The struct that will be directly deserialized from the ddl.
+     */
+    static struct Description
+    {
+        /// The position of the object.
+        @rename( "Position" ) @asArray @optional
+        vec3 position;
+
+        /// The position of the object.
+        @rename( "Rotation" ) @asArray @optional
+        vec4 rotation;
+
+        /// The position of the object.
+        @rename( "Scale" ) @asArray @optional
+        vec3 scale;
+    }
+
     // these should remain public fields, properties return copies not references
     /// The position of the object in local space.
     vec3 position;

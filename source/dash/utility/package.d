@@ -1,5 +1,6 @@
 ﻿module dash.utility;
 public:
+import dash.utility.data;
 import dash.utility.config;
 import dash.utility.input;
 import dash.utility.output;

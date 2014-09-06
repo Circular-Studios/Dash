@@ -7,7 +7,7 @@ import dash.core, dash.components, dash.graphics, dash.utility;
 import gl3n.linalg;
 import std.conv;
 
-mixin( registerComponents!q{dash.components.camera} );
+mixin( registerComponents!() );
 
 /**
  * Camera manages a view and projection matrix.

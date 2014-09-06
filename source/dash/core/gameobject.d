@@ -92,8 +92,8 @@ public:
         @rename( "Children" ) @optional
         Description[] children;
 
-        //@rename( "Components" ) @optional
-        Component[] component;
+        @rename( "Components" ) @optional
+        Component[] components;
     }
 
     /// The current transform of the object.
@@ -232,6 +232,7 @@ public:
     {
         GameObject obj;
 
+        // Create the object
         if( desc.prefabName )
         {
             obj = Prefabs[ desc.prefabName ].createInstance();
@@ -251,6 +252,7 @@ public:
         // Init transform
         obj.transform = desc.transform;
 
+        // Create children
         if( desc.children.length > 0 )
         {
             foreach( child; desc.children )
@@ -259,12 +261,13 @@ public:
             }
         }
 
-        // Init components
-        /*foreach( string key, Node componentNode; yamlObj )
+        // Add components
+        foreach( component; desc.components )
         {
+            obj.addComponent( component );
+        }
 
-        }*/
-
+        // Init components
         foreach( comp; obj.componentList )
             comp.initialize();
 

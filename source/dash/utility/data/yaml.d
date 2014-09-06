@@ -4,6 +4,9 @@ public import yaml;
 import vibe.data.serialization;
 import std.traits, std.range;
 
+/// Convience alias
+alias Yaml = Node;
+
 /**
  * Serializes the given value to YAML.
  *

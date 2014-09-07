@@ -4,12 +4,20 @@
 module dash.components.component;
 import dash.core, dash.components, dash.graphics, dash.utility;
 
-import yaml;
+import vibe.data.bson, vibe.data.json, dash.utility.data.yaml;
 import std.algorithm, std.array, std.string, std.traits, std.conv, std.typecons;
 
 /// Tests if a type can be created from yaml.
 enum isYamlObject(T) = __traits( compiles, { T obj; obj.yaml = Node( YAMLNull() ); } );
+enum isComponent(alias T) = is( T == class ) && is( T : Component ) && !__traits( isAbstractClass, T );
 enum serializationFormats = tuple( "Json", "Bson"/*, "Yaml"*/ );
+private enum perSerializationFormat( string code ) = "".reduce!( ( working, type ) => working ~ code.replace( "$type", type ) )( serializationFormats );
+alias helper( alias T ) = T;
+
+auto append( Begin, End )( Begin begin, End end )
+{
+    return tuple( begin.expand, end );
+}
 
 abstract class YamlObject
 {
@@ -48,35 +56,66 @@ public:
     void shutdown() { }
 
     // For serialization.
-    import vibe.data.bson, vibe.data.json, dash.utility.data.yaml;
-    mixin( {
-        return "".reduce!( ( working, type ) => working ~ q{
-            static $type delegate( Component )[ ClassInfo ] $typeSerializers;
-            $type to$type() const
+    mixin( perSerializationFormat!q{
+        static $type delegate( Component )[ ClassInfo ] $typeSerializers;
+        static Component delegate( $type )[ string ] $typeDeserializers;
+        $type to$type() const
+        {
+            return $typeSerializers[ typeid(this) ]( cast()this );
+        }
+        static Component from$type( $type d )
+        {
+            if( auto type = "Type" in d )
             {
-                return $typeSerializers[ typeid(this) ]( cast()this );
+                return $typeDeserializers[ type.get!string ]( d );
             }
-            static Component from$type( $type d )
+            else
             {
+                logWarning( "Component doesn't have \"Type\" field." );
                 return null;
             }
-        }.replace( "$type", type ) )( serializationFormats );
-    } () );
+        }
+    } );
+
+    const(ComponentDescription)* description() @property
+    {
+        if( auto desc =  typeid(this) in descriptions )
+            return desc;
+        else
+            assert( false, "ComponentDescription not found for type " ~ typeid(this).name );
+    }
+
+private:
+    static const(ComponentDescription)[ ClassInfo ] descriptions;
+}
+
+/// The description for the component
+class ComponentDescription
+{
+public:
+    static struct Field
+    {
+    public:
+        string name;
+        string typeName;
+        string attributes;
+        string mod;
+    }
+
+    Field[] fields;
 }
 
 /**
-* To be placed at the top of any module defining YamlComponents.
-*
-* Params:
-*  modName =           The name of the module to register.
-*/
+ * To be placed at the top of any module defining YamlComponents.
+ *
+ * Params:
+ *  modName =           The name of the module to register.
+ */
 enum registerComponents( string modName = __MODULE__ ) = q{
     static this()
     {
         // Declarations
-        import vibe.data.bson, vibe.data.json, dash.utility.data.yaml;
         import mod = $modName;
-        alias helper( alias T ) = T;
 
         // Foreach definition in the module (classes, structs, functions, etc.)
         foreach( memberName; __traits( allMembers, mod ) )
@@ -85,23 +124,152 @@ enum registerComponents( string modName = __MODULE__ ) = q{
             alias member = helper!( __traits( getMember, mod, memberName ) );
 
             // If member is a class that extends Componen
-            static if( is( member == class ) && is( member : Component ) && !__traits( isAbstractClass, member ) )
+            static if( isComponent!member )
             {
-                mixin( {
-                    import std.string: replace;
-                    import std.algorithm: reduce;
-
-                    return "".reduce!( ( working, type ) => working ~ q{
-                        Component.$typeSerializers[ typeid(member) ] = ( Component c )
-                        {
-                            return $type();
-                        };
-                    }.replace( "$type", type ) )( serializationFormats );
-                } () );
+                componentMetadata!( member ).register();
             }
         }
     }
 }.replace( "$modName", modName );
+
+/// Registers a type as a component
+template componentMetadata( T ) if( isComponent!T )
+{
+public:
+    // Runtime function, registers serializers
+    void register()
+    {
+        // Generate serializers for the type
+        mixin( perSerializationFormat!q{
+            Component.$typeSerializers[ typeid(T) ] = ( Component c )
+            {
+                return $type();
+                //return serializeTo$type( Description( cast(T)c ) );
+            };
+
+            Component.$typeDeserializers[ typeid(T).name ] = ( $type node )
+            {
+                return null;
+                //return deserialize$type!Description( node ).createInstance();
+            };
+        } );
+
+        Component.descriptions[ typeid(T) ] = description;
+    }
+
+    // Generate actual struct
+    struct Description
+    {
+        mixin( descContents );
+
+        enum fields = getFields();
+
+        // Create a description from a component.
+        this( T theThing )
+        {
+            this();
+
+            foreach( field; __traits( allMembers, T ) )
+            {
+                static if( fields.map!(f => f.name).canFind( field ) )
+                {
+                    mixin( field ~ " = theThing." ~ field ~ ";\n" );
+                }
+            }
+        }
+
+        // Create a component from a description.
+        T createInstance() const
+        {
+            T comp = new T;
+            foreach( field; __traits( allMembers, T ) )
+            {
+                static if( fields.map!(f => f.name).canFind( field ) )
+                {
+                    mixin( "comp." ~ field ~ " = this." ~ field ~ ";\n" );
+                }
+            }
+            return comp;
+        }
+    }
+
+    // Generate description
+    enum description = Description();
+
+private:
+    // Get a list of fields on the type
+    ComponentDescription.Field[] getFields( size_t idx = 0 )( ComponentDescription.Field[] fields = [] )
+    {
+        static if( idx == __traits( allMembers, T ).length )
+        {
+            return fields;
+        }
+        else
+        {
+            enum memberName = helper!( __traits( allMembers, T )[ idx ] );
+
+            // Make sure member is accessable and that we care about it
+            static if( !memberName.among( "this", "~this", __traits( allMembers, Component ) ) &&
+                        is( typeof( helper!( __traits( getMember, T, memberName ) ) ) ) )
+            {
+                alias member = helper!( __traits( getMember, T, memberName ) );
+
+                // Process variables
+                static if( !isSomeFunction!member )
+                {
+                    import std.conv;
+                    alias attributes = helper!( __traits( getAttributes, member ) );
+
+                    // Get string form of attributes
+                    static if( is( attributes.length ) )
+                        enum string attributesStr = attributes.array.map!( attr => attr.to!string ).join( ", " ).to!string;
+                    else
+                        enum string attributesStr = attributes.to!string;
+
+                    // Get required module import name
+                    static if( __traits( compiles, moduleName!( typeof( member ) ) ) )
+                        enum modName = moduleName!(typeof(member));
+                    else
+                        enum modName = null;
+
+                    // Generate field
+                    enum newField = ComponentDescription.Field( memberName, fullyQualifiedName!(typeof(member)), attributesStr, modName );
+                    return getFields!( idx + 1 )( fields ~ newField );
+                }
+                else
+                {
+                    return getFields!( idx + 1 )( fields );
+                }
+            }
+            else
+            {
+                return getFields!( idx + 1 )( fields );
+            }
+        }
+    }
+
+    // Generate static description struct for deserializing
+    enum descContents = {
+        return reduce!( ( working, field )
+            {
+                string result = working;
+
+                // Append required import for variable type
+                if( field.mod )
+                    result ~= "import " ~ field.mod ~ ";\n";
+
+                // Append variable attributes
+                if( field.attributes.length > 0 )
+                    result ~= "@(" ~ field.attributes ~ ") ";
+
+                // Append variable declaration
+                result ~= field.typeName ~ " " ~ field.name ~ ";\n";
+
+                return result;
+            }
+        )( "", description.fields );
+    } ();
+}
 
 /**
  * Meant to be added to components that can be set from YAML.
@@ -154,10 +322,14 @@ auto yamlComponent( string loader = "null" )( string name = "" )
  * }
  * ---
  */
-auto field( string loader = "null" )( string name = "" )
+/*
+auto field( string name = "" )
 {
-    return YamlUDA( YamlType.Field, name, mixin( loader ) );
+    return YamlUDA( YamlType.Field, name, null );
 }
+*/
+deprecated( "Use rename instead." )
+alias field = rename;
 
 /// Used to create objects from yaml. The key is the YAML name of the type.
 YamlObject delegate( Node )[string] createYamlObject;

@@ -34,8 +34,8 @@ public static:
         }
 
         adapter.initialize();
-        adapter.initializeDeferredRendering();
-        Shaders.initialize();
+        adapter.initializeDeferredRendering();  // TODO: Eventually moved to initialize with pipelines.
+        Shaders.initialize();   // TODO: Also eventually moved to initialize with pipelines as shaders are pipeline specific.
     }
 
     /**
@@ -43,7 +43,7 @@ public static:
      */
     final void shutdown()
     {
-        Shaders.shutdown();
+        Shaders.shutdown(); // TODO: adapter.shutdown should do this with pipelines.
         adapter.shutdown();
     }
 

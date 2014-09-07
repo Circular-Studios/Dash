@@ -99,7 +99,7 @@ public:
                 auto newMesh = new MeshAsset( file.fullPath, scene.mMeshes[ 0 ] );
 
                 if( scene.mNumAnimations > 0 )
-                    newMesh.animationData = new AssetAnimation( scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
+                    newMesh.animationData = new AnimationData( scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
 
                 meshes[ file.baseFileName ] = newMesh;
             }

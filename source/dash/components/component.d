@@ -5,7 +5,7 @@ module dash.components.component;
 import dash.core, dash.components, dash.graphics, dash.utility;
 
 import yaml;
-import std.array, std.string, std.traits, std.conv, std.typecons;
+import std.algorithm, std.array, std.string, std.traits, std.conv, std.typecons;
 
 /// Tests if a type can be created from yaml.
 enum isYamlObject(T) = __traits( compiles, { T obj; obj.yaml = Node( YAMLNull() ); } );
@@ -50,49 +50,18 @@ public:
     // For serialization.
     import vibe.data.bson, vibe.data.json, dash.utility.data.yaml;
     mixin( {
-        import std.string;
-        string serializers = "";
-
-        foreach( type; serializationFormats )
-        {
-            serializers ~= q{
-                static $type delegate( Component )[ClassInfo] $typeSerializers;
-                $type to$type() const
-                {
-                    return $typeSerializers[typeid(this)]( cast()this );
-                }
-                static Component from$type( $type d )
-                {
-                    return null;
-                }
-            }.replace( "$type", type );
-        }
-
-        return serializers;
+        return "".reduce!( ( working, type ) => working ~ q{
+            static $type delegate( Component )[ ClassInfo ] $typeSerializers;
+            $type to$type() const
+            {
+                return $typeSerializers[ typeid(this) ]( cast()this );
+            }
+            static Component from$type( $type d )
+            {
+                return null;
+            }
+        }.replace( "$type", type ) )( serializationFormats );
     } () );
-
-private:
-    enum serializers = {
-        import std.string;
-        string serializers = "";
-
-        foreach( type; serializationFormats )
-        {
-            serializers ~= q{
-                static $type delegate( Component )[ClassInfo] $typeSerializers;
-                $type to$type() const
-                {
-                    return $typeSerializers[typeid(this)]( cast()this );
-                }
-                static Component from$type( $type d )
-                {
-                    return null;
-                }
-            }.replace( "$type", type );
-        }
-
-        return serializers;
-    } ();
 }
 
 /**
@@ -118,28 +87,17 @@ enum registerComponents( string modName = __MODULE__ ) = q{
             // If member is a class that extends Componen
             static if( is( member == class ) && is( member : Component ) && !__traits( isAbstractClass, member ) )
             {
-                enum generateSerializers = {
+                mixin( {
                     import std.string: replace;
-                    string generator = "";
+                    import std.algorithm: reduce;
 
-                    foreach( type; serializationFormats )
-                    {
-                        generator ~= q{
-                            Component.$typeSerializers[typeid(member)] = ( Component c )
-                            {
-                                // TODO: Shouldn't not compile
-                                static if( __traits( compiles, serializeTo$type( cast(member)c ) ) )
-                                    return serializeTo$type( cast(member)c );
-                                else
-                                    return $type();
-                            };
-                        }.replace( "$type", type );
-                    }
-
-                    return generator;
-                } ();
-
-                mixin( generateSerializers );
+                    return "".reduce!( ( working, type ) => working ~ q{
+                        Component.$typeSerializers[ typeid(member) ] = ( Component c )
+                        {
+                            return $type();
+                        };
+                    }.replace( "$type", type ) )( serializationFormats );
+                } () );
             }
         }
     }

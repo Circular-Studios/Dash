@@ -99,18 +99,55 @@ public:
     /**
      * Switches the current animation
      */
-    void changeAnimation( int animNumber, int startAnimTime )
+    void changeAnimation( uint animNumber, uint startAnimTime )
     {
         if( animNumber < _animationData.animationSet.length )
         {
             _currentAnim = animNumber;
-            _currentAnimTime = startAnimTime;
+
+			if( startAnimTime < _animationData.animationSet[_currentAnim].duration )
+			{
+				_currentAnimTime = startAnimTime;
+			}
+			else
+			{
+				logWarning( "Changed animation successfully, yet animation time to start at was out of bounds." );
+				_currentAnimTime = 0;
+			}
+            
         }
         else
             logWarning( "Could not change to new animation, the animation did not exist." );
     }
-    /**
-    * Runs an animation once, then returns
+	///
+	/*unittest
+	{
+		import std.stdio;
+		writeln( "Dash change animation unittest:" );
+
+		// Setup instance
+		_animationData = new AssetAnimation( );
+		_animationData.animationSet ~= new AnimationSet();
+		_animationData.animationSet ~= new AnimationSet();
+
+		//writeln( "basic" );
+		changeAnimation(1, 0);
+		assert( _currentAnim == 1);
+		assert( _currentAnimTime == 0);
+
+		//writeln( "anim# out of bounds" );
+		changeAnimation(50, 0);
+		assert( _currentAnim == 1);
+		assert( _currentAnimTime == 0);
+
+		//writeln( "start time out of bounds" );
+		changeAnimation(1, 100000);
+		assert( _currentAnim == 1);
+		assert( _currentAnimTime == 0);
+	}*/
+
+	/**
+    * Runs an animation once, then returns to previous one
     */
     void runAnimationOnce( int animNumber, int returnAnimNumber )
     {

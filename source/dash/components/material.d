@@ -13,15 +13,16 @@ mixin( registerComponents!q{dash.components.material} );
 /**
  * A collection of textures that serve different purposes in the rendering pipeline.
  */
-@yamlComponent!( q{name => Assets.get!Material( name )} )()
 @yamlObject()
-final class Material : Asset
+final class MaterialAsset : Asset
 {
 package:
     @field( "Name" )
     string _name;
 
 public:
+    /// The defining yaml
+    Node yaml;
     /// The diffuse (or color) map.
     @field( "Diffuse" )
     Texture diffuse;
@@ -46,6 +47,19 @@ public:
     }
 
     /**
+     * Duplicate the material.
+     */
+    MaterialAsset clone()
+    {
+        auto mat = new MaterialAsset;
+        mat.diffuse = diffuse;
+        mat.normal = normal;
+        mat.specular = specular;
+        mat._name = _name;
+        return mat;
+    }
+
+    /**
      * Shuts down the material, making sure all references are released.
      */
     override void shutdown()
@@ -55,10 +69,31 @@ public:
 }
 
 /**
+ * A reference to a material.
+ */
+final class Material : AssetRef!MaterialAsset
+{
+    alias asset this;
+
+    this() { }
+    this( MaterialAsset ass )
+    {
+        super( ass );
+    }
+
+    override void initialize()
+    {
+        super.initialize();
+
+        // All materials should be unique.
+        asset = asset.clone();
+    }
+}
+
+/**
  * TODO
  */
-@yamlComponent!( q{name => Assets.get!Texture( name )} )()
-class Texture : Asset
+class TextureAsset : Asset
 {
 protected:
     uint _width = 1;
@@ -152,6 +187,14 @@ private:
 }
 
 /**
+ * A reference to a texture.
+ */
+class Texture : AssetRef!TextureAsset
+{
+    alias asset this;
+}
+
+/**
  * A default black texture.
  */
 @property Texture defaultTex()
@@ -159,7 +202,7 @@ private:
     static Texture def;
 
     if( !def )
-        def = new Texture( [cast(ubyte)0, cast(ubyte)0, cast(ubyte)0, cast(ubyte)255].ptr );
+        def = new TextureAsset( [cast(ubyte)0, cast(ubyte)0, cast(ubyte)0, cast(ubyte)255].ptr );
 
     return def;
 }
@@ -172,7 +215,7 @@ private:
     static Texture def;
 
     if( !def )
-        def = new Texture( [cast(ubyte)255, cast(ubyte)127, cast(ubyte)127, cast(ubyte)255].ptr );
+        def = new TextureAsset( [cast(ubyte)255, cast(ubyte)127, cast(ubyte)127, cast(ubyte)255].ptr );
 
     return def;
 }

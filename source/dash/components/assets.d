@@ -16,24 +16,32 @@ abstract final class Assets
 {
 static:
 private:
-    Material[][Resource] materialResources;
+    MaterialAsset[][Resource] materialResources;
 
 package:
-    Mesh[string] meshes;
-    Texture[string] textures;
-    Material[string] materials;
+    MeshAsset[string] meshes;
+    TextureAsset[string] textures;
+    MaterialAsset[string] materials;
 
 public:
     /// Basic quad, generally used for billboarding.
     Mesh unitSquare;
 
     /**
+     * Get a reference to the asset with the given type and name.
+     */
+    AssetRefT get( AssetRefT )( string name ) if( is( AssetRefT AssetT : AssetRef!AssetT ) && !is( AssetRefT == AssetRef!AssetT ) )
+    {
+        return new AssetRefT( get!AssetT( name ) );
+    }
+
+    /**
      * Get the asset with the given type and name.
      */
-    T get( T )( string name ) if( is( T == Mesh ) || is( T == Texture ) || is( T == Material ) || is( T == AssetAnimation ))
+    AssetT getAsset( AssetT )( string name ) if( is( AssetT : Asset ) )
     {
         enum get( Type, string array ) = q{
-            static if( is( T == $Type ) )
+            static if( is( AssetT == $Type ) )
             {
                 if( auto result = name in $array )
                 {
@@ -48,9 +56,9 @@ public:
             }
         }.replaceMap( [ "$array": array, "$Type": Type.stringof ] );
 
-        mixin( get!( Mesh, q{meshes} ) );
-        mixin( get!( Texture, q{textures} ) );
-        mixin( get!( Material, q{materials} ) );
+        mixin( get!( MeshAsset, q{meshes} ) );
+        mixin( get!( TextureAsset, q{textures} ) );
+        mixin( get!( MaterialAsset, q{materials} ) );
     }
 
     /**
@@ -67,7 +75,7 @@ public:
         assert(aiIsExtensionSupported(".fbx".toStringz), "fbx format isn't supported by assimp instance!");
 
         // Load the unitSquare
-        unitSquare = new Mesh( "", aiImportFileFromMemory(
+        unitSquare = new MeshAsset( "", aiImportFileFromMemory(
                                         unitSquareMesh.toStringz, unitSquareMesh.length,
                                         aiProcess_CalcTangentSpace | aiProcess_Triangulate |
                                         aiProcess_JoinIdenticalVertices | aiProcess_SortByPType,
@@ -88,7 +96,7 @@ public:
             // Add mesh
             if( scene.mNumMeshes > 0 )
             {
-                auto newMesh = new Mesh( file.fullPath, scene.mMeshes[ 0 ] );
+                auto newMesh = new MeshAsset( file.fullPath, scene.mMeshes[ 0 ] );
 
                 if( scene.mNumAnimations > 0 )
                     newMesh.animationData = new AssetAnimation( scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
@@ -109,7 +117,7 @@ public:
             if( file.baseFileName in textures )
                logWarning( "Texture ", file.baseFileName, " exists more than once." );
 
-            textures[ file.baseFileName ] = new Texture( file.fullPath );
+            textures[ file.baseFileName ] = new TextureAsset( file.fullPath );
         }
 
         foreach( objFile; loadYamlFiles( Resources.Materials ) )
@@ -158,7 +166,7 @@ public:
 
         // Iterate over each file, and it's materials
         refreshYamlObjects!(
-            node => cast(Material)createYamlObject[ "Material" ]( node ),
+            node => cast(MaterialAsset)createYamlObject[ "Material" ]( node ),
             node => node[ "Name" ].get!string in materials,
             ( node, mat ) => materials[ node[ "Name" ].get!string ] = mat,
             mat => materials.remove( mat.name ) )
@@ -187,24 +195,54 @@ public:
     }
 }
 
-abstract class Asset : Component
+abstract class Asset
 {
 private:
     bool _isUsed;
-    Resource _resource;
 
 public:
     /// Whether or not the material is actually used.
     mixin( Property!( _isUsed, AccessModifier.Package ) );
     /// The resource containing this asset.
-    mixin( RefGetter!_resource );
+    Resource resource;
 
     /**
      * Creates asset with resource.
      */
-    this( Resource resource )
+    this( Resource res )
     {
-        _resource = resource;
+        resource = res;
+    }
+
+    void initialize() { }
+    void update() { }
+    void refresh() { }
+    void shutdown() { }
+}
+
+/**
+ * A reference to an asset.
+ */
+abstract class AssetRef( AssetType ) : Component if( is( AssetType : Asset ) )
+{
+public:
+    //@ignore
+    AssetType asset;
+
+    @field( "Asset" )
+    string assetName;
+
+    this() { }
+    this( AssetType ass )
+    {
+        asset = ass;
+    }
+
+    /// Gets a reference to it's asset.
+    override void initialize()
+    {
+        if( !asset )
+            asset = Assets.getAsset!AssetType( assetName );
     }
 }
 

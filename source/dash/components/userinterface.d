@@ -163,7 +163,7 @@ public:
 /**
  * Creates an Awesomium web view texture
  */
-class AwesomiumView : Texture
+class AwesomiumView : TextureAsset
 {
 private:
     version( Windows )
@@ -176,7 +176,6 @@ public:
         _width = w;
         _height = h;
         glBuffer = new ubyte[_width*_height*4];
-        this.owner = owner;
 
         super( cast(ubyte*)null );
 

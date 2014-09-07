@@ -101,11 +101,11 @@ auto field( string loader = "null" )( string name = "" )
 }
 
 /// Used to create objects from yaml. The key is the YAML name of the type.
-YamlObject delegate( Node )[string] createYamlObject;
+Object delegate( Node )[string] createYamlObject;
 /// Used to create components from yaml. The key is the YAML name of the type.
 Component delegate( Node )[string] createYamlComponent;
 /// Refresh any object defined from yaml. The key is the typeid of the type.
-void delegate( YamlObject, Node )[TypeInfo] refreshYamlObject;
+void delegate( Object, Node )[TypeInfo] refreshYamlObject;
 
 /**
  * To be placed at the top of any module defining YamlComponents.
@@ -165,7 +165,7 @@ enum registerComponents( string modName ) = q{
 LoaderFunction[TypeInfo] typeLoaders;
 
 /// DON'T MIND ME
-void registerYamlObjects( Base )( string yamlName, YamlType type ) if( is( Base : YamlObject ) )
+void registerYamlObjects( Base )( string yamlName, YamlType type ) if( isYamlObject!Base )
 {
     // If no name specified, use class name.
     if( yamlName == "" )
@@ -341,7 +341,7 @@ void registerYamlObjects( Base )( string yamlName, YamlType type ) if( is( Base 
             createYamlObject[ yamlName ] = ( node )
             {
                 // Create an instance of the class to assign things to.
-                YamlObject b = new Base;
+                Object b = new Base;
 
                 refreshYamlObject[ typeid(Base) ]( b, node );
 

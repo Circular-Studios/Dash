@@ -57,8 +57,7 @@ mixin( registerComponents!q{dash.components.mesh} );
  *  Ogre XML
  *  Q3D
  */
-@yamlComponent!( q{name => Assets.get!Mesh( name )} )()
-class Mesh : Asset
+class MeshAsset : Asset
 {
 private:
     uint _glVertexArray, _numVertices, _numIndices, _glIndexBuffer, _glVertexBuffer;
@@ -306,7 +305,7 @@ public:
         // Add mesh
         if( scene.mNumMeshes > 0 )
         {
-            Mesh tempMesh = new Mesh( resource.fullPath, scene.mMeshes[ 0 ] );
+            auto tempMesh = new MeshAsset( resource.fullPath, scene.mMeshes[ 0 ] );
 
             if( scene.mNumAnimations > 0 )
                 tempMesh.animationData = new AssetAnimation( scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
@@ -338,6 +337,11 @@ public:
         glDeleteBuffers( 1, &_glVertexBuffer );
         glDeleteBuffers( 1, &_glVertexArray );
     }
+}
+
+class Mesh : AssetRef!MeshAsset
+{
+    alias asset this;
 }
 
 /**

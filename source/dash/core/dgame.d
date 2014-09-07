@@ -152,9 +152,6 @@ public:
             // Draw
             //////////////////////////////////////////////////////////////////////////
 
-            // Begin drawing
-            Graphics.beginDraw();
-
             activeScene.draw();
 
             // Draw in child class

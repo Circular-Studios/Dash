@@ -1,7 +1,7 @@
 /**
 * TODO
 */
-module dash.graphics.adapters.win32;
+module dash.graphics.adapters.win32gl;
 
 version( Windows ):
 
@@ -14,11 +14,8 @@ import derelict.opengl3.gl3, derelict.opengl3.wgl, derelict.opengl3.wglext;
 enum DWS_FULLSCREEN = WS_POPUP | WS_SYSMENU;
 enum DWS_WINDOWED = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
 
-/**
-* TODO
-*/
 extern( Windows )
-LRESULT WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
+private LRESULT WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
     switch( message )
     {
@@ -64,7 +61,7 @@ LRESULT WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 /**
 * TODO
 */
-final class Win32 : Adapter
+final class Win32GL : OpenGL
 {
 private:
     HWND _hWnd;
@@ -79,7 +76,7 @@ public:
     /// TODO
     mixin( Property!_hInstance );
     /// TODO
-    static @property Win32 get() { return cast(Win32)Graphics.adapter; }
+    static @property Win32GL get() { return cast(Win32GL)Graphics.adapter; }
 
     /**
     * TODO

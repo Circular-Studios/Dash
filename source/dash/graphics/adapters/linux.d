@@ -16,7 +16,7 @@ import std.traits;
 /**
 * TODO
 */
-final class Linux : Adapter
+final class Linux : OpenGL
 {
 private:
     // Because the XVisualStyle type returned from this function is

@@ -141,7 +141,7 @@ public:
      * Params:
      *  oldChild =            The object to remove.
      */
-    final void removechild( GameObject oldChild )
+    final void removeChild( GameObject oldChild )
     {
         _root.removeChild( oldChild );
     }

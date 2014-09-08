@@ -21,15 +21,18 @@
         "gl3n" : "~master",
         "dlogg": "~>0.3",
         "msgpack-d": "==0.9.2",
+        "vibe-d": "==0.7.21-alpha.4",
         "x11": { "version": "~>1.0", "optional": true }
     },
 
     "targetName": "dash",
     "targetType": "library",
 
-    "mainSourceFile": "source/app.d",
+    "mainSourceFile": "source/dash/core/main.d",
     "sourcePaths": [ "source/" ],
     "importPaths": [ "source/" ],
+
+    "versions": [ "VibeCustomMain" ],
 
     "-ddoxFilterArgs": [ "--min-protection=Protected" ],
 

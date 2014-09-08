@@ -16,20 +16,18 @@ mixin( registerComponents!q{dash.components.lights} );
  */
 abstract class Light : Component
 {
-private:
-    bool _castShadows;
-
 public:
     /// The color the light gives off.
     @field( "Color" )
     vec3 color;
     /// If it should cast shadows
-    mixin( Property!( _castShadows ) );
+    @field( "CastShadows" )
+    bool castShadows;
 
     this( vec3 color )
     {
         this.color = color;
-        _castShadows = false;
+        castShadows = false;
     }
 
     override void update() { }
@@ -76,6 +74,11 @@ public:
         this.direction = direction;
         super( color );
         this.castShadows = castShadows;
+    }
+
+    /// Initializes the lights.
+    override void initialize()
+    {
         if( castShadows )
         {
             // generate framebuffer for shadow map

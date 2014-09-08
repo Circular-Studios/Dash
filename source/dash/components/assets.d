@@ -3,6 +3,7 @@
  */
 module dash.components.assets;
 import dash.core.properties, dash.components, dash.utility;
+import dash.utility.data.serialization;
 
 import std.string, std.array, std.algorithm;
 
@@ -122,17 +123,15 @@ public:
             textures[ file.baseFileName ] = new TextureAsset( file.fullPath );
         }
 
-        foreach( objFile; loadYamlFiles( Resources.Materials ) )
+        foreach( res; scanDirectory( Resources.Materials ) )
         {
-            Node object = objFile[ 0 ];
-            auto name = object[ "Name" ].as!string;
+            auto newMat = deserializeFile!MaterialAsset( res );
 
-            if( name in materials )
-                logWarning( "Material ", name, " exists more than once." );
+            if( newMat.name in materials )
+                logWarning( "Material ", newMat.name, " exists more than once." );
 
-            auto newMat = cast(MaterialAsset)createYamlObject[ "Material" ]( object );
-            materials[ name ] = newMat;
-            materialResources[ objFile[ 1 ] ] ~= newMat;
+            materials[ newMat.name ] = newMat;
+            materialResources[ res ] ~= newMat;
         }
 
         meshes.rehash();
@@ -167,12 +166,7 @@ public:
         mixin( refresh!q{textures} );
 
         // Iterate over each file, and it's materials
-        refreshYamlObjects!(
-            node => cast(MaterialAsset)createYamlObject[ "Material" ]( node ),
-            node => node[ "Name" ].get!string in materials,
-            ( node, mat ) => materials[ node[ "Name" ].get!string ] = mat,
-            mat => materials.remove( mat.name ) )
-                ( materialResources );
+        //TODO: Implement
     }
 
     /**
@@ -206,11 +200,16 @@ public:
     /// Whether or not the material is actually used.
     mixin( Property!( _isUsed, AccessModifier.Package ) );
     /// The resource containing this asset.
+    @ignore
     Resource resource;
 
     /**
      * Creates asset with resource.
      */
+    this()
+    {
+        resource = Resource( "" );
+    }
     this( Resource res )
     {
         resource = res;
@@ -228,10 +227,10 @@ public:
 abstract class AssetRef( AssetType ) : Component if( is( AssetType : Asset ) )
 {
 public:
-    //@ignore
+    @ignore
     AssetType asset;
 
-    @field( "Asset" )
+    @rename( "Asset" )
     string assetName;
 
     this() { }

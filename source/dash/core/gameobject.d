@@ -364,67 +364,11 @@ public:
      * Refreshes the object with the given YAML node.
      *
      * Params:
-     *  node =          The node to refresh the object with.
+     *  desc =          The node to refresh the object with.
      */
-    final void refresh( Node node )
+    final void refresh( Description node )
     {
-        // Update components
-        foreach( type; componentList.keys )
-        {
-            if( auto refresher = type in refreshYamlObject )
-            {
-                ( *refresher )( componentList[ type ], node );
-                componentList[ type ].refresh();
-            }
-            else
-            {
-                componentList.remove( type );
-            }
-        }
-
-        // Update children
-        Node yamlChildren;
-        if( node.tryFind( "Children", yamlChildren ) && yamlChildren.isSequence )
-        {
-            auto childNames = children.map!( child => child.name );
-            bool[string] childFound = childNames.zip( false.repeat( childNames.length ) ).assocArray();
-
-            foreach( Node yamlChild; yamlChildren )
-            {
-                // Find 0 based index of child in yamlChildren
-                if( auto index = childNames.countUntil( yamlChild[ "Name" ].get!string ) + 1 )
-                {
-                    // Refresh with YAML node.
-                    children[ index - 1 ].refresh( yamlChild );
-                    childFound[ yamlChild[ "Name" ].get!string ] = true;
-                }
-                // If not in children, add it.
-                else
-                {
-                    addChild( GameObject.createFromYaml( yamlChild ) );
-                }
-            }
-
-            // Filter out found children's names, and then get the objects.
-            auto unfoundChildren = childFound.keys
-                                        .filter!( name => !childFound[ name ] )
-                                        .map!( name => children[ childNames.countUntil( name ) ] );
-            foreach( unfound; unfoundChildren )
-            {
-                logDebug( "Removing child ", unfound.name, " from ", name, "." );
-                unfound.shutdown();
-                removeChild( unfound );
-            }
-        }
-        // Remove all children
-        else
-        {
-            foreach( child; children )
-            {
-                child.shutdown();
-                removeChild( child );
-            }
-        }
+        //TODO: Implement
     }
 
     /**

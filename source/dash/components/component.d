@@ -20,30 +20,14 @@ auto append( Begin, End )( Begin begin, End end )
     return tuple( begin.expand, end );
 }
 
-abstract class YamlObject
-{
-public:
-    @ignore
-    Node yaml;
-
-    /// Called when refreshing an object.
-    void refresh() { }
-
-    this()
-    {
-        yaml = Node( YAMLNull() );
-    }
-}
-
 /**
  * Interface for components to implement.
  */
-abstract class Component : YamlObject
+abstract class Component
 {
 public:
-    /// The node that defined the component.
-    Node yaml;
     /// The GameObject that owns this component.
+    @ignore
     GameObject owner;
 
     /// The function called on initialization of the object.
@@ -57,8 +41,8 @@ public:
 
     // For serialization.
     mixin( perSerializationFormat!q{
-        static $type delegate( Component )[ ClassInfo ] $typeSerializers;
-        static Component delegate( $type )[ string ] $typeDeserializers;
+        @ignore static $type delegate( Component )[ ClassInfo ] $typeSerializers;
+        @ignore static Component delegate( $type )[ string ] $typeDeserializers;
         $type to$type() const
         {
             return $typeSerializers[ typeid(this) ]( cast()this );
@@ -345,7 +329,7 @@ Component delegate( Node )[string] createYamlComponent;
 void delegate( Object, Node )[TypeInfo] refreshYamlObject;
 
 enum YamlType { Object, Component, Field }
-private alias LoaderFunction = YamlObject delegate( string );
+private alias LoaderFunction = Object delegate( string );
 
 struct YamlUDA
 {

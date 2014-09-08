@@ -64,12 +64,7 @@ public:
      */
     void refresh()
     {
-        refreshYamlObjects!(
-            node => cast(Prefab)createYamlObject[ "Prefab" ]( node ),
-            node => node[ "Name" ].get!string in prefabs,
-            ( node, fab ) => prefabs[ node[ "Name" ].get!string ] = fab,
-            fab => prefabs.remove( fab.name ) )
-                ( prefabResources );
+        //TODO: Implement
     }
 
 private:
@@ -80,7 +75,7 @@ private:
  * A prefab that allows for quick object creation.
  */
 @yamlObject()
-final class Prefab : YamlObject
+final class Prefab
 {
 public:
     /// The name of the prefab.
@@ -94,7 +89,8 @@ public:
      */
     GameObject createInstance()
     {
-        return GameObject.createFromYaml( yaml );
+        //TODO: Fix this
+        return null;//GameObject.createFromYaml( yaml );
     }
 
 private:

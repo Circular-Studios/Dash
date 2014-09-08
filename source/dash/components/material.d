@@ -21,8 +21,6 @@ package:
     string _name;
 
 public:
-    /// The defining yaml
-    Node yaml;
     /// The diffuse (or color) map.
     @field( "Diffuse" )
     Texture diffuse;

@@ -57,6 +57,7 @@ public:
      */
     final void clear()
     {
+        destroy( _root );
         _root = new GameObject;
     }
 
@@ -82,12 +83,7 @@ public:
     final void refresh()
     {
         // Iterate over each file, and it's objects
-        refreshYamlObjects!(
-            GameObject.createFromYaml,
-            node => this[ node[ "Name" ].get!string ],
-            ( node, obj ) => _root.addChild( obj ),
-            ( obj ) { if( obj.parent ) obj.parent.removeChild( obj ); } )
-                ( goResources );
+        //TODO: Implement
     }
 
     /**

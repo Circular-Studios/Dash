@@ -3,7 +3,7 @@
  */
 module dash.components.animation;
 import dash.core.properties;
-import dash.components.component;
+import dash.components;
 import dash.utility;
 
 import derelict.assimp3.assimp;
@@ -18,7 +18,7 @@ class Animation : Component
 {
 private:
     /// Asset animation that the gameobject is animating based off of
-    AssetAnimation _animationData;
+    AnimationData _animationData;
     /// Current animation out of all the animations in the asset animation
     int _currentAnim;
     /// Current time of the animation
@@ -40,7 +40,7 @@ public:
     /**
      * Create animation object based on asset animation
      */
-    this( AssetAnimation assetAnimation )
+    this( AnimationData assetAnimation )
     {
         _currentAnim = 0;
         _currentAnimTime = 0.0f;
@@ -137,7 +137,7 @@ public:
 /**
  * Stores the animation skeleton/bones, stores the animations poses, and makes this information accessible to gameobjects
  */
-class AssetAnimation
+class AnimationData : Asset
 {
 private:
     /// List of animations, containing all of the information specific to each
@@ -167,6 +167,8 @@ public:
      */
     this( const(aiAnimation**) animations, int numAnimations, const(aiMesh*) mesh, const(aiNode*) nodeHierarchy )
     {
+        super( Resource( "" ) );
+
         for( int i = 0; i < nodeHierarchy.mNumChildren; i++)
         {
             string name = nodeHierarchy.mChildren[ i ].mName.data.ptr.fromStringz().to!string;
@@ -446,7 +448,7 @@ public:
     /**
      * Shutdown the animation bone/pose data
      */
-    void shutdown()
+    override void shutdown()
     {
 
     }

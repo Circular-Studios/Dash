@@ -282,7 +282,7 @@ public:
         transform = Transform( this );
 
         // Create default material
-        material = new Material( "default" );
+        material = new Material( new MaterialAsset( "default" ) );
         id = nextId++;
 
         stateFlags = new ObjectStateFlags;

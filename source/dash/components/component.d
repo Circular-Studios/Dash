@@ -10,9 +10,10 @@ import std.algorithm, std.array, std.string, std.traits, std.conv, std.typecons;
 /// Tests if a type can be created from yaml.
 enum isYamlObject(T) = __traits( compiles, { T obj; obj.yaml = Node( YAMLNull() ); } );
 enum isComponent(alias T) = is( T == class ) && is( T : Component ) && !__traits( isAbstractClass, T );
-enum serializationFormats = tuple( "Json", "Bson"/*, "Yaml"*/ );
+enum serializationFormats = tuple( "Json"/*, "Bson"/*, "Yaml"*/ );
 private enum perSerializationFormat( string code ) = "".reduce!( ( working, type ) => working ~ code.replace( "$type", type ) )( serializationFormats );
 alias helper( alias T ) = T;
+alias helper() = TypeTuple!();
 
 auto append( Begin, End )( Begin begin, End end )
 {
@@ -77,7 +78,7 @@ public:
         }
     } );
 
-    const(ComponentDescription)* description() @property
+    const(Description)* description() @property
     {
         if( auto desc =  typeid(this) in descriptions )
             return desc;
@@ -85,24 +86,24 @@ public:
             assert( false, "ComponentDescription not found for type " ~ typeid(this).name );
     }
 
-private:
-    static const(ComponentDescription)[ ClassInfo ] descriptions;
-}
-
-/// The description for the component
-class ComponentDescription
-{
-public:
-    static struct Field
+    /// The description for the component
+    struct Description
     {
     public:
-        string name;
-        string typeName;
-        string attributes;
-        string mod;
+        static struct Field
+        {
+        public:
+            string name;
+            string typeName;
+            string attributes;
+            string mod;
+        }
+
+        Field[] fields;
     }
 
-    Field[] fields;
+private:
+    static const(Description)[ ClassInfo ] descriptions;
 }
 
 /**
@@ -144,13 +145,13 @@ public:
             Component.$typeSerializers[ typeid(T) ] = ( Component c )
             {
                 return $type();
-                //return serializeTo$type( Description( cast(T)c ) );
+                //return serializeTo$type( SerializationDescription( cast(T)c ) );
             };
 
             Component.$typeDeserializers[ typeid(T).name ] = ( $type node )
             {
                 return null;
-                //return deserialize$type!Description( node ).createInstance();
+                //return deserialize$type!SerializationDescription( node ).createInstance();
             };
         } );
 
@@ -158,7 +159,7 @@ public:
     }
 
     // Generate actual struct
-    struct Description
+    struct SerializationDescription
     {
         mixin( descContents );
 
@@ -167,8 +168,6 @@ public:
         // Create a description from a component.
         this( T theThing )
         {
-            this();
-
             foreach( field; __traits( allMembers, T ) )
             {
                 static if( fields.map!(f => f.name).canFind( field ) )
@@ -179,7 +178,7 @@ public:
         }
 
         // Create a component from a description.
-        T createInstance() const
+        T createInstance()
         {
             T comp = new T;
             foreach( field; __traits( allMembers, T ) )
@@ -194,11 +193,11 @@ public:
     }
 
     // Generate description
-    enum description = Description();
+    enum description = Component.Description( getFields() );
 
 private:
     // Get a list of fields on the type
-    ComponentDescription.Field[] getFields( size_t idx = 0 )( ComponentDescription.Field[] fields = [] )
+    Component.Description.Field[] getFields( size_t idx = 0 )( Component.Description.Field[] fields = [] )
     {
         static if( idx == __traits( allMembers, T ).length )
         {
@@ -221,10 +220,18 @@ private:
                     alias attributes = helper!( __traits( getAttributes, member ) );
 
                     // Get string form of attributes
-                    static if( is( attributes.length ) )
-                        enum string attributesStr = attributes.array.map!( attr => attr.to!string ).join( ", " ).to!string;
-                    else
-                        enum string attributesStr = attributes.to!string;
+                    string attributesStr()
+                    {
+                        static if( is( attributes.length ) )
+                            return attributes.array.map!( attr => attr.to!string ).join( ", " ).to!string;
+                        else static if( is( attributes.to!string ) )
+                            return attributes.to!string;
+                        else
+                        {
+                            __ctfeWriteln( "No attributes on member " ~ memberName );
+                            return null;
+                        }
+                    }
 
                     // Get required module import name
                     static if( __traits( compiles, moduleName!( typeof( member ) ) ) )
@@ -233,7 +240,7 @@ private:
                         enum modName = null;
 
                     // Generate field
-                    enum newField = ComponentDescription.Field( memberName, fullyQualifiedName!(typeof(member)), attributesStr, modName );
+                    enum newField = Component.Description.Field( memberName, fullyQualifiedName!(Unqual!(typeof(member))), attributesStr, modName );
                     return getFields!( idx + 1 )( fields ~ newField );
                 }
                 else
@@ -259,7 +266,7 @@ private:
                     result ~= "import " ~ field.mod ~ ";\n";
 
                 // Append variable attributes
-                if( field.attributes.length > 0 )
+                if( field.attributes )
                     result ~= "@(" ~ field.attributes ~ ") ";
 
                 // Append variable declaration
@@ -332,11 +339,11 @@ deprecated( "Use rename instead." )
 alias field = rename;
 
 /// Used to create objects from yaml. The key is the YAML name of the type.
-YamlObject delegate( Node )[string] createYamlObject;
+Object delegate( Node )[string] createYamlObject;
 /// Used to create components from yaml. The key is the YAML name of the type.
 Component delegate( Node )[string] createYamlComponent;
 /// Refresh any object defined from yaml. The key is the typeid of the type.
-void delegate( YamlObject, Node )[TypeInfo] refreshYamlObject;
+void delegate( Object, Node )[TypeInfo] refreshYamlObject;
 
 enum YamlType { Object, Component, Field }
 private alias LoaderFunction = YamlObject delegate( string );

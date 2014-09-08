@@ -215,7 +215,7 @@ public:
             import win32.windows;
             POINT i;
             GetCursorPos( &i );
-            ScreenToClient( Win32.get().hWnd, &i );
+            ScreenToClient( Win32GL.get().hWnd, &i );
 
             // Adjust for border
             if( !Graphics.adapter.fullscreen )
@@ -260,9 +260,7 @@ public:
 
         if( x >= 0 && x <= Graphics.width && y >= 0 && y <= Graphics.height )
         {
-            glBindFramebuffer( GL_FRAMEBUFFER, Graphics.deferredFrameBuffer );
-            glReadBuffer( GL_DEPTH_ATTACHMENT );
-            glReadPixels( x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+            depth = Graphics.getDepthAtScreenPoint( mouse ); 
 
             auto linearDepth = scene.camera.projectionConstants.x / ( scene.camera.projectionConstants.y - depth );
             //Convert x and y to normalized device coords
@@ -272,8 +270,6 @@ public:
             auto viewSpace = scene.camera.inversePerspectiveMatrix * vec4( screenX, screenY, 1.0f, 1.0f);
             auto viewRay = vec3( viewSpace.xy * (1.0f / viewSpace.z), 1.0f);
             view = viewRay * linearDepth;
-
-            glBindFramebuffer( GL_FRAMEBUFFER, 0 );
         }
 
         return view;
@@ -311,24 +307,15 @@ public:
         }
 
         vec2i mouse = mousePos();
-        float fId;
 
         if( mouse.x >= 0 && mouse.x <= Graphics.width && mouse.y >= 0 && mouse.y <= Graphics.height )
         {
-            glBindFramebuffer( GL_FRAMEBUFFER, Graphics.deferredFrameBuffer );
-            glReadBuffer( GL_COLOR_ATTACHMENT1 );
-            glReadPixels( mouse.x, mouse.y, 1, 1, GL_ALPHA, GL_FLOAT, &fId);
+            uint id = Graphics.getObjectIDAtScreenPoint( mouse );
 
-            uint id = cast(int)(fId);
-            glBindFramebuffer( GL_FRAMEBUFFER, 0 );
-
-            if(id > 0)
-			{
-				import dash.utility.output;
-
-				logInfo( "Clicked object ID: ", id );
-                return scene[id];
-			}
+            if( id > 0 )
+            {
+                return scene[ id ];
+            }
         }
 
         return null;

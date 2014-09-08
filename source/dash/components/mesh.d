@@ -11,13 +11,6 @@ import std.stdio, std.stream, std.format, std.math, std.string;
 
 mixin( registerComponents!() );
 
-/*Mesh getMesh( string name )
-{
-    auto mesh = Assets.get!Mesh( yml.get!string );
-
-    return mesh;
-}*/
-
 /**
  * Loads and manages meshes into OpenGL.
  *
@@ -57,14 +50,13 @@ mixin( registerComponents!() );
  *  Ogre XML
  *  Q3D
  */
-@yamlComponent!( q{name => Assets.get!Mesh( name )} )()
-class Mesh : Asset
+class MeshAsset : Asset
 {
 private:
     uint _glVertexArray, _numVertices, _numIndices, _glIndexBuffer, _glVertexBuffer;
     bool _animated;
     AABB _boundingBox;
-    AssetAnimation _animationData;
+    AnimationData _animationData;
 
 public:
     /// TODO
@@ -306,10 +298,10 @@ public:
         // Add mesh
         if( scene.mNumMeshes > 0 )
         {
-            Mesh tempMesh = new Mesh( resource.fullPath, scene.mMeshes[ 0 ] );
+            auto tempMesh = new MeshAsset( resource.fullPath, scene.mMeshes[ 0 ] );
 
             if( scene.mNumAnimations > 0 )
-                tempMesh.animationData = new AssetAnimation( scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
+                tempMesh.animationData = new AnimationData( scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
 
             // Copy attributes
             _glVertexArray = tempMesh._glVertexArray;
@@ -337,6 +329,17 @@ public:
     {
         glDeleteBuffers( 1, &_glVertexBuffer );
         glDeleteBuffers( 1, &_glVertexArray );
+    }
+}
+
+class Mesh : AssetRef!MeshAsset
+{
+    alias asset this;
+
+    this() { }
+    this( MeshAsset ass )
+    {
+        super( ass );
     }
 }
 

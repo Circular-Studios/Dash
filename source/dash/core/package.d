@@ -5,4 +5,4 @@ import dash.core.gameobject;
 import dash.core.scene;
 import dash.core.prefabs;
 import dash.core.properties;
-import dash.core.reflection;
+import dash.core.main;

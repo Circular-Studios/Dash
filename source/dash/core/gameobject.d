@@ -93,6 +93,8 @@ public:
     mixin( componentProperty!Animation );
     /// The camera attached to this object.
     mixin( componentProperty!Camera );
+	/// The emitter attached to this object.
+	mixin( componentProperty!Emitter );
     /// The object that this object belongs to.
     mixin( Property!_parent );
     /// All of the objects which list this as parent

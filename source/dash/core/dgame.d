@@ -229,6 +229,7 @@ private:
         UserInterface.shutdownAwesomium();
         Assets.shutdown();
         Graphics.shutdown();
+		Audio.shutdown();
     }
 
     /**

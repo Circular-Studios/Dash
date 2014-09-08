@@ -37,7 +37,7 @@ pure @safe nothrow @nogc:
 		return Soloud(SoloudObject(Soloud_create()));
 	}
 
-	~this()
+	public void destroy()
 	{
 		Soloud_destroy(objhandle);
 	}
@@ -424,7 +424,7 @@ pure @safe nothrow @nogc:
 		return BiquadResonantFilter(SoloudObject(BiquadResonantFilter_create()));
 	}
 
-	~this()
+	public void destroy()
 	{
 		BiquadResonantFilter_destroy(objhandle);
 	}
@@ -448,7 +448,7 @@ pure @safe nothrow @nogc:
 		return Bus(SoloudObject(Bus_create()));
 	}
 
-	~this()
+	public void destroy()
 	{
 		Bus_destroy(objhandle);
 	}
@@ -552,7 +552,7 @@ pure @safe nothrow @nogc:
 		return EchoFilter(SoloudObject(EchoFilter_create()));
 	}
 
-	~this()
+	public void destroy()
 	{
 		EchoFilter_destroy(objhandle);
 	}
@@ -579,7 +579,7 @@ pure @safe nothrow @nogc:
 		return FFTFilter(SoloudObject(FFTFilter_create()));
 	}
 
-	~this()
+	public void destroy()
 	{
 		FFTFilter_destroy(objhandle);
 	}
@@ -606,7 +606,7 @@ pure @safe nothrow @nogc:
 		return FlangerFilter(SoloudObject(FlangerFilter_create()));
 	}
 
-	~this()
+	public void destroy()
 	{
 		FlangerFilter_destroy(objhandle);
 	}
@@ -633,7 +633,7 @@ pure @safe nothrow @nogc:
 		return LofiFilter(SoloudObject(LofiFilter_create()));
 	}
 
-	~this()
+	public void destroy()
 	{
 		LofiFilter_destroy(objhandle);
 	}
@@ -657,7 +657,7 @@ pure @safe nothrow @nogc:
 		return Modplug(SoloudObject(Modplug_create()));
 	}
 
-	~this()
+	public void destroy()
 	{
 		Modplug_destroy(objhandle);
 	}
@@ -731,7 +731,7 @@ pure @safe nothrow @nogc:
 		return Prg(SoloudObject(Prg_create()));
 	}
 
-	~this()
+	public void destroy()
 	{
 		Prg_destroy(objhandle);
 	}
@@ -767,7 +767,7 @@ pure @safe nothrow @nogc:
 		return Sfxr(SoloudObject(Sfxr_create()));
 	}
 
-	~this()
+	public void destroy()
 	{
 		Sfxr_destroy(objhandle);
 	}
@@ -851,7 +851,7 @@ pure @safe nothrow @nogc:
 		return Speech(SoloudObject(Speech_create()));
 	}
 
-	~this()
+	public void destroy()
 	{
 		Speech_destroy(objhandle);
 	}
@@ -925,7 +925,7 @@ pure @safe nothrow @nogc:
 		return Wav(SoloudObject(Wav_create()));
 	}
 
-	~this()
+	public void destroy()
 	{
 		Wav_destroy(objhandle);
 	}
@@ -1009,7 +1009,7 @@ pure @safe nothrow @nogc:
 		return WavStream(SoloudObject(WavStream_create()));
 	}
 
-	~this()
+	public void destroy()
 	{
 		WavStream_destroy(objhandle);
 	}

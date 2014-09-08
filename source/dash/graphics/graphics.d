@@ -26,7 +26,7 @@ public static:
         }
         else version( Windows )
         {
-            adapter = new Win32;
+            adapter = new Win32GL;
         }
         else version( linux )
         {

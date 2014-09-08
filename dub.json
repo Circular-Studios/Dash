@@ -29,7 +29,7 @@
     "targetName": "dash",
     "targetType": "library",
 
-    "mainSourceFile": "source/app.d",
+    "mainSourceFile": "source/dash/core/main.d",
     "sourcePaths": [ "source/" ],
     "importPaths": [ "source/" ],
 

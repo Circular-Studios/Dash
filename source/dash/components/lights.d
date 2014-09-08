@@ -76,6 +76,11 @@ public:
         this.direction = direction;
         super( color );
         this.castShadows = castShadows;
+    }
+
+    /// Initializes the lights.
+    override void initialize()
+    {
         if( castShadows )
         {
             // generate framebuffer for shadow map

@@ -11,13 +11,6 @@ import std.stdio, std.stream, std.format, std.math, std.string;
 
 mixin( registerComponents!q{dash.components.mesh} );
 
-/*Mesh getMesh( string name )
-{
-    auto mesh = Assets.get!Mesh( yml.get!string );
-
-    return mesh;
-}*/
-
 /**
  * Loads and manages meshes into OpenGL.
  *
@@ -342,6 +335,11 @@ public:
 class Mesh : AssetRef!MeshAsset
 {
     alias asset this;
+
+    this( MeshAsset ass )
+    {
+        super( ass );
+    }
 }
 
 /**

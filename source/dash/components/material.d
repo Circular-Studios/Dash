@@ -86,7 +86,8 @@ final class Material : AssetRef!MaterialAsset
         super.initialize();
 
         // All materials should be unique.
-        asset = asset.clone();
+        if( asset )
+            asset = asset.clone();
     }
 }
 
@@ -192,6 +193,11 @@ private:
 class Texture : AssetRef!TextureAsset
 {
     alias asset this;
+
+    this( TextureAsset ass )
+    {
+        super( ass );
+    }
 }
 
 /**
@@ -202,7 +208,7 @@ class Texture : AssetRef!TextureAsset
     static Texture def;
 
     if( !def )
-        def = new TextureAsset( [cast(ubyte)0, cast(ubyte)0, cast(ubyte)0, cast(ubyte)255].ptr );
+        def = new Texture( new TextureAsset( [cast(ubyte)0, cast(ubyte)0, cast(ubyte)0, cast(ubyte)255].ptr ) );
 
     return def;
 }
@@ -215,7 +221,7 @@ class Texture : AssetRef!TextureAsset
     static Texture def;
 
     if( !def )
-        def = new TextureAsset( [cast(ubyte)255, cast(ubyte)127, cast(ubyte)127, cast(ubyte)255].ptr );
+        def = new Texture( new TextureAsset( [cast(ubyte)255, cast(ubyte)127, cast(ubyte)127, cast(ubyte)255].ptr ) );
 
     return def;
 }

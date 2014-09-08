@@ -32,7 +32,9 @@ public:
      */
     AssetRefT get( AssetRefT )( string name ) if( is( AssetRefT AssetT : AssetRef!AssetT ) && !is( AssetRefT == AssetRef!AssetT ) )
     {
-        return new AssetRefT( get!AssetT( name ) );
+        static if( is( AssetRefT AssetT : AssetRef!AssetT ) )
+            return new AssetRefT( getAsset!AssetT( name ) );
+        else static assert( false );
     }
 
     /**
@@ -75,11 +77,11 @@ public:
         assert(aiIsExtensionSupported(".fbx".toStringz), "fbx format isn't supported by assimp instance!");
 
         // Load the unitSquare
-        unitSquare = new MeshAsset( "", aiImportFileFromMemory(
-                                        unitSquareMesh.toStringz, unitSquareMesh.length,
+        unitSquare = new Mesh( new MeshAsset( "", aiImportFileFromMemory(
+                                        unitSquareMesh.toStringz(), unitSquareMesh.length,
                                         aiProcess_CalcTangentSpace | aiProcess_Triangulate |
                                         aiProcess_JoinIdenticalVertices | aiProcess_SortByPType,
-                                        "obj" ).mMeshes[0] );
+                                        "obj" ).mMeshes[0] ) );
 
         foreach( file; scanDirectory( Resources.Meshes ) )
         {
@@ -128,7 +130,7 @@ public:
             if( name in materials )
                 logWarning( "Material ", name, " exists more than once." );
 
-            auto newMat = cast(Material)createYamlObject[ "Material" ]( object );
+            auto newMat = cast(MaterialAsset)createYamlObject[ "Material" ]( object );
             materials[ name ] = newMat;
             materialResources[ objFile[ 1 ] ] ~= newMat;
         }

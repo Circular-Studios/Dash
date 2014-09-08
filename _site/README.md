@@ -1,4 +1,4 @@
-jetstrap-docs
+dash-docs
 =============
 
-Jetstrap Documentation and Tutorials
+Dash Documentation and Tutorials

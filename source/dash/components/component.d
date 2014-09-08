@@ -42,7 +42,6 @@ abstract class Component : YamlObject
 {
 public:
     /// The node that defined the component.
-    @ignore
     Node yaml;
     /// The GameObject that owns this component.
     GameObject owner;
@@ -151,7 +150,7 @@ public:
             Component.$typeDeserializers[ typeid(T).name ] = ( $type node )
             {
                 return null;
-                //return deserialize$type!SerializationDescription( node ).createInstance();
+                //return deserialize$type!( SerializationDescription )( node ).createInstance();
             };
         } );
 

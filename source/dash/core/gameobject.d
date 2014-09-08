@@ -93,7 +93,23 @@ public:
         Description[] children;
 
         @rename( "Components" ) @optional
-        Component[] components;
+            Component[] components;
+
+        /**
+        * Create a description from a GameObject.
+        *
+        * Returns:
+        *  A new description with components and info.
+        */
+        this( GameObject obj )
+        {
+            name = obj.name;
+            prefabName = "";
+            prefab = null;
+            transform = typeof(obj.transform).Description( obj.transform );
+            children = obj.children.map!( child => typeof(child).Description( child ) ).array();
+            components = obj.componentList.values.dup;
+        }
     }
 
     /// The current transform of the object.
@@ -226,7 +242,7 @@ public:
      *  desc =              The description to pull info from.
      *
      * Returns:
-     *  A new game object with components and info pulled from yaml.
+     *  A new game object with components and info pulled from desc.
      */
     static GameObject create( Description desc )
     {
@@ -537,9 +553,9 @@ private:
 
     void opAssign( Description desc )
     {
-        position = desc.position;
-        rotation = quat( desc.rotation.w, desc.rotation.xyz );
-        scale = desc.scale;
+        position = vec3( desc.position[] );
+        rotation = quat( vec4( desc.rotation ) );
+        scale = vec3( desc.scale[] );
     }
 
     /**
@@ -564,15 +580,22 @@ public:
     {
         /// The position of the object.
         @rename( "Position" ) @asArray @optional
-        vec3 position;
+        float[3] position;
 
         /// The position of the object.
         @rename( "Rotation" ) @asArray @optional
-        vec4 rotation;
+        float[4] rotation;
 
         /// The position of the object.
         @rename( "Scale" ) @asArray @optional
-        vec3 scale;
+        float[3] scale;
+
+        this( Transform t )
+        {
+            position = t.position.vector[ 0..3 ];
+            rotation = t.rotation.quaternion[ 0..4 ];
+            scale = t.scale.vector[ 0..3 ];
+        }
     }
 
     // these should remain public fields, properties return copies not references

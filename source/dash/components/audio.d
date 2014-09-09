@@ -42,7 +42,7 @@ public:
 class Emitter : Component
 {
 private:
-	Wav toPlay;
+	Modplug toPlay;
 public:
 	/**
 	 * Create an emmiter object
@@ -54,32 +54,21 @@ public:
 
 	override void initialize() {
 		super.initialize;
-		toPlay = Wav.create();
-
+		toPlay = Modplug.create();
 	}
 
 	// call:
-	// emmiter.play(Audio.sounds["baseFileName"]);
+	// emmiter.play( filename );
 	void play( string soundName )
 	{
+		// Load in the sound
+		toPlay.load( Audio.sounds[soundName].toStringz() );
 
-		/*string filePath = Audio.sounds[soundName];
-		logInfo( "playing: ", filePath );
-		toPlay = Wav.create();
-		toPlay.load( filePath.toStringz() );
-		Speech speech = Speech.create();
-		speech.setText("hello".toStringz());*/
-		toPlay.load( "C:\\Circular\\Sample-Dash-Game\\Audio\\airhorn.wav".toStringz() );
-
-		auto result = Audio.soloud.play( toPlay, 1.0 );
-		
-		logInfo( Audio.soloud.getErrorString( result ) );
-		/*Audio.soloud.play3d(toPlay,
+		// play the sound from the location of the parent object
+		Audio.soloud.play3d(toPlay,
 							owner.transform.position.x,
 		                    owner.transform.position.y,
-		                    owner.transform.position.z);*/
-		//logInfo( "playing: ", soundName, " with id: ", Audio.effects[soundName].objhandle );
-		//Audio.soloud.play( Audio.effects[soundName] );
+		                    owner.transform.position.z);
 	}
 }
 
@@ -101,20 +90,14 @@ static:
 public:
 	string[string] sounds;
 
-	Wav[string] effects;
-
 	void initialize()
 	{
 		soloud = Soloud.create();
 		soloud.init();
+
 		foreach( file; scanDirectory( Resources.Audio ) )
 		{
-			sounds[file.baseFileName] = file.fullPath;
-
-			/*effects[file.baseFileName] = Wav.create();
-			effects[file.baseFileName].load( file.fullPath.toStringz );
-			logInfo( "baseFileName: ", file.baseFileName );
-			logInfo( "fullPath: ", file.fullPath.toStringz );*/
+			sounds[file.baseFileName] = file.relativePath;
 		}
 	}
 

@@ -62,7 +62,61 @@ T deserializeFile( T )( Resource file, SerializationMode mode = SerializationMod
                 case ".yml":  return handleYaml();
                 default: throw new Exception( "File extension " ~ file.extension.toLower ~ " not supported." );
             }
-    } 
+    }
+}
+
+/**
+ * Deserializes a file with multiple documents.
+ *
+ * Params:
+ *  file =              The name of the file to deserialize.
+ *
+ * Returns: The deserialized object.
+ */
+T[] deserializeMultiFile( T )( Resource file, SerializationMode mode = SerializationMode.Default )
+{
+    import dash.utility.output;
+    logInfo( "Deserializing ", file.baseFileName, " to ", T.stringof );
+
+    import std.path: extension;
+    import std.string: toLower;
+
+    T[] handleJson()
+    {
+        return [deserializeJson!T( file.readText().parseJsonString() )];
+    }
+
+    T[] handleBson()
+    {
+        throw new Exception( "Not implemented." );
+    }
+
+    T[] handleYaml()
+    {
+        import std.algorithm: map;
+        import std.array: array;
+        return Loader
+            .fromString( cast(char[])file.readText() )
+            .loadAll()
+            .map!( node => node.deserializeYaml!T() )
+            .array();
+    }
+
+    final switch( mode ) with( SerializationMode )
+    {
+        case Json: return handleJson();
+        case Bson: return handleBson();
+        case Yaml: return handleYaml();
+        case Default:
+            switch( file.extension.toLower )
+            {
+                case ".json": return handleJson();
+                case ".bson": return handleBson();
+                case ".yaml":
+                case ".yml":  return handleYaml();
+                default: throw new Exception( "File extension " ~ file.extension.toLower ~ " not supported." );
+            }
+    }
 }
 
 /**

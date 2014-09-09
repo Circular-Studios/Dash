@@ -18,7 +18,7 @@ alias Yaml = Node;
  * Fields ending with an underscore will have the last underscore stripped in the
  * serialized output. This makes it possible to use fields with D keywords as their name
  * by simply appending an underscore.
- * 
+ *
  * The following methods can be used to customize the serialization of structs/classes:
  *
  * ---
@@ -112,16 +112,23 @@ public:
 
     void readArray( T )( scope void delegate( size_t ) size_callback, scope void delegate() entry_callback )
     {
-        enforceYaml( m_current.isSequence );
+        enforceYaml( m_current.isSequence || m_current.isScalar );
 
-        auto old = m_current;
-        size_callback( m_current.length );
-        foreach( ent; old )
+        if( m_current.isSequence )
         {
-            m_current = ent;
+            auto old = m_current;
+            size_callback( m_current.length );
+            foreach( Node ent; old )
+            {
+                m_current = ent;
+                entry_callback();
+            }
+            m_current = old;
+        }
+        else
+        {
             entry_callback();
         }
-        m_current = old;
     }
 
     T readValue( T )()

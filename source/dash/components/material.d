@@ -16,22 +16,19 @@ mixin( registerComponents!() );
 @yamlObject()
 final class MaterialAsset : Asset
 {
-package:
-    @field( "Name" )
-    string _name;
-
 public:
+    /// The name of the material.
+    @rename( "Name" )
+    string name;
     /// The diffuse (or color) map.
-    @field( "Diffuse" )
+    @rename( "Diffuse" ) @asArray
     Texture diffuse;
     /// The normal map, which specifies which way a face is pointing at a given pixel.
-    @field( "Normal" )
+    @rename( "Normal" ) @asArray
     Texture normal;
     /// The specular map, which specifies how shiny a given point is.
-    @field( "Specular" )
+    @rename( "Specular" ) @asArray
     Texture specular;
-    /// The name of the material.
-    mixin( Getter!_name );
 
     /**
      * Default constructor, makes sure everything is initialized to default.
@@ -41,7 +38,7 @@ public:
         super( Resource( "" ) );
         diffuse = specular = defaultTex;
         normal = defaultNormal;
-        _name = name;
+        this.name = name;
     }
 
     /**
@@ -53,7 +50,7 @@ public:
         mat.diffuse = diffuse;
         mat.normal = normal;
         mat.specular = specular;
-        mat._name = _name;
+        mat.name = name;
         return mat;
     }
 

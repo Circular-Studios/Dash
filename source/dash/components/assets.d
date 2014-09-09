@@ -125,13 +125,16 @@ public:
 
         foreach( res; scanDirectory( Resources.Materials ) )
         {
-            auto newMat = deserializeFile!MaterialAsset( res );
+            auto newMat = deserializeMultiFile!MaterialAsset( res );
 
-            if( newMat.name in materials )
-                logWarning( "Material ", newMat.name, " exists more than once." );
+            foreach( mat; newMat )
+            {
+                if( mat.name in materials )
+                    logWarning( "Material ", mat.name, " exists more than once." );
 
-            materials[ newMat.name ] = newMat;
-            materialResources[ res ] ~= newMat;
+                materials[ mat.name ] = mat;
+                materialResources[ res ] ~= mat;
+            }
         }
 
         meshes.rehash();

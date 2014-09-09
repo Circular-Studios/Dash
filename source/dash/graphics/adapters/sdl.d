@@ -1,13 +1,14 @@
 module dash.graphics.adapters.sdl;
 import dash.core.dgame;
-import dash.graphics.graphics;
+//import dash.graphics.graphics;
+import dash.graphics;
 import dash.graphics.adapters.adapter;
 import dash.utility;
 
 import derelict.opengl3.gl3, gfm.sdl2;
 import std.string;
 
-class Sdl : Adapter
+class Sdl : OpenGL
 {
 private:
     SDL2 sdl;
@@ -70,13 +71,16 @@ public:
     override void resize()
     {
         loadProperties();
-
         window.setSize( width, height );
+
+	resizeDefferedRenderBuffer();
+        glViewport( 0, 0, width, height );
     }
 
     override void refresh()
     {
         resize();
+	swapBuffers();
     }
 
     override void swapBuffers()
@@ -84,6 +88,7 @@ public:
         window.swapBuffers();
     }
 
+    //Don't know if we need this...
     override void openWindow()
     {
 
@@ -91,6 +96,7 @@ public:
 
     override void closeWindow()
     {
+	    window.close();
 
     }
 
@@ -120,19 +126,29 @@ public:
                     break;
                 }
                 
-                //
+		//On keypress
                 case SDL_KEYDOWN:
+		    Keyboard.setButtonState( cast(Keyboard.Buttons)event.key.keysym.sym, true );
+		    break;
+
+		//On keyrelease
                 case SDL_KEYUP:
-                {
+		    Keyboard.setButtonState( cast(Keyboard.Buttons)event.key.keysym.sym, false );
                     break;
-                }
 
                 // Handle quitting.
                 case SDL_QUIT:
                     DGame.instance.currentState = EngineState.Quit;
                     break;
 
+                case SDL_MOUSEWHEEL:
+		    Mouse.setAxisState( Mouse.Axes.ScrollWheel, Mouse.getAxisState( Mouse.Axes.ScrollWheel ) + ( ( cast(int)event.wheel.y >> 16 ) / 120 ) );
+		    break;
+
                 case SDL_APP_TERMINATING:
+		    shutdown();
+		    break;
+
                 case SDL_APP_LOWMEMORY:
                 case SDL_APP_WILLENTERBACKGROUND:
                 case SDL_APP_DIDENTERBACKGROUND:
@@ -143,7 +159,6 @@ public:
                 case SDL_TEXTEDITING:
                 case SDL_TEXTINPUT:
                 case SDL_MOUSEMOTION:
-                case SDL_MOUSEWHEEL:
                 case SDL_JOYAXISMOTION:
                 case SDL_JOYBALLMOTION:
                 case SDL_JOYHATMOTION:

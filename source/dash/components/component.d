@@ -59,6 +59,7 @@ public:
                 return null;
             }
         }
+        static assert( is$typeSerializable!Component );
     } );
 
     const(Description)* description() @property

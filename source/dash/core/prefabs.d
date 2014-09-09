@@ -46,16 +46,13 @@ public:
         foreach( key; prefabs.keys )
             prefabs.remove( key );
 
-        foreach( objFile; loadYamlFiles( Resources.Prefabs ) )
+        foreach( res; scanDirectory( Resources.Prefabs ) )
         {
-            auto object = objFile[0];
-            auto name = object[ "Name" ].as!string;
-
-            //auto newFab = new Prefab( object );
-            auto newFab = cast(Prefab)createYamlObject[ "Prefab" ]( object );
-            newFab.name = name;
-            prefabs[ name ] = newFab;
-            prefabResources[ objFile[1] ] ~= newFab;
+            foreach( newFab; deserializeMultiFile!( GameObject.Description )( res ) )
+            {
+                prefabs[ newFab.name ] = newFab;
+                prefabResources[ res ] ~= newFab;
+            }
         }
     }
 
@@ -79,7 +76,15 @@ final class Prefab
 {
 public:
     /// The name of the prefab.
-    mixin( Property!_name );
+    string name;
+    /// The description to create objects from.
+    GameObject.Description description;
+
+    /// Creates a prefab from a description.
+    this( GameObject.Description desc )
+    {
+        description = desc;
+    }
 
     /**
      * Creates a GameObject instance from the prefab.
@@ -89,10 +94,6 @@ public:
      */
     GameObject createInstance()
     {
-        //TODO: Fix this
-        return null;//GameObject.createFromYaml( yaml );
+        return GameObject.create( description );
     }
-
-private:
-    string _name;
 }

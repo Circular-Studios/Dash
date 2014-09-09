@@ -55,6 +55,9 @@ T deserializeYaml( T, R )( R input ) if ( isInputRange!R && !is( R == Node ) )
 static assert(is(typeof( deserializeYaml!string( Node( "" ) ) )));
 //static assert(is(typeof( deserializeYaml!string( "" ) )));
 
+/// Does the type support custom serialization.
+enum isYamlSerializable( T ) = is( typeof( T.init.toYaml() ) == Node ) && is( typeof( T.fromYaml( Node() ) ) == T );
+
 /// Serializer for vibe.d framework.
 struct YamlSerializer
 {
@@ -65,7 +68,6 @@ private:
 public:
     enum isYamlBasicType( T ) = isNumeric!T || isBoolean!T || is( T == string ) || is( T == typeof(null) );
     enum isSupportedValueType( T ) = isYamlBasicType!T || is( T == Node );
-    enum isYamlSerializable( T ) = is( typeof( T.init.toYaml() ) == Node ) && is( typeof( T.fromYaml( Node() ) ) == T );
 
     this( Node data ) { m_current = data; }
     @disable this(this);

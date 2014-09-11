@@ -8,17 +8,10 @@ import vibe.data.bson, vibe.data.json, dash.utility.data.yaml;
 import std.algorithm, std.array, std.string, std.traits, std.conv, std.typecons;
 
 /// Tests if a type can be created from yaml.
-enum isYamlObject(T) = __traits( compiles, { T obj; obj.yaml = Node( YAMLNull() ); } );
 enum isComponent(alias T) = is( T == class ) && is( T : Component ) && !__traits( isAbstractClass, T );
-enum serializationFormats = tuple( "Json"/*, "Bson"/*, "Yaml"*/ );
 private enum perSerializationFormat( string code ) = "".reduce!( ( working, type ) => working ~ code.replace( "$type", type ) )( serializationFormats );
 alias helper( alias T ) = T;
 alias helper() = TypeTuple!();
-
-auto append( Begin, End )( Begin begin, End end )
-{
-    return tuple( begin.expand, end );
-}
 
 /**
  * Interface for components to implement.

@@ -66,7 +66,7 @@ private:
     Node[] m_compositeStack;
 
 public:
-    enum isYamlBasicType( T ) = isNumeric!T || isBoolean!T || is( T == string ) || is( T == typeof(null) );
+    enum isYamlBasicType( T ) = isNumeric!T || isBoolean!T || is( T == string ) || is( T == typeof(null) ) || isYamlSerializable!T;
     enum isSupportedValueType( T ) = isYamlBasicType!T || is( T == Node );
 
     this( Node data ) { m_current = data; }

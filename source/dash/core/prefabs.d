@@ -6,7 +6,6 @@ import dash.core, dash.components, dash.utility;
 
 import yaml;
 import gl3n.linalg;
-import std.variant;
 
 mixin( registerComponents!() );
 
@@ -48,8 +47,9 @@ public:
 
         foreach( res; scanDirectory( Resources.Prefabs ) )
         {
-            foreach( newFab; deserializeMultiFile!( GameObject.Description )( res ) )
+            foreach( fabDesc; res.deserializeMultiFile!( GameObject.Description )() )
             {
+                auto newFab = new Prefab( fabDesc );
                 prefabs[ newFab.name ] = newFab;
                 prefabResources[ res ] ~= newFab;
             }

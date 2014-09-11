@@ -93,7 +93,7 @@ public:
         Description[] children;
 
         @rename( "Components" ) @optional
-            Component[] components;
+        Component[] components;
 
         /**
         * Create a description from a GameObject.
@@ -289,6 +289,18 @@ public:
 
         return obj;
     }
+
+    /// To complement the descriptions, and make serialization easier.
+    static GameObject fromRepresentation( Description desc )
+    {
+        return GameObject.create( desc );
+    }
+    /// ditto
+    Description toRepresentation()
+    {
+        return GameObject.Description( this );
+    }
+    static assert( isCustomSerializable!GameObject );
 
     /**
      * Creates basic GameObject with transform and connection to transform's emitter.

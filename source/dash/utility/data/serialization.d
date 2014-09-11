@@ -2,11 +2,15 @@ module dash.utility.data.serialization;
 import dash.utility.resources;
 import dash.utility.data.yaml;
 import vibe.data.json, vibe.data.bson;
+import std.typecons: tuple;
 
 // Serialization attributes
 public import vibe.data.serialization: asArray, byName, ignore, name, optional;
 /// Rename a field in the ddl.
 alias rename = name;
+
+/// Supported serialization formats.
+enum serializationFormats = tuple( "Json"/*, "Bson"*/, "Yaml" );
 
 /**
  * Modes of serialization.

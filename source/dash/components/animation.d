@@ -7,7 +7,7 @@ import dash.components.component;
 import dash.utility;
 
 import gfm.math.vector: vec3f;
-import gfm.math.quaternion: quaternionf;
+import gfm.math.quaternion: quatf;
 import gfm.math.matrix: mat4f, Matrix;
 import derelict.assimp3.assimp;
 import std.string: fromStringz;
@@ -402,13 +402,13 @@ public:
      *
      * Returns: The quaternions in quat[] format
      */
-    quaternionf[] convertQuat( const(aiQuatKey*) quaternions, int numKeys )
+    quatf[] convertQuat( const(aiQuatKey*) quaternions, int numKeys )
     {
-        quaternionf[] keys;
+        quatf[] keys;
         for( int i = 0; i < numKeys; i++ )
         {
             aiQuatKey quaternion = quaternions[ i ];
-            keys ~= quaternionf( quaternion.mValue.w, quaternion.mValue.x, quaternion.mValue.y, quaternion.mValue.z );
+            keys ~= quatf( quaternion.mValue.w, quaternion.mValue.x, quaternion.mValue.y, quaternion.mValue.z );
         }
 
         return keys;
@@ -468,7 +468,7 @@ public:
     class BonePose
     {
         vec3f[] positionKeys;
-        quaternionf[] rotationKeys;
+        quatf[] rotationKeys;
         vec3f[] scaleKeys;
     }
     /**

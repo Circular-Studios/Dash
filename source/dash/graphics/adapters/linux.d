@@ -13,13 +13,10 @@ import derelict.opengl3.gl3, derelict.opengl3.glxext;
 
 import std.traits;
 
-public alias GLXContext GLRenderContext;
-public alias uint GLDeviceContext;
-
 /**
 * TODO
 */
-final class Linux : Adapter
+final class Linux : OpenGL
 {
 private:
     // Because the XVisualStyle type returned from this function is
@@ -40,6 +37,7 @@ private:
     Colormap cmap;
 
 public:
+
     /// TODO
     static @property Linux get() { return cast(Linux)Graphics.adapter; }
 
@@ -66,7 +64,7 @@ public:
         // Get display and screen
         display = XOpenDisplay( null );
         screen = DefaultScreen( display );
-        
+
         // Setup the window
         screenWidth = DisplayWidth( display, screen );
         screenHeight = DisplayHeight( display, screen );
@@ -103,7 +101,7 @@ public:
         // Get address of gl functions
         DerelictGL3.reload();
     }
-    
+
     /**
     * TODO
     */
@@ -112,7 +110,7 @@ public:
         closeWindow();
         XCloseDisplay( display );
     }
-    
+
     /**
     * TODO
     */
@@ -121,25 +119,25 @@ public:
         XResizeWindow( display, window, width, height );
         glViewport( 0, 0, width, height );
     }
-    
+
     /**
     * TODO
     */
     override void refresh()
     {
         resize();
-        
+
         // Enable back face culling
         if( backfaceCulling )
         {
             glEnable( GL_CULL_FACE );
             glCullFace( GL_BACK );
         }
-        
+
         // Turn on of off the v sync
         glXSwapIntervalEXT( display, glXGetCurrentDrawable(), vsync );
     }
-    
+
     /**
     * TODO
     */
@@ -147,7 +145,7 @@ public:
     {
         glXSwapBuffers( display, cast(uint)window );
     }
-    
+
     /**
     * TODO
     */
@@ -155,13 +153,13 @@ public:
     {
         window = XCreateWindow(
             display, root,
-            0, 0, width, height, 0, 
+            0, 0, width, height, 0,
             xvi.depth, InputOutput, xvi.visual,
             CWColormap | CWEventMask, &windowAttributes );
-        
+
         XMapWindow( display, window );
         XStoreName( display, window, DGame.instance.title.dup.ptr );
-        
+
         context = glXCreateContext( display, glvi, null, GL_TRUE );
         glXMakeCurrent( display, cast(uint)window, context );
     }
@@ -175,7 +173,7 @@ public:
         glXDestroyContext( display, context );
         XDestroyWindow( display, window );
     }
-    
+
     /**
     * TODO
     */
@@ -195,4 +193,4 @@ public:
             }
         }
     }
-} 
+}

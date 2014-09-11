@@ -139,13 +139,13 @@ public:
         // Init transform
         if( yamlObj.tryFind( "Transform", innerNode ) )
         {
-            vec3 transVec;
+            vec3f transVec;
             if( innerNode.tryFind( "Scale", transVec ) )
-                obj.transform.scale = vec3( transVec );
+                obj.transform.scale = transVec;
             if( innerNode.tryFind( "Position", transVec ) )
-                obj.transform.position = vec3( transVec );
+                obj.transform.position = transVec;
             if( innerNode.tryFind( "Rotation", transVec ) )
-                obj.transform.rotation = quat.identity.rotatex( transVec.x.radians ).rotatey( transVec.y.radians ).rotatez( transVec.z.radians );
+                obj.transform.rotation = quatf.IDENTITY.rotatex( transVec.x.radians ).rotatey( transVec.y.radians ).rotatez( transVec.z.radians );
         }
 
         if( yamlObj.tryFind( "Children", innerNode ) )
@@ -437,7 +437,7 @@ public:
 }
 
 import gfm.math.vector: vec3f;
-import gfm.math.quaternion: quaternionf;
+import gfm.math.quaternion: quatf;
 import gfm.math.matrix: mat4f;
 
 /**
@@ -451,7 +451,7 @@ private struct Transform
 private:
     GameObject _owner;
     vec3f _prevPos;
-    quaternionf _prevRot;
+    quatf _prevRot;
     vec3f _prevScale;
     mat4f _matrix;
 
@@ -466,7 +466,7 @@ private:
         owner = obj;
         position = vec3f(0,0,0);
         scale = vec3f(1,1,1);
-        rotation = quaternionf.identity;
+        rotation = quatf.IDENTITY;
     }
 
 public:
@@ -474,7 +474,7 @@ public:
     /// The position of the object in local space.
     vec3f position;
     /// The rotation of the object in local space.
-    quaternionf rotation;
+    quatf rotation;
     /// The absolute scale of the object. Ignores parent scale.
     vec3f scale;
 
@@ -496,7 +496,7 @@ public:
         if( owner.parent is null )
             return position;
         else
-            return (owner.parent.transform.matrix * vec4(position.x,position.y,position.z,1.0f)).xyz;
+            return (owner.parent.transform.matrix * vec4f(position, 1.0f)).xyz;
     }
 
     /**
@@ -504,7 +504,7 @@ public:
      *
      * Returns: The object's rotation relative to the world origin, not the parent.
      */
-    final @property quaternionf worldRotation() @safe pure nothrow
+    final @property quatf worldRotation() @safe pure nothrow
     {
         if( owner.parent is null )
             return rotation;
@@ -534,7 +534,7 @@ public:
      */
     final @property const vec3f forward()
     {
-        return vec3( -2 * (rotation.x * rotation.z + rotation.w * rotation.y),
+        return vec3f( -2 * (rotation.x * rotation.z + rotation.w * rotation.y),
                             -2 * (rotation.y * rotation.z - rotation.w * rotation.x),
                             -1 + 2 * (rotation.x * rotation.x + rotation.y * rotation.y ));
     }
@@ -557,7 +557,7 @@ public:
      */
     final  @property const vec3f up()
     {
-        return vec3( 2 * (rotation.x * rotation.y - rotation.w * rotation.z),
+        return vec3f( 2 * (rotation.x * rotation.y - rotation.w * rotation.z),
                         1 - 2 * (rotation.x * rotation.x + rotation.z * rotation.z),
                         2 * (rotation.y * rotation.z + rotation.w * rotation.x));
     }
@@ -569,7 +569,7 @@ public:
 
         auto trans = new Transform( null );
 
-        auto up = vec3( 0.0f, 0.0f, 1.0f );
+        auto up = vec3f( 0.0f, 0.0f, 1.0f );
         trans.rotation.rotatex( 90.radians );
         assert( almost_equal( trans.up, up ) );
     }
@@ -581,7 +581,7 @@ public:
      */
     final  @property const vec3f right()
     {
-        return vec3( 1 - 2 * (rotation.y * rotation.y + rotation.z * rotation.z),
+        return vec3f( 1 - 2 * (rotation.y * rotation.y + rotation.z * rotation.z),
                         2 * (rotation.x * rotation.y + rotation.w * rotation.z),
                         2 * (rotation.x * rotation.z - rotation.w * rotation.y));
     }
@@ -593,7 +593,7 @@ public:
 
         auto trans = new Transform( null );
 
-        auto right = vec3( 0.0f, 0.0f, -1.0f );
+        auto right = vec3f( 0.0f, 0.0f, -1.0f );
         trans.rotation.rotatey( 90.radians );
         assert( almost_equal( trans.right, right ) );
     }
@@ -609,17 +609,17 @@ public:
 
         _matrix = mat4f.identity;
         // Scale
-        _matrix[ 0 ][ 0 ] = scale.x;
-        _matrix[ 1 ][ 1 ] = scale.y;
-        _matrix[ 2 ][ 2 ] = scale.z;
+        _matrix.c[ 0 ][ 0 ] = scale.x;
+        _matrix.c[ 1 ][ 1 ] = scale.y;
+        _matrix.c[ 2 ][ 2 ] = scale.z;
 
         // Rotate
-        _matrix = _matrix * rotation.to_matrix!(4,4);
+        _matrix = _matrix * cast(mat4f)rotation;
 
         // Translate
-        _matrix[ 0 ][ 3 ] = position.x;
-        _matrix[ 1 ][ 3 ] = position.y;
-        _matrix[ 2 ][ 3 ] = position.z;
+        _matrix.c[ 0 ][ 3 ] = position.x;
+        _matrix.c[ 1 ][ 3 ] = position.y;
+        _matrix.c[ 2 ][ 3 ] = position.z;
 
         // include parent objects' transforms
         if( owner.parent )

@@ -175,7 +175,7 @@ public:
                         outputData ~= vertWeights[ face.mIndices[ j ] ][0..4];
 
                         // Save the position in verts
-                        boundingBox.expand( vec3f( pos.x, pos.y, pos.z ) );
+                        boundingBox = boundingBox.expand( vec3f( pos.x, pos.y, pos.z ) );
                     }
                 }
             }
@@ -217,7 +217,7 @@ public:
                         //outputData ~= bitangent.z;
 
                         // Save the position in verts
-                        boundingBox.expand( vec3f( pos.x, pos.y, pos.z ) );
+                        boundingBox = boundingBox.expand( vec3f( pos.x, pos.y, pos.z ) );
                     }
                 }
             }
@@ -350,9 +350,9 @@ public:
  */
 private float calcTangentHandedness( aiVector3D nor, aiVector3D tan, aiVector3D bit )
 {
-    vec3 n = vec3( nor.x, nor.y, nor.z );
-    vec3 t = vec3( tan.x, tan.y, tan.z );
-    vec3 b = vec3( bit.x, bit.y, bit.z );
+    vec3f n = vec3f( nor.x, nor.y, nor.z );
+    vec3f t = vec3f( tan.x, tan.y, tan.z );
+    vec3f b = vec3f( bit.x, bit.y, bit.z );
 
     //Gramm-schmidt
     t = (t - n * dot( n, t )).normalized();

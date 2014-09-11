@@ -2,13 +2,12 @@
 * Lighting pass shader for Directional Lights
 */
 module dash.graphics.shaders.glsl.directionallight;
+import dash.graphics.shaders.glsl;
 
 package:
 
 /// Takes in a clip-space quad and creates a ray from camera to each vertex, which is interpolated during pass-through
-immutable string directionallightVS = q{
-    #version 400
-
+immutable string directionallightVS = glslVersion ~ q{
     layout(location = 0) in vec3 vPosition_s;
     layout(location = 1) in vec2 vUV;
 
@@ -32,9 +31,7 @@ immutable string directionallightVS = q{
 
 /// Calculates diffuse and specular lights from the full-screen directional light, 
 /// using the view ray to reconstruct pixel position
-immutable string directionallightFS = q{
-    #version 400
-
+immutable string directionallightFS = glslVersion ~ q{
     struct DirectionalLight
     {
         vec3 color;

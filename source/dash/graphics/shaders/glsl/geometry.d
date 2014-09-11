@@ -2,13 +2,12 @@
 * Geometry pass shader for standard meshes
 */
 module dash.graphics.shaders.glsl.geometry;
+import dash.graphics.shaders.glsl;
 
 package:
 
 /// Standard mesh vertex shader, transforms position to screen space and normals/tangents to view space
-immutable string geometryVS = q{
-    #version 400
-
+immutable string geometryVS = glslVersion ~ q{
     layout(location = 0) in vec3 vPosition_m;
     layout(location = 1) in vec2 vUV;
     layout(location = 2) in vec3 vNormal_m;
@@ -38,9 +37,7 @@ immutable string geometryVS = q{
 };
 
 /// Saves diffuse, specular, mappedNormals (encoded to spheremapped XY), and object ID to appropriate FBO textures
-immutable string geometryFS = q{
-    #version 400
-
+immutable string geometryFS = glslVersion ~ q{
     in vec4 fPosition_s;
     in vec3 fNormal_v;
     in vec2 fUV;

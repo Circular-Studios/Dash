@@ -2,13 +2,12 @@
 * Lighting Pass shader for ambient lights
 */
 module dash.graphics.shaders.glsl.ambientlight;
+import dash.graphics.shaders.glsl;
 
 package:
 
 /// Takes in a clip-space quad and interpolates the UVs
-immutable string ambientlightVS = q{
-#version 400
-    
+immutable string ambientlightVS = glslVersion ~ q{
     layout(location = 0) in vec3 vPosition_s;
     layout(location = 1) in vec2 vUV;
     
@@ -24,9 +23,7 @@ immutable string ambientlightVS = q{
 };
 
 /// Outputs the color for the diffuse * the ambient light value
-immutable string ambientlightFS = q{
-#version 400
-
+immutable string ambientlightFS = glslVersion ~ q{
     struct AmbientLight
     {
         vec3 color;

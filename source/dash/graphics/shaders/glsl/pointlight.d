@@ -2,13 +2,12 @@
 * Lighting pass shader for Point Lights
 */
 module dash.graphics.shaders.glsl.pointlight;
+import dash.graphics.shaders.glsl;
 
 package:
 
 /// Takes a mesh representing the possible area of the light and creates a ray to each vertex
-immutable string pointlightVS = q{
-#version 400
-    
+immutable string pointlightVS = glslVersion ~ q{
     layout(location = 0) in vec3 vPosition_m;
     layout(location = 1) in vec2 vUV;
     layout(location = 2) in vec3 vNormal_m;
@@ -33,9 +32,7 @@ immutable string pointlightVS = q{
 };
 
 /// Outputs diffuse and specular color from the light, using the view ray to reconstruct position and a falloff rate to attenuate
-immutable string pointlightFS = q{
-#version 400
-
+immutable string pointlightFS = glslVersion ~ q{
     struct PointLight{
         vec3 pos_v;
         vec3 color;

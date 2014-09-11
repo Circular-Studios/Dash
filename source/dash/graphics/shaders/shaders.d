@@ -279,7 +279,7 @@ public:
      */
     final void bindUniformMatrix4fv( uint uniform, mat4f matrix )
     {
-        glUniformMatrix4fv( uniform, 1, false, matrix.value_ptr );
+        glUniformMatrix4fv( uniform, 1, false, matrix.ptr );
     }
 
     /**
@@ -352,7 +352,7 @@ public:
      */
     final void bindDirectionalLight( DirectionalLight light, mat4f transform )
     {
-        bindUniform3f( LightDirection, ( transform * vec4( light.direction, 0.0f ) ).xyz );
+        bindUniform3f( LightDirection, ( transform * vec4f( light.direction, 0.0f ) ).xyz );
         bindUniform3f( LightColor, light.color );
         bindUniform1f( LightShadowless, cast(float)(!light.castShadows) );
     }
@@ -374,7 +374,7 @@ public:
     final void bindPointLight( PointLight light, mat4f transform )
     {
         bindUniform3f( LightColor, light.color );
-        bindUniform3f( LightPosition, ( transform * vec4( light.owner.transform.worldPosition, 1.0f ) ).xyz);
+        bindUniform3f( LightPosition, ( transform * vec4f( light.owner.transform.worldPosition, 1.0f ) ).xyz);
         bindUniform1f( LightRadius, light.radius );
         bindUniform1f( LightFalloffRate, light.falloffRate );
     }

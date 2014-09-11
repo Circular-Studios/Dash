@@ -10,6 +10,7 @@ import gfm.math.vector: vec3f, dot;
 import gfm.math.matrix: mat4f, Matrix;
 import gfm.math.box: box3f;
 import derelict.opengl3.gl3;
+import std.math;
 
 mixin( registerComponents!q{dash.components.lights} );
 
@@ -18,20 +19,18 @@ mixin( registerComponents!q{dash.components.lights} );
  */
 abstract class Light : Component
 {
-private:
-    bool _castShadows;
-
 public:
     /// The color the light gives off.
     @field( "Color" )
     vec3f color;
     /// If it should cast shadows
-    mixin( Property!( _castShadows ) );
+    @field( "CastShadows" )
+    bool castShadows;
 
     this( vec3f color )
     {
         this.color = color;
-        _castShadows = false;
+        castShadows = false;
     }
 
     override void update() { }
@@ -78,6 +77,11 @@ public:
         this.direction = direction;
         super( color );
         this.castShadows = castShadows;
+    }
+
+    /// Initializes the lights.
+    override void initialize()
+    {
         if( castShadows )
         {
             // generate framebuffer for shadow map
@@ -128,7 +132,7 @@ public:
         float cosTheta = dot( lDirNorm, baseAxis );
         float halfCosX2 = sqrt( 0.5f * (1.0f + cosTheta) ) * 2.0f;
         vec3f w = cross( lDirNorm, baseAxis );
-        quat rotation = quat( halfCosX2/2, w.x / halfCosX2, w.y / halfCosX2, w.z / halfCosX2 );
+        quatf rotation = quatf( halfCosX2/2, w.x / halfCosX2, w.y / halfCosX2, w.z / halfCosX2 );
 
         // determine the x,y,z axes
         float cosPitch = cos( rotation.pitch );
@@ -142,32 +146,31 @@ public:
         // build the view matrix
         mat4f viewMatrix;
         ///*
-        viewMatrix.clear(0.0f);
-        viewMatrix[ 0 ] = xaxis.vector ~ -( xaxis * center );
-        viewMatrix[ 1 ] = yaxis.vector ~ -( yaxis * center );
-        viewMatrix[ 2 ] = zaxis.vector ~ -( zaxis * center );
-        viewMatrix[ 3 ] = [ 0, 0, 0, 1 ];
+        viewMatrix.rows[ 0 ] = xaxis.v ~ -( xaxis * center );
+        viewMatrix.rows[ 1 ] = yaxis.v ~ -( yaxis * center );
+        viewMatrix.rows[ 2 ] = zaxis.v ~ -( zaxis * center );
+        viewMatrix.rows[ 3 ] = [ 0, 0, 0, 1 ];
         /*/
         // using lookAt works for everying but a light direction of (0,+/-1,0)
         light.view = Camera.lookAt( center - light.direction.normalized, center ); //*/
 
         // get frustum in view space
-        frustum.min = (viewMatrix * vec4(frustum.min,1.0f)).xyz;
-        frustum.max = (viewMatrix * vec4(frustum.max,1.0f)).xyz;
+        frustum.min = (viewMatrix * vec4f(frustum.min,1.0f)).xyz;
+        frustum.max = (viewMatrix * vec4f(frustum.max,1.0f)).xyz;
 
         // get mins and maxes in view space
         vec3f mins, maxes;
         for( int i = 0; i < 3; i++ )
         {
-            if( frustum.min.vector[ i ] < frustum.max.vector[ i ] )
+            if( frustum.min.v[ i ] < frustum.max.v[ i ] )
             {
-                mins.vector[ i ] = frustum.min.vector[ i ];
-                maxes.vector[ i ] = frustum.max.vector[ i ];
+                mins.v[ i ] = frustum.min.v[ i ];
+                maxes.v[ i ] = frustum.max.v[ i ];
             }
             else
             {
-                mins.vector[ i ] = frustum.max.vector[ i ];
-                maxes.vector[ i ] = frustum.min.vector[ i ];
+                mins.v[ i ] = frustum.max.v[ i ];
+                maxes.v[ i ] = frustum.min.v[ i ];
             }
         }
 
@@ -211,14 +214,14 @@ public:
     {
         _matrix = mat4f.identity;
         // Scale
-        _matrix[ 0 ][ 0 ] = radius;
-        _matrix[ 1 ][ 1 ] = radius;
-        _matrix[ 2 ][ 2 ] = radius;
+        _matrix.c[ 0 ][ 0 ] = radius;
+        _matrix.c[ 1 ][ 1 ] = radius;
+        _matrix.c[ 2 ][ 2 ] = radius;
         // Translate
         vec3f position = owner.transform.worldPosition;
-        _matrix[ 0 ][ 3 ] = position.x;
-        _matrix[ 1 ][ 3 ] = position.y;
-        _matrix[ 2 ][ 3 ] = position.z;
+        _matrix.c[ 0 ][ 3 ] = position.x;
+        _matrix.c[ 1 ][ 3 ] = position.y;
+        _matrix.c[ 2 ][ 3 ] = position.z;
         return _matrix;
     }
 

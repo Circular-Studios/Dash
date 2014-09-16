@@ -510,7 +510,7 @@ private:
     void opAssign( Description desc )
     {
         position = vec3( desc.position[] );
-        rotation = quat( vec4( desc.rotation ) );
+        rotation = quat.euler_rotation( desc.rotation[ 1 ], desc.rotation[ 0 ], desc.rotation[ 2 ] );
         scale = vec3( desc.scale[] );
     }
 
@@ -540,7 +540,7 @@ public:
 
         /// The position of the object.
         @rename( "Rotation" ) @asArray @optional
-        float[4] rotation;
+        float[3] rotation;
 
         /// The position of the object.
         @rename( "Scale" ) @asArray @optional
@@ -549,7 +549,7 @@ public:
         this( Transform t )
         {
             position = t.position.vector[ 0..3 ];
-            rotation = t.rotation.quaternion[ 0..4 ];
+            rotation = [ t.rotation.yaw, t.rotation.pitch, t.rotation.roll ];
             scale = t.scale.vector[ 0..3 ];
         }
     }

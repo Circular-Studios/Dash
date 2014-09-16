@@ -5,7 +5,7 @@ import vibe.data.json, vibe.data.bson;
 import std.typecons: tuple;
 
 // Serialization attributes
-public import vibe.data.serialization: asArray, byName, ignore, name, optional;
+public import vibe.data.serialization: asArray, byName, ignore, name, optional, isCustomSerializable;
 /// Rename a field in the ddl.
 alias rename = name;
 

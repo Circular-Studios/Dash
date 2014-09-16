@@ -27,7 +27,15 @@ public:
     {
         Prefab opIndex( string index )
         {
-            return prefabs[ index ];
+            if( auto fab = index in prefabs )
+            {
+                return *fab;
+            }
+            else
+            {
+                logWarning( "Prefab ", index, " not found." );
+                return null;
+            }
         }
 
         Prefab opIndexAssign( Prefab newFab, string index )
@@ -84,6 +92,7 @@ public:
     this( GameObject.Description desc )
     {
         description = desc;
+        name = description.name;
     }
 
     /**

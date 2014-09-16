@@ -44,7 +44,15 @@ public:
         {
             if( auto type = "Type" in d )
             {
-                return $typeDeserializers[ type.get!string ]( d );
+                if( auto cereal = type.get!string in $typeDeserializers )
+                {
+                    return ( *cereal )( d );
+                }
+                else
+                {
+                    logWarning( "Component's \"Type\" not found: ", type.get!string );
+                    return null;
+                }
             }
             else
             {
@@ -124,8 +132,7 @@ public:
                 return $type();
                 //return serializeTo$type( SerializationDescription( cast(T)c ) );
             };
-
-            Component.$typeDeserializers[ typeid(T).name ] = ( $type node )
+            Component.$typeDeserializers[ T.stringof ] = ( $type node )
             {
                 return null;
                 //return deserialize$type!( SerializationDescription )( node ).createInstance();

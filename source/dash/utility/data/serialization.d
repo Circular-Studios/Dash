@@ -48,7 +48,7 @@ T deserializeFile( T )( Resource file, SerializationMode mode = SerializationMod
 
     T handleYaml()
     {
-        Yaml content = Loader.fromString( file.readText() ).load();
+        Yaml content = Loader.fromString( cast(char[])file.readText() ).load();
         return deserializeYaml!T( content );
     }
 

@@ -94,22 +94,6 @@ public:
 
         @rename( "Components" ) @optional
         Component[] components;
-
-        /**
-        * Create a description from a GameObject.
-        *
-        * Returns:
-        *  A new description with components and info.
-        */
-        this( GameObject obj )
-        {
-            name = obj.name;
-            prefabName = "";
-            prefab = null;
-            transform = typeof(obj.transform).Description( obj.transform );
-            children = obj.children.map!( child => typeof(child).Description( child ) ).array();
-            components = obj.componentList.values.dup;
-        }
     }
 
     /// The current transform of the object.
@@ -290,6 +274,27 @@ public:
         return obj;
     }
 
+    /**
+     * Create a description from a GameObject.
+     *
+     * Returns:
+     *  A new description with components and info.
+     */
+    Description toDescription()
+    {
+        Description desc;
+        with( desc )
+        {
+            name = this.name;
+            prefabName = "";
+            prefab = null;
+            transform = this.transform.toDescription();
+            children = this.children.map!( child => child.toDescription() ).array();
+            components = this.componentList.values.dup;
+        }
+        return desc;
+    }
+
     /// To complement the descriptions, and make serialization easier.
     static GameObject fromRepresentation( Description desc )
     {
@@ -298,7 +303,7 @@ public:
     /// ditto
     Description toRepresentation()
     {
-        return GameObject.Description( this );
+        return toDescription();
     }
     static assert( isCustomSerializable!GameObject );
 
@@ -545,13 +550,24 @@ public:
         /// The position of the object.
         @rename( "Scale" ) @asArray @optional
         float[3] scale;
+    }
 
-        this( Transform t )
+    /**
+     * Create a description from a Transform.
+     *
+     * Returns:
+     *  A new description with components.
+     */
+    Description toDescription()
+    {
+        Description desc;
+        with( desc )
         {
-            position = t.position.vector[ 0..3 ];
-            rotation = [ t.rotation.yaw, t.rotation.pitch, t.rotation.roll ];
-            scale = t.scale.vector[ 0..3 ];
+            position = this.position.vector[ 0..3 ];
+            rotation = [ this.rotation.yaw, this.rotation.pitch, this.rotation.roll ];
+            scale = this.scale.vector[ 0..3 ];
         }
+        return desc;
     }
 
     // these should remain public fields, properties return copies not references

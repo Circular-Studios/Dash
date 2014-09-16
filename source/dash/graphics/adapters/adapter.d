@@ -4,7 +4,7 @@
 module dash.graphics.adapters.adapter;
 import dash.core.properties, dash.components.userinterface, dash.utility.config;
 
-import gfm.math.vector: vec2i;
+import gfm.math.vector: vec2ui;
 import std.typecons: BlackHole;
 
 alias NullAdapter = BlackHole!Adapter;
@@ -81,12 +81,12 @@ public:
     /**
      * Read from the depth buffer at the given point.
      */
-    abstract float getDepthAtScreenPoint( vec2i point );
+    abstract float getDepthAtScreenPoint( vec2ui point );
 
     /**
      * Read from the depth buffer at the given point.
      */
-    abstract uint getObjectIDAtScreenPoint( vec2i point );
+    abstract uint getObjectIDAtScreenPoint( vec2ui point );
 
     /// TODO: Remove in favor of pipelines
     abstract void initializeDeferredRendering();

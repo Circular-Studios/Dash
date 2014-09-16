@@ -5,7 +5,7 @@ module dash.core.gameobject;
 import dash.core, dash.components, dash.graphics, dash.utility;
 
 import yaml;
-
+import gfm.math.funcs: radians;
 import std.conv, std.variant, std.array, std.algorithm, std.typecons, std.range, std.string;
 
 enum AnonymousName = "__anonymous";
@@ -145,7 +145,7 @@ public:
             if( innerNode.tryFind( "Position", transVec ) )
                 obj.transform.position = transVec;
             if( innerNode.tryFind( "Rotation", transVec ) )
-                obj.transform.rotation = quatf.IDENTITY.rotatex( transVec.x.radians ).rotatey( transVec.y.radians ).rotatez( transVec.z.radians );
+                obj.transform.rotation = quatf.fromEulerAngles( transVec.x.radians, transVec.y.radians, transVec.z.radians );
         }
 
         if( yamlObj.tryFind( "Children", innerNode ) )
@@ -466,7 +466,7 @@ private:
         owner = obj;
         position = vec3f(0,0,0);
         scale = vec3f(1,1,1);
-        rotation = quatf.IDENTITY;
+        rotation = quatf.identity;
     }
 
 public:

@@ -107,7 +107,7 @@ public:
     /**
      * Read from the depth buffer at the given point.
      */
-    override float getDepthAtScreenPoint( vec2i point )
+    override float getDepthAtScreenPoint( vec2ui point )
     {
         float depth;
         glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
@@ -120,7 +120,7 @@ public:
     /**
      * Read from the depth buffer at the given point.
      */
-    override uint getObjectIDAtScreenPoint( vec2i point )
+    override uint getObjectIDAtScreenPoint( vec2ui point )
     {
         float fId;
         glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
@@ -188,7 +188,7 @@ public:
                     mat4f worldView = scene.camera.viewMatrix * object.transform.matrix;
                     mat4f worldViewProj = projection * worldView;
 
-                    if( !( object.mesh.boundingBox in Frustum( worldViewProj ) ) )
+                    if( !( object.mesh.boundingBox in Frustum!float( worldViewProj ) ) )
                     {
                         // If we can't see an object, don't draw it.
                         continue;
@@ -237,8 +237,8 @@ public:
                     {
                         if( object.mesh && object.stateFlags.drawMesh )
                         {
-                            frustum = frustum.expand( (object.transform.matrix * vec4(object.mesh.boundingBox.min, 1.0f)).xyz );
-                            frustum = frustum.expand( (object.transform.matrix * vec4(object.mesh.boundingBox.max, 1.0f)).xyz );
+                            frustum = frustum.expand( (object.transform.matrix * vec4f(object.mesh.boundingBox.min, 1.0f)).xyz );
+                            frustum = frustum.expand( (object.transform.matrix * vec4f(object.mesh.boundingBox.max, 1.0f)).xyz );
                         }
                     }
 

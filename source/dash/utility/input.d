@@ -243,7 +243,7 @@ public:
         if( !DGame.instance.activeScene )
         {
             logWarning( "No active scene." );
-            return vec3( 0.0f, 0.0f, 0.0f );
+            return vec3f( 0.0f, 0.0f, 0.0f );
         }
 
         auto scene = DGame.instance.activeScene;
@@ -251,13 +251,13 @@ public:
         if( !scene.camera )
         {
             logWarning( "No camera on active scene." );
-            return vec3( 0.0f, 0.0f, 0.0f );
+            return vec3f( 0.0f, 0.0f, 0.0f );
         }
         vec2ui mouse = mousePos();
         float depth;
         int x = mouse.x;
         int y = mouse.y;
-        auto view = vec3( 0, 0, 0 );
+        auto view = vec3f( 0, 0, 0 );
 
         if( x >= 0 && x <= Graphics.width && y >= 0 && y <= Graphics.height )
         {
@@ -268,8 +268,8 @@ public:
             float screenX = ( mouse.x / cast(float)Graphics.width ) * 2 - 1;
             float screenY = -( ( mouse.y / cast(float)Graphics.height ) * 2 - 1 );
 
-            auto viewSpace = scene.camera.inversePerspectiveMatrix * vec4( screenX, screenY, 1.0f, 1.0f);
-            auto viewRay = vec3( viewSpace.xy * (1.0f / viewSpace.z), 1.0f);
+            auto viewSpace = scene.camera.inversePerspectiveMatrix * vec4f( screenX, screenY, 1.0f, 1.0f);
+            auto viewRay = vec3f( viewSpace.xy * (1.0f / viewSpace.z), 1.0f);
             view = viewRay * linearDepth;
         }
 
@@ -307,7 +307,7 @@ public:
             return null;
         }
 
-        vec2i mouse = mousePos();
+        vec2ui mouse = mousePos();
 
         if( mouse.x >= 0 && mouse.x <= Graphics.width && mouse.y >= 0 && mouse.y <= Graphics.height )
         {

@@ -135,10 +135,11 @@ public:
         quatf rotation = quatf( halfCosX2/2, w.x / halfCosX2, w.y / halfCosX2, w.z / halfCosX2 );
 
         // determine the x,y,z axes
-        float cosPitch = cos( rotation.pitch );
-        float sinPitch = sin( rotation.pitch );
-        float cosYaw = cos( rotation.yaw );
-        float sinYaw = sin( rotation.yaw );
+        vec3f eulers = rotation.toEulerAngles();
+        float cosPitch = cos( eulers.x );
+        float sinPitch = sin( eulers.x );
+        float cosYaw = cos( eulers.y );
+        float sinYaw = sin( eulers.y );
         vec3f xaxis = vec3f( cosYaw, 0.0f, -sinYaw );
         vec3f yaxis = vec3f( sinYaw * sinPitch, cosPitch, cosYaw * sinPitch );
         vec3f zaxis = vec3f( sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw );

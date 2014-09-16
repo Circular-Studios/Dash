@@ -48,11 +48,11 @@ static this()
     import dash.components.lights;
     import dash.graphics.shaders.shaders;
     import dash.utility.output;
-    import gl3n.linalg;
+    import gfm.math.vector, gfm.math.quaternion;
 
     constructor.addConstructorScalar( "!Vector2", ( ref Node node )
     {
-        vec2 result;
+        vec2f result;
         string[] vals = node.as!string.split();
         if( vals.length != 2 )
             throw new Exception( "Invalid number of values: " ~ node.as!string );
@@ -63,7 +63,7 @@ static this()
     } );
     constructor.addConstructorScalar( "!Vector3", ( ref Node node )
     {
-        vec3 result;
+        vec3f result;
         string[] vals = node.as!string.split();
         if( vals.length != 3 )
             throw new Exception( "Invalid number of values: " ~ node.as!string );
@@ -75,7 +75,7 @@ static this()
     } );
     constructor.addConstructorScalar( "!Quaternion", ( ref Node node )
     {
-        quat result;
+        quatf result;
         string[] vals = node.as!string.split();
         if( vals.length != 3 )
             throw new Exception( "Invalid number of values: " ~ node.as!string );

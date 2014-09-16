@@ -6,6 +6,7 @@ import dash.core, dash.components, dash.graphics, dash.utility;
 
 import gfm.math.vector: vec2f, vec3f, vec4f, cross, dot;
 import gfm.math.matrix: mat4f;
+import gfm.math.funcs: radians;
 import std.conv: to;
 import std.math: sin, cos;
 
@@ -19,7 +20,6 @@ final class Camera : Component, IDirtyable
 {
 private:
     float _prevFov, _prevNear, _prevFar, _prevWidth, _prevHeight;
-
 
     vec2f _projectionConstants; // For rebuilding linear Z in shaders
     mat4f _prevLocalMatrix;
@@ -45,8 +45,6 @@ public:
     /**
      * TODO
      *
-     * Params:
-     *
      * Returns:
      */
     final vec2f projectionConstants()
@@ -63,8 +61,6 @@ public:
 
     /**
      * TODO
-     *
-     * Params:
      *
      * Returns:
      */
@@ -83,8 +79,6 @@ public:
     /**
      * TODO
      *
-     * Params:
-     *
      * Returns:
      */
     final mat4f inversePerspectiveMatrix()
@@ -101,8 +95,6 @@ public:
 
     /**
      * TODO
-     *
-     * Params:
      *
      * Returns:
      */
@@ -121,8 +113,6 @@ public:
     /**
      * TODO
      *
-     * Params:
-     *
      * Returns:
      */
     final mat4f inverseOrthogonalMatrix()
@@ -140,17 +130,16 @@ public:
     /**
      * TODO
      *
-     * Params:
-     *
      * Returns:
      */
     final void updateViewMatrix()
     {
         //Assuming pitch & yaw are in radians
-        float cosPitch = cos( owner.transform.rotation.pitch );
-        float sinPitch = sin( owner.transform.rotation.pitch );
-        float cosYaw = cos( owner.transform.rotation.yaw );
-        float sinYaw = sin( owner.transform.rotation.yaw );
+        vec3f eulers = owner.transform.rotation.toEulerAngles();
+        float cosPitch = cos( eulers.x );
+        float sinPitch = sin( eulers.x );
+        float cosYaw = cos( eulers.y );
+        float sinYaw = sin( eulers.y );
 
         vec3f xaxis = vec3f( cosYaw, 0.0f, -sinYaw );
         vec3f yaxis = vec3f( sinYaw * sinPitch, cosPitch, cosYaw * sinPitch );
@@ -238,7 +227,7 @@ private:
     final void updatePerspective()
     {
         _projectionConstants = vec2f( ( -far * near ) / ( far - near ), far / ( far - near ) );
-        _perspectiveMatrix = mat4f.perspective( cast(float)Graphics.width, cast(float)Graphics.height, fov, near, far );
+        _perspectiveMatrix = mat4f.perspective( fov.radians, cast(float)Graphics.width / cast(float)Graphics.height, near, far );
         _inversePerspectiveMatrix = _perspectiveMatrix.inverse();
     }
 

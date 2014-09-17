@@ -138,87 +138,6 @@ public:
     //alias stateFlags this;
 
     /**
-     * Create a GameObject from a Yaml node.
-     *
-     * Params:
-     *  yamlObj =           The YAML node to pull info from.
-     *
-     * Returns:
-     *  A new game object with components and info pulled from yaml.
-     */
-    static GameObject createFromYaml( Node yamlObj )
-    {
-        GameObject obj;
-        string prop;
-        Node innerNode;
-
-        if( yamlObj.tryFind( "InstanceOf", prop ) )
-        {
-            obj = Prefabs[ prop ].createInstance();
-        }
-        else
-        {
-            obj = new GameObject;
-        }
-
-        // Set object name
-        obj.name = yamlObj[ "Name" ].as!string;
-
-        // Init transform
-        if( yamlObj.tryFind( "Transform", innerNode ) )
-        {
-            vec3f transVec;
-            if( innerNode.tryFind( "Scale", transVec ) )
-                obj.transform.scale = transVec;
-            if( innerNode.tryFind( "Position", transVec ) )
-                obj.transform.position = transVec;
-            if( innerNode.tryFind( "Rotation", transVec ) )
-                obj.transform.rotation = quatf.fromEulerAngles( transVec.x.radians, transVec.y.radians, transVec.z.radians );
-        }
-
-        if( yamlObj.tryFind( "Children", innerNode ) )
-        {
-            if( innerNode.isSequence )
-            {
-                foreach( Node child; innerNode )
-                {
-                    // If inline object, create it and add it as a child.
-                    if( child.isMapping )
-                        obj.addChild( GameObject.createFromYaml( child ) );
-                    // Add child name to map.
-                    else
-                        logWarning( "Specifing child objects by name is deprecated. Please add ", child.get!string, " as an inline child of ", obj.name, "." );
-                }
-            }
-            else
-            {
-                logWarning( "Scalar values and mappings in 'Children' of ", obj.name, " are not supported, and it is being ignored." );
-            }
-        }
-
-        // Init components
-        foreach( string key, Node componentNode; yamlObj )
-        {
-            if( key == "Name" || key == "InstanceOf" || key == "Transform" || key == "Children" )
-                continue;
-
-            if( auto init = key in createYamlComponent )
-            {
-                auto newComp = cast(Component)(*init)( componentNode );
-                obj.addComponent( newComp );
-                newComp.owner = obj;
-            }
-            else
-                logWarning( "Unknown key: ", key );
-        }
-
-        foreach( comp; obj.componentList )
-            comp.initialize();
-
-        return obj;
-    }
-
-    /**
      * Create a GameObject from a description object.
      *
      * Params:
@@ -517,9 +436,9 @@ private:
 
     void opAssign( Description desc )
     {
-        position = vec3( desc.position[] );
-        rotation = quat.euler_rotation( desc.rotation[ 1 ], desc.rotation[ 0 ], desc.rotation[ 2 ] );
-        scale = vec3( desc.scale[] );
+        position = vec3f( desc.position[] );
+        rotation = quatf.fromEulerAngles( desc.rotation[ 1 ], desc.rotation[ 0 ], desc.rotation[ 2 ] );
+        scale = vec3f( desc.scale[] );
     }
 
     /**
@@ -566,9 +485,9 @@ public:
         Description desc;
         with( desc )
         {
-            position = this.position.vector[ 0..3 ];
-            rotation = [ this.rotation.yaw, this.rotation.pitch, this.rotation.roll ];
-            scale = this.scale.vector[ 0..3 ];
+            position = this.position.v[ 0..3 ];
+            rotation = this.rotation.toEulerAngles()[ 0..3 ];
+            scale = this.scale.v[ 0..3 ];
         }
         return desc;
     }

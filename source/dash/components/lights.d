@@ -21,10 +21,10 @@ abstract class Light : Component
 {
 public:
     /// The color the light gives off.
-    @field( "Color" )
+    @rename( "Color" )
     vec3f color;
     /// If it should cast shadows
-    @field( "CastShadows" )
+    @rename( "CastShadows" )
     bool castShadows;
 
     this( vec3f color )
@@ -40,7 +40,6 @@ public:
 /**
  * Ambient Light
  */
-@yamlComponent()
 class AmbientLight : Light
 {
     this( vec3f color = vec3f() )
@@ -52,7 +51,6 @@ class AmbientLight : Light
 /**
  * Directional Light
  */
-@yamlComponent()
 class DirectionalLight : Light
 {
 private:
@@ -63,7 +61,6 @@ private:
 
 public:
     /// The direction the light points in.
-    @field( "Direction" )
     vec3f direction;
     /// The FrameBuffer for the shadowmap.
     mixin( Property!( _shadowMapFrameBuffer ) );
@@ -183,7 +180,6 @@ public:
 /**
  * Point Light
  */
-@yamlComponent()
 class PointLight : Light
 {
 private:
@@ -191,10 +187,10 @@ private:
 
 public:
     /// The area that lighting will be calculated for.
-    @field( "Radius" )
+    @rename( "Radius" )
     float radius;
     /// The light's exponential attenuation modifier.
-    @field( "FalloffRate" )
+    @rename( "FalloffRate" )
     float falloffRate;
 
     this( vec3f color = vec3f(), float radius = 0.0f, float falloffRate = 0.0f )
@@ -231,7 +227,6 @@ public:
 /**
  * SpotLight Stub
  */
-@yamlComponent()
 class SpotLight : Light
 {
 public:

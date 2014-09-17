@@ -15,7 +15,6 @@ mixin( registerComponents!() );
 /**
  * Camera manages a view and projection matrix.
  */
-@yamlComponent( "Camera" )
 final class Camera : Component, IDirtyable
 {
 private:
@@ -35,11 +34,11 @@ public:
     mixin( ThisDirtyGetter!( _viewMatrix, updateViewMatrix ) );
     /// TODO
     mixin( ThisDirtyGetter!( _inverseViewMatrix, updateViewMatrix ) );
-    @field( "FOV" )
+    @rename( "FOV" )
     float fov;
-    @field( "Near" )
+    @rename( "Near" )
     float near;
-    @field( "Far" )
+    @rename( "Far" )
     float far;
 
     /**

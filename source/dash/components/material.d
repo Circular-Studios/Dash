@@ -13,7 +13,6 @@ mixin( registerComponents!() );
 /**
  * A collection of textures that serve different purposes in the rendering pipeline.
  */
-@yamlObject()
 final class MaterialAsset : Asset
 {
 public:

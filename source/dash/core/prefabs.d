@@ -76,8 +76,7 @@ private:
 /**
  * A prefab that allows for quick object creation.
  */
-@yamlObject()
-final class Prefab
+final class Prefab : Asset
 {
 public:
     /// The name of the prefab.

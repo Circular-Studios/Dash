@@ -298,10 +298,10 @@ public:
         // Add mesh
         if( scene.mNumMeshes > 0 )
         {
-            Mesh tempMesh = new Mesh( resource.fullPath, scene.mMeshes[ 0 ] );
+            auto tempMesh = new MeshAsset( resource.fullPath, scene.mMeshes[ 0 ] );
 
             if( scene.mNumAnimations > 0 )
-                tempMesh.animationData = new AssetAnimation( scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
+                tempMesh.animationData = new AnimationData( scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
 
             // Copy attributes
             _glVertexArray = tempMesh._glVertexArray;

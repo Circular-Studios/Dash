@@ -16,7 +16,7 @@ public:
 
         // Default port to 8080
         ushort bindPort = 8080;
-        config.tryFind( "Editor.Port", bindPort );
+        bindPort = config.Editor.Port;
 
         auto router = new URLRouter;
         router.get( "/ws", handleWebSockets( &handleConnection ) );

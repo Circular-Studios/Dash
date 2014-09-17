@@ -2,7 +2,7 @@ module dash.utility.data.serialization;
 import dash.utility.resources;
 import dash.utility.data.yaml;
 import vibe.data.json, vibe.data.bson;
-import std.typecons: tuple;
+import std.typecons: Tuple, tuple;
 
 // Serialization attributes
 public import vibe.data.serialization: asArray, byName, ignore, name, optional, isCustomSerializable;
@@ -21,6 +21,23 @@ enum SerializationMode
     Json,
     Bson,
     Yaml,
+}
+
+/**
+ * Deserializes a file.
+ *
+ * Params:
+ *  fileName =          The name of the file to deserialize.
+ *
+ * Returns: The deserialized object.
+ */
+Tuple!( T, Resource ) deserializeFileByName( T )( string fileName, SerializationMode mode = SerializationMode.Default )
+{
+    import std.path: dirName;
+    import std.array: front;
+
+    Resource file = Resource( fileName.dirName.scanDirectory( fileName.baseName ~ ".*" ).front );
+    return tuple( deserializeFile( file ), file );
 }
 
 /**
@@ -87,12 +104,12 @@ T[] deserializeMultiFile( T )( Resource file, SerializationMode mode = Serializa
 
     T[] handleJson()
     {
-        return [deserializeJson!T( file.readText().parseJsonString() )];
+        return [deserializeFile!T( file, SerializationMode.Json )];
     }
 
     T[] handleBson()
     {
-        throw new Exception( "Not implemented." );
+        return [deserializeFile!T( file, SerializationMode.Bson )];
     }
 
     T[] handleYaml()

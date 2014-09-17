@@ -7,25 +7,7 @@ import dash.utility.resources, dash.utility.output, dash.utility.data;
 
 public import yaml;
 
-import std.variant, std.algorithm, std.traits, std.range,
-       std.array, std.conv, std.file, std.typecons, std.path;
-
-/**
- * Place this mixin anywhere in your game code to allow the Content.yml file
- * to be imported at compile time. Note that this will only actually import
- * the file when EmbedContent is listed as a defined version.
- */
-mixin template ContentImport()
-{
-    version( EmbedContent )
-    {
-        static this()
-        {
-            import dash.utility.config;
-            contentYML = import( "Content.yml" );
-        }
-    }
-}
+import std.datetime;
 
 /**
  * Get a YAML map as a D object of type T.
@@ -39,94 +21,86 @@ mixin template ContentImport()
 deprecated( "Use deserializeYaml" )
 alias getObject = deserializeYaml;
 
-unittest
+/**
+ * The global instance of config.
+ */
+private Config configInst;
+/// ditto
+const(Config) config() @property
 {
-    import std.stdio;
-    writeln( "Dash Config getObject unittest" );
-
-    auto t = Node( ["x": 5, "y": 7, "z": 9] ).getObject!Test();
-
-    assert( t.x == 5 );
-    assert( t.y == 7 );
-    assert( t.z == 9 );
-}
-version(unittest) class Test
-{
-    int x;
-    int y;
-    private int _z;
-
-    @property int z() { return _z; }
-    @property void z( int newZ ) { _z = newZ; }
+    return configInst;
 }
 
 /**
  * Static class which handles the configuration options and YAML interactions.
  */
-final abstract class Config
+struct Config
 {
-public static:
-    /**
-     * TODO
-     */
-    void initialize()
-    {
-        version( EmbedContent )
-        {
-            logDebug( "Using imported Content.yml file." );
-            assert( contentYML, "EmbedContent version set, mixin not used." );
-            auto loader = Loader.fromString( contentYML );
-            loader.constructor = constructor;
-            contentNode = loader.load();
-            // Null content yml so it can be collected.
-            contentYML = null;
-        }
-        else version( unittest )
-        {
-            auto loader = Loader.fromString( testYML );
-            loader.constructor = constructor;
-            contentNode = loader.load();
-        }
-        else
-        {
-            if( exists( Resources.CompactContentFile ) )
-            {
-                logDebug( "Using Content.yml file." );
-                configFile = Resource( Resources.CompactContentFile );
-                contentNode = Resources.CompactContentFile.loadYamlFile();
-            }
-            else
-            {
-                logDebug( "Using normal content directory." );
-                configFile = Resource( Resources.ConfigFile );
-            }
-        }
+public:
+    LoggerSettings Logging;
+    DisplaySettings Display;
+    GraphicsSettings Graphics;
+    UserInterfaceSettings UserInterface;
+    EditorSettings Editor;
 
-        config = Resources.ConfigFile.loadYamlFile();
+    static struct LoggerSettings
+    {
+        string FilePath;
+        Verbosities Debug;
+        Verbosities Release;
+
+        static struct Verbosities
+        {
+            Verbosity OutputVerbosity;
+            Verbosity LoggingVerbosity;
+        }
     }
 
-    void refresh()
+    static struct DisplaySettings
     {
-        // No need to refresh, there can be no changes.
-        version( EmbedContent ) { }
-        else
+        bool Fullscreen;
+        uint Height;
+        uint Width;
+    }
+
+    static struct GraphicsSettings
+    {
+        bool BackfaceCulling;
+        bool VSync;
+    }
+
+    static struct UserInterfaceSettings
+    {
+        string FilePath;
+    }
+
+    static struct EditorSettings
+    {
+        ushort Port;
+    }
+
+static:
+    private Resource resource = Resource( "" );
+    private SysTime lastModified;
+
+    void initialize()
+    {
+        import std.file: timeLastModified;
+
+        auto res = deserializeFileByName!Config( Resources.ConfigFile );
+        config = res[ 0 ];
+        resource = res[ 1 ];
+        lastModified = resource.fullPath.timeLastModified;
+    }
+
+    void update()
+    {
+        import std.file: timeLastModified;
+
+        if( lastModified < resource.fullPath.timeLastModified )
         {
-            if( exists( Resources.CompactContentFile ) )
-            {
-                logDebug( "Using Content.yml file." );
-                if( configFile.needsRefresh )
-                {
-                    contentNode = Node( YAMLNull() );
-                    contentNode = Resources.CompactContentFile.loadYamlFile();
-                    config = Resources.ConfigFile.loadYamlFile();
-                }
-            }
-            else
-            {
-                logDebug( "Using normal content directory." );
-                if( configFile.needsRefresh )
-                    config = Resources.ConfigFile.loadYamlFile();
-            }
+            config = deserializeFile( resource );
+            lastModified = resource.fullPath.timeLastModified;
         }
     }
 }

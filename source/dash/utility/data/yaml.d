@@ -140,34 +140,6 @@ T[] loadYamlObjects( T )( string folder )
 * Params:
 *  filePath =              The path to file to load.
 */
-Node loadYamlFile( string filePath )
-{
-    if( contentNode.isNull )
-    {
-        auto loader = Loader( filePath );
-        loader.constructor = constructor;
-        try
-        {
-            return loader.load();
-        }
-        catch( YAMLException e )
-        {
-            logFatal( "Error parsing file ", Resource( filePath ).baseFileName, ": ", e.msg );
-            return Node();
-        }
-    }
-    else
-    {
-        return contentNode.find( filePath.fileToYaml );
-    }
-}
-
-/**
-* Load a yaml file with the engine-specific mappings.
-*
-* Params:
-*  filePath =              The path to file to load.
-*/
 Node[] loadAllDocumentsInYamlFile( string filePath )
 {
     if( contentNode.isNull )

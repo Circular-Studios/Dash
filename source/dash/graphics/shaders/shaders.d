@@ -5,8 +5,9 @@ module dash.graphics.shaders.shaders;
 import dash.core, dash.components, dash.graphics, dash.utility;
 import dash.graphics.shaders.glsl;
 
+import gfm.math.vector: vec2f, vec3f;
+import gfm.math.matrix: mat4f;
 import derelict.opengl3.gl3;
-import gl3n.linalg;
 
 import std.string, std.traits, std.algorithm;
 
@@ -251,7 +252,7 @@ public:
     /**
      * Pass through for glUniform2f
      */
-    final void bindUniform2f( uint uniform, const vec2 value )
+    final void bindUniform2f( uint uniform, const vec2f value )
     {
         glUniform2f( uniform, value.x, value.y );
     }
@@ -260,7 +261,7 @@ public:
      * Pass through for glUniform 3f
      * Passes to the shader in XYZ order
      */
-    final void bindUniform3f( uint uniform, const vec3 value )
+    final void bindUniform3f( uint uniform, const vec3f value )
     {
         glUniform3f( uniform, value.x, value.y, value.z );
     }
@@ -276,25 +277,22 @@ public:
     /**
      *  pass through for glUniformMatrix4fv
      */
-    final void bindUniformMatrix4fv( uint uniform, mat4 matrix )
+    final void bindUniformMatrix4fv( uint uniform, mat4f matrix )
     {
-        glUniformMatrix4fv( uniform, 1, true, matrix.value_ptr );
+        glUniformMatrix4fv( uniform, 1, false, matrix.ptr );
     }
 
     /**
      * Bind an array of mat4s.
      */
-    final void bindUniformMatrix4fvArray( uint uniform, mat4[] matrices )
+    final void bindUniformMatrix4fvArray( uint uniform, mat4f[] matrices )
     {
         float[] matptr;
         foreach( matrix; matrices )
         {
-            for( int i = 0; i < 16; i++ )
-            {
-                matptr ~= matrix.value_ptr()[i];
-            }
+            matptr ~= matrix.v[];
         }
-        glUniformMatrix4fv( uniform, cast(int)matrices.length, true, matptr.ptr );
+        glUniformMatrix4fv( uniform, cast(int)matrices.length, false, matptr.ptr );
     }
 
     /**
@@ -352,9 +350,9 @@ public:
     /**
      * Bind a directional light after a modifying transform
      */
-    final void bindDirectionalLight( DirectionalLight light, mat4 transform )
+    final void bindDirectionalLight( DirectionalLight light, mat4f transform )
     {
-        bindUniform3f( LightDirection, ( transform * vec4( light.direction, 0.0f ) ).xyz );
+        bindUniform3f( LightDirection, ( transform * vec4f( light.direction, 0.0f ) ).xyz );
         bindUniform3f( LightColor, light.color );
         bindUniform1f( LightShadowless, cast(float)(!light.castShadows) );
     }
@@ -373,10 +371,10 @@ public:
     /**
      * Bind a point light after a modifying transform
      */
-    final void bindPointLight( PointLight light, mat4 transform )
+    final void bindPointLight( PointLight light, mat4f transform )
     {
         bindUniform3f( LightColor, light.color );
-        bindUniform3f( LightPosition, ( transform * vec4( light.owner.transform.worldPosition, 1.0f ) ).xyz);
+        bindUniform3f( LightPosition, ( transform * vec4f( light.owner.transform.worldPosition, 1.0f ) ).xyz);
         bindUniform1f( LightRadius, light.radius );
         bindUniform1f( LightFalloffRate, light.falloffRate );
     }
@@ -385,7 +383,7 @@ public:
     /**
      * Sets the eye position for lighting calculations
      */
-    final void setEyePosition( vec3 pos )
+    final void setEyePosition( vec3f pos )
     {
         glUniform3f( EyePosition, pos.x, pos.y, pos.z );
     }

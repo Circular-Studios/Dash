@@ -4,8 +4,11 @@
 module dash.components.camera;
 import dash.core, dash.components, dash.graphics, dash.utility;
 
-import gl3n.linalg;
-import std.conv;
+import gfm.math.vector: vec2f, vec3f, vec4f, cross, dot;
+import gfm.math.matrix: mat4f;
+import gfm.math.funcs: radians;
+import std.conv: to;
+import std.math: sin, cos;
 
 mixin( registerComponents!() );
 
@@ -18,15 +21,14 @@ final class Camera : Component, IDirtyable
 private:
     float _prevFov, _prevNear, _prevFar, _prevWidth, _prevHeight;
 
-
-    vec2 _projectionConstants; // For rebuilding linear Z in shaders
-    mat4 _prevLocalMatrix;
-    mat4 _viewMatrix;
-    mat4 _inverseViewMatrix;
-    mat4 _perspectiveMatrix;
-    mat4 _inversePerspectiveMatrix;
-    mat4 _orthogonalMatrix;
-    mat4 _inverseOrthogonalMatrix;
+    vec2f _projectionConstants; // For rebuilding linear Z in shaders
+    mat4f _prevLocalMatrix;
+    mat4f _viewMatrix;
+    mat4f _inverseViewMatrix;
+    mat4f _perspectiveMatrix;
+    mat4f _inversePerspectiveMatrix;
+    mat4f _orthogonalMatrix;
+    mat4f _inverseOrthogonalMatrix;
 
 public:
     /// TODO
@@ -43,11 +45,9 @@ public:
     /**
      * TODO
      *
-     * Params:
-     *
      * Returns:
      */
-    final vec2 projectionConstants()
+    final vec2f projectionConstants()
     {
         if( this.projectionDirty )
         {
@@ -62,11 +62,9 @@ public:
     /**
      * TODO
      *
-     * Params:
-     *
      * Returns:
      */
-    final mat4 perspectiveMatrix()
+    final mat4f perspectiveMatrix()
     {
         if( this.projectionDirty )
         {
@@ -81,11 +79,9 @@ public:
     /**
      * TODO
      *
-     * Params:
-     *
      * Returns:
      */
-    final mat4 inversePerspectiveMatrix()
+    final mat4f inversePerspectiveMatrix()
     {
         if( this.projectionDirty )
         {
@@ -100,11 +96,9 @@ public:
     /**
      * TODO
      *
-     * Params:
-     *
      * Returns:
      */
-    final mat4 orthogonalMatrix()
+    final mat4f orthogonalMatrix()
     {
         if( this.projectionDirty )
         {
@@ -119,11 +113,9 @@ public:
     /**
      * TODO
      *
-     * Params:
-     *
      * Returns:
      */
-    final mat4 inverseOrthogonalMatrix()
+    final mat4f inverseOrthogonalMatrix()
     {
         if( this.projectionDirty )
         {
@@ -138,27 +130,26 @@ public:
     /**
      * TODO
      *
-     * Params:
-     *
      * Returns:
      */
     final void updateViewMatrix()
     {
         //Assuming pitch & yaw are in radians
-        float cosPitch = cos( owner.transform.rotation.pitch );
-        float sinPitch = sin( owner.transform.rotation.pitch );
-        float cosYaw = cos( owner.transform.rotation.yaw );
-        float sinYaw = sin( owner.transform.rotation.yaw );
+        vec3f eulers = owner.transform.rotation.toEulerAngles();
+        float cosPitch = cos( eulers.x );
+        float sinPitch = sin( eulers.x );
+        float cosYaw = cos( eulers.y );
+        float sinYaw = sin( eulers.y );
 
-        vec3 xaxis = vec3( cosYaw, 0.0f, -sinYaw );
-        vec3 yaxis = vec3( sinYaw * sinPitch, cosPitch, cosYaw * sinPitch );
-        vec3 zaxis = vec3( sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw );
+        vec3f xaxis = vec3f( cosYaw, 0.0f, -sinYaw );
+        vec3f yaxis = vec3f( sinYaw * sinPitch, cosPitch, cosYaw * sinPitch );
+        vec3f zaxis = vec3f( sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw );
 
-        _viewMatrix.clear( 0.0f );
-        _viewMatrix[ 0 ] = xaxis.vector ~ -( xaxis * owner.transform.position );
-        _viewMatrix[ 1 ] = yaxis.vector ~ -( yaxis * owner.transform.position );
-        _viewMatrix[ 2 ] = zaxis.vector ~ -( zaxis * owner.transform.position );
-        _viewMatrix[ 3 ] = [ 0, 0, 0, 1 ];
+        _viewMatrix.v[] = 0.0f;
+        _viewMatrix.rows[ 0 ] = xaxis.v ~ -( xaxis * owner.transform.position );
+        _viewMatrix.rows[ 1 ] = yaxis.v ~ -( yaxis * owner.transform.position );
+        _viewMatrix.rows[ 2 ] = zaxis.v ~ -( zaxis * owner.transform.position );
+        _viewMatrix.rows[ 3 ] = vec4f( 0, 0, 0, 1 );
 
         _inverseViewMatrix = _viewMatrix.inverse();
     }
@@ -174,28 +165,28 @@ public:
      * Returns:
      * A right handed view matrix for the given params.
      */
-    final static mat4 lookAt( vec3 targetPos, vec3 cameraPos, vec3 worldUp = vec3(0,1,0) )
+    final static mat4f lookAt( vec3f targetPos, vec3f cameraPos, vec3f worldUp = vec3f(0,1,0) )
     {
-        vec3 zaxis = ( cameraPos - targetPos );
+        vec3f zaxis = ( cameraPos - targetPos );
         zaxis.normalize;
-        vec3 xaxis = cross( worldUp, zaxis );
+        vec3f xaxis = cross( worldUp, zaxis );
         xaxis.normalize;
-        vec3 yaxis = cross( zaxis, xaxis );
+        vec3f yaxis = cross( zaxis, xaxis );
 
-        mat4 result = mat4.identity;
+        mat4f result = mat4f.identity;
 
-        result[0][0] = xaxis.x;
-        result[1][0] = xaxis.y;
-        result[2][0] = xaxis.z;
-        result[3][0] = -dot( xaxis, cameraPos );
-        result[0][1] = yaxis.x;
-        result[1][1] = yaxis.y;
-        result[2][1] = yaxis.z;
-        result[3][1] = -dot( yaxis, cameraPos );
-        result[0][2] = zaxis.x;
-        result[1][2] = zaxis.y;
-        result[2][2] = zaxis.z;
-        result[3][2] = -dot( zaxis, cameraPos );
+        result.c[0][0] = xaxis.x;
+        result.c[1][0] = xaxis.y;
+        result.c[2][0] = xaxis.z;
+        result.c[3][0] = -dot( xaxis, cameraPos );
+        result.c[0][1] = yaxis.x;
+        result.c[1][1] = yaxis.y;
+        result.c[2][1] = yaxis.z;
+        result.c[3][1] = -dot( yaxis, cameraPos );
+        result.c[0][2] = zaxis.x;
+        result.c[1][2] = zaxis.y;
+        result.c[2][2] = zaxis.z;
+        result.c[3][2] = -dot( zaxis, cameraPos );
 
         return result.transposed;
     }
@@ -235,8 +226,8 @@ private:
      */
     final void updatePerspective()
     {
-        _projectionConstants = vec2( ( -far * near ) / ( far - near ), far / ( far - near ) );
-        _perspectiveMatrix = mat4.perspective( cast(float)Graphics.width, cast(float)Graphics.height, fov, near, far );
+        _projectionConstants = vec2f( ( -far * near ) / ( far - near ), far / ( far - near ) );
+        _perspectiveMatrix = mat4f.perspective( fov.radians, cast(float)Graphics.width / cast(float)Graphics.height, near, far );
         _inversePerspectiveMatrix = _perspectiveMatrix.inverse();
     }
 
@@ -245,12 +236,12 @@ private:
      */
     final void updateOrthogonal()
     {
-        _orthogonalMatrix = mat4.identity;
+        _orthogonalMatrix = mat4f.identity;
 
-        _orthogonalMatrix[0][0] = 2.0f / Graphics.width;
-        _orthogonalMatrix[1][1] = 2.0f / Graphics.height;
-        _orthogonalMatrix[2][2] = -2.0f / (far - near);
-        _orthogonalMatrix[3][3] = 1.0f;
+        _orthogonalMatrix.c[0][0] = 2.0f / Graphics.width;
+        _orthogonalMatrix.c[1][1] = 2.0f / Graphics.height;
+        _orthogonalMatrix.c[2][2] = -2.0f / (far - near);
+        _orthogonalMatrix.c[3][3] = 1.0f;
 
         _inverseOrthogonalMatrix = _orthogonalMatrix.inverse();
     }

@@ -2,7 +2,7 @@ module dash.graphics.adapters.gl;
 import dash.core, dash.components, dash.graphics;
 import dash.utility.output;
 
-import gl3n.linalg, gl3n.frustum, gl3n.math;
+import gfm.math;
 import derelict.opengl3.gl3;
 
 import std.algorithm, std.array;
@@ -107,7 +107,7 @@ public:
     /**
      * Read from the depth buffer at the given point.
      */
-    override float getDepthAtScreenPoint( vec2i point )
+    override float getDepthAtScreenPoint( vec2ui point )
     {
         float depth;
         glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
@@ -120,7 +120,7 @@ public:
     /**
      * Read from the depth buffer at the given point.
      */
-    override uint getObjectIDAtScreenPoint( vec2i point )
+    override uint getObjectIDAtScreenPoint( vec2ui point )
     {
         float fId;
         glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
@@ -165,8 +165,8 @@ public:
         auto pointLights = getLightsByType!PointLight;
         auto spotLights = getLightsByType!SpotLight;
 
-        mat4 projection = scene.camera.perspectiveMatrix;
-        mat4 invProj = scene.camera.inversePerspectiveMatrix;
+        mat4f projection = scene.camera.perspectiveMatrix;
+        mat4f invProj = scene.camera.inversePerspectiveMatrix;
 
         void updateMatricies( GameObject current )
         {
@@ -185,10 +185,10 @@ public:
             {
                 if( object.mesh && object.stateFlags.drawMesh )
                 {
-                    mat4 worldView = scene.camera.viewMatrix * object.transform.matrix;
-                    mat4 worldViewProj = projection * worldView;
+                    mat4f worldView = scene.camera.viewMatrix * object.transform.matrix;
+                    mat4f worldViewProj = projection * worldView;
 
-                    if( !( object.mesh.boundingBox in Frustum( worldViewProj ) ) )
+                    if( worldViewProj.frustum().contains( object.mesh.boundingBox ) == Frustum!float.OUTSIDE )
                     {
                         // If we can't see an object, don't draw it.
                         continue;
@@ -232,13 +232,13 @@ public:
                     glViewport( 0, 0, light.shadowMapSize, light.shadowMapSize );
 
                     // determine the world space volume for all objects
-                    AABB frustum;
+                    box3f frustum;
                     foreach( object; scene.objects )
                     {
                         if( object.mesh && object.stateFlags.drawMesh )
                         {
-                            frustum.expand( (object.transform.matrix * vec4(object.mesh.boundingBox.min, 1.0f)).xyz );
-                            frustum.expand( (object.transform.matrix * vec4(object.mesh.boundingBox.max, 1.0f)).xyz );
+                            frustum = frustum.expand( (object.transform.matrix * vec4f(object.mesh.boundingBox.min, 1.0f)).xyz );
+                            frustum = frustum.expand( (object.transform.matrix * vec4f(object.mesh.boundingBox.max, 1.0f)).xyz );
                         }
                     }
 

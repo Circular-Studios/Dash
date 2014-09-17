@@ -5,8 +5,7 @@ module dash.core.gameobject;
 import dash.core, dash.components, dash.graphics, dash.utility;
 
 import yaml;
-import gl3n.linalg, gl3n.math;
-
+import gfm.math.funcs: radians;
 import std.conv, std.variant, std.array, std.algorithm, std.typecons, std.range, std.string;
 
 enum AnonymousName = "__anonymous";
@@ -168,13 +167,13 @@ public:
         // Init transform
         if( yamlObj.tryFind( "Transform", innerNode ) )
         {
-            vec3 transVec;
+            vec3f transVec;
             if( innerNode.tryFind( "Scale", transVec ) )
-                obj.transform.scale = vec3( transVec );
+                obj.transform.scale = transVec;
             if( innerNode.tryFind( "Position", transVec ) )
-                obj.transform.position = vec3( transVec );
+                obj.transform.position = transVec;
             if( innerNode.tryFind( "Rotation", transVec ) )
-                obj.transform.rotation = quat.identity.rotatex( transVec.x.radians ).rotatey( transVec.y.radians ).rotatez( transVec.z.radians );
+                obj.transform.rotation = quatf.fromEulerAngles( transVec.x.radians, transVec.y.radians, transVec.z.radians );
         }
 
         if( yamlObj.tryFind( "Children", innerNode ) )
@@ -497,6 +496,10 @@ public:
     }
 }
 
+import gfm.math.vector: vec3f;
+import gfm.math.quaternion: quatf;
+import gfm.math.matrix: mat4f;
+
 /**
  * Handles 3D Transformations for an object.
  * Stores position, rotation, and scale
@@ -507,10 +510,10 @@ private struct Transform
 {
 private:
     GameObject _owner;
-    vec3 _prevPos;
-    quat _prevRot;
-    vec3 _prevScale;
-    mat4 _matrix;
+    vec3f _prevPos;
+    quatf _prevRot;
+    vec3f _prevScale;
+    mat4f _matrix;
 
     void opAssign( Description desc )
     {
@@ -528,9 +531,9 @@ private:
     this( GameObject obj )
     {
         owner = obj;
-        position = vec3(0,0,0);
-        scale = vec3(1,1,1);
-        rotation = quat.identity;
+        position = vec3f(0,0,0);
+        scale = vec3f(1,1,1);
+        rotation = quatf.identity;
     }
 
 public:
@@ -572,11 +575,11 @@ public:
 
     // these should remain public fields, properties return copies not references
     /// The position of the object in local space.
-    vec3 position;
+    vec3f position;
     /// The rotation of the object in local space.
-    quat rotation;
+    quatf rotation;
     /// The absolute scale of the object. Ignores parent scale.
-    vec3 scale;
+    vec3f scale;
 
     /// The object which this belongs to.
     mixin( Property!( _owner, AccessModifier.Public ) );
@@ -591,12 +594,12 @@ public:
      *
      * Returns: The object's position relative to the world origin, not the parent.
      */
-    final @property vec3 worldPosition() @safe pure nothrow
+    final @property vec3f worldPosition() @safe pure nothrow
     {
         if( owner.parent is null )
             return position;
         else
-            return (owner.parent.transform.matrix * vec4(position.x,position.y,position.z,1.0f)).xyz;
+            return (owner.parent.transform.matrix * vec4f(position, 1.0f)).xyz;
     }
 
     /**
@@ -604,7 +607,7 @@ public:
      *
      * Returns: The object's rotation relative to the world origin, not the parent.
      */
-    final @property quat worldRotation() @safe pure nothrow
+    final @property quatf worldRotation() @safe pure nothrow
     {
         if( owner.parent is null )
             return rotation;
@@ -632,9 +635,9 @@ public:
      *
      * Returns: The forward axis of the current transform.
      */
-    final @property const vec3 forward()
+    final @property const vec3f forward()
     {
-        return vec3( -2 * (rotation.x * rotation.z + rotation.w * rotation.y),
+        return vec3f( -2 * (rotation.x * rotation.z + rotation.w * rotation.y),
                             -2 * (rotation.y * rotation.z - rotation.w * rotation.x),
                             -1 + 2 * (rotation.x * rotation.x + rotation.y * rotation.y ));
     }
@@ -642,11 +645,10 @@ public:
     unittest
     {
         import std.stdio;
-        import gl3n.math;
         writeln( "Dash Transform forward unittest" );
 
         auto trans = new Transform( null );
-        auto forward = vec3( 0.0f, 1.0f, 0.0f );
+        auto forward = vec3f( 0.0f, 1.0f, 0.0f );
         trans.rotation.rotatex( 90.radians );
         assert( almost_equal( trans.forward, forward ) );
     }
@@ -656,9 +658,9 @@ public:
      *
      * Returns: The up axis of the current transform.
      */
-    final  @property const vec3 up()
+    final  @property const vec3f up()
     {
-        return vec3( 2 * (rotation.x * rotation.y - rotation.w * rotation.z),
+        return vec3f( 2 * (rotation.x * rotation.y - rotation.w * rotation.z),
                         1 - 2 * (rotation.x * rotation.x + rotation.z * rotation.z),
                         2 * (rotation.y * rotation.z + rotation.w * rotation.x));
     }
@@ -666,12 +668,11 @@ public:
     unittest
     {
         import std.stdio;
-        import gl3n.math;
         writeln( "Dash Transform up unittest" );
 
         auto trans = new Transform( null );
 
-        auto up = vec3( 0.0f, 0.0f, 1.0f );
+        auto up = vec3f( 0.0f, 0.0f, 1.0f );
         trans.rotation.rotatex( 90.radians );
         assert( almost_equal( trans.up, up ) );
     }
@@ -681,9 +682,9 @@ public:
      *
      * Returns: The right axis of the current transform.
      */
-    final  @property const vec3 right()
+    final  @property const vec3f right()
     {
-        return vec3( 1 - 2 * (rotation.y * rotation.y + rotation.z * rotation.z),
+        return vec3f( 1 - 2 * (rotation.y * rotation.y + rotation.z * rotation.z),
                         2 * (rotation.x * rotation.y + rotation.w * rotation.z),
                         2 * (rotation.x * rotation.z - rotation.w * rotation.y));
     }
@@ -691,12 +692,11 @@ public:
     unittest
     {
         import std.stdio;
-        import gl3n.math;
         writeln( "Dash Transform right unittest" );
 
         auto trans = new Transform( null );
 
-        auto right = vec3( 0.0f, 0.0f, -1.0f );
+        auto right = vec3f( 0.0f, 0.0f, -1.0f );
         trans.rotation.rotatey( 90.radians );
         assert( almost_equal( trans.right, right ) );
     }
@@ -710,19 +710,19 @@ public:
         _prevRot = rotation;
         _prevScale = scale;
 
-        _matrix = mat4.identity;
+        _matrix = mat4f.identity;
         // Scale
-        _matrix[ 0 ][ 0 ] = scale.x;
-        _matrix[ 1 ][ 1 ] = scale.y;
-        _matrix[ 2 ][ 2 ] = scale.z;
+        _matrix.c[ 0 ][ 0 ] = scale.x;
+        _matrix.c[ 1 ][ 1 ] = scale.y;
+        _matrix.c[ 2 ][ 2 ] = scale.z;
 
         // Rotate
-        _matrix = _matrix * rotation.to_matrix!(4,4);
+        _matrix = _matrix * cast(mat4f)rotation;
 
         // Translate
-        _matrix[ 0 ][ 3 ] = position.x;
-        _matrix[ 1 ][ 3 ] = position.y;
-        _matrix[ 2 ][ 3 ] = position.z;
+        _matrix.c[ 0 ][ 3 ] = position.x;
+        _matrix.c[ 1 ][ 3 ] = position.y;
+        _matrix.c[ 2 ][ 3 ] = position.z;
 
         // include parent objects' transforms
         if( owner.parent )

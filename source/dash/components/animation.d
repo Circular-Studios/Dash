@@ -6,8 +6,10 @@ import dash.core.properties;
 import dash.components;
 import dash.utility;
 
+import gfm.math.vector: vec3f;
+import gfm.math.quaternion: quatf;
+import gfm.math.matrix: mat4f, Matrix;
 import derelict.assimp3.assimp;
-import gl3n.linalg;
 import std.string: fromStringz;
 import std.conv: to;
 
@@ -24,7 +26,7 @@ private:
     /// Current time of the animation
     float _currentAnimTime;
     /// Bone transforms for the current pose
-    mat4[] _currBoneTransforms;
+    mat4f[] _currBoneTransforms;
     /// If the gameobject should be animating
     bool _animating;
 
@@ -309,17 +311,17 @@ public:
      *
      * Returns: The boneTransforms, returned to the gameobject animation component
      */
-    mat4[] getTransformsAtTime( int animationNumber, float time )
+    mat4f[] getTransformsAtTime( int animationNumber, float time )
     {
-        mat4[] boneTransforms = new mat4[ _numberOfBones ];
+        mat4f[] boneTransforms = new mat4f[ _numberOfBones ];
 
         // Check shader/model
         for( int i = 0; i < _numberOfBones; i++)
         {
-            boneTransforms[ i ] = mat4.identity;
+            boneTransforms[ i ] = mat4f.identity;
         }
 
-        fillTransforms( animationSet[ animationNumber ].bonePoses, boneTransforms, boneHierarchy, time, mat4.identity );
+        fillTransforms( animationSet[ animationNumber ].bonePoses, boneTransforms, boneHierarchy, time, mat4f.identity );
 
         return boneTransforms;
     }
@@ -332,10 +334,10 @@ public:
      *      time =            The animations current time
      *      parentTransform = The parents transform (which effects this bone)
      */
-    void fillTransforms( BonePose[] bonePoses, mat4[] transforms, Bone bone, float time, mat4 parentTransform )
+    void fillTransforms( BonePose[] bonePoses, mat4f[] transforms, Bone bone, float time, mat4f parentTransform )
     {
         BonePose bonePose = bonePoses[ bone.boneNumber ];
-        mat4 finalTransform;
+        mat4f finalTransform;
         if( bonePose.positionKeys.length == 0 && bonePose.rotationKeys.length == 0 && bonePose.scaleKeys.length == 0 )
         {
             finalTransform = parentTransform * bone.nodeOffset;
@@ -343,23 +345,23 @@ public:
         }
         else
         {
-            mat4 boneTransform = mat4.identity;
+            mat4f boneTransform = mat4f.identity;
 
             if( bonePose.positionKeys.length > cast(int)time )
             {
-                boneTransform = boneTransform.translation( bonePose.positionKeys[ cast(int)time ].vector[ 0 ],
-                                                           bonePose.positionKeys[ cast(int)time ].vector[ 1 ],
-                                                           bonePose.positionKeys[ cast(int)time ].vector[ 2 ] );
+                boneTransform = boneTransform.translation( vec3f( bonePose.positionKeys[ cast(int)time ].v[ 0 ],
+                                                                  bonePose.positionKeys[ cast(int)time ].v[ 1 ],
+                                                                  bonePose.positionKeys[ cast(int)time ].v[ 2 ] ) );
             }
             if( bonePose.rotationKeys.length > cast(int)time )
             {
-                boneTransform = boneTransform * bonePose.rotationKeys[ cast(int)time ].to_matrix!( 4, 4 );
+                boneTransform = boneTransform * cast(mat4f)bonePose.rotationKeys[ cast(int)time ];
             }
             if( bonePose.scaleKeys.length > cast(int)time )
             {
-                boneTransform = boneTransform.scale( bonePose.scaleKeys[ cast(int)time ].vector[ 0 ],
-                                                     bonePose.scaleKeys[ cast(int)time ].vector[ 1 ],
-                                                     bonePose.scaleKeys[ cast(int)time ].vector[ 2 ] );
+                boneTransform = boneTransform.scaling( vec3f( bonePose.scaleKeys[ cast(int)time ].v[ 0 ],
+                                                            bonePose.scaleKeys[ cast(int)time ].v[ 1 ],
+                                                            bonePose.scaleKeys[ cast(int)time ].v[ 2 ] ) );
             }
 
             finalTransform = parentTransform * boneTransform;
@@ -374,7 +376,7 @@ public:
     }
 
     /**
-    * Converts a aiVectorKey[] to vec3[].
+    * Converts a aiVectorKey[] to vec3f[].
      *
      * Params:
      *      quaternions = aiVectorKey[] to be converted
@@ -382,13 +384,13 @@ public:
      *
      * Returns: The vectors in vector[] format
      */
-    vec3[] convertVectorArray( const(aiVectorKey*) vectors, int numKeys )
+    vec3f[] convertVectorArray( const(aiVectorKey*) vectors, int numKeys )
     {
-        vec3[] keys;
+        vec3f[] keys;
         for( int i = 0; i < numKeys; i++ )
         {
             aiVector3D vector = vectors[ i ].mValue;
-            keys ~= vec3( vector.x, vector.y, vector.z );
+            keys ~= vec3f( vector.x, vector.y, vector.z );
         }
 
         return keys;
@@ -402,13 +404,13 @@ public:
      *
      * Returns: The quaternions in quat[] format
      */
-    quat[] convertQuat( const(aiQuatKey*) quaternions, int numKeys )
+    quatf[] convertQuat( const(aiQuatKey*) quaternions, int numKeys )
     {
-        quat[] keys;
+        quatf[] keys;
         for( int i = 0; i < numKeys; i++ )
         {
             aiQuatKey quaternion = quaternions[ i ];
-            keys ~= quat( quaternion.mValue.w, quaternion.mValue.x, quaternion.mValue.y, quaternion.mValue.z );
+            keys ~= quatf( quaternion.mValue.w, quaternion.mValue.x, quaternion.mValue.y, quaternion.mValue.z );
         }
 
         return keys;
@@ -421,26 +423,26 @@ public:
      *
      * Returns: The matrix in mat4 format
      */
-    mat4 convertAIMatrix( aiMatrix4x4 aiMatrix )
+    mat4f convertAIMatrix( aiMatrix4x4 aiMatrix )
     {
-        mat4 matrix = mat4.identity;
+        mat4f matrix = mat4f.identity;
 
-        matrix[0][0] = aiMatrix.a1;
-        matrix[0][1] = aiMatrix.a2;
-        matrix[0][2] = aiMatrix.a3;
-        matrix[0][3] = aiMatrix.a4;
-        matrix[1][0] = aiMatrix.b1;
-        matrix[1][1] = aiMatrix.b2;
-        matrix[1][2] = aiMatrix.b3;
-        matrix[1][3] = aiMatrix.b4;
-        matrix[2][0] = aiMatrix.c1;
-        matrix[2][1] = aiMatrix.c2;
-        matrix[2][2] = aiMatrix.c3;
-        matrix[2][3] = aiMatrix.c4;
-        matrix[3][0] = aiMatrix.d1;
-        matrix[3][1] = aiMatrix.d2;
-        matrix[3][2] = aiMatrix.d3;
-        matrix[3][3] = aiMatrix.d4;
+        matrix.c[0][0] = aiMatrix.a1;
+        matrix.c[0][1] = aiMatrix.a2;
+        matrix.c[0][2] = aiMatrix.a3;
+        matrix.c[0][3] = aiMatrix.a4;
+        matrix.c[1][0] = aiMatrix.b1;
+        matrix.c[1][1] = aiMatrix.b2;
+        matrix.c[1][2] = aiMatrix.b3;
+        matrix.c[1][3] = aiMatrix.b4;
+        matrix.c[2][0] = aiMatrix.c1;
+        matrix.c[2][1] = aiMatrix.c2;
+        matrix.c[2][2] = aiMatrix.c3;
+        matrix.c[2][3] = aiMatrix.c4;
+        matrix.c[3][0] = aiMatrix.d1;
+        matrix.c[3][1] = aiMatrix.d2;
+        matrix.c[3][2] = aiMatrix.d3;
+        matrix.c[3][3] = aiMatrix.d4;
 
         return matrix;
     }
@@ -467,9 +469,9 @@ public:
     */
     class BonePose
     {
-        vec3[] positionKeys;
-        quat[] rotationKeys;
-        vec3[] scaleKeys;
+        vec3f[] positionKeys;
+        quatf[] rotationKeys;
+        vec3f[] scaleKeys;
     }
     /**
      * A bone in the animation, storing everything it needs
@@ -486,7 +488,7 @@ public:
         int boneNumber;
         Bone[] children;
 
-        mat4 offset;
-        mat4 nodeOffset;
+        mat4f offset;
+        mat4f nodeOffset;
     }
 }

@@ -5,9 +5,6 @@
 module dash.utility.tasks;
 import dash.utility.time, dash.utility.output;
 
-import gl3n.util: is_vector, is_matrix, is_quaternion;
-import gl3n.interpolate: lerp;
-
 import core.time;
 import std.algorithm: min;
 import std.parallelism: parallel;
@@ -59,7 +56,7 @@ unittest
 {
     import dash.utility.time;
     import std.stdio;
-    import gl3n.linalg;
+    import gfm.math.vector;
 
     writeln( "Dash Tasks scheduleInterpolateTask unittest 1" );
 

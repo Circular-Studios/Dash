@@ -4,9 +4,6 @@
 module dash.core.prefabs;
 import dash.core, dash.components, dash.utility;
 
-import yaml;
-import gl3n.linalg;
-
 mixin( registerComponents!() );
 
 /**

@@ -188,7 +188,7 @@ public:
                     mat4f worldView = scene.camera.viewMatrix * object.transform.matrix;
                     mat4f worldViewProj = projection * worldView;
 
-                    if( !( object.mesh.boundingBox in Frustum!float( worldViewProj ) ) )
+                    if( worldViewProj.frustum().contains( object.mesh.boundingBox ) == Frustum!float.OUTSIDE )
                     {
                         // If we can't see an object, don't draw it.
                         continue;

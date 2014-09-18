@@ -568,8 +568,8 @@ public:
 
         auto trans = new Transform( null );
         auto forward = vec3f( 0.0f, 1.0f, 0.0f );
-        trans.rotation.rotatex( 90.radians );
-        assert( almost_equal( trans.forward, forward ) );
+        trans.rotation *= quatf.fromEulerAngles( 90.0f.radians, 0.0f, 0.0f );
+        assert( trans.forward.dot( forward ) > 0.999999f );
     }
 
     /*
@@ -592,8 +592,8 @@ public:
         auto trans = new Transform( null );
 
         auto up = vec3f( 0.0f, 0.0f, 1.0f );
-        trans.rotation.rotatex( 90.radians );
-        assert( almost_equal( trans.up, up ) );
+        trans.rotation *= quatf.fromEulerAngles( 90.0f.radians, 0.0f, 0.0f );
+        assert( trans.up.dot( up ) > 0.999999f );
     }
 
     /*
@@ -616,8 +616,8 @@ public:
         auto trans = new Transform( null );
 
         auto right = vec3f( 0.0f, 0.0f, -1.0f );
-        trans.rotation.rotatey( 90.radians );
-        assert( almost_equal( trans.right, right ) );
+        trans.rotation *= quatf.fromEulerAngles( 0.0f, 90.0f.radians, 0.0f );
+        assert( trans.right.dot( right ) > 0.999999f );
     }
 
     /**

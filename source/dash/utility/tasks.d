@@ -5,6 +5,7 @@
 module dash.utility.tasks;
 import dash.utility.time, dash.utility.output;
 
+import gfm.math.funcs: lerp;
 import core.time;
 import std.algorithm: min;
 import std.parallelism: parallel;
@@ -44,7 +45,7 @@ UUID scheduleTask( bool delegate() dg )
  * scheduleInterpolateTask( position, startNode, endNode, 100.msecs );
  * ---
  */
-UUID scheduleInterpolateTask(T)( ref T val, T start, T end, Duration duration, T function( T, T, float ) interpFunc = &lerp!T ) if( is_vector!T || is_quaternion!T )
+UUID scheduleInterpolateTask(T)( ref T val, T start, T end, Duration duration, T function( T, T, float ) interpFunc = &lerp!( T, float ) )// if( is_vector!T || is_quaternion!T )
 {
     return scheduleTimedTask( duration, ( elapsed )
     {
@@ -60,9 +61,9 @@ unittest
 
     writeln( "Dash Tasks scheduleInterpolateTask unittest 1" );
 
-    vec3 interpVec = vec3( 0, 0, 0 );
-    vec3 start = vec3( 0, 1, 0 );
-    vec3 end = vec3( 0, 1, 1 );
+    vec3f interpVec = vec3f( 0, 0, 0 );
+    vec3f start = vec3f( 0, 1, 0 );
+    vec3f end = vec3f( 0, 1, 1 );
     scheduleInterpolateTask( interpVec, start, end, 100.msecs );
 
     while( scheduledTasks.length )
@@ -93,8 +94,8 @@ unittest
  * scheduleInterpolateTask!q{position}( transform, startNode, endNode, 100.msecs );
  * ---
  */
-UUID scheduleInterpolateTask( string prop, T, Owner )( ref Owner own, T start, T end, Duration duration, T function( T, T, float ) interpFunc = &lerp!T )
-    if( ( is_vector!T || is_quaternion!T ) && __traits( compiles, mixin( "own." ~ prop ) ) )
+UUID scheduleInterpolateTask( string prop, T, Owner )( ref Owner own, T start, T end, Duration duration, T function( T, T, float ) interpFunc = &lerp!( T, float ) )
+    if( __traits( compiles, mixin( "own." ~ prop ) ) )
 {
     auto startTime = Time.totalTime;
     return scheduleTimedTask( duration, ( elapsed )
@@ -107,14 +108,14 @@ unittest
 {
     import dash.utility.time;
     import std.stdio;
-    import gl3n.linalg;
+    import gfm.math.vector;
 
     writeln( "Dash Tasks scheduleInterpolateTask unittest 2" );
 
     auto testClass = new TestPropertyInterpolate;
-    testClass.vector = vec3( 0, 0, 0 );
-    vec3 start = vec3( 0, 1, 0 );
-    vec3 end = vec3( 0, 1, 1 );
+    testClass.vector = vec3f( 0, 0, 0 );
+    vec3f start = vec3f( 0, 1, 0 );
+    vec3f end = vec3f( 0, 1, 1 );
     scheduleInterpolateTask!q{vector}( testClass, start, end, 100.msecs );
 
     while( scheduledTasks.length )
@@ -128,11 +129,11 @@ unittest
 version( unittest )
 class TestPropertyInterpolate
 {
-    import gl3n.linalg;
+    import gfm.math.vector;
 
-    private vec3 _vector;
-    public @property vec3 vector() { return _vector; }
-    public @property void vector( vec3 newVal ) { _vector = newVal; }
+    private vec3f _vector;
+    public @property vec3f vector() { return _vector; }
+    public @property void vector( vec3f newVal ) { _vector = newVal; }
 }
 
 /**

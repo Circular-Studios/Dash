@@ -144,10 +144,10 @@ public:
         // build the view matrix
         mat4f viewMatrix;
         ///*
-        viewMatrix.rows[ 0 ] = xaxis.v ~ -( xaxis * center );
-        viewMatrix.rows[ 1 ] = yaxis.v ~ -( yaxis * center );
-        viewMatrix.rows[ 2 ] = zaxis.v ~ -( zaxis * center );
-        viewMatrix.rows[ 3 ] = [ 0, 0, 0, 1 ];
+        viewMatrix.rows[ 0 ] = vec4f( xaxis, -xaxis.dot( center ) );
+        viewMatrix.rows[ 1 ] = vec4f( yaxis, -yaxis.dot( center ) );
+        viewMatrix.rows[ 2 ] = vec4f( zaxis, -zaxis.dot( center ) );
+        viewMatrix.rows[ 3 ] = vec4f( 0, 0, 0, 1 );
         /*/
         // using lookAt works for everying but a light direction of (0,+/-1,0)
         light.view = Camera.lookAt( center - light.direction.normalized, center ); //*/

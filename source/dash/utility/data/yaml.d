@@ -60,112 +60,6 @@ static assert(is(typeof( deserializeYaml!string( Node( "" ) ) )));
 enum isYamlSerializable( T ) = is( typeof( T.init.toYaml() ) == Node ) && is( typeof( T.fromYaml( Node() ) ) == T );
 
 /**
-* Process all yaml files in a directory.
-*
-* Params:
-*  folder =                The folder to iterate over.
-*/
-Tuple!( Node, Resource )[] loadYamlFiles( string folder )
-{
-    Tuple!( Node, Resource )[] nodes;
-
-    if( contentNode.isNull )
-    {
-        // Actually scan directories
-        foreach( file; scanDirectory( folder, "*.yml" ) )
-        {
-            auto loader = Loader( file.fullPath );
-            loader.constructor = constructor;
-
-            try
-            {
-                // Iterate over all documents in a file
-                foreach( doc; loader )
-                {
-                    nodes ~= tuple( doc, file );
-                }
-            }
-            catch( YAMLException e )
-            {
-                logFatal( "Error parsing file ", file.baseFileName, ": ", e.msg );
-            }
-        }
-    }
-    else
-    {
-        auto fileNode = contentNode.find( folder.fileToYaml );
-
-        foreach( string fileName, Node fileContent; fileNode )
-        {
-            if( fileContent.isSequence )
-            {
-                foreach( Node childChild; fileContent )
-                    nodes ~= tuple( childChild, configFile );
-            }
-            else if( fileContent.isMapping )
-            {
-                nodes ~= tuple( fileContent, configFile );
-            }
-        }
-    }
-
-    return nodes;
-}
-
-/**
-* Process all documents files in a directory.
-*
-* Params:
-*  folder =                The folder to iterate over.
-*/
-Node[] loadYamlDocuments( string path )
-{
-    return loadYamlFiles( path ).map!( tup => tup[ 0 ] ).array;
-}
-
-/**
-* Processes all yaml files in a directory, and converts each document into an object of type T.
-*
-* Params:
-*  folder =            The folder to look in.
-*/
-T[] loadYamlObjects( T )( string folder )
-{
-    return folder.loadYamlDocuments.map!(yml => yml.getObject!T() );
-}
-
-/**
-* Load a yaml file with the engine-specific mappings.
-*
-* Params:
-*  filePath =              The path to file to load.
-*/
-Node[] loadAllDocumentsInYamlFile( string filePath )
-{
-    if( contentNode.isNull )
-    {
-        auto loader = Loader( filePath );
-        loader.constructor = constructor;
-        try
-        {
-            Node[] nodes;
-            foreach( document; loader )
-                nodes ~= document;
-            return nodes;
-        }
-        catch( YAMLException e )
-        {
-            logFatal( "Error parsing file ", Resource( filePath ).baseFileName, ": ", e.msg );
-            return [];
-        }
-    }
-    else
-    {
-        return contentNode.find( filePath.fileToYaml ).get!( Node[] );
-    }
-}
-
-/**
 * Get the element, cast to the given type, at the given path, in the given node.
 *
 * Params:
@@ -200,7 +94,7 @@ unittest
 
     assert( n3.find!int( "test3.test2.test1" ) == 10, "Config.find nested test failed");
 
-    auto n4 = Loader.fromString(
+    auto n4 = Loader.fromString( cast(char[])
                                 "test3:\n" ~
                                 "   test2:\n" ~
                                 "       test1: 10" ).load;
@@ -250,6 +144,8 @@ final bool tryFind( T )( Node node, string path, ref T result ) nothrow @safe
 /// ditto
 final bool tryFind( T: Node )( Node node, string path, ref T result ) nothrow @safe
 {
+    import std.algorithm: countUntil;
+
     // If anything goes wrong, it means the node wasn't found.
     scope( failure ) return false;
 
@@ -313,20 +209,6 @@ unittest
     int val;
     assert( n1.tryFind( "test1", val ), "Config.tryFind failed." );
     assert( !n1.tryFind( "dontexist", val ), "Config.tryFind returned true." );
-}
-
-/**
-* Get element as a file path relative to the content home.
-*
-* Params:
-*  node =          The node to search for the path in.
-*  path =          The path to search the node for.
-*
-* Returns: The value at path relative to FilePath.ResourceHome.
-*/
-final string findPath( Node node, string path )
-{
-    return Resources.Home ~ node.find!string( path );//buildNormalizedPath( FilePath.ResourceHome, get!string( path ) );;
 }
 
 /// Serializer for vibe.d framework.
@@ -445,7 +327,6 @@ unittest
 private:
 void enforceYaml( string file = __FILE__, size_t line = __LINE__ )( bool cond, lazy string message = "YAML exception" )
 {
-    import std.json: JSONException;
     import std.exception;
-    enforceEx!JSONException(cond, message, file, line);
+    enforceEx!YAMLException(cond, message, file, line);
 }

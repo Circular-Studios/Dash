@@ -145,9 +145,9 @@ public:
         vec3f zaxis = vec3f( sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw );
 
         _viewMatrix.v[] = 0.0f;
-        _viewMatrix.rows[ 0 ] = xaxis.v ~ -( xaxis * owner.transform.position );
-        _viewMatrix.rows[ 1 ] = yaxis.v ~ -( yaxis * owner.transform.position );
-        _viewMatrix.rows[ 2 ] = zaxis.v ~ -( zaxis * owner.transform.position );
+        _viewMatrix.rows[ 0 ] = vec4f( xaxis, -xaxis.dot( owner.transform.position ) );
+        _viewMatrix.rows[ 1 ] = vec4f( yaxis, -yaxis.dot( owner.transform.position ) );
+        _viewMatrix.rows[ 2 ] = vec4f( zaxis, -zaxis.dot( owner.transform.position ) );
         _viewMatrix.rows[ 3 ] = vec4f( 0, 0, 0, 1 );
 
         _inverseViewMatrix = _viewMatrix.inverse();

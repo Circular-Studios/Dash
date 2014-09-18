@@ -54,7 +54,8 @@ public:
      */
     void initialize()
     {
-        auto bindings = Resources.InputBindings.loadYamlFile();
+        // TODO: Implement
+        auto bindings = Node();//Resources.InputBindings.loadYamlFile();
 
         Keyboard.initialize();
         Mouse.initialize();

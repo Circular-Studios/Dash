@@ -106,7 +106,7 @@ protected:
      */
     final void loadProperties()
     {
-        fullscreen = config.find!bool( "Display.Fullscreen" );
+        fullscreen = config.display.fullscreen;
         if( fullscreen )
         {
             width = screenWidth;
@@ -114,11 +114,11 @@ protected:
         }
         else
         {
-            width = config.find!uint( "Display.Width" );
-            height = config.find!uint( "Display.Height" );
+            width = config.display.width;
+            height = config.display.height;
         }
 
-        backfaceCulling = config.find!bool( "Graphics.BackfaceCulling" );
-        vsync = config.find!bool( "Graphics.VSync" );
+        backfaceCulling = config.graphics.backfaceCulling;
+        vsync = config.graphics.vsync;
     }
 }

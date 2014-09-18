@@ -328,5 +328,5 @@ private:
 void enforceYaml( string file = __FILE__, size_t line = __LINE__ )( bool cond, lazy string message = "YAML exception" )
 {
     import std.exception;
-    enforceEx!YAMLException(cond, message, file, line);
+    enforceEx!Exception(cond, message, file, line);
 }

@@ -129,8 +129,7 @@ public:
         mixin( perSerializationFormat!q{
             Component.$typeSerializers[ typeid(T) ] = ( Component c )
             {
-                return $type();
-                //return serializeTo$type( SerializationDescription( cast(T)c ) );
+                return serializeTo$type( SerializationDescription( cast(T)c ) );
             };
             Component.$typeDeserializers[ T.stringof ] = ( $type node )
             {

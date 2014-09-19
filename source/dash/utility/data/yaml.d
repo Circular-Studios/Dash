@@ -237,7 +237,7 @@ public:
     void beginWriteArray( T )( size_t ) { m_compositeStack ~= Node( cast(string[])[] ); }
     void endWriteArray( T )() { m_current = m_compositeStack[$-1]; m_compositeStack.length--; }
     void beginWriteArrayEntry( T )( size_t ) {}
-    void endWriteArrayEntry( T )( size_t ) { m_compositeStack[$-1] ~= m_current; }
+    void endWriteArrayEntry( T )( size_t ) { m_compositeStack[$-1].add( m_current ); }
 
     void writeValue( T )( T value )
     {
@@ -245,6 +245,8 @@ public:
             m_current = value;
         else static if( isYamlSerializable!T )
             m_current = value.toYaml();
+        else static if( is( T == typeof(null) ) )
+            m_current = Node( YAMLNull() );
         else
             m_current = Node( value );
     }

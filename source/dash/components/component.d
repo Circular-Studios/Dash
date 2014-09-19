@@ -11,6 +11,7 @@ import std.algorithm, std.array, std.string, std.traits, std.conv, std.typecons;
 enum isComponent(alias T) = is( T == class ) && is( T : Component ) && !__traits( isAbstractClass, T );
 private enum perSerializationFormat( string code ) = "".reduce!( ( working, type ) => working ~ code.replace( "$type", type ) )( serializationFormats );
 alias helper( alias T ) = T;
+alias helper( T... ) = T;
 alias helper() = TypeTuple!();
 
 /**
@@ -133,8 +134,7 @@ public:
             };
             Component.$typeDeserializers[ T.stringof ] = ( $type node )
             {
-                return null;
-                //return deserialize$type!( SerializationDescription )( node ).createInstance();
+                return deserialize$type!( SerializationDescription )( node ).createInstance();
             };
         } );
 
@@ -210,10 +210,7 @@ private:
                         else static if( is( attributes.to!string ) )
                             return attributes.to!string;
                         else
-                        {
-                            __ctfeWriteln( "No attributes on member " ~ memberName );
                             return null;
-                        }
                     }
 
                     // Get required module import name

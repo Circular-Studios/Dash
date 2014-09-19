@@ -245,7 +245,7 @@ public:
     /// Gets a reference to it's asset.
     override void initialize()
     {
-        if( !asset )
+        if( !asset && assetName )
             asset = Assets.getAsset!AssetType( assetName );
     }
 }

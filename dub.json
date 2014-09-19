@@ -21,7 +21,7 @@
         "derelict-fi": "~>1.0",
         "derelict-assimp3": "~>1.0",
         "dyaml": "~>0.5",
-        "gfm:math" : "==1.2.3",
+        "gfm:math": "==1.2.3",
         "dlogg": "~>0.3",
         "msgpack-d": "==0.9.2",
         "vibe-d": "~master",

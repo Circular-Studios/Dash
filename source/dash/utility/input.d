@@ -60,6 +60,9 @@ public:
         Keyboard.initialize();
         Mouse.initialize();
 
+        if( !bindings.isMapping )
+            return;
+
         foreach( string name, Node bind; bindings )
         {
             if( !bind.isMapping )

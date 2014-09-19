@@ -34,10 +34,12 @@ enum SerializationMode
 Tuple!( T, Resource ) deserializeFileByName( T )( string fileName, SerializationMode mode = SerializationMode.Default )
 {
     import std.path: dirName, baseName;
-    import std.array: front;
+    import std.array: empty, front;
 
-    Resource file = fileName.dirName.scanDirectory( fileName.baseName ~ ".*" ).front;
-    return tuple( deserializeFile!T( file ), file );
+    auto files = fileName.dirName.scanDirectory( fileName.baseName ~ ".*" );
+    return files.empty
+        ? tuple( T.init, Resource( "" ) )
+        : tuple( deserializeFile!T( files.front ), files.front );
 }
 
 /**

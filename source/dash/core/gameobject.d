@@ -6,7 +6,7 @@ import dash.core, dash.components, dash.graphics, dash.utility;
 
 import yaml;
 import gfm.math.funcs: radians;
-import std.conv, std.variant, std.array, std.algorithm, std.typecons, std.range, std.string;
+import std.conv, std.variant, std.array, std.algorithm, std.typecons, std.range, std.string, std.math;
 
 enum AnonymousName = "__anonymous";
 
@@ -569,7 +569,9 @@ public:
         auto trans = new Transform( null );
         auto forward = vec3f( 0.0f, 1.0f, 0.0f );
         trans.rotation *= quatf.fromEulerAngles( 90.0f.radians, 0.0f, 0.0f );
-        assert( trans.forward.dot( forward ) > 0.999999f );
+
+        foreach( i, v; trans.forward.v )
+            assert( abs( v - forward.v[ i ] ) < 0.000001f );
     }
 
     /*
@@ -577,7 +579,7 @@ public:
      *
      * Returns: The up axis of the current transform.
      */
-    final  @property const vec3f up()
+    final @property const vec3f up()
     {
         return vec3f( 2 * (rotation.x * rotation.y - rotation.w * rotation.z),
                         1 - 2 * (rotation.x * rotation.x + rotation.z * rotation.z),
@@ -590,10 +592,11 @@ public:
         writeln( "Dash Transform up unittest" );
 
         auto trans = new Transform( null );
-
         auto up = vec3f( 0.0f, 0.0f, 1.0f );
         trans.rotation *= quatf.fromEulerAngles( 90.0f.radians, 0.0f, 0.0f );
-        assert( trans.up.dot( up ) > 0.999999f );
+
+        foreach( i, v; trans.up.v )
+            assert( abs( v - up.v[ i ] ) < 0.000001f );
     }
 
     /*
@@ -601,7 +604,7 @@ public:
      *
      * Returns: The right axis of the current transform.
      */
-    final  @property const vec3f right()
+    final @property const vec3f right()
     {
         return vec3f( 1 - 2 * (rotation.y * rotation.y + rotation.z * rotation.z),
                         2 * (rotation.x * rotation.y + rotation.w * rotation.z),
@@ -614,10 +617,11 @@ public:
         writeln( "Dash Transform right unittest" );
 
         auto trans = new Transform( null );
-
         auto right = vec3f( 0.0f, 0.0f, -1.0f );
         trans.rotation *= quatf.fromEulerAngles( 0.0f, 90.0f.radians, 0.0f );
-        assert( trans.right.dot( right ) > 0.999999f );
+
+        foreach( i, v; trans.right.v )
+            assert( abs( v - right.v[ i ] ) < 0.000001f );
     }
 
     /**

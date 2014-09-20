@@ -53,10 +53,14 @@ public:
         // TODO: Call all functions in passes and clear it. Also ALL OTHER RENDERING STUFF!
         foreach(pass; passes)
         {
+            // Render each object in each pass
             foreach(del; pass.data)
             {
                 del();
             }
+
+            // Clear the pass after rendering it
+            pass.clear();
         }
     }
 }

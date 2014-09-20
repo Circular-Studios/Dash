@@ -66,10 +66,8 @@ public:
 
     const(Description)* description() @property
     {
-        if( auto desc =  typeid(this) in descriptions )
-            return desc;
-        else
-            assert( false, "ComponentDescription not found for type " ~ typeid(this).name );
+        assert( typeid(this) in descriptions, "ComponentDescription not found for type " ~ typeid(this).name );
+        return &descriptions[ typeid(this) ];
     }
 
     /// The description for the component
@@ -207,7 +205,7 @@ private:
                     {
                         static if( is( attributes.length ) )
                             return attributes.array.map!( attr => attr.to!string ).join( ", " ).to!string;
-                        else static if( is( attributes.to!string ) )
+                        else static if( is( typeof(attributes.to!string()) == string ) )
                             return attributes.to!string;
                         else
                             return null;

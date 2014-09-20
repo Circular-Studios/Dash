@@ -90,7 +90,6 @@ public:
         float[] outputData;
         uint[] indices;
         animated = false;
-        boundingBox = box3f( vec3f( 0.0f, 0.0f, 0.0f ), vec3f( 0.0f, 0.0f, 0.0f ) );
 
         if( mesh )
         {
@@ -341,6 +340,15 @@ class Mesh : AssetRef!MeshAsset
     {
         super( ass );
     }
+
+    override void initialize()
+    {
+        super.initialize();
+
+        if( animated && owner )
+            owner.addComponent( animationData.getComponent() );
+    }
+    
 }
 
 /**

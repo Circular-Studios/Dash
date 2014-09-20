@@ -310,21 +310,14 @@ public:
      * Adds a component to the object.
      */
     final void addComponent( Component newComponent )
+    in
     {
-        if( newComponent )
-        {
-            componentList[ typeid(newComponent) ] = newComponent;
-
-            newComponent.owner = this;
-
-            if( typeid(newComponent) == typeid(Mesh) )
-            {
-                auto mesh = cast(Mesh)newComponent;
-
-                if( mesh.animated )
-                    addComponent( mesh.animationData.getComponent() );
-            }
-        }
+        assert( newComponent, "Null component added." );
+    }
+    body
+    {
+        componentList[ typeid(newComponent) ] = newComponent;
+        newComponent.owner = this;
     }
 
     /**

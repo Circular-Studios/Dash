@@ -29,6 +29,7 @@ public:
 
 	override void update()
 	{
+		Audio.soloud.update3dAudio();
 		Audio.soloud.set3dListenerAt(owner.transform.position.x,
 		                             owner.transform.position.y,
 		                             owner.transform.position.z);
@@ -36,13 +37,14 @@ public:
 }
 
 /**
- * Emitter object that plays sounds that listeners can hear if they are close enough
+ * Emitter object that plays sounds that listeners can hear
  */
 @yamlComponent( "Emitter" )
 class Emitter : Component
 {
 private:
 	Modplug toPlay;
+	uint[] handles;
 public:
 	/**
 	 * Create an emmiter object
@@ -69,6 +71,46 @@ public:
 							owner.transform.position.x,
 		                    owner.transform.position.y,
 		                    owner.transform.position.z);
+	}
+
+	void playFollow( string soundName ) {
+		// Load in the sound
+		toPlay.load( Audio.sounds[soundName].toStringz() );
+
+		// play the sound from the location of the parent object
+		// and set the sound to move with the emitter
+		handles ~= Audio.soloud.play3d( toPlay,
+				                        owner.transform.position.x,
+				                        owner.transform.position.y,
+				                        owner.transform.position.z );
+
+	}
+
+	override void update()
+	{
+		foreach_reverse( i, handle; handles )
+		{
+			if( !Audio.soloud.isValidVoiceHandle( handle ) )
+			{
+				auto end = handles[i+1..$];
+				handles = handles[0..i];
+				handles ~= end;
+			} else {
+				Audio.soloud.set3dSourcePosition( handle,
+				                                  owner.transform.position.x,
+				                                  owner.transform.position.y,
+				                                  owner.transform.position.z );
+			}
+		}
+	}
+
+
+	/**
+	 * Plays a sound that will follow the emitter for however long you set the length to be.
+	 */
+	void playFollow( string soundName, float soundLength )
+	{
+
 	}
 }
 

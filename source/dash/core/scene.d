@@ -57,6 +57,8 @@ public:
      */
     final void clear()
     {
+        _root.shutdown();
+        destroy( _root );
         _root = new GameObject;
     }
 

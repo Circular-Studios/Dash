@@ -21,10 +21,10 @@ abstract class Light : Component
 {
 public:
     /// The color the light gives off.
-    @rename( "Color" )
+    @rename( "Color" ) @optional
     vec3f color;
     /// If it should cast shadows
-    @rename( "CastShadows" )
+    @rename( "CastShadows" ) @optional
     bool castShadows;
 
     this( vec3f color )
@@ -61,6 +61,7 @@ private:
 
 public:
     /// The direction the light points in.
+    @rename( "Direction" ) @optional
     vec3f direction;
     /// The FrameBuffer for the shadowmap.
     mixin( Property!( _shadowMapFrameBuffer ) );

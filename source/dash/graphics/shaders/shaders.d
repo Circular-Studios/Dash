@@ -290,7 +290,7 @@ public:
         {
             matptr ~= matrix.value_ptr()[0..16];
         }
-        glUniformMatrix4fv( uniform, cast(int)matrices.length, false, matptr.ptr );
+        glUniformMatrix4fv( uniform, cast(int)matrices.length, true, matptr.ptr );
     }
 
     /**

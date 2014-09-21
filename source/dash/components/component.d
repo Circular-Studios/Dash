@@ -203,16 +203,17 @@ private:
             static if( !memberName.among( "this", "~this", __traits( allMembers, Component ) ) &&
                         is( typeof( helper!( __traits( getMember, T, memberName ) ) ) ) )
             {
+                import vibe.internal.meta.uda;
+
                 alias member = helper!( __traits( getMember, T, memberName ) );
 
                 // Process variables
-                static if( !isSomeFunction!member )
+                static if( !isSomeFunction!member && !findFirstUDA!( IgnoreAttribute, member ).found )
                 {
-                    import std.conv;
-
                     // Get string form of attributes
                     string attributesStr()
                     {
+                        import std.conv;
                         string[] attrs;
                         foreach( attr; __traits( getAttributes, member ) )
                         {

@@ -18,7 +18,7 @@ abstract class Light : Component
 {
 public:
     /// The color the light gives off.
-    @rename( "Color" ) @optional
+    @rename( "Color" ) @ignore
     vec3f color;
     /// If it should cast shadows
     @rename( "CastShadows" ) @optional
@@ -58,7 +58,7 @@ private:
 
 public:
     /// The direction the light points in.
-    @rename( "Direction" ) @optional
+    @rename( "Direction" ) @ignore
     vec3f direction;
     /// The FrameBuffer for the shadowmap.
     mixin( Property!( _shadowMapFrameBuffer ) );
@@ -67,7 +67,7 @@ public:
     mixin( Property!( _projView ) );
     mixin( Property!( _shadowMapSize ) );
 
-    this( vec3f color = vec3f(), vec3f direction = vec3f(), bool castShadows = false )
+    this( vec3f color = vec3f( 1.0f ), vec3f direction = vec3f( 0.0f ), bool castShadows = false )
     {
         this.direction = direction;
         super( color );
@@ -191,7 +191,7 @@ public:
     @rename( "FalloffRate" )
     float falloffRate;
 
-    this( vec3f color = vec3f(), float radius = 0.0f, float falloffRate = 0.0f )
+    this( vec3f color = vec3f( 1.0f ), float radius = 0.0f, float falloffRate = 0.0f )
     {
         this.radius = radius;
         this.falloffRate = falloffRate;

@@ -148,7 +148,7 @@ private:
     // Generate actual struct
     final class SerializationDescription : Description
     {
-        pragma( msg, T.stringof ~ "\n" ~ descContents );
+        //pragma( msg, T.stringof ~ "\n" ~ descContents );
         mixin( descContents );
 
         override immutable(Description.Field[]) fields() const @property

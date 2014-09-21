@@ -302,6 +302,7 @@ public:
     in
     {
         assert( material, "Cannot bind null material." );
+        assert( material.diffuse && material.normal && material.specular, "Material must have diffuse, normal, and specular components." );
     }
     body
     {

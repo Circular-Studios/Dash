@@ -52,7 +52,7 @@ public:
                 _root.addChild( newObj );
                 goResources[ file ] ~= newObj;
 
-                logDebug( "Adding object ", newObj.name, " with components: ", desc.components );
+                logDebug( "Adding object ", newObj.name, " with diffuse: ", newObj.material.diffuse );
             }
         }
     }

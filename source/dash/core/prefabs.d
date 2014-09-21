@@ -80,7 +80,10 @@ final class Prefab : Asset
 {
 public:
     /// The name of the prefab.
-    string name;
+    const(string) name() @property
+    {
+        return description.name;
+    }
     /// The description to create objects from.
     GameObject.Description description;
 
@@ -88,7 +91,6 @@ public:
     this( GameObject.Description desc )
     {
         description = desc;
-        name = description.name;
     }
 
     /**

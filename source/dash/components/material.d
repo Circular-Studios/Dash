@@ -82,6 +82,10 @@ final class Material : AssetRef!MaterialAsset
         // All materials should be unique.
         if( asset )
             asset = asset.clone();
+
+        asset.diffuse.initialize();
+        asset.normal.initialize();
+        asset.specular.initialize();
     }
 }
 

@@ -50,11 +50,10 @@ final class GameObject
 private:
     GameObject _parent;
     GameObject[] _children;
+    Prefab _prefab;
     Component[TypeInfo] componentList;
     string _name;
-    ObjectStateFlags* _stateFlags;
     bool canChangeName;
-    Node _yaml;
     static uint nextId = 1;
 
     enum componentProperty( Type ) = q{
@@ -77,7 +76,7 @@ public:
 
         /// The name of the prefab to create from. Do you use with $(D prefab).
         @rename( "InstanceOf" ) @optional
-        string prefabName;
+        string prefabName = null;
 
         /// The Prefab to create from.
         @ignore
@@ -124,16 +123,16 @@ public:
     mixin( Property!_parent );
     /// All of the objects which list this as parent
     mixin( Property!_children );
-    /// The yaml node that created the object.
-    mixin( RefGetter!_yaml );
-    /// The current update settings
-    mixin( Property!( _stateFlags, AccessModifier.Public ) );
     /// The name of the object.
     mixin( Getter!_name );
+    /// The prefab that this object is based on.
+    mixin( Property!_prefab );
     /// ditto
     mixin( ConditionalSetter!( _name, q{canChangeName}, AccessModifier.Public ) );
     /// The ID of the object.
     immutable uint id;
+    /// The current update settings
+    ObjectStateFlags* stateFlags;
     /// Allow setting of state flags directly.
     //alias stateFlags this;
 
@@ -153,7 +152,9 @@ public:
         // Create the object
         if( desc.prefabName )
         {
-            obj = Prefabs[ desc.prefabName ].createInstance();
+            auto fab = Prefabs[ desc.prefabName ];
+            obj = fab.createInstance();
+            obj.prefab = fab;
         }
         else if( desc.prefab )
         {
@@ -204,8 +205,8 @@ public:
         with( desc )
         {
             name = this.name;
-            prefabName = "";
-            prefab = null;
+            prefab = this.prefab;
+            prefabName = prefab ? prefab.name : null;
             transform = this.transform.toDescription();
             children = this.children.map!( child => child.toDescription() ).array();
             components = this.componentList.values.dup;

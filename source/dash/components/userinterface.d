@@ -4,7 +4,6 @@
 module dash.components.userinterface;
 import dash.core, dash.utility.awesomium, dash.components, dash.utility, dash.graphics.graphics;
 
-import gfm.math.matrix: mat4f;
 import std.string;
 
 /**

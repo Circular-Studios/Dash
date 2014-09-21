@@ -4,9 +4,6 @@
 module dash.components.camera;
 import dash.core, dash.components, dash.graphics, dash.utility;
 
-import gfm.math.vector: vec2f, vec3f, vec4f, cross, dot;
-import gfm.math.matrix: mat4f;
-import gfm.math.funcs: radians;
 import std.conv: to;
 import std.math: sin, cos;
 
@@ -145,10 +142,10 @@ public:
         vec3f zaxis = vec3f( sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw );
 
         _viewMatrix.v[] = 0.0f;
-        _viewMatrix.rows[ 0 ] = vec4f( xaxis, -xaxis.dot( owner.transform.position ) );
-        _viewMatrix.rows[ 1 ] = vec4f( yaxis, -yaxis.dot( owner.transform.position ) );
-        _viewMatrix.rows[ 2 ] = vec4f( zaxis, -zaxis.dot( owner.transform.position ) );
-        _viewMatrix.rows[ 3 ] = vec4f( 0, 0, 0, 1 );
+        _viewMatrix.c[ 0 ] = vec4f( xaxis, -xaxis.dot( owner.transform.position ) ).vector;
+        _viewMatrix.c[ 1 ] = vec4f( yaxis, -yaxis.dot( owner.transform.position ) ).vector;
+        _viewMatrix.c[ 2 ] = vec4f( zaxis, -zaxis.dot( owner.transform.position ) ).vector;
+        _viewMatrix.c[ 3 ] = vec4f( 0, 0, 0, 1 ).vector;
 
         _inverseViewMatrix = _viewMatrix.inverse();
     }
@@ -226,7 +223,7 @@ private:
     final void updatePerspective()
     {
         _projectionConstants = vec2f( ( -far * near ) / ( far - near ), far / ( far - near ) );
-        _perspectiveMatrix = mat4f.perspective( fov.radians, cast(float)Graphics.width / cast(float)Graphics.height, near, far );
+        _perspectiveMatrix = perspectiveMat( cast(float)Graphics.width, cast(float)Graphics.height, fov.radians, near, far );
         _inversePerspectiveMatrix = _perspectiveMatrix.inverse();
     }
 

@@ -21,7 +21,7 @@
         "derelict-fi": "~>1.0",
         "derelict-assimp3": "~>1.0",
         "dyaml": "~>0.5",
-        "gfm:math": "==1.2.3",
+        "gl3n": "==1.0.0",
         "dlogg": "~>0.3",
         "msgpack-d": "==0.9.2",
         "vibe-d": "~master",
@@ -35,7 +35,10 @@
     "sourcePaths": [ "source/" ],
     "importPaths": [ "source/" ],
 
-    "versions": [ "VibeCustomMain" ],
+    "versions": [
+        "DashUseGl3n",
+        "VibeCustomMain"
+    ],
 
     "-ddoxFilterArgs": [ "--min-protection=Protected" ],
 

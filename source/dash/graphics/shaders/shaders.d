@@ -5,8 +5,6 @@ module dash.graphics.shaders.shaders;
 import dash.core, dash.components, dash.graphics, dash.utility;
 import dash.graphics.shaders.glsl;
 
-import gfm.math.vector: vec2f, vec3f;
-import gfm.math.matrix: mat4f;
 import derelict.opengl3.gl3;
 
 import std.string, std.traits, std.algorithm;
@@ -279,7 +277,7 @@ public:
      */
     final void bindUniformMatrix4fv( uint uniform, mat4f matrix )
     {
-        glUniformMatrix4fv( uniform, 1, false, matrix.ptr );
+        glUniformMatrix4fv( uniform, 1, true, matrix.value_ptr );
     }
 
     /**

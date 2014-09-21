@@ -5,7 +5,6 @@ module dash.core.gameobject;
 import dash.core, dash.components, dash.graphics, dash.utility;
 
 import yaml;
-import gfm.math.funcs: radians;
 import std.conv, std.variant, std.array, std.algorithm, std.typecons, std.range, std.string, std.math;
 
 enum AnonymousName = "__anonymous";
@@ -202,15 +201,12 @@ public:
     Description toDescription()
     {
         Description desc;
-        with( desc )
-        {
-            name = this.name;
-            prefab = this.prefab;
-            prefabName = prefab ? prefab.name : null;
-            transform = this.transform.toDescription();
-            children = this.children.map!( child => child.toDescription() ).array();
-            components = this.componentList.values.dup;
-        }
+        desc.name = name;
+        desc.prefab = prefab;
+        desc.prefabName = prefab ? prefab.name : null;
+        desc.transform = transform.toDescription();
+        desc.children = children.map!( child => child.toDescription() ).array();
+        desc.components = componentList.values.dup;
         return desc;
     }
 
@@ -409,10 +405,6 @@ public:
     }
 }
 
-import gfm.math.vector: vec3f;
-import gfm.math.quaternion: quatf;
-import gfm.math.matrix: mat4f;
-
 /**
  * Handles 3D Transformations for an object.
  * Stores position, rotation, and scale
@@ -431,7 +423,7 @@ private:
     void opAssign( Description desc )
     {
         position = vec3f( desc.position[] );
-        rotation = quatf.fromEulerAngles( desc.rotation[ 1 ], desc.rotation[ 0 ], desc.rotation[ 2 ] );
+        rotation = fromEulerAngles( desc.rotation[ 1 ], desc.rotation[ 0 ], desc.rotation[ 2 ] );
         scale = vec3f( desc.scale[] );
     }
 
@@ -477,12 +469,9 @@ public:
     Description toDescription()
     {
         Description desc;
-        with( desc )
-        {
-            position = this.position.v[ 0..3 ];
-            rotation = this.rotation.toEulerAngles()[ 0..3 ];
-            scale = this.scale.v[ 0..3 ];
-        }
+        desc.position = position.vector[ 0..3 ];
+        desc.rotation = rotation.toEulerAngles().vector[ 0..3 ];
+        desc.scale = scale.vector[ 0..3 ];
         return desc;
     }
 
@@ -562,7 +551,7 @@ public:
 
         auto trans = new Transform( null );
         auto forward = vec3f( 0.0f, 1.0f, 0.0f );
-        trans.rotation *= quatf.fromEulerAngles( 90.0f.radians, 0.0f, 0.0f );
+        trans.rotation *= fromEulerAngles( 90.0f.radians, 0.0f, 0.0f );
 
         foreach( i, v; trans.forward.v )
             assert( abs( v - forward.v[ i ] ) < 0.000001f );
@@ -587,7 +576,7 @@ public:
 
         auto trans = new Transform( null );
         auto up = vec3f( 0.0f, 0.0f, 1.0f );
-        trans.rotation *= quatf.fromEulerAngles( 90.0f.radians, 0.0f, 0.0f );
+        trans.rotation *= fromEulerAngles( 90.0f.radians, 0.0f, 0.0f );
 
         foreach( i, v; trans.up.v )
             assert( abs( v - up.v[ i ] ) < 0.000001f );
@@ -612,7 +601,7 @@ public:
 
         auto trans = new Transform( null );
         auto right = vec3f( 0.0f, 0.0f, -1.0f );
-        trans.rotation *= quatf.fromEulerAngles( 0.0f, 90.0f.radians, 0.0f );
+        trans.rotation *= fromEulerAngles( 0.0f, 90.0f.radians, 0.0f );
 
         foreach( i, v; trans.right.v )
             assert( abs( v - right.v[ i ] ) < 0.000001f );
@@ -634,7 +623,7 @@ public:
         _matrix.c[ 2 ][ 2 ] = scale.z;
 
         // Rotate
-        _matrix = _matrix * cast(mat4f)rotation;
+        _matrix = _matrix * rotation.toMatrix!4;
 
         // Translate
         _matrix.c[ 0 ][ 3 ] = position.x;

@@ -2,9 +2,8 @@
 * Contains all core code for the Graphics adapters, which is similar across all platforms
 */
 module dash.graphics.adapters.adapter;
-import dash.core.properties, dash.components.userinterface, dash.utility.config;
+import dash.core.properties, dash.components.userinterface, dash.utility.config, dash.utility.math;
 
-import gfm.math.vector: vec2ui;
 import std.typecons: BlackHole;
 
 alias NullAdapter = BlackHole!Adapter;

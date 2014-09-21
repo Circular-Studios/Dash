@@ -4,8 +4,6 @@
 module dash.components.mesh;
 import dash.core, dash.components, dash.graphics, dash.utility;
 
-import gfm.math.vector: vec3f;
-import gfm.math.box: box3f;
 import derelict.opengl3.gl3, derelict.assimp3.assimp;
 import std.stdio, std.stream, std.format, std.math, std.string;
 
@@ -166,7 +164,7 @@ public:
                         outputData ~= vertWeights[ face.mIndices[ j ] ][0..4];
 
                         // Save the position in verts
-                        boundingBox = boundingBox.expand( vec3f( pos.x, pos.y, pos.z ) );
+                        boundingBox.expandInPlace( vec3f( pos.x, pos.y, pos.z ) );
                     }
                 }
             }
@@ -208,7 +206,7 @@ public:
                         //outputData ~= bitangent.z;
 
                         // Save the position in verts
-                        boundingBox = boundingBox.expand( vec3f( pos.x, pos.y, pos.z ) );
+                        boundingBox.expandInPlace( vec3f( pos.x, pos.y, pos.z ) );
                     }
                 }
             }

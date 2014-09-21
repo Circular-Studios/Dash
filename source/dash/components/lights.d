@@ -6,9 +6,6 @@ module dash.components.lights;
 import dash.core, dash.components, dash.graphics;
 import dash.utility;
 
-import gfm.math.vector: vec3f, dot;
-import gfm.math.matrix: mat4f, Matrix;
-import gfm.math.box: box3f;
 import derelict.opengl3.gl3;
 import std.math;
 
@@ -145,10 +142,10 @@ public:
         // build the view matrix
         mat4f viewMatrix;
         ///*
-        viewMatrix.rows[ 0 ] = vec4f( xaxis, -xaxis.dot( center ) );
-        viewMatrix.rows[ 1 ] = vec4f( yaxis, -yaxis.dot( center ) );
-        viewMatrix.rows[ 2 ] = vec4f( zaxis, -zaxis.dot( center ) );
-        viewMatrix.rows[ 3 ] = vec4f( 0, 0, 0, 1 );
+        viewMatrix.c[ 0 ] = vec4f( xaxis, -xaxis.dot( center ) ).vector;
+        viewMatrix.c[ 1 ] = vec4f( yaxis, -yaxis.dot( center ) ).vector;
+        viewMatrix.c[ 2 ] = vec4f( zaxis, -zaxis.dot( center ) ).vector;
+        viewMatrix.c[ 3 ] = vec4f( 0, 0, 0, 1 ).vector;
         /*/
         // using lookAt works for everying but a light direction of (0,+/-1,0)
         light.view = Camera.lookAt( center - light.direction.normalized, center ); //*/
@@ -161,15 +158,15 @@ public:
         vec3f mins, maxes;
         for( int i = 0; i < 3; i++ )
         {
-            if( frustum.min.v[ i ] < frustum.max.v[ i ] )
+            if( frustum.min.vector[ i ] < frustum.max.vector[ i ] )
             {
-                mins.v[ i ] = frustum.min.v[ i ];
-                maxes.v[ i ] = frustum.max.v[ i ];
+                mins.vector[ i ] = frustum.min.vector[ i ];
+                maxes.vector[ i ] = frustum.max.vector[ i ];
             }
             else
             {
-                mins.v[ i ] = frustum.max.v[ i ];
-                maxes.v[ i ] = frustum.min.v[ i ];
+                mins.vector[ i ] = frustum.max.vector[ i ];
+                maxes.vector[ i ] = frustum.min.vector[ i ];
             }
         }
 

@@ -5,7 +5,6 @@
 module dash.utility.tasks;
 import dash.utility.time, dash.utility.output;
 
-import gfm.math.funcs: lerp;
 import core.time;
 import std.algorithm: min;
 import std.parallelism: parallel;

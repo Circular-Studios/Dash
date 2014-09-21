@@ -5,7 +5,6 @@ module dash.utility.input;
 import dash.utility, dash.core, dash.graphics;
 
 import yaml;
-import gfm.math.vector: vec2ui, vec3f, vec4f;
 import derelict.opengl3.gl3;
 import std.typecons, std.conv, std.traits, std.uuid;
 

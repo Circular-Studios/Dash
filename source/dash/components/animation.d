@@ -6,9 +6,6 @@ import dash.core.properties;
 import dash.components;
 import dash.utility;
 
-import gfm.math.vector: vec3f;
-import gfm.math.quaternion: quatf;
-import gfm.math.matrix: mat4f, Matrix;
 import derelict.assimp3.assimp;
 import std.string: fromStringz;
 import std.conv: to;
@@ -349,19 +346,19 @@ public:
 
             if( bonePose.positionKeys.length > cast(int)time )
             {
-                boneTransform = boneTransform.translation( vec3f( bonePose.positionKeys[ cast(int)time ].v[ 0 ],
-                                                                  bonePose.positionKeys[ cast(int)time ].v[ 1 ],
-                                                                  bonePose.positionKeys[ cast(int)time ].v[ 2 ] ) );
+                boneTransform = boneTransform.translation( bonePose.positionKeys[ cast(int)time ].vector[ 0 ],
+                                                           bonePose.positionKeys[ cast(int)time ].vector[ 1 ],
+                                                           bonePose.positionKeys[ cast(int)time ].vector[ 2 ] );
             }
             if( bonePose.rotationKeys.length > cast(int)time )
             {
-                boneTransform = boneTransform * cast(mat4f)bonePose.rotationKeys[ cast(int)time ];
+                boneTransform = boneTransform * bonePose.rotationKeys[ cast(int)time ].toMatrix!4;
             }
             if( bonePose.scaleKeys.length > cast(int)time )
             {
-                boneTransform = boneTransform.scaling( vec3f( bonePose.scaleKeys[ cast(int)time ].v[ 0 ],
-                                                            bonePose.scaleKeys[ cast(int)time ].v[ 1 ],
-                                                            bonePose.scaleKeys[ cast(int)time ].v[ 2 ] ) );
+                boneTransform = boneTransform.scaling( bonePose.scaleKeys[ cast(int)time ].vector[ 0 ],
+                                                       bonePose.scaleKeys[ cast(int)time ].vector[ 1 ],
+                                                       bonePose.scaleKeys[ cast(int)time ].vector[ 2 ] );
             }
 
             finalTransform = parentTransform * boneTransform;

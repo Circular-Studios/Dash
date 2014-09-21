@@ -1,8 +1,7 @@
 module dash.graphics.adapters.gl;
 import dash.core, dash.components, dash.graphics;
-import dash.utility.output;
+import dash.utility.output, dash.utility.math;
 
-import gfm.math;
 import derelict.opengl3.gl3;
 
 import std.algorithm, std.array;
@@ -188,7 +187,7 @@ public:
                     mat4f worldView = scene.camera.viewMatrix * object.transform.matrix;
                     mat4f worldViewProj = projection * worldView;
 
-                    if( worldViewProj.frustum().contains( object.mesh.boundingBox ) == Frustum!float.OUTSIDE )
+                    if( !( object.mesh.boundingBox in Frustum( worldViewProj ) ) )
                     {
                         // If we can't see an object, don't draw it.
                         continue;
@@ -237,8 +236,8 @@ public:
                     {
                         if( object.mesh && object.stateFlags.drawMesh )
                         {
-                            frustum = frustum.expand( (object.transform.matrix * vec4f(object.mesh.boundingBox.min, 1.0f)).xyz );
-                            frustum = frustum.expand( (object.transform.matrix * vec4f(object.mesh.boundingBox.max, 1.0f)).xyz );
+                            frustum.expandInPlace( (object.transform.matrix * vec4f(object.mesh.boundingBox.min, 1.0f)).xyz );
+                            frustum.expandInPlace( (object.transform.matrix * vec4f(object.mesh.boundingBox.max, 1.0f)).xyz );
                         }
                     }
 

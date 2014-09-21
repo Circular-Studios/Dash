@@ -33,6 +33,17 @@ public:
     /// Called on shutdown.
     void shutdown() { }
 
+    /**
+     * Create a description from the this parameter.
+     */
+    const(Description) description() @property
+    {
+        assert( typeid(this) in descriptionCreators, "ComponentDescription not found for type " ~ typeid(this).name );
+        return descriptionCreators[ typeid(this) ]( this );
+    }
+    private alias DescriptionCreator = const(Description) function( Component );
+    private static DescriptionCreator[ ClassInfo ] descriptionCreators;
+
     // For serialization.
     mixin( perSerializationFormat!q{
         @ignore static $type delegate( Component )[ ClassInfo ] $typeSerializers;
@@ -63,31 +74,22 @@ public:
         }
         static assert( is$typeSerializable!Component );
     } );
+}
 
-    const(Description)* description() @property
-    {
-        assert( typeid(this) in descriptions, "ComponentDescription not found for type " ~ typeid(this).name );
-        return &descriptions[ typeid(this) ];
-    }
-
-    /// The description for the component
-    struct Description
+/// The description for the component
+abstract class Description
+{
+public:
+    static struct Field
     {
     public:
-        static struct Field
-        {
-        public:
-            string name;
-            string typeName;
-            string attributes;
-            string mod;
-        }
-
-        Field[] fields;
+        string name;
+        string typeName;
+        string attributes;
+        string mod;
     }
 
-private:
-    static const(Description)[ ClassInfo ] descriptions;
+    abstract immutable(Field[]) fields() const @property;
 }
 
 /**
@@ -128,7 +130,7 @@ public:
         mixin( perSerializationFormat!q{
             Component.$typeSerializers[ typeid(T) ] = ( Component c )
             {
-                return serializeTo$type( SerializationDescription( cast(T)c ) );
+                return serializeTo$type( SerializationDescription.create( cast(T)c ) );
             };
             Component.$typeDeserializers[ T.stringof ] = ( $type node )
             {
@@ -136,26 +138,39 @@ public:
             };
         } );
 
-        Component.descriptions[ typeid(T) ] = description;
+        Component.descriptionCreators[ typeid(T) ] = &SerializationDescription.create;
     }
 
+    // Generate description
+    enum fieldList = getFields();
+
+private:
     // Generate actual struct
-    struct SerializationDescription
+    final class SerializationDescription : Description
     {
+        pragma( msg, T.stringof ~ "\n" ~ descContents );
         mixin( descContents );
 
-        enum fields = getFields();
+        override immutable(Description.Field[]) fields() const @property
+        {
+            return fieldList;
+        }
 
         // Create a description from a component.
-        this( T theThing )
+        static const(SerializationDescription) create( Component comp )
         {
+            auto theThing = cast(T)comp;
+            auto desc = new SerializationDescription;
+
             foreach( field; __traits( allMembers, T ) )
             {
-                static if( fields.map!(f => f.name).canFind( field ) )
+                static if( fieldList.map!(f => f.name).canFind( field ) )
                 {
-                    mixin( field ~ " = theThing." ~ field ~ ";\n" );
+                    mixin( "desc."~field~" = theThing."~field~";\n" );
                 }
             }
+
+            return desc;
         }
 
         // Create a component from a description.
@@ -164,7 +179,7 @@ public:
             T comp = new T;
             foreach( field; __traits( allMembers, T ) )
             {
-                static if( fields.map!(f => f.name).canFind( field ) )
+                static if( fieldList.map!(f => f.name).canFind( field ) )
                 {
                     mixin( "comp." ~ field ~ " = this." ~ field ~ ";\n" );
                 }
@@ -173,12 +188,8 @@ public:
         }
     }
 
-    // Generate description
-    enum description = Component.Description( getFields() );
-
-private:
     // Get a list of fields on the type
-    Component.Description.Field[] getFields( size_t idx = 0 )( Component.Description.Field[] fields = [] )
+    Description.Field[] getFields( size_t idx = 0 )( Description.Field[] fields = [] )
     {
         static if( idx == __traits( allMembers, T ).length )
         {
@@ -198,17 +209,16 @@ private:
                 static if( !isSomeFunction!member )
                 {
                     import std.conv;
-                    alias attributes = helper!( __traits( getAttributes, member ) );
 
                     // Get string form of attributes
                     string attributesStr()
                     {
-                        static if( is( attributes.length ) )
-                            return attributes.array.map!( attr => attr.to!string ).join( ", " ).to!string;
-                        else static if( is( typeof(attributes.to!string()) == string ) )
-                            return attributes.to!string;
-                        else
-                            return null;
+                        string[] attrs;
+                        foreach( attr; __traits( getAttributes, member ) )
+                        {
+                            attrs ~= attr.to!string;
+                        }
+                        return attrs.join( ", " ).to!string;
                     }
 
                     // Get required module import name
@@ -218,7 +228,7 @@ private:
                         enum modName = null;
 
                     // Generate field
-                    enum newField = Component.Description.Field( memberName, fullyQualifiedName!(Unqual!(typeof(member))), attributesStr, modName );
+                    enum newField = Description.Field( memberName, fullyQualifiedName!(Unqual!(typeof(member))), attributesStr, modName );
                     return getFields!( idx + 1 )( fields ~ newField );
                 }
                 else
@@ -252,6 +262,6 @@ private:
 
                 return result;
             }
-        )( "", description.fields );
+        )( "", fieldList );
     } ();
 }

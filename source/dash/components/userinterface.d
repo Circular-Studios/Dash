@@ -35,8 +35,8 @@ public:
     this( uint w, uint h, string filePath )
     {
         _scaleMat = mat4f.identity;
-        _scaleMat.c[0][0] = cast(float)w/2.0f;
-        _scaleMat.c[1][1] = cast(float)h/2.0f;
+        _scaleMat[0][0] = cast(float)w/2.0f;
+        _scaleMat[1][1] = cast(float)h/2.0f;
         _height = h;
         _width = w;
         version(Windows)

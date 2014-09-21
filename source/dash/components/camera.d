@@ -141,11 +141,11 @@ public:
         vec3f yaxis = vec3f( sinYaw * sinPitch, cosPitch, cosYaw * sinPitch );
         vec3f zaxis = vec3f( sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw );
 
-        _viewMatrix.v[] = 0.0f;
-        _viewMatrix.c[ 0 ] = vec4f( xaxis, -xaxis.dot( owner.transform.position ) ).vector;
-        _viewMatrix.c[ 1 ] = vec4f( yaxis, -yaxis.dot( owner.transform.position ) ).vector;
-        _viewMatrix.c[ 2 ] = vec4f( zaxis, -zaxis.dot( owner.transform.position ) ).vector;
-        _viewMatrix.c[ 3 ] = vec4f( 0, 0, 0, 1 ).vector;
+        _viewMatrix.clear( 0.0f );
+        _viewMatrix[ 0 ] = vec4f( xaxis, -xaxis.dot( owner.transform.position ) ).vector;
+        _viewMatrix[ 1 ] = vec4f( yaxis, -yaxis.dot( owner.transform.position ) ).vector;
+        _viewMatrix[ 2 ] = vec4f( zaxis, -zaxis.dot( owner.transform.position ) ).vector;
+        _viewMatrix[ 3 ] = vec4f( 0, 0, 0, 1 ).vector;
 
         _inverseViewMatrix = _viewMatrix.inverse();
     }
@@ -171,18 +171,18 @@ public:
 
         mat4f result = mat4f.identity;
 
-        result.c[0][0] = xaxis.x;
-        result.c[1][0] = xaxis.y;
-        result.c[2][0] = xaxis.z;
-        result.c[3][0] = -dot( xaxis, cameraPos );
-        result.c[0][1] = yaxis.x;
-        result.c[1][1] = yaxis.y;
-        result.c[2][1] = yaxis.z;
-        result.c[3][1] = -dot( yaxis, cameraPos );
-        result.c[0][2] = zaxis.x;
-        result.c[1][2] = zaxis.y;
-        result.c[2][2] = zaxis.z;
-        result.c[3][2] = -dot( zaxis, cameraPos );
+        result[0][0] = xaxis.x;
+        result[1][0] = xaxis.y;
+        result[2][0] = xaxis.z;
+        result[3][0] = -dot( xaxis, cameraPos );
+        result[0][1] = yaxis.x;
+        result[1][1] = yaxis.y;
+        result[2][1] = yaxis.z;
+        result[3][1] = -dot( yaxis, cameraPos );
+        result[0][2] = zaxis.x;
+        result[1][2] = zaxis.y;
+        result[2][2] = zaxis.z;
+        result[3][2] = -dot( zaxis, cameraPos );
 
         return result.transposed;
     }
@@ -234,10 +234,10 @@ private:
     {
         _orthogonalMatrix = mat4f.identity;
 
-        _orthogonalMatrix.c[0][0] = 2.0f / Graphics.width;
-        _orthogonalMatrix.c[1][1] = 2.0f / Graphics.height;
-        _orthogonalMatrix.c[2][2] = -2.0f / (far - near);
-        _orthogonalMatrix.c[3][3] = 1.0f;
+        _orthogonalMatrix[0][0] = 2.0f / Graphics.width;
+        _orthogonalMatrix[1][1] = 2.0f / Graphics.height;
+        _orthogonalMatrix[2][2] = -2.0f / (far - near);
+        _orthogonalMatrix[3][3] = 1.0f;
 
         _inverseOrthogonalMatrix = _orthogonalMatrix.inverse();
     }

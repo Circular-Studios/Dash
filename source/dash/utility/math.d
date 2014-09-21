@@ -34,16 +34,6 @@ public:
     // Matrices
     alias mat4f = Matrix!( float, 4, 4 );
 
-    Floating[Size][Size] c( Floating, uint Size )( Matrix!( Floating, Size, Size ) m ) @property
-    {
-        return m.matrix;
-    }
-
-    Floating[] v( Floating, uint Size )( Matrix!( Floating, Size, Size ) m ) @property
-    {
-        return m.value_ptr[ 0..Size*Size ];
-    }
-
     mat4f perspectiveMat( float width, float height, float fov, float near, float far )
     {
         return mat4f.perspective( width, height, fov, near, far );

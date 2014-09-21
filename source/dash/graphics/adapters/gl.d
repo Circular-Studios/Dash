@@ -167,50 +167,44 @@ public:
         mat4f projection = scene.camera.perspectiveMatrix;
         mat4f invProj = scene.camera.inversePerspectiveMatrix;
 
-        void updateMatricies( GameObject current )
-        {
-            current.transform.updateMatrix();
-            foreach( child; current.children )
-                updateMatricies( child );
-        }
-        updateMatricies( scene.root );
+        scene.root.transform.updateMatrix();
 
         /**
         * Pass for all objects with Meshes
         */
         void geometryPass()
         {
-            foreach( object; scene.objects )
+            foreach( obj; scene.objects )
             {
-                if( object.mesh && object.stateFlags.drawMesh )
+                if( obj.mesh && obj.stateFlags.drawMesh )
                 {
-                    mat4f worldView = scene.camera.viewMatrix * object.transform.matrix;
+                    mat4f worldView = scene.camera.viewMatrix * obj.transform.matrix;
                     mat4f worldViewProj = projection * worldView;
 
-                    if( !( object.mesh.boundingBox in Frustum( worldViewProj ) ) )
+                    if( !( obj.mesh.boundingBox in Frustum( worldViewProj ) ) )
                     {
                         // If we can't see an object, don't draw it.
                         continue;
                     }
 
                     // set the shader
-                    Shader shader = object.mesh.animated
+                    Shader shader = obj.mesh.animated
                         ? Shaders.animatedGeometry
                         : Shaders.geometry;
 
                     glUseProgram( shader.programID );
-                    glBindVertexArray( object.mesh.glVertexArray );
+                    glBindVertexArray( obj.mesh.glVertexArray );
 
                     shader.bindUniformMatrix4fv( shader.WorldView, worldView );
                     shader.bindUniformMatrix4fv( shader.WorldViewProjection, worldViewProj );
-                    shader.bindUniform1ui( shader.ObjectId, object.id );
+                    shader.bindUniform1ui( shader.ObjectId, obj.id );
 
-                    if( object.mesh.animated )
-                        shader.bindUniformMatrix4fvArray( shader.Bones, object.animation.currBoneTransforms );
+                    if( obj.mesh.animated )
+                        shader.bindUniformMatrix4fvArray( shader.Bones, obj.animation.currBoneTransforms );
 
-                    shader.bindMaterial( object.material );
+                    shader.bindMaterial( obj.material );
 
-                    glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
+                    glDrawElements( GL_TRIANGLES, obj.mesh.numVertices, GL_UNSIGNED_INT, null );
 
                     glBindVertexArray(0);
                 }

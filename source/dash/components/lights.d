@@ -142,10 +142,10 @@ public:
         // build the view matrix
         mat4f viewMatrix;
         ///*
-        viewMatrix.c[ 0 ] = vec4f( xaxis, -xaxis.dot( center ) ).vector;
-        viewMatrix.c[ 1 ] = vec4f( yaxis, -yaxis.dot( center ) ).vector;
-        viewMatrix.c[ 2 ] = vec4f( zaxis, -zaxis.dot( center ) ).vector;
-        viewMatrix.c[ 3 ] = vec4f( 0, 0, 0, 1 ).vector;
+        viewMatrix[ 0 ] = vec4f( xaxis, -xaxis.dot( center ) ).vector;
+        viewMatrix[ 1 ] = vec4f( yaxis, -yaxis.dot( center ) ).vector;
+        viewMatrix[ 2 ] = vec4f( zaxis, -zaxis.dot( center ) ).vector;
+        viewMatrix[ 3 ] = vec4f( 0, 0, 0, 1 ).vector;
         /*/
         // using lookAt works for everying but a light direction of (0,+/-1,0)
         light.view = Camera.lookAt( center - light.direction.normalized, center ); //*/
@@ -209,14 +209,14 @@ public:
     {
         _matrix = mat4f.identity;
         // Scale
-        _matrix.c[ 0 ][ 0 ] = radius;
-        _matrix.c[ 1 ][ 1 ] = radius;
-        _matrix.c[ 2 ][ 2 ] = radius;
+        _matrix[ 0 ][ 0 ] = radius;
+        _matrix[ 1 ][ 1 ] = radius;
+        _matrix[ 2 ][ 2 ] = radius;
         // Translate
         vec3f position = owner.transform.worldPosition;
-        _matrix.c[ 0 ][ 3 ] = position.x;
-        _matrix.c[ 1 ][ 3 ] = position.y;
-        _matrix.c[ 2 ][ 3 ] = position.z;
+        _matrix[ 0 ][ 3 ] = position.x;
+        _matrix[ 1 ][ 3 ] = position.y;
+        _matrix[ 2 ][ 3 ] = position.z;
         return _matrix;
     }
 

@@ -288,7 +288,7 @@ public:
         float[] matptr;
         foreach( matrix; matrices )
         {
-            matptr ~= matrix.v[];
+            matptr ~= matrix.value_ptr()[0..16];
         }
         glUniformMatrix4fv( uniform, cast(int)matrices.length, false, matptr.ptr );
     }

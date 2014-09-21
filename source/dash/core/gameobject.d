@@ -448,16 +448,16 @@ public:
     static struct Description
     {
         /// The position of the object.
-        @rename( "Position" ) @asArray @optional
-        float[3] position;
+        @rename( "Position" ) @optional
+        float[3] position = [ 0.0f, 0.0f, 0.0f ];
 
         /// The position of the object.
-        @rename( "Rotation" ) @asArray @optional
-        float[3] rotation;
+        @rename( "Rotation" ) @optional
+        float[3] rotation = [ 0.0f, 0.0f, 0.0f ];
 
         /// The position of the object.
-        @rename( "Scale" ) @asArray @optional
-        float[3] scale;
+        @rename( "Scale" ) @optional
+        float[3] scale = [ 0.0f, 0.0f, 0.0f ];
     }
 
     /**
@@ -618,17 +618,17 @@ public:
 
         _matrix = mat4f.identity;
         // Scale
-        _matrix.c[ 0 ][ 0 ] = scale.x;
-        _matrix.c[ 1 ][ 1 ] = scale.y;
-        _matrix.c[ 2 ][ 2 ] = scale.z;
+        _matrix[ 0 ][ 0 ] = scale.x;
+        _matrix[ 1 ][ 1 ] = scale.y;
+        _matrix[ 2 ][ 2 ] = scale.z;
 
         // Rotate
         _matrix = _matrix * rotation.toMatrix!4;
 
         // Translate
-        _matrix.c[ 0 ][ 3 ] = position.x;
-        _matrix.c[ 1 ][ 3 ] = position.y;
-        _matrix.c[ 2 ][ 3 ] = position.z;
+        _matrix[ 0 ][ 3 ] = position.x;
+        _matrix[ 1 ][ 3 ] = position.y;
+        _matrix[ 2 ][ 3 ] = position.z;
 
         // include parent objects' transforms
         if( owner.parent )

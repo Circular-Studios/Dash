@@ -551,10 +551,8 @@ public:
 
         auto trans = new Transform( null );
         auto forward = vec3f( 0.0f, 1.0f, 0.0f );
-        trans.rotation *= fromEulerAngles( 90.0f.radians, 0.0f, 0.0f );
-
-        foreach( i, v; trans.forward.v )
-            assert( abs( v - forward.v[ i ] ) < 0.000001f );
+        trans.rotation.rotatex( 90.radians );
+        assert( almost_equal( trans.forward, forward ) );
     }
 
     /*
@@ -576,10 +574,8 @@ public:
 
         auto trans = new Transform( null );
         auto up = vec3f( 0.0f, 0.0f, 1.0f );
-        trans.rotation *= fromEulerAngles( 90.0f.radians, 0.0f, 0.0f );
-
-        foreach( i, v; trans.up.v )
-            assert( abs( v - up.v[ i ] ) < 0.000001f );
+        trans.rotation.rotatex( 90.radians );
+        assert( almost_equal( trans.up, up ) );
     }
 
     /*
@@ -600,11 +596,9 @@ public:
         writeln( "Dash Transform right unittest" );
 
         auto trans = new Transform( null );
-        auto right = vec3f( 0.0f, 0.0f, -1.0f );
-        trans.rotation *= fromEulerAngles( 0.0f, 90.0f.radians, 0.0f );
-
-        foreach( i, v; trans.right.v )
-            assert( abs( v - right.v[ i ] ) < 0.000001f );
+        auto right = vec3( 0.0f, 0.0f, -1.0f );
+        trans.rotation.rotatey( 90.radians );
+        assert( almost_equal( trans.right, right ) );
     }
 
     /**

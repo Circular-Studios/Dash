@@ -3,7 +3,7 @@
  *
  */
 module dash.utility.tasks;
-import dash.utility.time, dash.utility.output;
+import dash.utility.time, dash.utility.output, dash.utility.math;
 
 import core.time;
 import std.algorithm: min;
@@ -44,7 +44,7 @@ UUID scheduleTask( bool delegate() dg )
  * scheduleInterpolateTask( position, startNode, endNode, 100.msecs );
  * ---
  */
-UUID scheduleInterpolateTask(T)( ref T val, T start, T end, Duration duration, T function( T, T, float ) interpFunc = &lerp!( T, float ) )// if( is_vector!T || is_quaternion!T )
+UUID scheduleInterpolateTask(T)( ref T val, T start, T end, Duration duration, T function( T, T, float ) interpFunc = &lerp!( T ) )// if( is_vector!T || is_quaternion!T )
 {
     return scheduleTimedTask( duration, ( elapsed )
     {
@@ -54,9 +54,7 @@ UUID scheduleInterpolateTask(T)( ref T val, T start, T end, Duration duration, T
 ///
 unittest
 {
-    import dash.utility.time;
     import std.stdio;
-    import gfm.math.vector;
 
     writeln( "Dash Tasks scheduleInterpolateTask unittest 1" );
 
@@ -93,7 +91,7 @@ unittest
  * scheduleInterpolateTask!q{position}( transform, startNode, endNode, 100.msecs );
  * ---
  */
-UUID scheduleInterpolateTask( string prop, T, Owner )( ref Owner own, T start, T end, Duration duration, T function( T, T, float ) interpFunc = &lerp!( T, float ) )
+UUID scheduleInterpolateTask( string prop, T, Owner )( ref Owner own, T start, T end, Duration duration, T function( T, T, float ) interpFunc = &lerp!( T ) )
     if( __traits( compiles, mixin( "own." ~ prop ) ) )
 {
     auto startTime = Time.totalTime;
@@ -105,9 +103,7 @@ UUID scheduleInterpolateTask( string prop, T, Owner )( ref Owner own, T start, T
 ///
 unittest
 {
-    import dash.utility.time;
     import std.stdio;
-    import gfm.math.vector;
 
     writeln( "Dash Tasks scheduleInterpolateTask unittest 2" );
 
@@ -128,7 +124,7 @@ unittest
 version( unittest )
 class TestPropertyInterpolate
 {
-    import gfm.math.vector;
+    import dash.utility.math;
 
     private vec3f _vector;
     public @property vec3f vector() { return _vector; }

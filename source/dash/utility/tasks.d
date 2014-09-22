@@ -59,7 +59,7 @@ unittest
 {
     import dash.utility.time;
     import std.stdio;
-    import gl3n.linalg. gl3n.math;
+    import gl3n.linalg, gl3n.math;
 
     writeln( "Dash Tasks scheduleInterpolateTask unittest 1" );
 

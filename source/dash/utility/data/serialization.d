@@ -164,7 +164,7 @@ template serializeToFile( bool prettyPrint = true )
 
         void handleYaml()
         {
-            throw new Exception( "Not implemented." );
+            Dumper( outPath ).dump( serializeToYaml( t ) );
         }
 
         final switch( mode ) with( SerializationMode )

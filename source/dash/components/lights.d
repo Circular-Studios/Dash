@@ -39,7 +39,7 @@ public:
  */
 class AmbientLight : Light
 {
-    this( vec3f color = vec3f() )
+    this( vec3f color = vec3f( 1.0f ) )
     {
         super( color );
     }

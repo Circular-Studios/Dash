@@ -356,9 +356,9 @@ public:
             }
             if( bonePose.scaleKeys.length > cast(int)time )
             {
-                boneTransform = boneTransform.scaling( bonePose.scaleKeys[ cast(int)time ].vector[ 0 ],
-                                                       bonePose.scaleKeys[ cast(int)time ].vector[ 1 ],
-                                                       bonePose.scaleKeys[ cast(int)time ].vector[ 2 ] );
+                boneTransform = boneTransform.scale( bonePose.scaleKeys[ cast(int)time ].vector[ 0 ],
+                                                     bonePose.scaleKeys[ cast(int)time ].vector[ 1 ],
+                                                     bonePose.scaleKeys[ cast(int)time ].vector[ 2 ] );
             }
 
             finalTransform = parentTransform * boneTransform;

@@ -90,6 +90,8 @@ public:
         string serializer;
     }
 
+    @rename( "Type" )
+    string type;
     abstract immutable(Field[]) fields() const @property;
 }
 
@@ -179,6 +181,7 @@ private:
         {
             auto theThing = cast(T)comp;
             auto desc = new SerializationDescription;
+            desc.type = T.stringof;
 
             foreach( fieldName; __traits( allMembers, T ) )
             {

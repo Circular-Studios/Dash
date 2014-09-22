@@ -11,64 +11,6 @@ import std.math;
 // Serialization attributes
 public import vibe.data.serialization: rename = name, asArray, byName, ignore, optional, isCustomSerializable;
 
-/// Supported serialization formats.
-enum serializationFormats = tuple( "Json"/*, "Bson"*/, "Yaml" );
-
-/// Type to use when defining custom 
-struct CustomSerializer( _T, _Rep, alias _ser, alias _deser, alias _check = (_) => true )
-    if( is( typeof( _ser( _T.init ) ) == _Rep ) &&
-        is( typeof( _deser( _Rep.init ) ) == _T ) &&
-        is( typeof( _check( _Rep.init ) ) == bool ) )
-{
-    /// The type being serialized
-    alias T = _T;
-    /// The serialized representation
-    alias Rep = _Rep;
-    /// Function to convert the type to its rep
-    alias serialize = _ser;
-    /// Function to convert the rep to the type
-    alias deserialize = _deser;
-    /// Function called to ensure the representation is valid
-    alias check = _check;
-}
-
-/// For calling templated templates.
-template PApply( alias Target, T... )
-{
-    alias PApply( U... ) = Target!( T, U );
-}
-
-/// Checks if a serializer is for a type.
-enum serializerTypesMatch( Type, alias CS ) = is( CS.T == Type );
-
-/// Predicate for std.typetupple
-alias isSerializerFor( T ) = PApply!( serializerTypesMatch, T );
-
-/// Does a given type have a serializer
-enum hasSerializer( T ) = anySatisfy!( isSerializerFor!T, customSerializers );
-
-/// Get the serializer for a type
-template serializerFor( T )
-{
-    static if( hasSerializer!T )
-        alias serializerFor = Filter!( isSerializerFor!T, customSerializers )[ 0 ];
-    else
-        alias serializerFor = defaultSerializer!T;
-}
-
-/// A tuple of all supported serializers
-alias customSerializers = TypeTuple!(
-    CustomSerializer!( vec2f, float[], vec => vec.vector[], arr => vec2f( arr ), arr => arr.length == 2 ),
-    CustomSerializer!( vec3f, float[], vec => vec.vector[], arr => vec3f( arr ), arr => arr.length == 3 ),
-    CustomSerializer!( quatf, float[], vec => vec.toEulerAngles.vector[], arr => fromEulerAngles( arr ), arr => arr.length == 3 ),
-);
-static assert( hasSerializer!vec2f );
-static assert( hasSerializer!vec3f );
-static assert( hasSerializer!quatf );
-
-/// Serializer for all other types
-alias defaultSerializer( T ) = CustomSerializer!( T, T, t => t, t => t, t => true );
-
 /**
  * Modes of serialization.
  */
@@ -205,11 +147,14 @@ template serializeToFile( bool prettyPrint = true )
     {
         import std.path: extension;
         import std.string: toLower;
-        import std.file: File;
+        import std.file: write;
+        import std.array: appender;
 
         void handleJson()
         {
-            writeJsonString!( File, prettyPrint )( new File( outPath ), serializeToJson( t ) );
+            auto json = appender!string;
+            writeJsonString!( typeof(json), prettyPrint )( json, serializeToJson( t ) );
+            write( outPath, json.data );
         }
 
         void handleBson()
@@ -228,15 +173,73 @@ template serializeToFile( bool prettyPrint = true )
             case Bson: handleBson(); break;
             case Yaml: handleYaml(); break;
             case Default:
-                switch( file.extension.toLower )
+                switch( outPath.extension.toLower )
                 {
                     case ".json": handleJson(); break;
                     case ".bson": handleBson(); break;
                     case ".yaml":
                     case ".yml":  handleYaml(); break;
-                    default: throw new Exception( "File extension " ~ file.extension.toLower ~ " not supported." );
+                    default: throw new Exception( "File extension " ~ outPath.extension.toLower ~ " not supported." );
                 }
                 break;
         }
     }
 }
+
+/// Supported serialization formats.
+enum serializationFormats = tuple( "Json"/*, "Bson"*/, "Yaml" );
+
+/// Type to use when defining custom 
+struct CustomSerializer( _T, _Rep, alias _ser, alias _deser, alias _check = (_) => true )
+    if( is( typeof( _ser( _T.init ) ) == _Rep ) &&
+        is( typeof( _deser( _Rep.init ) ) == _T ) &&
+        is( typeof( _check( _Rep.init ) ) == bool ) )
+{
+    /// The type being serialized
+    alias T = _T;
+    /// The serialized representation
+    alias Rep = _Rep;
+    /// Function to convert the type to its rep
+    alias serialize = _ser;
+    /// Function to convert the rep to the type
+    alias deserialize = _deser;
+    /// Function called to ensure the representation is valid
+    alias check = _check;
+}
+
+/// For calling templated templates.
+template PApply( alias Target, T... )
+{
+    alias PApply( U... ) = Target!( T, U );
+}
+
+/// Checks if a serializer is for a type.
+enum serializerTypesMatch( Type, alias CS ) = is( CS.T == Type );
+
+/// Predicate for std.typetupple
+alias isSerializerFor( T ) = PApply!( serializerTypesMatch, T );
+
+/// Does a given type have a serializer
+enum hasSerializer( T ) = anySatisfy!( isSerializerFor!T, customSerializers );
+
+/// Get the serializer for a type
+template serializerFor( T )
+{
+    static if( hasSerializer!T )
+        alias serializerFor = Filter!( isSerializerFor!T, customSerializers )[ 0 ];
+    else
+        alias serializerFor = defaultSerializer!T;
+}
+
+/// A tuple of all supported serializers
+alias customSerializers = TypeTuple!(
+    CustomSerializer!( vec2f, float[], vec => vec.vector[], arr => vec2f( arr ), arr => arr.length == 2 ),
+    CustomSerializer!( vec3f, float[], vec => vec.vector[], arr => vec3f( arr ), arr => arr.length == 3 ),
+    CustomSerializer!( quatf, float[], vec => vec.toEulerAngles.vector[], arr => fromEulerAngles( arr ), arr => arr.length == 3 ),
+);
+static assert( hasSerializer!vec2f );
+static assert( hasSerializer!vec3f );
+static assert( hasSerializer!quatf );
+
+/// Serializer for all other types
+alias defaultSerializer( T ) = CustomSerializer!( T, T, t => t, t => t, t => true );

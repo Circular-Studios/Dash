@@ -423,7 +423,7 @@ private:
     void opAssign( Description desc )
     {
         position = vec3f( desc.position[] );
-        rotation = fromEulerAngles( desc.rotation[ 1 ], desc.rotation[ 0 ], desc.rotation[ 2 ] );
+        rotation = fromEulerAngles( desc.rotation[ 0 ], desc.rotation[ 1 ], desc.rotation[ 2 ] );
         scale = vec3f( desc.scale[] );
     }
 

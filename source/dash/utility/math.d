@@ -28,7 +28,7 @@ public:
 
     Quaternion!Floating fromEulerAngles( Floating = float )( Floating pitch, Floating yaw, Floating roll )
     {
-        return Quaternion!Floating.identity.rotatex( pitch ).rotatey( yaw ).rotatez( roll );
+        return Quaternion!Floating.identity.rotatex( pitch.radians ).rotatey( yaw.radians ).rotatez( roll.radians );
     }
 
     // Matrices

@@ -223,7 +223,7 @@ private:
     final void updatePerspective()
     {
         _projectionConstants = vec2f( ( -far * near ) / ( far - near ), far / ( far - near ) );
-        _perspectiveMatrix = perspectiveMat( cast(float)Graphics.width, cast(float)Graphics.height, fov.radians, near, far );
+        _perspectiveMatrix = perspectiveMat( cast(float)Graphics.width, cast(float)Graphics.height, fov, near, far );
         _inversePerspectiveMatrix = _perspectiveMatrix.inverse();
     }
 

@@ -31,6 +31,21 @@ public:
         return Quaternion!Floating.identity.rotatex( pitch.radians ).rotatey( yaw.radians ).rotatez( roll.radians );
     }
 
+    Quaternion!Floating fromEulerAngles( Floating = float )( Vector!( Floating, 3 ) vec )
+    {
+        return fromEulerAngles( vec.x, vec.y, vec.z );
+    }
+
+    Quaternion!Floating fromEulerAngles( Floating = float )( Floating[] angles )
+    in
+    {
+        assert( angles.length >= 3, "Invalid array given." );
+    }
+    body
+    {
+        return fromEulerAngles( angles[ 0 ], angles[ 1 ], angles[ 2 ] );
+    }
+
     // Matrices
     alias mat4f = Matrix!( float, 4, 4 );
 

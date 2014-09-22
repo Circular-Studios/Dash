@@ -1,14 +1,73 @@
 module dash.utility.data.serialization;
-import dash.utility.resources;
 import dash.utility.data.yaml;
+import dash.utility.resources;
+import dash.utility.math;
+
 import vibe.data.json, vibe.data.bson;
 import std.typecons: Tuple, tuple;
+import std.typetuple;
+import std.math;
 
 // Serialization attributes
 public import vibe.data.serialization: rename = name, asArray, byName, ignore, optional, isCustomSerializable;
 
 /// Supported serialization formats.
 enum serializationFormats = tuple( "Json"/*, "Bson"*/, "Yaml" );
+
+/// Type to use when defining custom 
+struct CustomSerializer( _T, _Rep, alias _ser, alias _deser, alias _check = (_) => true )
+    if( is( typeof( _ser( _T.init ) ) == _Rep ) &&
+        is( typeof( _deser( _Rep.init ) ) == _T ) &&
+        is( typeof( _check( _Rep.init ) ) == bool ) )
+{
+    /// The type being serialized
+    alias T = _T;
+    /// The serialized representation
+    alias Rep = _Rep;
+    /// Function to convert the type to its rep
+    alias serialize = _ser;
+    /// Function to convert the rep to the type
+    alias deserialize = _deser;
+    /// Function called to ensure the representation is valid
+    alias check = _check;
+}
+
+/// For calling templated templates.
+template PApply( alias Target, T... )
+{
+    alias PApply( U... ) = Target!( T, U );
+}
+
+/// Checks if a serializer is for a type.
+enum serializerTypesMatch( Type, alias CS ) = is( CS.T == Type );
+
+/// Predicate for std.typetupple
+alias isSerializerFor( T ) = PApply!( serializerTypesMatch, T );
+
+/// Does a given type have a serializer
+enum hasSerializer( T ) = anySatisfy!( isSerializerFor!T, customSerializers );
+
+/// Get the serializer for a type
+template serializerFor( T )
+{
+    static if( hasSerializer!T )
+        alias serializerFor = Filter!( isSerializerFor!T, customSerializers )[ 0 ];
+    else
+        alias serializerFor = defaultSerializer!T;
+}
+
+/// A tuple of all supported serializers
+alias customSerializers = TypeTuple!(
+    CustomSerializer!( vec2f, float[], vec => vec.vector[], arr => vec2f( arr ), arr => arr.length == 2 ),
+    CustomSerializer!( vec3f, float[], vec => vec.vector[], arr => vec3f( arr ), arr => arr.length == 3 ),
+    CustomSerializer!( quatf, float[], vec => vec.toEulerAngles.vector[], arr => fromEulerAngles( arr ), arr => arr.length == 3 ),
+);
+static assert( hasSerializer!vec2f );
+static assert( hasSerializer!vec3f );
+static assert( hasSerializer!quatf );
+
+/// Serializer for all other types
+alias defaultSerializer( T ) = CustomSerializer!( T, T, t => t, t => t, t => true );
 
 /**
  * Modes of serialization.
@@ -96,9 +155,6 @@ T deserializeFile( T )( Resource file, SerializationMode mode = SerializationMod
  */
 T[] deserializeMultiFile( T )( Resource file, SerializationMode mode = SerializationMode.Default )
 {
-    import dash.utility.output;
-    logInfo( "Deserializing ", file.baseFileName, " to ", T.stringof );
-
     import std.path: extension;
     import std.string: toLower;
 

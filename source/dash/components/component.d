@@ -87,6 +87,7 @@ public:
         string typeName;
         string attributes;
         string mod;
+        string serializer;
     }
 
     abstract immutable(Field[]) fields() const @property;
@@ -134,7 +135,7 @@ public:
             };
             Component.$typeDeserializers[ T.stringof ] = ( $type node )
             {
-                return deserialize$type!( SerializationDescription )( node ).createInstance();
+                return deserialize$type!SerializationDescription( node ).createInstance();
             };
         } );
 
@@ -148,47 +149,74 @@ private:
     // Generate actual struct
     final class SerializationDescription : Description
     {
-        //pragma( msg, T.stringof ~ "\n" ~ descContents );
-        mixin( descContents );
+        mixin( { return reduce!( ( working, field )
+            {
+                string result = working;
 
+                // Append required import for variable type
+                if( field.mod )
+                    result ~= "import " ~ field.mod ~ ";\n";
+
+                // Append variable attributes
+                if( field.attributes )
+                    result ~= "@(" ~ field.attributes ~ ")\n";
+
+                // Append variable declaration
+                result ~= field.typeName ~ " " ~ field.name ~ ";\n";
+
+                return result;
+            }
+        )( "", fieldList ); } () );
+
+        /// Get a list of field descriptions
         override immutable(Description.Field[]) fields() const @property
         {
             return fieldList;
         }
 
-        // Create a description from a component.
+        /// Create a description from a component.
         static const(SerializationDescription) create( Component comp )
         {
             auto theThing = cast(T)comp;
             auto desc = new SerializationDescription;
 
-            foreach( field; __traits( allMembers, T ) )
+            foreach( fieldName; __traits( allMembers, T ) )
             {
-                static if( fieldList.map!(f => f.name).canFind( field ) )
+                enum idx = fieldList.map!(f => f.name).countUntil( fieldName );
+                static if( idx >= 0 )
                 {
-                    mixin( "desc."~field~" = theThing."~field~";\n" );
+                    enum field = fieldList[ idx ];
+                    mixin( "auto ser = "~field.serializer~".serialize(theThing."~field.name~");" );
+                    mixin( "desc."~field.name~" = ser;" );
                 }
             }
 
             return desc;
         }
 
-        // Create a component from a description.
+        /// Create a component from a description.
         T createInstance()
         {
             T comp = new T;
-            foreach( field; __traits( allMembers, T ) )
+            foreach( fieldName; __traits( allMembers, T ) )
             {
-                static if( fieldList.map!(f => f.name).canFind( field ) )
+                enum idx = fieldList.map!(f => f.name).countUntil( fieldName );
+                static if( idx >= 0 )
                 {
-                    mixin( "comp." ~ field ~ " = this." ~ field ~ ";\n" );
+                    enum field = fieldList[ idx ];
+                    // Check if the field was actually set
+                    if( mixin( field.name ) != mixin( "new SerializationDescription()." ~ field.name ) )
+                    {
+                        mixin( "auto ser = "~field.serializer~".deserialize(this."~field.name~");" );
+                        mixin( "comp."~field.name~" = ser;" );
+                    }
                 }
             }
             return comp;
         }
     }
 
-    // Get a list of fields on the type
+    /// Get a list of fields on the type
     Description.Field[] getFields( size_t idx = 0 )( Description.Field[] fields = [] )
     {
         static if( idx == __traits( allMembers, T ).length )
@@ -206,6 +234,7 @@ private:
                 import vibe.internal.meta.uda;
 
                 alias member = helper!( __traits( getMember, T, memberName ) );
+                alias memberType = typeof(member);
 
                 // Process variables
                 static if( !isSomeFunction!member && !findFirstUDA!( IgnoreAttribute, member ).found )
@@ -228,9 +257,19 @@ private:
                     else
                         enum modName = null;
 
+                    // Get the serializer for the type
+                    alias serializer = serializerFor!memberType;
+                    alias descMemberType = serializer.Rep;
                     // Generate field
-                    enum newField = Description.Field( memberName, fullyQualifiedName!(Unqual!(typeof(member))), attributesStr, modName );
-                    return getFields!( idx + 1 )( fields ~ newField );
+                    return getFields!( idx + 1 )( fields ~
+                        Description.Field(
+                            memberName,
+                            fullyQualifiedName!(Unqual!descMemberType),
+                            attributesStr,
+                            modName,
+                            serializer.stringof
+                        )
+                    );
                 }
                 else
                 {
@@ -243,26 +282,4 @@ private:
             }
         }
     }
-
-    // Generate static description struct for deserializing
-    enum descContents = {
-        return reduce!( ( working, field )
-            {
-                string result = working;
-
-                // Append required import for variable type
-                if( field.mod )
-                    result ~= "import " ~ field.mod ~ ";\n";
-
-                // Append variable attributes
-                if( field.attributes )
-                    result ~= "@(" ~ field.attributes ~ ") ";
-
-                // Append variable declaration
-                result ~= field.typeName ~ " " ~ field.name ~ ";\n";
-
-                return result;
-            }
-        )( "", fieldList );
-    } ();
 }

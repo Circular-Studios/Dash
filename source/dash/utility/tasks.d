@@ -59,7 +59,7 @@ unittest
 {
     import dash.utility.time;
     import std.stdio;
-    import gl3n.linalg;
+    import gl3n.linalg, gl3n.math;
 
     writeln( "Dash Tasks scheduleInterpolateTask unittest 1" );
 
@@ -74,7 +74,7 @@ unittest
         executeTasks();
     }
 
-    assert( interpVec == end );
+    assert( almost_equal( interpVec, end ) );
 }
 
 /**
@@ -110,7 +110,7 @@ unittest
 {
     import dash.utility.time;
     import std.stdio;
-    import gl3n.linalg;
+    import gl3n.linalg, gl3n.math;
 
     writeln( "Dash Tasks scheduleInterpolateTask unittest 2" );
 
@@ -126,7 +126,7 @@ unittest
         Time.update();
     }
 
-    assert( testClass.vector == end );
+    assert( almost_equal( testClass.vector, end ) );
 }
 version( unittest )
 class TestPropertyInterpolate

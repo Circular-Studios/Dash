@@ -496,9 +496,7 @@ public:
      */
     void setButtonState( Buttons buttonCode, ButtonStorageType newState )
     {
-	logDebug("Setting buttonstate for buttoncode ", cast(size_t) buttonCode);
-        buttonStaging[ cast(size_t) buttonCode ] = newState;
-	//logDebug("Kk, buttonStaging[", buttonCode, "] is now = ", buttonStaging[ buttonCode ]);
+        buttonStaging[ buttonCode ] = newState;
     }
 
 private:
@@ -593,10 +591,6 @@ public:
 
     ref typeof(this) opAssign( const ref typeof(this) other )
     {
-        /*for( size_t ii = 0; ii < other.keys.length; ++ii )
-	{
-            keys[ ii ] = other.keys[ ii ];
-	}*/
 	foreach(size_t index, T value; other.keys)
 	{
 		keys[index] = value;
@@ -607,31 +601,19 @@ public:
 
     T opIndex( size_t keyCode ) 
     {
-	if(keyCode in keys)
-	{
-		return keys[ keyCode ];
-	}
-	else
-	{
-		auto keyDefinitions = EnumMembers!Inputs;
-		foreach(immutable value; keyDefinitions)
-		{
-			if(keyCode == cast(size_t)value)
-			{
-				logDebug("You just pressed an unrecorded key: ", cast(Inputs)keyCode);
-				keys[ keyCode ] = T();
-				return keys[ keyCode ];
-			}
-		}
 
-		return T();
-	}
+	//If the key being pressed doesn't have 
+	//an entry in keys, add it, and set it
+	//to the default value
+	if(!(keyCode in keys))
+		keys[ keyCode ] = T();
+
+	return keys[ keyCode ];
 
     }
 
     T opIndexAssign( T newValue, size_t keyCode )
     {
-        //if( keyCode < totalSize )
         keys[ keyCode ] = newValue;
 
         return newValue;

@@ -328,13 +328,13 @@ public:
 
 //alias Keyboard;
 version(UseSDL2)
-{
-	alias Keyboard = InputSystem!( KeyboardButtonsWin, void );
-}
+
+	alias Keyboard = InputSystem!( KeyboardButtonsSDL, void );
+
 else
-{
+
 	alias Keyboard  = InputSystem!( KeyboardButtonsWin, void );
-}
+
 alias Mouse     = InputSystem!( MouseButtons, MouseAxes );
 
 private:
@@ -496,7 +496,9 @@ public:
      */
     void setButtonState( Buttons buttonCode, ButtonStorageType newState )
     {
-        buttonStaging[ buttonCode ] = newState;
+	logDebug("Setting buttonstate for buttoncode ", cast(size_t) buttonCode);
+        buttonStaging[ cast(size_t) buttonCode ] = newState;
+	//logDebug("Kk, buttonStaging[", buttonCode, "] is now = ", buttonStaging[ buttonCode ]);
     }
 
 private:
@@ -582,34 +584,60 @@ private:
 struct State( T, InputEnum ) if( is( InputEnum == enum ) )
 {
 private:
-    enum totalSize = Inputs.END;
+    //enum totalSize = Inputs.END;
+    enum totalSize = EnumMembers!Inputs.length;
     alias StorageType = T;
     alias Inputs = InputEnum;
 public:
-    T[ totalSize ] keys;
+    T[ size_t ] keys;
 
     ref typeof(this) opAssign( const ref typeof(this) other )
     {
-        for( uint ii = 0; ii < other.keys.length; ++ii )
+        /*for( size_t ii = 0; ii < other.keys.length; ++ii )
+	{
             keys[ ii ] = other.keys[ ii ];
+	}*/
+	foreach(size_t index, T value; other.keys)
+	{
+		keys[index] = value;
+	}
 
         return this;
     }
 
-    T opIndex( size_t keyCode ) const
+    T opIndex( size_t keyCode ) 
     {
-        return keys[ keyCode ];
+	if(keyCode in keys)
+	{
+		return keys[ keyCode ];
+	}
+	else
+	{
+		auto keyDefinitions = EnumMembers!Inputs;
+		foreach(immutable value; keyDefinitions)
+		{
+			if(keyCode == cast(size_t)value)
+			{
+				logDebug("You just pressed an unrecorded key: ", cast(Inputs)keyCode);
+				keys[ keyCode ] = T();
+				return keys[ keyCode ];
+			}
+		}
+
+		return T();
+	}
+
     }
 
     T opIndexAssign( T newValue, size_t keyCode )
     {
-        if( keyCode < totalSize )
-            keys[ keyCode ] = newValue;
+        //if( keyCode < totalSize )
+        keys[ keyCode ] = newValue;
 
         return newValue;
     }
 
-    Tuple!( InputEnum, T )[] opBinary( string Op : "-" )( const ref typeof(this) other )
+    Tuple!( InputEnum, T )[] opBinary( string Op : "-" )( ref typeof(this) other )
     {
         Tuple!( InputEnum, T )[] differences;
 

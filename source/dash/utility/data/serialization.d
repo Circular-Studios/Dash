@@ -61,13 +61,12 @@ T deserializeFile( T )( Resource file, SerializationMode mode = SerializationMod
 
     T handleBson()
     {
-        throw new Exception( "Not implemented." );
+        return deserializeBson!T( Bson( Bson.Type.object, file.read().idup ) );
     }
 
     T handleYaml()
     {
-        Yaml content = Loader.fromString( cast(char[])file.readText() ).load();
-        return deserializeYaml!T( content );
+        return deserializeYaml!T( Loader.fromString( cast(char[])file.readText() ).load() );
     }
 
     final switch( mode ) with( SerializationMode )
@@ -159,7 +158,7 @@ template serializeToFile( bool prettyPrint = true )
 
         void handleBson()
         {
-            throw new Exception( "Not implemented." );
+            write( outPath, serializeToBson( t ).data );
         }
 
         void handleYaml()
@@ -187,7 +186,7 @@ template serializeToFile( bool prettyPrint = true )
 }
 
 /// Supported serialization formats.
-enum serializationFormats = tuple( "Json"/*, "Bson"*/, "Yaml" );
+enum serializationFormats = tuple( "Json", "Bson", "Yaml" );
 
 /// Type to use when defining custom 
 struct CustomSerializer( _T, _Rep, alias _ser, alias _deser, alias _check = (_) => true )

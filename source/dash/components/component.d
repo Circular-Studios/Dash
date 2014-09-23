@@ -52,13 +52,19 @@ public:
         {
             return $typeSerializers[ typeid(this) ]( cast()this );
         }
-        static Component from$type( $type d )
+        static Component from$type( $type data )
         {
+            // If it's Bson, convert it to a json object.
+            static if( is( $type == Bson ) )
+                auto d = data.toJson();
+            else
+                auto d = data;
+
             if( auto type = "Type" in d )
             {
                 if( auto cereal = type.get!string in $typeDeserializers )
                 {
-                    return ( *cereal )( d );
+                    return ( *cereal )( data );
                 }
                 else
                 {

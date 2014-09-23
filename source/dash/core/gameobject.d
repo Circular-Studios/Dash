@@ -414,7 +414,6 @@ public:
 private struct Transform
 {
 private:
-    GameObject _owner;
     vec3f _prevPos;
     quatf _prevRot;
     vec3f _prevScale;
@@ -484,7 +483,7 @@ public:
     vec3f scale;
 
     /// The object which this belongs to.
-    mixin( Property!( _owner, AccessModifier.Public ) );
+    GameObject owner;
     /// The world matrix of the transform.
     mixin( Getter!_matrix );
     //mixin( ThisDirtyGetter!( _matrix, updateMatrix ) );

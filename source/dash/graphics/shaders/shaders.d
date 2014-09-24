@@ -8,7 +8,7 @@ import dash.graphics.shaders.glsl;
 import derelict.opengl3.gl3;
 import gl3n.linalg;
 
-import std.string, std.traits, std.algorithm;
+import std.string, std.traits, std.algorithm, std.array;
 
 /*
  * String constants for our shader uniforms
@@ -286,7 +286,7 @@ public:
      */
     final void bindUniformMatrix4fvArray( uint uniform, mat4[] matrices )
     {
-        float[] matptr;
+        auto matptr = appender!(float[]);
         foreach( matrix; matrices )
         {
             for( int i = 0; i < 16; i++ )
@@ -294,7 +294,7 @@ public:
                 matptr ~= matrix.value_ptr()[i];
             }
         }
-        glUniformMatrix4fv( uniform, cast(int)matrices.length, true, matptr.ptr );
+        glUniformMatrix4fv( uniform, cast(int)matrices.length, true, matptr.data.ptr );
     }
 
     /**

@@ -100,7 +100,7 @@ public:
      * Returns:
      *  The new GameObject from the Prefab.
      */
-    GameObject createInstance()
+    GameObject createInstance() const
     {
         return GameObject.create( description );
     }

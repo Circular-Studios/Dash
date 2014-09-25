@@ -93,7 +93,7 @@ public:
         Description[] children;
 
         @rename( "Components" ) @optional
-        Component[] components;
+        Component.Description[] components;
     }
 
     /// The current transform of the object.
@@ -147,7 +147,7 @@ public:
      * Returns:
      *  A new game object with components and info pulled from desc.
      */
-    static GameObject create( Description desc )
+    static GameObject create( const Description desc )
     {
         GameObject obj;
 
@@ -185,7 +185,7 @@ public:
         // Add components
         foreach( component; desc.components )
         {
-            obj.addComponent( component );
+            obj.addComponent( component.createInstance() );
         }
 
         // Init components
@@ -209,7 +209,7 @@ public:
         desc.prefabName = prefab ? prefab.name : null;
         desc.transform = transform.toDescription();
         desc.children = children.map!( child => child.toDescription() ).array();
-        desc.components = componentList.values.dup;
+        desc.components = componentList.values.map!( comp => cast()comp.description ).array();
         return desc;
     }
 

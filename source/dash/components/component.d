@@ -19,14 +19,15 @@ alias helper() = TypeTuple!();
  */
 abstract class Component
 {
+private:
+    /// The description from the last creation/refresh.
+    @ignore
+    Description lastDesc;
+
 public:
     /// The GameObject that owns this component.
     @ignore
     GameObject owner;
-
-    /// The description from the last creation/refresh.
-    @ignore
-    Description lastDesc;
 
     /// The function called on initialization of the object.
     void initialize() { }
@@ -190,20 +191,12 @@ private:
     final class SerializationDescription : Description
     {
         mixin( { return reduce!( ( working, field ) {
-            string result = working;
-
             // Append required import for variable type
-            if( field.mod )
-                result ~= "import " ~ field.mod ~ ";\n";
-
+            if( field.mod )         working ~= "import " ~ field.mod ~ ";\n";
             // Append variable attributes
-            if( field.attributes )
-                result ~= "@(" ~ field.attributes ~ ")\n";
-
+            if( field.attributes )  working ~= "@(" ~ field.attributes ~ ")\n";
             // Append variable declaration
-            result ~= field.typeName ~ " " ~ field.name ~ ";\n";
-
-            return result;
+            return working ~ field.typeName ~ " " ~ field.name ~ ";\n";
         } )( "", fieldList ); } () );
 
         // Generate serializers for the type

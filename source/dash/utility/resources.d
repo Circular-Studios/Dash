@@ -15,7 +15,7 @@ enum Resources : string
     Materials = Home ~ "/Materials",
     Meshes = Home ~ "/Meshes",
     Textures = Home ~ "/Textures",
-	Audio = Home ~ "/Audio",
+    Audio = Home ~ "/Audio",
     Scripts = Home ~ "/Scripts",
     Prefabs = Home ~ "/Prefabs",
     Objects = Home ~ "/Objects",

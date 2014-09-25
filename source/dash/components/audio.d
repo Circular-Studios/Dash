@@ -19,21 +19,21 @@ class Listener : Component
 private:
 
 public:
-	/**
-	 * Create a listener object 
-	 */
-	this()
-	{
-		// Constructor code
-	}
+    /**
+     * Create a listener object 
+     */
+    this()
+    {
+        // Constructor code
+    }
 
-	override void update()
-	{
-		Audio.soloud.update3dAudio();
-		Audio.soloud.set3dListenerAt(owner.transform.position.x,
-		                             owner.transform.position.y,
-		                             owner.transform.position.z);
-	}
+    override void update()
+    {
+        Audio.soloud.update3dAudio();
+        Audio.soloud.set3dListenerAt(owner.transform.position.x,
+                                     owner.transform.position.y,
+                                     owner.transform.position.z);
+    }
 }
 
 /**
@@ -43,75 +43,77 @@ public:
 class Emitter : Component
 {
 private:
-	Modplug toPlay;
-	uint[] handles;
+    Modplug toPlay;
+    uint[] handles;
 public:
-	/**
-	 * Create an emmiter object
-	 */
-	this()
-	{
-		// Constructor Code
-	}
+    /**
+     * Create an emmiter object
+     */
+    this()
+    {
+        // Constructor Code
+    }
 
-	override void initialize() {
-		super.initialize;
-		toPlay = Modplug.create();
-	}
+    override void initialize() {
+        super.initialize;
+        toPlay = Modplug.create();
+    }
 
-	// call:
-	// emmiter.play( filename );
-	void play( string soundName )
-	{
-		// Load in the sound
-		toPlay.load( Audio.sounds[soundName].toStringz() );
+    // call:
+    // emmiter.play( filename );
+    void play( string soundName )
+    {
+        // Load in the sound
+        toPlay.load( Audio.sounds[soundName].toStringz() );
 
-		// play the sound from the location of the parent object
-		Audio.soloud.play3d(toPlay,
-							owner.transform.position.x,
-		                    owner.transform.position.y,
-		                    owner.transform.position.z);
-	}
-
-	void playFollow( string soundName ) {
-		// Load in the sound
-		toPlay.load( Audio.sounds[soundName].toStringz() );
-
-		// play the sound from the location of the parent object
-		// and set the sound to move with the emitter
-		handles ~= Audio.soloud.play3d( toPlay,
-				                        owner.transform.position.x,
-				                        owner.transform.position.y,
-				                        owner.transform.position.z );
-
-	}
-
-	override void update()
-	{
-		foreach_reverse( i, handle; handles )
-		{
-			if( !Audio.soloud.isValidVoiceHandle( handle ) )
-			{
-				auto end = handles[i+1..$];
-				handles = handles[0..i];
-				handles ~= end;
-			} else {
-				Audio.soloud.set3dSourcePosition( handle,
-				                                  owner.transform.position.x,
-				                                  owner.transform.position.y,
-				                                  owner.transform.position.z );
-			}
-		}
-	}
+        // play the sound from the location of the parent object
+        Audio.soloud.play3d(toPlay,
+                            owner.transform.position.x,
+                            owner.transform.position.y,
+                            owner.transform.position.z);
+    }
 
 
-	/**
-	 * Plays a sound that will follow the emitter for however long you set the length to be.
-	 */
-	void playFollow( string soundName, float soundLength )
-	{
+    /**
+     * Plays a sound that will follow the emitter for however long you set the length to be.
+     */
+    void playFollow( string soundName ) {
+        // Load in the sound
+        toPlay.load( Audio.sounds[soundName].toStringz() );
 
-	}
+        // play the sound from the location of the parent object
+        // and set the sound to move with the emitter
+        handles ~= Audio.soloud.play3d( toPlay,
+                                        owner.transform.position.x,
+                                        owner.transform.position.y,
+                                        owner.transform.position.z );
+
+    }
+
+    override void update()
+    {
+        foreach_reverse( i, handle; handles )
+        {
+            if( !Audio.soloud.isValidVoiceHandle( handle ) )
+            {
+                auto end = handles[i+1..$];
+                handles = handles[0..i];
+                handles ~= end;
+            } else {
+                Audio.soloud.set3dSourcePosition( handle,
+                                                  owner.transform.position.x,
+                                                  owner.transform.position.y,
+                                                  owner.transform.position.z );
+            }
+        }
+    }
+
+
+    
+    void playFollow( string soundName, float soundLength )
+    {
+
+    }
 }
 
 /**
@@ -119,7 +121,7 @@ public:
  * implement sound struct
 struct Sound
 {
-	Wav soundfile;
+    Wav soundfile;
 }
  */
  
@@ -127,25 +129,25 @@ final abstract class Audio
 {
 static:
 //private:
-	Soloud soloud;
+    Soloud soloud;
 
 public:
-	string[string] sounds;
+    string[string] sounds;
 
-	void initialize()
-	{
-		soloud = Soloud.create();
-		soloud.init();
+    void initialize()
+    {
+        soloud = Soloud.create();
+        soloud.init();
 
-		foreach( file; scanDirectory( Resources.Audio ) )
-		{
-			sounds[file.baseFileName] = file.relativePath;
-		}
-	}
+        foreach( file; scanDirectory( Resources.Audio ) )
+        {
+            sounds[file.baseFileName] = file.relativePath;
+        }
+    }
 
-	void shutdown()
-	{
-		soloud.deinit();
-		soloud.destroy();
-	}
+    void shutdown()
+    {
+        soloud.deinit();
+        soloud.destroy();
+    }
 }

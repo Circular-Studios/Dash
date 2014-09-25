@@ -25,7 +25,7 @@ package:
 public:
     /// The camera to render with.
     Camera camera;
-	Listener listener;
+    Listener listener;
 
     /// The root object of the scene.
     mixin( Getter!_root );

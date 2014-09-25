@@ -46,11 +46,9 @@ public:
 
     // For serialization.
     mixin( perSerializationFormat!q{
-        @ignore static $type delegate( Component )[ ClassInfo ] $typeSerializers;
-        @ignore static Component delegate( $type )[ string ] $typeDeserializers;
         $type to$type() const
         {
-            return $typeSerializers[ typeid(this) ]( cast()this );
+            return getDescription( typeid(this) ).serializeComponentTo$type( cast()this );
         }
         static Component from$type( $type data )
         {
@@ -62,9 +60,9 @@ public:
 
             if( auto type = "Type" in d )
             {
-                if( auto cereal = type.get!string in $typeDeserializers )
+                if( auto desc = getDescription( type.get!string ) )
                 {
-                    return ( *cereal )( data );
+                    return desc.deserializeFrom$type( data ).createInstance();
                 }
                 else
                 {
@@ -96,9 +94,41 @@ public:
         string serializer;
     }
 
+    /// The type of the component.
     @rename( "Type" )
     string type;
+
+    /// Get a list of teh fields on a component.
     abstract immutable(Field[]) fields() const @property;
+
+    /// Create an instance of the component the description is for.
+    abstract Component createInstance() const;
+
+    /// Serializers and deserializers
+    mixin( perSerializationFormat!q{
+        abstract $type serializeComponentTo$type( Component c ) const;
+        abstract Description deserializeFrom$type( $type node ) const;
+    } );
+}
+
+/// A map of all registered Component types to their descriptions
+private immutable(Description)[ClassInfo] descriptionsByClassInfo;
+private immutable(Description)[string] descriptionsByName;
+
+immutable(Description) getDescription( ClassInfo type )
+{
+    if( auto desc = type in descriptionsByClassInfo )
+        return *desc;
+    else
+        return null;
+}
+
+immutable(Description) getDescription( string name )
+{
+    if( auto desc = name in descriptionsByName )
+        return *desc;
+    else
+        return null;
 }
 
 /**
@@ -135,19 +165,9 @@ public:
     // Runtime function, registers serializers
     void register()
     {
-        // Generate serializers for the type
-        mixin( perSerializationFormat!q{
-            Component.$typeSerializers[ typeid(T) ] = ( Component c )
-            {
-                return serializeTo$type( SerializationDescription.create( cast(T)c ) );
-            };
-            Component.$typeDeserializers[ T.stringof ] = ( $type node )
-            {
-                return deserialize$type!SerializationDescription( node ).createInstance();
-            };
-        } );
-
-        Component.descriptionCreators[ typeid(T) ] = &SerializationDescription.create;
+        immutable desc = new immutable SerializationDescription;
+        descriptionsByClassInfo[ typeid(T) ] = desc;
+        descriptionsByName[ T.stringof ] = desc;
     }
 
     // Generate description
@@ -157,24 +177,34 @@ private:
     // Generate actual struct
     final class SerializationDescription : Description
     {
-        mixin( { return reduce!( ( working, field )
+        mixin( { return reduce!( ( working, field ) {
+            string result = working;
+
+            // Append required import for variable type
+            if( field.mod )
+                result ~= "import " ~ field.mod ~ ";\n";
+
+            // Append variable attributes
+            if( field.attributes )
+                result ~= "@(" ~ field.attributes ~ ")\n";
+
+            // Append variable declaration
+            result ~= field.typeName ~ " " ~ field.name ~ ";\n";
+
+            return result;
+        } )( "", fieldList ); } () );
+
+        // Generate serializers for the type
+        mixin( perSerializationFormat!q{
+            override $type serializeComponentTo$type( Component c ) const
             {
-                string result = working;
-
-                // Append required import for variable type
-                if( field.mod )
-                    result ~= "import " ~ field.mod ~ ";\n";
-
-                // Append variable attributes
-                if( field.attributes )
-                    result ~= "@(" ~ field.attributes ~ ")\n";
-
-                // Append variable declaration
-                result ~= field.typeName ~ " " ~ field.name ~ ";\n";
-
-                return result;
+                return serializeTo$type( SerializationDescription.create( cast(T)c ) );
             }
-        )( "", fieldList ); } () );
+            override SerializationDescription deserializeFrom$type( $type node ) const
+            {
+                return deserialize$type!SerializationDescription( node );
+            }
+        } );
 
         /// Get a list of field descriptions
         override immutable(Description.Field[]) fields() const @property
@@ -204,7 +234,7 @@ private:
         }
 
         /// Create a component from a description.
-        T createInstance()
+        override T createInstance() const
         {
             T comp = new T;
             foreach( fieldName; __traits( allMembers, T ) )

@@ -38,11 +38,8 @@ public:
      */
     const(Description) description() @property
     {
-        assert( typeid(this) in descriptionCreators, "ComponentDescription not found for type " ~ typeid(this).name );
-        return descriptionCreators[ typeid(this) ]( this );
+        return getDescription( typeid(this) ).create( this );
     }
-    private alias DescriptionCreator = const(Description) function( Component );
-    private static DescriptionCreator[ ClassInfo ] descriptionCreators;
 
     // For serialization.
     mixin( perSerializationFormat!q{
@@ -103,6 +100,9 @@ public:
 
     /// Create an instance of the component the description is for.
     abstract Component createInstance() const;
+
+    /// Creates a description from a component.
+    abstract const(Description) create( const Component comp ) const;
 
     /// Serializers and deserializers
     mixin( perSerializationFormat!q{
@@ -213,7 +213,7 @@ private:
         }
 
         /// Create a description from a component.
-        static const(SerializationDescription) create( Component comp )
+        override const(SerializationDescription) create( const Component comp ) const
         {
             auto theThing = cast(T)comp;
             auto desc = new SerializationDescription;

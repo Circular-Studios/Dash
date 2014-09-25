@@ -4,34 +4,24 @@
 module dash.components.component;
 import dash.core, dash.components, dash.graphics, dash.utility;
 
-import yaml;
-import std.array, std.string, std.traits, std.conv;
+import vibe.data.bson, vibe.data.json, dash.utility.data.yaml;
+import std.algorithm, std.array, std.string, std.traits, std.conv, std.typecons;
 
 /// Tests if a type can be created from yaml.
-enum isYamlObject(T) = __traits( compiles, { T obj; obj.yaml = Node( YAMLNull() ); } );
-
-abstract class YamlObject
-{
-    Node yaml;
-
-    /// Called when refreshing an object.
-    void refresh() { }
-
-    this()
-    {
-        yaml = Node( YAMLNull() );
-    }
-}
+enum isComponent(alias T) = is( T == class ) && is( T : Component ) && !__traits( isAbstractClass, T );
+private enum perSerializationFormat( string code ) = "".reduce!( ( working, type ) => working ~ code.replace( "$type", type ) )( serializationFormats );
+alias helper( alias T ) = T;
+alias helper( T... ) = T;
+alias helper() = TypeTuple!();
 
 /**
  * Interface for components to implement.
  */
-abstract class Component : YamlObject
+abstract class Component
 {
 public:
-    /// The node that defined the component.
-    Node yaml;
     /// The GameObject that owns this component.
+    @ignore
     GameObject owner;
 
     /// The function called on initialization of the object.
@@ -42,70 +32,74 @@ public:
     void draw() { }
     /// Called on shutdown.
     void shutdown() { }
+
+    /**
+     * Create a description from the this parameter.
+     */
+    const(Description) description() @property
+    {
+        assert( typeid(this) in descriptionCreators, "ComponentDescription not found for type " ~ typeid(this).name );
+        return descriptionCreators[ typeid(this) ]( this );
+    }
+    private alias DescriptionCreator = const(Description) function( Component );
+    private static DescriptionCreator[ ClassInfo ] descriptionCreators;
+
+    // For serialization.
+    mixin( perSerializationFormat!q{
+        @ignore static $type delegate( Component )[ ClassInfo ] $typeSerializers;
+        @ignore static Component delegate( $type )[ string ] $typeDeserializers;
+        $type to$type() const
+        {
+            return $typeSerializers[ typeid(this) ]( cast()this );
+        }
+        static Component from$type( $type data )
+        {
+            // If it's Bson, convert it to a json object.
+            static if( is( $type == Bson ) )
+                auto d = data.toJson();
+            else
+                auto d = data;
+
+            if( auto type = "Type" in d )
+            {
+                if( auto cereal = type.get!string in $typeDeserializers )
+                {
+                    return ( *cereal )( data );
+                }
+                else
+                {
+                    logWarning( "Component's \"Type\" not found: ", type.get!string );
+                    return null;
+                }
+            }
+            else
+            {
+                logWarning( "Component doesn't have \"Type\" field." );
+                return null;
+            }
+        }
+        static assert( is$typeSerializable!Component );
+    } );
 }
 
-/**
- * Meant to be added to components that can be set from YAML.
- * Example:
- * ---
- * @yamlObject("Test")
- * class Test : YamlObject
- * {
- *     @field("X")
- *     int x;
- * }
- * ---
- */
-auto yamlObject( string name = "" )
+/// The description for the component
+abstract class Description
 {
-    return YamlUDA( YamlType.Object, name, null );
-}
+public:
+    static struct Field
+    {
+    public:
+        string name;
+        string typeName;
+        string attributes;
+        string mod;
+        string serializer;
+    }
 
-/**
- * Meant to be added to components that can be set from YAML.
- * Example:
- * ---
- * @yamlComponent("Test")
- * class Test : Component
- * {
- *     @field("X")
- *     int x;
- * }
- * ---
- */
-auto yamlComponent( string loader = "null" )( string name = "" )
-{
-    return YamlUDA( YamlType.Component, name, mixin( loader ) );
+    @rename( "Type" )
+    string type;
+    abstract immutable(Field[]) fields() const @property;
 }
-
-/**
- * Meant to be added to members for making them YAML accessible.
- *
- * Params:
- *  name =              The name of the tag in YAML.
- *  loader =            If cannot be loaded directly, specify function used to load it.
- *
- * Example:
- * ---
- * @yamlComponent("Test")
- * class Test : Component
- * {
- *     @field("X")
- *     int x;
- * }
- * ---
- */
-auto field( string loader = "null" )( string name = "" )
-{
-    return YamlUDA( YamlType.Field, name, mixin( loader ) );
-}
-
-/// Used to create objects from yaml. The key is the YAML name of the type.
-YamlObject delegate( Node )[string] createYamlObject;
-/// Used to create components from yaml. The key is the YAML name of the type.
-Component delegate( Node )[string] createYamlComponent;
-/// Refresh any object defined from yaml. The key is the typeid of the type.
-void delegate( YamlObject, Node )[TypeInfo] refreshYamlObject;
 
 /**
  * To be placed at the top of any module defining YamlComponents.
@@ -113,250 +107,188 @@ void delegate( YamlObject, Node )[TypeInfo] refreshYamlObject;
  * Params:
  *  modName =           The name of the module to register.
  */
-enum registerComponents( string modName ) = q{
+enum registerComponents( string modName = __MODULE__ ) = q{
     static this()
     {
-        import yaml;
-        mixin( "import mod = $modName;" );
+        // Declarations
+        import mod = $modName;
 
         // Foreach definition in the module (classes, structs, functions, etc.)
-        foreach( member; __traits( allMembers, mod ) )
+        foreach( memberName; __traits( allMembers, mod ) )
         {
-            // If the we can get the attributes of the definition
-            static if( __traits( compiles, __traits( getAttributes, __traits( getMember, mod, member ) ) ) )
+            // Alais to the member
+            alias member = helper!( __traits( getMember, mod, memberName ) );
+
+            // If member is a class that extends Componen
+            static if( isComponent!member )
             {
-                // Iterate over each attribute and try to find a YamlEntry
-                foreach( attrib; __traits( getAttributes, __traits( getMember, mod, member ) ) )
-                {
-                    // If we find one, process it and go to next definition.
-                    static if( is( typeof(attrib) == YamlUDA ) )
-                    {
-                        if( attrib.type == YamlType.Component )
-                        {
-                            /*static if( !is( typeof( mixin( member ) ) : Component ) )
-                                logError( "@yamlComponent() must be placed on a class which extends Component. ", member, " fails this check." );*/
-
-                            // If the type has a loader, register it as the create function.
-                            if( attrib.loader )
-                            {
-                                typeLoaders[ typeid(mixin( member )) ] = attrib.loader;
-                                createYamlComponent[ member ] = ( node ) { if( node.isScalar ) return cast(Component)attrib.loader( node.get!string ); else { logInfo( "Invalid node for ", member ); return null; } };
-                            }
-                        }
-                        else if( attrib.type == YamlType.Object )
-                        {
-                            /*static if( !is( typeof( mixin( member ) ) : YamlObject ) && !isYamlObject!( mixin( member ) ) )
-                                logError( "@yamlObject() must be placed on a class which extends YamlObject or passes isYamlObject. ", member, " fails this check." );*/
-                        }
-                        else
-                        {
-                            logError( "@field on a type is illegal." );
-                        }
-
-                        registerYamlObjects!( mixin( member ) )( attrib.name.length == 0 ? member : attrib.name, attrib.type );
-                    }
-                }
+                componentMetadata!( member ).register();
             }
         }
     }
 }.replace( "$modName", modName );
 
-/// For internal use only.
-LoaderFunction[TypeInfo] typeLoaders;
-
-/// DON'T MIND ME
-void registerYamlObjects( Base )( string yamlName, YamlType type ) if( is( Base : YamlObject ) )
+/// Registers a type as a component
+template componentMetadata( T ) if( isComponent!T )
 {
-    // If no name specified, use class name.
-    if( yamlName == "" )
-        yamlName = Base.stringof.split( "." )[ $-1 ];
-
-    refreshYamlObject[ typeid(Base) ] = ( comp, n )
+public:
+    // Runtime function, registers serializers
+    void register()
     {
-        auto b = cast(Base)comp;
-
-        // If node contains reference to this type, grab that as root instead.
-        Node node;
-        if( !n.tryFind( yamlName, node ) )
-            node = n;
-
-        // Get all members of the class (including inherited ones).
-        foreach( memberName; __traits( allMembers, Base ) )
-        {
-            // If the attributes are gettable.
-            static if( __traits( compiles, __traits( getAttributes, __traits( getMember, Base, memberName ) ) ) )
+        // Generate serializers for the type
+        mixin( perSerializationFormat!q{
+            Component.$typeSerializers[ typeid(T) ] = ( Component c )
             {
-                // Iterate over each attribute on the member.
-                foreach( attrib; __traits( getAttributes, __traits( getMember, Base, memberName ) ) )
+                return serializeTo$type( SerializationDescription.create( cast(T)c ) );
+            };
+            Component.$typeDeserializers[ T.stringof ] = ( $type node )
+            {
+                return deserialize$type!SerializationDescription( node ).createInstance();
+            };
+        } );
+
+        Component.descriptionCreators[ typeid(T) ] = &SerializationDescription.create;
+    }
+
+    // Generate description
+    enum fieldList = getFields();
+
+private:
+    // Generate actual struct
+    final class SerializationDescription : Description
+    {
+        mixin( { return reduce!( ( working, field )
+            {
+                string result = working;
+
+                // Append required import for variable type
+                if( field.mod )
+                    result ~= "import " ~ field.mod ~ ";\n";
+
+                // Append variable attributes
+                if( field.attributes )
+                    result ~= "@(" ~ field.attributes ~ ")\n";
+
+                // Append variable declaration
+                result ~= field.typeName ~ " " ~ field.name ~ ";\n";
+
+                return result;
+            }
+        )( "", fieldList ); } () );
+
+        /// Get a list of field descriptions
+        override immutable(Description.Field[]) fields() const @property
+        {
+            return fieldList;
+        }
+
+        /// Create a description from a component.
+        static const(SerializationDescription) create( Component comp )
+        {
+            auto theThing = cast(T)comp;
+            auto desc = new SerializationDescription;
+            desc.type = T.stringof;
+
+            foreach( fieldName; __traits( allMembers, T ) )
+            {
+                enum idx = fieldList.map!(f => f.name).countUntil( fieldName );
+                static if( idx >= 0 )
                 {
-                    // If it is marked as a field, process.
-                    static if( is( typeof(attrib) == YamlUDA ) )
+                    enum field = fieldList[ idx ];
+                    mixin( "auto ser = "~field.serializer~".serialize(theThing."~field.name~");" );
+                    mixin( "desc."~field.name~" = ser;" );
+                }
+            }
+
+            return desc;
+        }
+
+        /// Create a component from a description.
+        T createInstance()
+        {
+            T comp = new T;
+            foreach( fieldName; __traits( allMembers, T ) )
+            {
+                enum idx = fieldList.map!(f => f.name).countUntil( fieldName );
+                static if( idx >= 0 )
+                {
+                    enum field = fieldList[ idx ];
+                    // Check if the field was actually set
+                    if( mixin( field.name ) != mixin( "new SerializationDescription()." ~ field.name ) )
                     {
-                        if( attrib.type == YamlType.Field )
-                        {
-                            string yamlFieldName;
-                            // If a name is not specified, use the name of the member.
-                            if( attrib.name == "" )
-                                yamlFieldName = memberName;
-                            else
-                                yamlFieldName = attrib.name;
-
-                            // If there's an loader on the field, use that.
-                            if( attrib.loader )
-                            {
-                                static if( is( typeof( mixin( "b." ~ memberName ) ) : YamlObject ) )
-                                {
-                                    string newStringVal;
-                                    if( node.tryFind( yamlFieldName, newStringVal ) )
-                                    {
-                                        auto newVal = cast(typeof(mixin( "b." ~ memberName )))attrib.loader( newStringVal );
-                                        // If value hasn't changed, or if it was changed through code, ignore.
-                                        string oldStringVal;
-                                        if( b.yaml.tryFind( yamlFieldName, oldStringVal ) )
-                                        {
-                                            auto oldVal = cast(typeof(mixin( "b." ~ memberName )))attrib.loader( oldStringVal );
-                                            if( oldStringVal == newStringVal || oldVal != mixin( "b." ~ memberName ) )
-                                                continue;
-                                        }
-
-                                        mixin( "b." ~ memberName ) = newVal;
-                                    }
-                                    else
-                                    {
-                                        logDebug( "Failed using attrib loader for ", yamlFieldName );
-                                    }
-                                }
-                            }
-                            // If the type of the field has a loader, use that.
-                            else if( typeid( mixin( "b." ~ memberName ) ) in typeLoaders )
-                            {
-                                static if( is( typeof( mixin( "b." ~ memberName ) ) : YamlObject ) )
-                                {
-                                    auto loader = typeid( mixin( "b." ~ memberName ) ) in typeLoaders;
-
-                                    string newStringVal;
-                                    if( node.tryFind( yamlFieldName, newStringVal ) )
-                                    {
-                                        auto newVal = cast(typeof(mixin( "b." ~ memberName )))( *loader )( newStringVal );
-                                        // If value hasn't changed, ignore.
-                                        string oldStringVal;
-                                        if( b.yaml.tryFind( yamlFieldName, oldStringVal ) )
-                                        {
-                                            auto oldVal = cast(typeof(mixin( "b." ~ memberName )))( *loader )( oldStringVal );
-                                            if( oldStringVal == newStringVal || oldVal != mixin( "b." ~ memberName ) )
-                                                continue;
-                                        }
-
-                                        mixin( "b." ~ memberName ) = newVal;
-                                    }
-                                    else
-                                    {
-                                        logDebug( "Failed using typeloader for ", yamlFieldName );
-                                    }
-                                }
-                            }
-                            // Else just try to parse the yaml.
-                            else
-                            {
-                                typeof( __traits( getMember, b, memberName ) ) val;
-
-                                static if( is( typeof( __traits( getMember, b, memberName ) ) == enum ) )
-                                {
-                                    string valName;
-                                    bool result = node.tryFind( yamlFieldName, valName );
-
-                                    if( result )
-                                        val = valName.to!( typeof( mixin( "b." ~ memberName ) ) );
-                                }
-                                else
-                                {
-                                    bool result = node.tryFind( yamlFieldName, val );
-                                }
-
-                                if( result )
-                                {
-                                    // If value hasn't changed, ignore.
-                                    typeof( __traits( getMember, b, memberName ) ) oldVal;
-                                    if( b.yaml.tryFind( yamlFieldName, oldVal ) )
-                                    {
-                                        if( oldVal == val || oldVal != mixin( "b." ~ memberName ) )
-                                            continue;
-                                    }
-
-                                    mixin( "b." ~ memberName ) = val;
-                                }
-                                else
-                                {
-                                    logDebug( "Failed creating ", yamlFieldName, " of type ", typeof( mixin( "b." ~ memberName ) ).stringof );
-                                    logDebug( "Typeloaders: ", typeLoaders );
-                                }
-                            }
-                        }
-
-                        break;
-                    }
-                    // If the user forgot (), remind them.
-                    else static if( is( typeof(attrib == typeof(field) ) ) )
-                    {
-                        static assert( false, "Don't forget () after field on " ~ memberName );
+                        mixin( "auto ser = "~field.serializer~".deserialize(this."~field.name~");" );
+                        mixin( "comp."~field.name~" = ser;" );
                     }
                 }
             }
+            return comp;
         }
+    }
 
-        // Set the yaml property so the class has access to the yaml that created it.
-        b.yaml = node;
-    };
-
-    // Make sure the type is instantiable
-    static if( __traits( compiles, new Base ) )
+    /// Get a list of fields on the type
+    Description.Field[] getFields( size_t idx = 0 )( Description.Field[] fields = [] )
     {
-        static if( is( Base : Component ) )
+        static if( idx == __traits( allMembers, T ).length )
         {
-            if( type == YamlType.Component )
+            return fields;
+        }
+        else
+        {
+            enum memberName = helper!( __traits( allMembers, T )[ idx ] );
+
+            // Make sure member is accessable and that we care about it
+            static if( !memberName.among( "this", "~this", __traits( allMembers, Component ) ) &&
+                        is( typeof( helper!( __traits( getMember, T, memberName ) ) ) ) )
             {
-                if( auto loader = typeid( Base ) in typeLoaders )
+                import vibe.internal.meta.uda;
+
+                alias member = helper!( __traits( getMember, T, memberName ) );
+                alias memberType = typeof(member);
+
+                // Process variables
+                static if( !isSomeFunction!member && !findFirstUDA!( IgnoreAttribute, member ).found )
                 {
-                    createYamlComponent[ yamlName ] = ( node )
+                    // Get string form of attributes
+                    string attributesStr()
                     {
-                        return cast(Component)( *loader )( node.get!string );
-                    };
+                        import std.conv;
+                        string[] attrs;
+                        foreach( attr; __traits( getAttributes, member ) )
+                        {
+                            attrs ~= attr.to!string;
+                        }
+                        return attrs.join( ", " ).to!string;
+                    }
+
+                    // Get required module import name
+                    static if( __traits( compiles, moduleName!( typeof( member ) ) ) )
+                        enum modName = moduleName!(typeof(member));
+                    else
+                        enum modName = null;
+
+                    // Get the serializer for the type
+                    alias serializer = serializerFor!memberType;
+                    alias descMemberType = serializer.Rep;
+                    // Generate field
+                    return getFields!( idx + 1 )( fields ~
+                        Description.Field(
+                            memberName,
+                            fullyQualifiedName!(Unqual!descMemberType),
+                            attributesStr,
+                            modName,
+                            serializer.stringof
+                        )
+                    );
                 }
                 else
                 {
-                    createYamlComponent[ yamlName ] = ( node )
-                    {
-                        // Create an instance of the class to assign things to.
-                        Component b = new Base;
-
-                        refreshYamlObject[ typeid(Base) ]( b, node );
-
-                        return b;
-                    };
+                    return getFields!( idx + 1 )( fields );
                 }
             }
-        }
-        if( type == YamlType.Object )
-        {
-            createYamlObject[ yamlName ] = ( node )
+            else
             {
-                // Create an instance of the class to assign things to.
-                YamlObject b = new Base;
-
-                refreshYamlObject[ typeid(Base) ]( b, node );
-
-                return b;
-            };
+                return getFields!( idx + 1 )( fields );
+            }
         }
     }
-}
-
-enum YamlType { Object, Component, Field }
-private alias LoaderFunction = YamlObject delegate( string );
-
-struct YamlUDA
-{
-    YamlType type;
-    string name;
-    LoaderFunction loader;
 }

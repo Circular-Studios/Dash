@@ -45,12 +45,17 @@ public:
      */
     final void loadObjects( string objectPath = "" )
     {
-        foreach( ymlFile; buildNormalizedPath( Resources.Objects, objectPath ).loadYamlFiles() )
+        foreach( file; buildNormalizedPath( Resources.Objects, objectPath ).scanDirectory() )
         {
-            // Create the object
-            auto newObj = GameObject.createFromYaml( ymlFile[ 0 ] );
-            _root.addChild( newObj );
-            goResources[ ymlFile[ 1 ] ] ~= newObj;
+            // Create the objects
+            foreach( desc; file.deserializeMultiFile!( GameObject.Description )() )
+            {
+                auto newObj = GameObject.create( desc );
+                _root.addChild( newObj );
+                goResources[ file ] ~= newObj;
+
+                logDebug( "Adding object ", newObj.name, " with diffuse: ", newObj.material.diffuse );
+            }
         }
     }
 
@@ -86,12 +91,7 @@ public:
     final void refresh()
     {
         // Iterate over each file, and it's objects
-        refreshYamlObjects!(
-            GameObject.createFromYaml,
-            node => this[ node[ "Name" ].get!string ],
-            ( node, obj ) => _root.addChild( obj ),
-            ( obj ) { if( obj.parent ) obj.parent.removeChild( obj ); } )
-                ( goResources );
+        //TODO: Implement
     }
 
     /**

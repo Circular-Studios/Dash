@@ -14,15 +14,11 @@ public:
     {
         this.editor = editor;
 
-        // Default port to 8080
-        ushort bindPort = 8080;
-        config.tryFind( "Editor.Port", bindPort );
-
         auto router = new URLRouter;
-        router.get( "/ws", handleWebSockets( &handleConnection ) );
+        router.get( "/" ~ config.editor.route, handleWebSockets( &handleConnection ) );
 
         auto settings = new HTTPServerSettings;
-        settings.port = bindPort;
+        settings.port = config.editor.port;
         settings.bindAddresses = [ "::1", "127.0.0.1" ];
 
         listenHTTP( settings, router );

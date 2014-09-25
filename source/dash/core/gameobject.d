@@ -5,9 +5,7 @@ module dash.core.gameobject;
 import dash.core, dash.components, dash.graphics, dash.utility;
 
 import yaml;
-import gl3n.linalg, gl3n.math;
-
-import std.conv, std.variant, std.array, std.algorithm, std.typecons, std.range, std.string;
+import std.conv, std.variant, std.array, std.algorithm, std.typecons, std.range, std.string, std.math;
 
 enum AnonymousName = "__anonymous";
 
@@ -49,14 +47,12 @@ struct ObjectStateFlags
 final class GameObject
 {
 private:
-    Transform _transform;
     GameObject _parent;
     GameObject[] _children;
+    Prefab _prefab;
     Component[TypeInfo] componentList;
     string _name;
-    ObjectStateFlags* _stateFlags;
     bool canChangeName;
-    Node _yaml;
     static uint nextId = 1;
 
     enum componentProperty( Type ) = q{
@@ -68,8 +64,37 @@ package:
     Scene scene;
 
 public:
+    /**
+     * The struct that will be directly deserialized from the ddl.
+     */
+    static struct Description
+    {
+        /// The name of the object.
+        @rename( "Name" )
+        string name;
+
+        /// The name of the prefab to create from. Do you use with $(D prefab).
+        @rename( "InstanceOf" ) @optional
+        string prefabName = null;
+
+        /// The Prefab to create from.
+        @ignore
+        Prefab prefab;
+
+        /// The transform of the object.
+        @rename( "Transform" ) @optional
+        Transform.Description transform;
+
+        /// Children of this object.
+        @rename( "Children" ) @optional
+        Description[] children;
+
+        @rename( "Components" ) @optional
+        Component[] components;
+    }
+
     /// The current transform of the object.
-    mixin( RefGetter!_transform );
+    Transform transform;
     /// The light attached to this object.
     @property void light( Light v ) { addComponent( v ); }
     /// ditto
@@ -99,37 +124,42 @@ public:
     mixin( Property!_parent );
     /// All of the objects which list this as parent
     mixin( Property!_children );
-    /// The yaml node that created the object.
-    mixin( RefGetter!_yaml );
-    /// The current update settings
-    mixin( Property!( _stateFlags, AccessModifier.Public ) );
     /// The name of the object.
     mixin( Getter!_name );
+    /// The prefab that this object is based on.
+    mixin( Property!_prefab );
     /// ditto
     mixin( ConditionalSetter!( _name, q{canChangeName}, AccessModifier.Public ) );
     /// The ID of the object.
     immutable uint id;
+    /// The current update settings
+    ObjectStateFlags* stateFlags;
     /// Allow setting of state flags directly.
     //alias stateFlags this;
 
     /**
-     * Create a GameObject from a Yaml node.
+     * Create a GameObject from a description object.
      *
      * Params:
-     *  yamlObj =           The YAML node to pull info from.
+     *  desc =              The description to pull info from.
      *
      * Returns:
-     *  A new game object with components and info pulled from yaml.
+     *  A new game object with components and info pulled from desc.
      */
-    static GameObject createFromYaml( Node yamlObj )
+    static GameObject create( Description desc )
     {
         GameObject obj;
-        string prop;
-        Node innerNode;
 
-        if( yamlObj.tryFind( "InstanceOf", prop ) )
+        // Create the object
+        if( desc.prefabName )
         {
-            obj = Prefabs[ prop ].createInstance();
+            auto fab = Prefabs[ desc.prefabName ];
+            obj = fab.createInstance();
+            obj.prefab = fab;
+        }
+        else if( desc.prefab )
+        {
+            obj = desc.prefab.createInstance();
         }
         else
         {
@@ -137,56 +167,27 @@ public:
         }
 
         // Set object name
-        obj.name = yamlObj[ "Name" ].as!string;
+        obj.name = desc.name;
 
         // Init transform
-        if( yamlObj.tryFind( "Transform", innerNode ) )
+        obj.transform = desc.transform;
+
+        // Create children
+        if( desc.children.length > 0 )
         {
-            vec3 transVec;
-            if( innerNode.tryFind( "Scale", transVec ) )
-                obj.transform.scale = vec3( transVec );
-            if( innerNode.tryFind( "Position", transVec ) )
-                obj.transform.position = vec3( transVec );
-            if( innerNode.tryFind( "Rotation", transVec ) )
-                obj.transform.rotation = quat.identity.rotatex( transVec.x.radians ).rotatey( transVec.y.radians ).rotatez( transVec.z.radians );
+            foreach( child; desc.children )
+            {
+                obj.addChild( GameObject.create( child ) );
+            }
         }
 
-        if( yamlObj.tryFind( "Children", innerNode ) )
+        // Add components
+        foreach( component; desc.components )
         {
-            if( innerNode.isSequence )
-            {
-                foreach( Node child; innerNode )
-                {
-                    // If inline object, create it and add it as a child.
-                    if( child.isMapping )
-                        obj.addChild( GameObject.createFromYaml( child ) );
-                    // Add child name to map.
-                    else
-                        logWarning( "Specifing child objects by name is deprecated. Please add ", child.get!string, " as an inline child of ", obj.name, "." );
-                }
-            }
-            else
-            {
-                logWarning( "Scalar values and mappings in 'Children' of ", obj.name, " are not supported, and it is being ignored." );
-            }
+            obj.addComponent( component );
         }
 
         // Init components
-        foreach( string key, Node componentNode; yamlObj )
-        {
-            if( key == "Name" || key == "InstanceOf" || key == "Transform" || key == "Children" )
-                continue;
-
-            if( auto init = key in createYamlComponent )
-            {
-                auto newComp = cast(Component)(*init)( componentNode );
-                obj.addComponent( newComp );
-                newComp.owner = obj;
-            }
-            else
-                logWarning( "Unknown key: ", key );
-        }
-
         foreach( comp; obj.componentList )
             comp.initialize();
 
@@ -194,14 +195,44 @@ public:
     }
 
     /**
+     * Create a description from a GameObject.
+     *
+     * Returns:
+     *  A new description with components and info.
+     */
+    Description toDescription()
+    {
+        Description desc;
+        desc.name = name;
+        desc.prefab = prefab;
+        desc.prefabName = prefab ? prefab.name : null;
+        desc.transform = transform.toDescription();
+        desc.children = children.map!( child => child.toDescription() ).array();
+        desc.components = componentList.values.dup;
+        return desc;
+    }
+
+    /// To complement the descriptions, and make serialization easier.
+    static GameObject fromRepresentation( Description desc )
+    {
+        return GameObject.create( desc );
+    }
+    /// ditto
+    Description toRepresentation()
+    {
+        return toDescription();
+    }
+    static assert( isCustomSerializable!GameObject );
+
+    /**
      * Creates basic GameObject with transform and connection to transform's emitter.
      */
     this()
     {
-        _transform = Transform( this );
+        transform = Transform( this );
 
         // Create default material
-        material = new Material( "default" );
+        material = new Material( new MaterialAsset( "default" ) );
         id = nextId++;
 
         stateFlags = new ObjectStateFlags;
@@ -267,88 +298,25 @@ public:
      * Refreshes the object with the given YAML node.
      *
      * Params:
-     *  node =          The node to refresh the object with.
+     *  desc =          The node to refresh the object with.
      */
-    final void refresh( Node node )
+    final void refresh( Description node )
     {
-        // Update components
-        foreach( type; componentList.keys )
-        {
-            if( auto refresher = type in refreshYamlObject )
-            {
-                ( *refresher )( componentList[ type ], node );
-                componentList[ type ].refresh();
-            }
-            else
-            {
-                componentList.remove( type );
-            }
-        }
-
-        // Update children
-        Node yamlChildren;
-        if( node.tryFind( "Children", yamlChildren ) && yamlChildren.isSequence )
-        {
-            auto childNames = children.map!( child => child.name );
-            bool[string] childFound = childNames.zip( false.repeat( childNames.length ) ).assocArray();
-
-            foreach( Node yamlChild; yamlChildren )
-            {
-                // Find 0 based index of child in yamlChildren
-                if( auto index = childNames.countUntil( yamlChild[ "Name" ].get!string ) + 1 )
-                {
-                    // Refresh with YAML node.
-                    children[ index - 1 ].refresh( yamlChild );
-                    childFound[ yamlChild[ "Name" ].get!string ] = true;
-                }
-                // If not in children, add it.
-                else
-                {
-                    addChild( GameObject.createFromYaml( yamlChild ) );
-                }
-            }
-
-            // Filter out found children's names, and then get the objects.
-            auto unfoundChildren = childFound.keys
-                                        .filter!( name => !childFound[ name ] )
-                                        .map!( name => children[ childNames.countUntil( name ) ] );
-            foreach( unfound; unfoundChildren )
-            {
-                logDebug( "Removing child ", unfound.name, " from ", name, "." );
-                unfound.shutdown();
-                removeChild( unfound );
-            }
-        }
-        // Remove all children
-        else
-        {
-            foreach( child; children )
-            {
-                child.shutdown();
-                removeChild( child );
-            }
-        }
+        //TODO: Implement
     }
 
     /**
      * Adds a component to the object.
      */
     final void addComponent( Component newComponent )
+    in
     {
-        if( newComponent )
-        {
-            componentList[ typeid(newComponent) ] = newComponent;
-
-            newComponent.owner = this;
-
-            if( typeid(newComponent) == typeid(Mesh) )
-            {
-                auto mesh = cast(Mesh)newComponent;
-
-                if( mesh.animated )
-                    addComponent( mesh.animationData.getComponent() );
-            }
-        }
+        assert( newComponent, "Null component added." );
+    }
+    body
+    {
+        componentList[ typeid(newComponent) ] = newComponent;
+        newComponent.owner = this;
     }
 
     /**
@@ -448,10 +416,17 @@ public:
 private struct Transform
 {
 private:
-    vec3 _prevPos;
-    quat _prevRot;
-    vec3 _prevScale;
-    mat4 _matrix;
+    vec3f _prevPos;
+    quatf _prevRot;
+    vec3f _prevScale;
+    mat4f _matrix;
+
+    void opAssign( Description desc )
+    {
+        position = vec3f( desc.position[] );
+        rotation = fromEulerAngles( desc.rotation[ 0 ], desc.rotation[ 1 ], desc.rotation[ 2 ] );
+        scale = vec3f( desc.scale[] );
+    }
 
     /**
      * Default constructor, most often created by GameObjects.
@@ -462,19 +437,52 @@ private:
     this( GameObject obj )
     {
         owner = obj;
-        position = vec3(0,0,0);
-        scale = vec3(1,1,1);
-        rotation = quat.identity;
+        position = vec3f(0,0,0);
+        scale = vec3f(1,1,1);
+        rotation = quatf.identity;
     }
 
 public:
+    /**
+     * The struct that will be directly deserialized from the ddl.
+     */
+    static struct Description
+    {
+        /// The position of the object.
+        @rename( "Position" ) @optional
+        float[3] position = [ 0.0f, 0.0f, 0.0f ];
+
+        /// The position of the object.
+        @rename( "Rotation" ) @optional
+        float[3] rotation = [ 0.0f, 0.0f, 0.0f ];
+
+        /// The position of the object.
+        @rename( "Scale" ) @optional
+        float[3] scale = [ 0.0f, 0.0f, 0.0f ];
+    }
+
+    /**
+     * Create a description from a Transform.
+     *
+     * Returns:
+     *  A new description with components.
+     */
+    Description toDescription()
+    {
+        Description desc;
+        desc.position = position.vector[ 0..3 ];
+        desc.rotation = rotation.toEulerAngles().vector[ 0..3 ];
+        desc.scale = scale.vector[ 0..3 ];
+        return desc;
+    }
+
     // these should remain public fields, properties return copies not references
     /// The position of the object in local space.
-    vec3 position;
+    vec3f position;
     /// The rotation of the object in local space.
-    quat rotation;
+    quatf rotation;
     /// The absolute scale of the object. Ignores parent scale.
-    vec3 scale;
+    vec3f scale;
 
     /// The object which this belongs to.
     GameObject owner;
@@ -489,12 +497,12 @@ public:
      *
      * Returns: The object's position relative to the world origin, not the parent.
      */
-    final @property vec3 worldPosition() @safe pure nothrow
+    final @property vec3f worldPosition() @safe pure nothrow
     {
         if( owner.parent is null )
             return position;
         else
-            return (owner.parent.transform.matrix * vec4(position.x,position.y,position.z,1.0f)).xyz;
+            return (owner.parent.transform.matrix * vec4f(position, 1.0f)).xyz;
     }
 
     /**
@@ -502,7 +510,7 @@ public:
      *
      * Returns: The object's rotation relative to the world origin, not the parent.
      */
-    final @property quat worldRotation() @safe pure nothrow
+    final @property quatf worldRotation() @safe pure nothrow
     {
         if( owner.parent is null )
             return rotation;
@@ -530,9 +538,9 @@ public:
      *
      * Returns: The forward axis of the current transform.
      */
-    final @property const vec3 forward()
+    final @property const vec3f forward()
     {
-        return vec3( -2 * (rotation.x * rotation.z + rotation.w * rotation.y),
+        return vec3f( -2 * (rotation.x * rotation.z + rotation.w * rotation.y),
                             -2 * (rotation.y * rotation.z - rotation.w * rotation.x),
                             -1 + 2 * (rotation.x * rotation.x + rotation.y * rotation.y ));
     }
@@ -540,11 +548,10 @@ public:
     unittest
     {
         import std.stdio;
-        import gl3n.math;
         writeln( "Dash Transform forward unittest" );
 
         auto trans = new Transform( null );
-        auto forward = vec3( 0.0f, 1.0f, 0.0f );
+        auto forward = vec3f( 0.0f, 1.0f, 0.0f );
         trans.rotation.rotatex( 90.radians );
         assert( almost_equal( trans.forward, forward ) );
     }
@@ -554,9 +561,9 @@ public:
      *
      * Returns: The up axis of the current transform.
      */
-    final  @property const vec3 up()
+    final @property const vec3f up()
     {
-        return vec3( 2 * (rotation.x * rotation.y - rotation.w * rotation.z),
+        return vec3f( 2 * (rotation.x * rotation.y - rotation.w * rotation.z),
                         1 - 2 * (rotation.x * rotation.x + rotation.z * rotation.z),
                         2 * (rotation.y * rotation.z + rotation.w * rotation.x));
     }
@@ -564,12 +571,10 @@ public:
     unittest
     {
         import std.stdio;
-        import gl3n.math;
         writeln( "Dash Transform up unittest" );
 
         auto trans = new Transform( null );
-
-        auto up = vec3( 0.0f, 0.0f, 1.0f );
+        auto up = vec3f( 0.0f, 0.0f, 1.0f );
         trans.rotation.rotatex( 90.radians );
         assert( almost_equal( trans.up, up ) );
     }
@@ -579,9 +584,9 @@ public:
      *
      * Returns: The right axis of the current transform.
      */
-    final  @property const vec3 right()
+    final @property const vec3f right()
     {
-        return vec3( 1 - 2 * (rotation.y * rotation.y + rotation.z * rotation.z),
+        return vec3f( 1 - 2 * (rotation.y * rotation.y + rotation.z * rotation.z),
                         2 * (rotation.x * rotation.y + rotation.w * rotation.z),
                         2 * (rotation.x * rotation.z - rotation.w * rotation.y));
     }
@@ -589,11 +594,9 @@ public:
     unittest
     {
         import std.stdio;
-        import gl3n.math;
         writeln( "Dash Transform right unittest" );
 
         auto trans = new Transform( null );
-
         auto right = vec3( 0.0f, 0.0f, -1.0f );
         trans.rotation.rotatey( 90.radians );
         assert( almost_equal( trans.right, right ) );
@@ -608,14 +611,14 @@ public:
         _prevRot = rotation;
         _prevScale = scale;
 
-        _matrix = mat4.identity;
+        _matrix = mat4f.identity;
         // Scale
         _matrix[ 0 ][ 0 ] = scale.x;
         _matrix[ 1 ][ 1 ] = scale.y;
         _matrix[ 2 ][ 2 ] = scale.z;
 
         // Rotate
-        _matrix = _matrix * rotation.to_matrix!(4,4);
+        _matrix = _matrix * rotation.toMatrix!4;
 
         // Translate
         _matrix[ 0 ][ 3 ] = position.x;

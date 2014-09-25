@@ -22,8 +22,8 @@ enum Resources : string
     Shaders = Home ~ "/Shaders",
     UI = Home ~ "/UI",
     ConfigDir = Home ~ "/Config",
-    ConfigFile = ConfigDir ~ "/Config.yml",
-    InputBindings = ConfigDir ~ "/Input.yml",
+    ConfigFile = ConfigDir ~ "/Config",
+    InputBindings = ConfigDir ~ "/Input",
     CompactContentFile = Home ~ "/Content.yml",
 }
 

@@ -216,8 +216,8 @@ public:
     {
         version( Windows )
         {
-            if( !Win32.get() )
-                return vec2i();
+            if( !Win32GL.get() )
+                return vec2ui();
 
             import dash.graphics;
             import win32.windows;

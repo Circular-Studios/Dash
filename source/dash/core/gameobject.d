@@ -41,6 +41,9 @@ struct ObjectStateFlags
     }
 }
 
+/// A tuple of a resource and a gameobject reference
+alias GameObjectResource    = Tuple!( Resource, "resource", GameObject, "object" );
+
 /**
  * Manages all components and transform in the world. Can be overridden.
  */

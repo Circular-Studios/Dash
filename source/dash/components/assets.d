@@ -78,7 +78,7 @@ public:
         assert(aiIsExtensionSupported(".fbx".toStringz), "fbx format isn't supported by assimp instance!");
 
         // Load the unitSquare
-        unitSquare = new Mesh( new MeshAsset( "", aiImportFileFromMemory(
+        unitSquare = new Mesh( new MeshAsset( Resource( "" ), aiImportFileFromMemory(
                                         unitSquareMesh.toStringz(), unitSquareMesh.length,
                                         aiProcess_CalcTangentSpace | aiProcess_Triangulate |
                                         aiProcess_JoinIdenticalVertices | aiProcess_SortByPType,
@@ -99,10 +99,10 @@ public:
             // Add mesh
             if( scene.mNumMeshes > 0 )
             {
-                auto newMesh = new MeshAsset( file.fullPath, scene.mMeshes[ 0 ] );
+                auto newMesh = new MeshAsset( file, scene.mMeshes[ 0 ] );
 
                 if( scene.mNumAnimations > 0 )
-                    newMesh.animationData = new AnimationData( scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
+                    newMesh.animationData = new AnimationData( file, scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
 
                 meshes[ file.baseFileName ] = newMesh;
             }
@@ -120,7 +120,7 @@ public:
             if( file.baseFileName in textures )
                logWarning( "Texture ", file.baseFileName, " exists more than once." );
 
-            textures[ file.baseFileName ] = new TextureAsset( file.fullPath );
+            textures[ file.baseFileName ] = new TextureAsset( file );
         }
 
         foreach( res; scanDirectory( Resources.Materials ) )
@@ -132,6 +132,7 @@ public:
                 if( mat.name in materials )
                     logWarning( "Material ", mat.name, " exists more than once." );
 
+                mat.resource = res;
                 materials[ mat.name ] = mat;
                 materialResources[ res ] ~= mat;
             }
@@ -194,6 +195,9 @@ public:
     }
 }
 
+/// A tuple of a resource and an asset
+alias AssetResource         = Tuple!( Resource, "resource", Asset, "asset" );
+
 abstract class Asset
 {
 private:
@@ -209,10 +213,6 @@ public:
     /**
      * Creates asset with resource.
      */
-    this()
-    {
-        resource = Resource( "" );
-    }
     this( Resource res )
     {
         resource = res;
@@ -240,6 +240,12 @@ public:
     this( AssetType ass )
     {
         asset = ass;
+    }
+
+    /// Is the asset null?
+    bool isNull() @property const pure @safe nothrow 
+    {
+        return asset is null;
     }
 
     /// Gets a reference to it's asset.

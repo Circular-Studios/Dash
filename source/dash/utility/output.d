@@ -125,16 +125,9 @@ synchronized final class GlobalLogger : StyledStrictLogger!(OutputType
     */
     final void initialize()
     {
-        debug enum section = "Debug";
-        else  enum section = "Release";
-
-        enum LognameSection = "Logging.FilePath";
-        enum OutputVerbositySection = "Logging."~section~".OutputVerbosity";
-        enum LoggingVerbositySection = "Logging."~section~".LoggingVerbosity";
-
         // Try to get new path for logging
-        string newFileName;
-        if( config.tryFind( LognameSection, newFileName ) )
+        string newFileName = config.logging.filePath;
+        if( newFileName )
         {
             string oldFileName = this.name;
             try
@@ -154,27 +147,11 @@ synchronized final class GlobalLogger : StyledStrictLogger!(OutputType
         }
 
         // Try to get output verbosity from config
-        Verbosity outputVerbosity;
-        if( config.tryFind( OutputVerbositySection, outputVerbosity ) )
-        {
-            minOutputLevel = cast(OutputType)( outputVerbosity );
-        }
-        else
-        {
-            debug minOutputLevel = OutputType.Info;
-            else minOutputLevel = OutputType.Warning;
-        }
-
+        debug minOutputLevel = cast(OutputType)config.logging.debug_.outputVerbosity;
+        else minOutputLevel = cast(OutputType)config.logging.release.outputVerbosity; 
+        
         // Try to get logging verbosity from config
-        Verbosity loggingVerbosity;
-        if( config.tryFind( LoggingVerbositySection, loggingVerbosity ) )
-        {
-            minLoggingLevel = cast(OutputType)( loggingVerbosity );
-        }
-        else
-        {
-            debug minLoggingLevel = OutputType.Info;
-            else minLoggingLevel = OutputType.Warning;
-        }
+        debug minLoggingLevel = cast(OutputType)config.logging.debug_.loggingVerbosity;
+        else minLoggingLevel = cast(OutputType)config.logging.release.loggingVerbosity; 
     }
 }

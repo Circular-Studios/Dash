@@ -5,18 +5,9 @@ module dash.components.mesh;
 import dash.core, dash.components, dash.graphics, dash.utility;
 
 import derelict.opengl3.gl3, derelict.assimp3.assimp;
-import gl3n.linalg, gl3n.aabb;
-
 import std.stdio, std.stream, std.format, std.math, std.string;
 
-mixin( registerComponents!q{dash.components.mesh} );
-
-/*Mesh getMesh( string name )
-{
-    auto mesh = Assets.get!Mesh( yml.get!string );
-
-    return mesh;
-}*/
+mixin( registerComponents!() );
 
 /**
  * Loads and manages meshes into OpenGL.
@@ -57,14 +48,13 @@ mixin( registerComponents!q{dash.components.mesh} );
  *  Ogre XML
  *  Q3D
  */
-@yamlComponent!( q{name => Assets.get!Mesh( name )} )()
-class Mesh : Asset
+class MeshAsset : Asset
 {
 private:
     uint _glVertexArray, _numVertices, _numIndices, _glIndexBuffer, _glVertexBuffer;
     bool _animated;
-    AABB _boundingBox;
-    AssetAnimation _animationData;
+    box3f _boundingBox;
+    AnimationData _animationData;
 
 public:
     /// TODO
@@ -98,7 +88,6 @@ public:
         float[] outputData;
         uint[] indices;
         animated = false;
-        boundingBox = AABB.from_points( [] );
 
         if( mesh )
         {
@@ -175,7 +164,7 @@ public:
                         outputData ~= vertWeights[ face.mIndices[ j ] ][0..4];
 
                         // Save the position in verts
-                        boundingBox.expand( vec3( pos.x, pos.y, pos.z ) );
+                        boundingBox.expandInPlace( vec3f( pos.x, pos.y, pos.z ) );
                     }
                 }
             }
@@ -217,7 +206,7 @@ public:
                         //outputData ~= bitangent.z;
 
                         // Save the position in verts
-                        boundingBox.expand( vec3( pos.x, pos.y, pos.z ) );
+                        boundingBox.expandInPlace( vec3f( pos.x, pos.y, pos.z ) );
                     }
                 }
             }
@@ -306,10 +295,10 @@ public:
         // Add mesh
         if( scene.mNumMeshes > 0 )
         {
-            Mesh tempMesh = new Mesh( resource.fullPath, scene.mMeshes[ 0 ] );
+            auto tempMesh = new MeshAsset( resource.fullPath, scene.mMeshes[ 0 ] );
 
             if( scene.mNumAnimations > 0 )
-                tempMesh.animationData = new AssetAnimation( scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
+                tempMesh.animationData = new AnimationData( scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
 
             // Copy attributes
             _glVertexArray = tempMesh._glVertexArray;
@@ -340,6 +329,26 @@ public:
     }
 }
 
+class Mesh : AssetRef!MeshAsset
+{
+    alias asset this;
+
+    this() { }
+    this( MeshAsset ass )
+    {
+        super( ass );
+    }
+
+    override void initialize()
+    {
+        super.initialize();
+
+        if( animated && owner )
+            owner.addComponent( animationData.getComponent() );
+    }
+    
+}
+
 /**
  * Helper function that calculates a modifier for the reconstructed bitangent based on regenerating them
  * May be needed elsewhere
@@ -350,9 +359,9 @@ public:
  */
 private float calcTangentHandedness( aiVector3D nor, aiVector3D tan, aiVector3D bit )
 {
-    vec3 n = vec3( nor.x, nor.y, nor.z );
-    vec3 t = vec3( tan.x, tan.y, tan.z );
-    vec3 b = vec3( bit.x, bit.y, bit.z );
+    vec3f n = vec3f( nor.x, nor.y, nor.z );
+    vec3f t = vec3f( tan.x, tan.y, tan.z );
+    vec3f b = vec3f( bit.x, bit.y, bit.z );
 
     //Gramm-schmidt
     t = (t - n * dot( n, t )).normalized();

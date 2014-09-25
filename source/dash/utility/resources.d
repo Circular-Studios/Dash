@@ -15,14 +15,15 @@ enum Resources : string
     Materials = Home ~ "/Materials",
     Meshes = Home ~ "/Meshes",
     Textures = Home ~ "/Textures",
+    Audio = Home ~ "/Audio",
     Scripts = Home ~ "/Scripts",
     Prefabs = Home ~ "/Prefabs",
     Objects = Home ~ "/Objects",
     Shaders = Home ~ "/Shaders",
     UI = Home ~ "/UI",
     ConfigDir = Home ~ "/Config",
-    ConfigFile = ConfigDir ~ "/Config.yml",
-    InputBindings = ConfigDir ~ "/Input.yml",
+    ConfigFile = ConfigDir ~ "/Config",
+    InputBindings = ConfigDir ~ "/Input",
     CompactContentFile = Home ~ "/Content.yml",
 }
 

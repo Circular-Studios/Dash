@@ -93,6 +93,8 @@ public:
     mixin( componentProperty!Animation );
     /// The camera attached to this object.
     mixin( componentProperty!Camera );
+    /// The emitter attached to this object.
+    mixin( componentProperty!Emitter );
     /// The object that this object belongs to.
     mixin( Property!_parent );
     /// All of the objects which list this as parent
@@ -242,8 +244,8 @@ public:
      */
     final void draw()
     {
-		foreach( component; componentList )
-			component.draw();
+        foreach( component; componentList )
+            component.draw();
 
         foreach( obj; children )
             obj.draw();
@@ -254,8 +256,8 @@ public:
      */
     final void shutdown()
     {
-		foreach( component; componentList )
-			component.shutdown();
+        foreach( component; componentList )
+            component.shutdown();
 
         foreach( obj; children )
             obj.shutdown();

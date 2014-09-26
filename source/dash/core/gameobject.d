@@ -64,7 +64,18 @@ private:
     }.replaceMap( [ "$property": Type.stringof.toLower, "$type": Type.stringof ] );
 
 package:
+    /// THIS IS ONLY SET IF THIS OBJECT IS SCENE _ROOT
     Scene scene;
+
+    /// Searche the parent tree until we find the scene object
+    Scene findScene()
+    {
+        // Get root object
+        GameObject par;
+        for( par = this; par.parent; par = par.parent ) { }
+        
+        return par.scene;
+    }
 
 public:
     /**
@@ -385,11 +396,9 @@ public:
         newChild.parent = this;
         newChild.canChangeName = false;
 
-        // Get root object
-        GameObject par;
-        for( par = this; par.parent; par = par.parent ) { }
+        Scene currentScene = findScene();
 
-        if( par.scene )
+        if( currentScene )
         {
             GameObject[] objectChildren;
             {
@@ -410,8 +419,8 @@ public:
             // If adding to the scene, make sure all new children are in.
             foreach( child; objectChildren )
             {
-                par.scene.objectById[ child.id ] = child;
-                par.scene.idByName[ child.name ] = child.id;
+                currentScene.objectById[ child.id ] = child;
+                currentScene.idByName[ child.name ] = child.id;
             }
         }
     }
@@ -429,15 +438,13 @@ public:
         oldChild.canChangeName = true;
         oldChild.parent = null;
 
-        // Get root object
-        GameObject par;
-        for( par = this; par.parent; par = par.parent ) { }
+        Scene currentScene = findScene();
 
         // Remove from scene.
-        if( par.scene )
+        if( currentScene )
         {
-            par.scene.objectById.remove( oldChild.id );
-            par.scene.idByName.remove( oldChild.name );
+            currentScene.objectById.remove( oldChild.id );
+            currentScene.idByName.remove( oldChild.name );
         }
     }
 }

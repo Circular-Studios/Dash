@@ -92,7 +92,7 @@ public:
 
     /// Get a list of teh fields on a component.
     @ignore
-    abstract immutable(Field[]) fields() const @property;
+    abstract immutable(Field[]) fields() @property const;
 
     /// Create an instance of the component the description is for.
     abstract Component createInstance() const;
@@ -102,6 +102,10 @@ public:
 
     /// Creates a description from a component.
     abstract const(Description) create( const Component comp ) const;
+
+    /// Get the type of the component the description is for.
+    @ignore
+    abstract ClassInfo componentType() @property const;
 
     /// Serializers and deserializers
     mixin( perSerializationFormat!q{
@@ -293,6 +297,12 @@ private:
                 }
             }
             return comp;
+        }
+
+        /// Get the type of the component the description is for.
+        override ClassInfo componentType() @property const
+        {
+            return typeid(T);
         }
     } // SerializationDescription
 

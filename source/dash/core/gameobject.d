@@ -53,7 +53,7 @@ private:
     GameObject _parent;
     GameObject[] _children;
     Prefab _prefab;
-    Component[TypeInfo] componentList;
+    Component[ClassInfo] componentList;
     string _name;
     bool canChangeName;
     static uint nextId = 1;
@@ -276,8 +276,8 @@ public:
      */
     final void draw()
     {
-		foreach( component; componentList )
-			component.draw();
+        foreach( component; componentList )
+            component.draw();
 
         foreach( obj; children )
             obj.draw();
@@ -288,8 +288,8 @@ public:
      */
     final void shutdown()
     {
-		foreach( component; componentList )
-			component.shutdown();
+        foreach( component; componentList )
+            component.shutdown();
 
         foreach( obj; children )
             obj.shutdown();
@@ -303,7 +303,30 @@ public:
      */
     final void refresh( Description node )
     {
-        //TODO: Implement
+        if( name != node.name )
+            name = node.name;
+
+        transform.refresh( node.transform );
+
+        bool[string] componentExists = zip( StoppingPolicy.shortest, componentList.byKey.map!( k => k.name ), false.repeat ).assocArray();
+
+        foreach( compDesc; node.components )
+        {
+            // Found it!
+            componentExists[ compDesc.componentType.name ] = true;
+
+            // Refresh, or add if it's new
+            if( auto comp = compDesc.componentType in componentList )
+                comp.refresh( compDesc );
+            else
+                addComponent( compDesc.createInstance() );
+        }
+
+        // Remove old components
+        foreach( key; componentExists.keys.filter!( k => componentExists[k] ) )
+            componentList.remove( cast(ClassInfo)ClassInfo.find( key ) );
+
+        //TODO: Refresh children
     }
 
     /**
@@ -427,6 +450,11 @@ private:
         position = vec3f( desc.position[] );
         rotation = fromEulerAngles( desc.rotation[ 0 ], desc.rotation[ 1 ], desc.rotation[ 2 ] );
         scale = vec3f( desc.scale[] );
+    }
+
+    void refresh( Description desc )
+    {
+        //TODO: Implement
     }
 
     /**

@@ -308,8 +308,8 @@ public:
 
         transform.refresh( node.transform );
 
+        // Refresh components
         bool[string] componentExists = zip( StoppingPolicy.shortest, componentList.byKey.map!( k => k.name ), false.repeat ).assocArray();
-
         foreach( compDesc; node.components )
         {
             // Found it!
@@ -326,7 +326,19 @@ public:
         foreach( key; componentExists.keys.filter!( k => componentExists[k] ) )
             componentList.remove( cast(ClassInfo)ClassInfo.find( key ) );
 
-        //TODO: Refresh children
+        // Refresh children
+        bool[string] childrenExist = zip( StoppingPolicy.shortest, _children.map!( child => child.name ), false.repeat ).assocArray();
+        foreach( childDesc; node.children )
+        {
+            // Found it!
+            childrenExist[ childDesc.name ] = true;
+
+            // Refresh, or add if it's new
+            if( auto child = _children.filter!( child => child.name == childDesc.name ).front )
+                child.refresh( childDesc );
+            else
+                addChild( GameObject.create( childDesc ) );
+        }
     }
 
     /**
@@ -402,7 +414,6 @@ public:
                 par.scene.idByName[ child.name ] = child.id;
             }
         }
-
     }
 
     /**

@@ -364,7 +364,7 @@ public:
         }
 
         // Remove old components
-        foreach( key; componentExists.keys.filter!( k => componentExists[k] ) )
+        foreach( key; componentExists.keys.filter!( k => !componentExists[k] ) )
             componentList.remove( cast(ClassInfo)ClassInfo.find( key ) );
 
         // Refresh children
@@ -380,6 +380,9 @@ public:
             else
                 addChild( GameObject.create( childDesc ) );
         }
+
+        foreach( key; childrenExist.keys.filter!( k => !childrenExist[k] ) )
+            childrenExist.remove( key );
     }
 
     /**

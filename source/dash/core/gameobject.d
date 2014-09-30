@@ -138,12 +138,40 @@ public:
     mixin( Property!_parent );
     /// All of the objects which list this as parent
     mixin( Property!_children );
-    /// The name of the object.
-    mixin( Getter!_name );
     /// The prefab that this object is based on.
     mixin( Property!_prefab );
-    /// ditto
-    mixin( ConditionalSetter!( _name, q{canChangeName}, AccessModifier.Public ) );
+    /// The name of the object.
+    mixin( Property!( _name, AccessModifier.Package ) );
+    /// Change the name of the object.
+    void changeName( string newName )
+    in
+    {
+        assert( newName && newName.length, "Invalid name given." );
+    }
+    body
+    {
+        // Ignore an unchanging name.
+        if( name == newName )
+        {
+            return;
+        }
+        else if( canChangeName || DGame.instance.currentState == EngineState.Editor )
+        {
+            // Update mappings in the scene.
+            if( auto scene = findScene() )
+            {
+                scene.idByName.remove( name );
+                scene.idByName[ newName ] = id;
+            }
+
+            // Change the name.
+            name = newName;
+        }
+        else
+        {
+            throw new Exception( "Unable to rename gameobject at this time." );
+        }
+    }
     /// The ID of the object.
     immutable uint id;
     /// The current update settings
@@ -317,7 +345,7 @@ public:
     final void refresh( Description node )
     {
         if( name != node.name )
-            name = node.name;
+            changeName( node.name );
 
         transform.refresh( node.transform );
 
@@ -513,7 +541,8 @@ private:
 
     void refresh( Description desc )
     {
-        //TODO: Implement
+        // TODO: Track if the transform actually changed.
+        this = desc;
     }
 
     /**

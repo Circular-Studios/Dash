@@ -1,9 +1,10 @@
 module dash.editor.editor;
 import dash.core.dgame;
-import dash.editor.websockets;
+import dash.editor.websockets, dash.editor.events;
 import dash.utility.output;
 
 import vibe.data.json;
+import vibe.http.status: HTTPStatus;
 import std.uuid, std.typecons;
 
 /**
@@ -16,9 +17,9 @@ class Editor
 public:
     // Event handlers
     alias JsonEventHandler = void delegate( Json );
-    alias JsonEventResponseHandler = void delegate( Json, void delegate( Json ) );
+    alias JsonEventResponseHandler = Json delegate( Json );
     alias TypedEventHandler( DataType ) = void delegate( DataType );
-    alias TypedEventResponseHandler( ResponseType, DataType ) = void delegate( DataType, void delegate( ResponseType ) );
+    alias TypedEventResponseHandler( ResponseType, DataType ) = ResponseType delegate( DataType );
 
     /**
      * Initializes the editor with a DGame instance.
@@ -151,17 +152,14 @@ public:
     {
         void handler( EventMessage msg )
         {
-            void writeback( Json json )
-            {
-                EventMessage newMsg;
-                newMsg.key = CallbackMessageKey;
-                newMsg.value = json;
-                newMsg.callbackId = msg.callbackId;
+            Json res = event( msg.value );
 
-                server.send( newMsg );
-            }
+            EventMessage newMsg;
+            newMsg.key = CallbackMessageKey;
+            newMsg.value = res;
+            newMsg.callbackId = msg.callbackId;
 
-            event( msg.value, &writeback );
+            server.send( newMsg );
         }
 
         return registerInternalMessageHandler( key, &handler );
@@ -200,22 +198,19 @@ public:
     {
         void handler( EventMessage msg )
         {
-            void writeback( ResponseType res )
-            {
-                EventMessage newMsg;
-                newMsg.key = CallbackMessageKey;
-                newMsg.value = res.serializeToJsonString();
-                newMsg.callbackId = msg.callbackId;
+            ResponseType res = event( msg.value.deserializeJson!DataType );
 
-                server.send( newMsg );
-            }
+            EventMessage newMsg;
+            newMsg.key = CallbackMessageKey;
+            newMsg.value = res.serializeToJsonString();
+            newMsg.callbackId = msg.callbackId;
 
-            event( msg.value.deserializeJson!DataType, &writeback );
+            server.send( newMsg );
         }
 
         return registerInternalMessageHandler( key, &handler );
     }
-    static assert(is(typeof( registerEventHandler!( string, string )( "key", ( data, writeback ) { } ) )));
+    static assert(is(typeof( registerEventHandler!( string, string )( "key", ( data ) { return data; } ) )));
 
     /**
      * Unregisters an event callback.
@@ -236,12 +231,6 @@ public:
                 }
             }
         }
-    }
-
-package:
-    final void queueEvent( EventMessage msg )
-    {
-        pendingEvents ~= msg;
     }
 
 protected:
@@ -284,14 +273,21 @@ protected:
         }
     }
 
-private:
-    enum CallbackMessageKey = "__callback__";
+package:
+    /// The message key for callbacks
+    package enum CallbackMessageKey = "__callback__";
+
     alias InternalEventHandler = void delegate( EventMessage );
     alias EventHandlerTuple = Tuple!(UUID, "id", InternalEventHandler, "handler");
 
     EventMessage[] pendingEvents;
     EventHandlerTuple[][string] eventHandlers;
     InternalEventHandler[UUID] callbacks;
+
+    final void queueEvent( EventMessage msg )
+    {
+        pendingEvents ~= msg;
+    }
 
     /// Register a 
     final UUID registerInternalMessageHandler( string key, InternalEventHandler handler )
@@ -306,7 +302,20 @@ private:
         callbacks[ id ] = handler;
     }
 
-    /// Handle an event that is a callback.
+    final void registerDefaultEvents()
+    {
+        registerInternalMessageHandler( CallbackMessageKey, &handleCallback );
+
+        // Test handler, responds with request
+        registerEventHandler( "loopback", json => json );
+        // Triggers an engine refresh
+        registerEventHandler!( int, Json )( "dgame:refresh", ( json ) {
+            game.currentState = EngineState.Refresh;
+            return HTTPStatus.ok;
+        } );
+    }
+
+    /// Handles callback messages
     final void handleCallback( EventMessage msg )
     {
         // If it's a callback, dispatch it as such.
@@ -320,13 +329,5 @@ private:
         {
             logFatal( "Callback reference lost: ", msg.callbackId );
         }
-    }
-
-    final void registerDefaultEvents()
-    {
-        registerInternalMessageHandler( CallbackMessageKey, &handleCallback );
-
-        registerEventHandler( "dgame:refresh", ( json ) { game.currentState = EngineState.Refresh; } );
-        registerEventHandler( "loopback", ( json, cb ) => cb( json ) );
     }
 }

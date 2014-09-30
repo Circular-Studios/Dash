@@ -8,31 +8,26 @@ import yaml;
 import derelict.opengl3.gl3, derelict.freeimage.freeimage;
 import std.variant, std.conv, std.string;
 
-mixin( registerComponents!q{dash.components.material} );
+mixin( registerComponents!() );
 
 /**
  * A collection of textures that serve different purposes in the rendering pipeline.
  */
-@yamlComponent!( q{name => Assets.get!Material( name )} )()
-@yamlObject()
-final class Material : Asset
+final class MaterialAsset : Asset
 {
-package:
-    @field( "Name" )
-    string _name;
-
 public:
+    /// The name of the material.
+    @rename( "Name" )
+    string name;
     /// The diffuse (or color) map.
-    @field( "Diffuse" )
+    @rename( "Diffuse" ) @asArray
     Texture diffuse;
     /// The normal map, which specifies which way a face is pointing at a given pixel.
-    @field( "Normal" )
+    @rename( "Normal" ) @asArray
     Texture normal;
     /// The specular map, which specifies how shiny a given point is.
-    @field( "Specular" )
+    @rename( "Specular" ) @asArray
     Texture specular;
-    /// The name of the material.
-    mixin( Getter!_name );
 
     /**
      * Default constructor, makes sure everything is initialized to default.
@@ -42,7 +37,20 @@ public:
         super( Resource( "" ) );
         diffuse = specular = defaultTex;
         normal = defaultNormal;
-        _name = name;
+        this.name = name;
+    }
+
+    /**
+     * Duplicate the material.
+     */
+    MaterialAsset clone()
+    {
+        auto mat = new MaterialAsset;
+        mat.diffuse = diffuse;
+        mat.normal = normal;
+        mat.specular = specular;
+        mat.name = name;
+        return mat;
     }
 
     /**
@@ -55,10 +63,36 @@ public:
 }
 
 /**
+ * A reference to a material.
+ */
+final class Material : AssetRef!MaterialAsset
+{
+    alias asset this;
+
+    this() { }
+    this( MaterialAsset ass )
+    {
+        super( ass );
+    }
+
+    override void initialize()
+    {
+        super.initialize();
+
+        // All materials should be unique.
+        if( asset )
+            asset = asset.clone();
+
+        asset.diffuse.initialize();
+        asset.normal.initialize();
+        asset.specular.initialize();
+    }
+}
+
+/**
  * TODO
  */
-@yamlComponent!( q{name => Assets.get!Texture( name )} )()
-class Texture : Asset
+class TextureAsset : Asset
 {
 protected:
     uint _width = 1;
@@ -152,6 +186,20 @@ private:
 }
 
 /**
+ * A reference to a texture.
+ */
+class Texture : AssetRef!TextureAsset
+{
+    alias asset this;
+
+    this() { }
+    this( TextureAsset ass )
+    {
+        super( ass );
+    }
+}
+
+/**
  * A default black texture.
  */
 @property Texture defaultTex()
@@ -159,7 +207,7 @@ private:
     static Texture def;
 
     if( !def )
-        def = new Texture( [cast(ubyte)0, cast(ubyte)0, cast(ubyte)0, cast(ubyte)255].ptr );
+        def = new Texture( new TextureAsset( [cast(ubyte)0, cast(ubyte)0, cast(ubyte)0, cast(ubyte)255].ptr ) );
 
     return def;
 }
@@ -172,7 +220,7 @@ private:
     static Texture def;
 
     if( !def )
-        def = new Texture( [cast(ubyte)255, cast(ubyte)127, cast(ubyte)127, cast(ubyte)255].ptr );
+        def = new Texture( new TextureAsset( [cast(ubyte)255, cast(ubyte)127, cast(ubyte)127, cast(ubyte)255].ptr ) );
 
     return def;
 }

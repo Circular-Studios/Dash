@@ -30,7 +30,7 @@ struct GameStateFlags
     bool updateScene;
     bool updateUI;
     bool updateTasks;
-	bool autoRefresh;
+    bool autoRefresh;
     //bool updatePhysics;
 
     /**
@@ -209,6 +209,7 @@ private:
         bench!( { Input.initialize(); } )( "Input init" );
         bench!( { Graphics.initialize(); } )( "Graphics init" );
         bench!( { Assets.initialize(); } )( "Assets init" );
+        bench!( { Audio.initialize(); } )( "Audio init" );
         bench!( { Prefabs.initialize(); } )( "Prefabs init" );
         bench!( { UserInterface.initializeAwesomium(); } )( "UI init" );
         bench!( { editor.initialize( this ); } )( "Editor init" );
@@ -228,6 +229,7 @@ private:
         UserInterface.shutdownAwesomium();
         Assets.shutdown();
         Graphics.shutdown();
+        Audio.shutdown();
     }
 
     /**

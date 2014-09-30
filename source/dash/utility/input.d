@@ -4,7 +4,7 @@
 module dash.utility.input;
 import dash.utility, dash.core, dash.graphics;
 
-import yaml, gl3n.linalg;
+import yaml;
 import derelict.opengl3.gl3;
 import std.typecons, std.conv, std.traits, std.uuid;
 
@@ -53,10 +53,14 @@ public:
      */
     void initialize()
     {
-        auto bindings = Resources.InputBindings.loadYamlFile();
+        // TODO: Implement
+        auto bindings = Node();//Resources.InputBindings.loadYamlFile();
 
         Keyboard.initialize();
         Mouse.initialize();
+
+        if( !bindings.isMapping )
+            return;
 
         foreach( string name, Node bind; bindings )
         {
@@ -207,7 +211,7 @@ public:
      *
      * Returns:     The position of the mouse cursor.
      */
-    vec2i mousePos()
+    vec2ui mousePos()
     {
         version( Windows )
         {
@@ -224,11 +228,11 @@ public:
                 i.y -= GetSystemMetrics( SM_CYBORDER );
             }
 
-            return vec2i( i.x, Graphics.height - i.y );
+            return vec2ui( i.x, Graphics.height - i.y );
         }
         else
         {
-            return vec2i();
+            return vec2ui();
         }
     }
 
@@ -237,12 +241,12 @@ public:
      *
      * Returns:     The position of the mouse cursor in world space.
      */
-    vec3 mousePosView()
+    vec3f mousePosView()
     {
         if( !DGame.instance.activeScene )
         {
             logWarning( "No active scene." );
-            return vec3( 0.0f, 0.0f, 0.0f );
+            return vec3f( 0.0f, 0.0f, 0.0f );
         }
 
         auto scene = DGame.instance.activeScene;
@@ -250,13 +254,13 @@ public:
         if( !scene.camera )
         {
             logWarning( "No camera on active scene." );
-            return vec3( 0.0f, 0.0f, 0.0f );
+            return vec3f( 0.0f, 0.0f, 0.0f );
         }
-        vec2i mouse = mousePos();
+        vec2ui mouse = mousePos();
         float depth;
         int x = mouse.x;
         int y = mouse.y;
-        auto view = vec3( 0, 0, 0 );
+        auto view = vec3f( 0, 0, 0 );
 
         if( x >= 0 && x <= Graphics.width && y >= 0 && y <= Graphics.height )
         {
@@ -267,8 +271,8 @@ public:
             float screenX = ( mouse.x / cast(float)Graphics.width ) * 2 - 1;
             float screenY = -( ( mouse.y / cast(float)Graphics.height ) * 2 - 1 );
 
-            auto viewSpace = scene.camera.inversePerspectiveMatrix * vec4( screenX, screenY, 1.0f, 1.0f);
-            auto viewRay = vec3( viewSpace.xy * (1.0f / viewSpace.z), 1.0f);
+            auto viewSpace = scene.camera.inversePerspectiveMatrix * vec4f( screenX, screenY, 1.0f, 1.0f);
+            auto viewRay = vec3f( viewSpace.xy * (1.0f / viewSpace.z), 1.0f);
             view = viewRay * linearDepth;
         }
 
@@ -280,9 +284,9 @@ public:
      *
      * Returns:     The position of the mouse cursor in world space.
      */
-    vec3 mousePosWorld()
+    vec3f mousePosWorld()
     {
-        return (DGame.instance.activeScene.camera.inverseViewMatrix * vec4( mousePosView(), 1.0f )).xyz;
+        return (DGame.instance.activeScene.camera.inverseViewMatrix * vec4f( mousePosView(), 1.0f )).xyz;
     }
 
     /**
@@ -306,7 +310,7 @@ public:
             return null;
         }
 
-        vec2i mouse = mousePos();
+        vec2ui mouse = mousePos();
 
         if( mouse.x >= 0 && mouse.x <= Graphics.width && mouse.y >= 0 && mouse.y <= Graphics.height )
         {

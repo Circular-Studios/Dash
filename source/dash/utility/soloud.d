@@ -16,423 +16,423 @@ private struct SoloudObject
 public struct Soloud
 {
 pure @safe nothrow @nogc:
-	public enum WASAPI = 6;
-	public enum AUTO = 0;
-	public enum CLIP_ROUNDOFF = 1;
-	public enum SDL2 = 2;
-	public enum ENABLE_VISUALIZATION = 2;
-	public enum SDL = 1;
-	public enum PORTAUDIO = 3;
-	public enum OPENAL = 8;
-	public enum BACKEND_MAX = 9;
-	public enum XAUDIO2 = 5;
-	public enum WINMM = 4;
-	public enum OSS = 7;
-
-	public SoloudObject soloudObject;
-	alias soloudObject this;
-
-	public static create()
-	{
-		return Soloud(SoloudObject(Soloud_create()));
-	}
-
-	~this()
-	{
-		Soloud_destroy(objhandle);
-	}
-
-	public int init(uint aFlags = CLIP_ROUNDOFF, uint aBackend = AUTO, uint aSamplerate = AUTO, uint aBufferSize = AUTO)
-	{
-		return Soloud_initEx(objhandle, aFlags, aBackend, aSamplerate, aBufferSize);
-	}
-
-	public void deinit()
-	{
-		Soloud_deinit(objhandle);
-	}
-
-	public uint getVersion()
-	{
-		return Soloud_getVersion(objhandle);
-	}
-
-	public const(char)* getErrorString(int aErrorCode)
-	{
-		return Soloud_getErrorString(objhandle, aErrorCode);
-	}
-
-	public uint play(SoloudObject aSound, float aVolume = 1.0f, float aPan = 0.0f, int aPaused = 0, uint aBus = 0)
-	{
-		return Soloud_playEx(objhandle, aSound.objhandle, aVolume, aPan, aPaused, aBus);
-	}
-
-	public uint playClocked(double aSoundTime, SoloudObject aSound, float aVolume = 1.0f, float aPan = 0.0f, uint aBus = 0)
-	{
-		return Soloud_playClockedEx(objhandle, aSoundTime, aSound.objhandle, aVolume, aPan, aBus);
-	}
-
-	public uint play3d(SoloudObject aSound, float aPosX, float aPosY, float aPosZ, float aVelX = 0.0f, float aVelY = 0.0f, float aVelZ = 0.0f, float aVolume = 1.0f, int aPaused = 0, uint aBus = 0)
-	{
-		return Soloud_play3dEx(objhandle, aSound.objhandle, aPosX, aPosY, aPosZ, aVelX, aVelY, aVelZ, aVolume, aPaused, aBus);
-	}
-
-	public uint play3dClocked(double aSoundTime, SoloudObject aSound, float aPosX, float aPosY, float aPosZ, float aVelX = 0.0f, float aVelY = 0.0f, float aVelZ = 0.0f, float aVolume = 1.0f, uint aBus = 0)
-	{
-		return Soloud_play3dClockedEx(objhandle, aSoundTime, aSound.objhandle, aPosX, aPosY, aPosZ, aVelX, aVelY, aVelZ, aVolume, aBus);
-	}
-
-	public void seek(uint aVoiceHandle, double aSeconds)
-	{
-		Soloud_seek(objhandle, aVoiceHandle, aSeconds);
-	}
-
-	public void stop(uint aVoiceHandle)
-	{
-		Soloud_stop(objhandle, aVoiceHandle);
-	}
-
-	public void stopAll()
-	{
-		Soloud_stopAll(objhandle);
-	}
-
-	public void stopAudioSource(SoloudObject aSound)
-	{
-		Soloud_stopAudioSource(objhandle, aSound.objhandle);
-	}
-
-	public void setFilterParameter(uint aVoiceHandle, uint aFilterId, uint aAttributeId, float aValue)
-	{
-		Soloud_setFilterParameter(objhandle, aVoiceHandle, aFilterId, aAttributeId, aValue);
-	}
-
-	public float getFilterParameter(uint aVoiceHandle, uint aFilterId, uint aAttributeId)
-	{
-		return Soloud_getFilterParameter(objhandle, aVoiceHandle, aFilterId, aAttributeId);
-	}
-
-	public void fadeFilterParameter(uint aVoiceHandle, uint aFilterId, uint aAttributeId, float aTo, double aTime)
-	{
-		Soloud_fadeFilterParameter(objhandle, aVoiceHandle, aFilterId, aAttributeId, aTo, aTime);
-	}
-
-	public void oscillateFilterParameter(uint aVoiceHandle, uint aFilterId, uint aAttributeId, float aFrom, float aTo, double aTime)
-	{
-		Soloud_oscillateFilterParameter(objhandle, aVoiceHandle, aFilterId, aAttributeId, aFrom, aTo, aTime);
-	}
-
-	public double getStreamTime(uint aVoiceHandle)
-	{
-		return Soloud_getStreamTime(objhandle, aVoiceHandle);
-	}
-
-	public int getPause(uint aVoiceHandle)
-	{
-		return Soloud_getPause(objhandle, aVoiceHandle);
-	}
-
-	public float getVolume(uint aVoiceHandle)
-	{
-		return Soloud_getVolume(objhandle, aVoiceHandle);
-	}
-
-	public float getPan(uint aVoiceHandle)
-	{
-		return Soloud_getPan(objhandle, aVoiceHandle);
-	}
-
-	public float getSamplerate(uint aVoiceHandle)
-	{
-		return Soloud_getSamplerate(objhandle, aVoiceHandle);
-	}
-
-	public int getProtectVoice(uint aVoiceHandle)
-	{
-		return Soloud_getProtectVoice(objhandle, aVoiceHandle);
-	}
-
-	public uint getActiveVoiceCount()
-	{
-		return Soloud_getActiveVoiceCount(objhandle);
-	}
-
-	public int isValidVoiceHandle(uint aVoiceHandle)
-	{
-		return Soloud_isValidVoiceHandle(objhandle, aVoiceHandle);
-	}
-
-	public float getRelativePlaySpeed(uint aVoiceHandle)
-	{
-		return Soloud_getRelativePlaySpeed(objhandle, aVoiceHandle);
-	}
-
-	public float getPostClipScaler()
-	{
-		return Soloud_getPostClipScaler(objhandle);
-	}
-
-	public float getGlobalVolume()
-	{
-		return Soloud_getGlobalVolume(objhandle);
-	}
-
-	public void setGlobalVolume(float aVolume)
-	{
-		Soloud_setGlobalVolume(objhandle, aVolume);
-	}
-
-	public void setPostClipScaler(float aScaler)
-	{
-		Soloud_setPostClipScaler(objhandle, aScaler);
-	}
-
-	public void setPause(uint aVoiceHandle, int aPause)
-	{
-		Soloud_setPause(objhandle, aVoiceHandle, aPause);
-	}
-
-	public void setPauseAll(int aPause)
-	{
-		Soloud_setPauseAll(objhandle, aPause);
-	}
-
-	public void setRelativePlaySpeed(uint aVoiceHandle, float aSpeed)
-	{
-		Soloud_setRelativePlaySpeed(objhandle, aVoiceHandle, aSpeed);
-	}
-
-	public void setProtectVoice(uint aVoiceHandle, int aProtect)
-	{
-		Soloud_setProtectVoice(objhandle, aVoiceHandle, aProtect);
-	}
-
-	public void setSamplerate(uint aVoiceHandle, float aSamplerate)
-	{
-		Soloud_setSamplerate(objhandle, aVoiceHandle, aSamplerate);
-	}
-
-	public void setPan(uint aVoiceHandle, float aPan)
-	{
-		Soloud_setPan(objhandle, aVoiceHandle, aPan);
-	}
-
-	public void setPanAbsolute(uint aVoiceHandle, float aLVolume, float aRVolume)
-	{
-		Soloud_setPanAbsolute(objhandle, aVoiceHandle, aLVolume, aRVolume);
-	}
-
-	public void setVolume(uint aVoiceHandle, float aVolume)
-	{
-		Soloud_setVolume(objhandle, aVoiceHandle, aVolume);
-	}
-
-	public void setDelaySamples(uint aVoiceHandle, uint aSamples)
-	{
-		Soloud_setDelaySamples(objhandle, aVoiceHandle, aSamples);
-	}
-
-	public void fadeVolume(uint aVoiceHandle, float aTo, double aTime)
-	{
-		Soloud_fadeVolume(objhandle, aVoiceHandle, aTo, aTime);
-	}
-
-	public void fadePan(uint aVoiceHandle, float aTo, double aTime)
-	{
-		Soloud_fadePan(objhandle, aVoiceHandle, aTo, aTime);
-	}
-
-	public void fadeRelativePlaySpeed(uint aVoiceHandle, float aTo, double aTime)
-	{
-		Soloud_fadeRelativePlaySpeed(objhandle, aVoiceHandle, aTo, aTime);
-	}
-
-	public void fadeGlobalVolume(float aTo, double aTime)
-	{
-		Soloud_fadeGlobalVolume(objhandle, aTo, aTime);
-	}
-
-	public void schedulePause(uint aVoiceHandle, double aTime)
-	{
-		Soloud_schedulePause(objhandle, aVoiceHandle, aTime);
-	}
-
-	public void scheduleStop(uint aVoiceHandle, double aTime)
-	{
-		Soloud_scheduleStop(objhandle, aVoiceHandle, aTime);
-	}
-
-	public void oscillateVolume(uint aVoiceHandle, float aFrom, float aTo, double aTime)
-	{
-		Soloud_oscillateVolume(objhandle, aVoiceHandle, aFrom, aTo, aTime);
-	}
-
-	public void oscillatePan(uint aVoiceHandle, float aFrom, float aTo, double aTime)
-	{
-		Soloud_oscillatePan(objhandle, aVoiceHandle, aFrom, aTo, aTime);
-	}
-
-	public void oscillateRelativePlaySpeed(uint aVoiceHandle, float aFrom, float aTo, double aTime)
-	{
-		Soloud_oscillateRelativePlaySpeed(objhandle, aVoiceHandle, aFrom, aTo, aTime);
-	}
-
-	public void oscillateGlobalVolume(float aFrom, float aTo, double aTime)
-	{
-		Soloud_oscillateGlobalVolume(objhandle, aFrom, aTo, aTime);
-	}
-
-	public void setGlobalFilter(uint aFilterId, SoloudObject aFilter)
-	{
-		Soloud_setGlobalFilter(objhandle, aFilterId, aFilter.objhandle);
-	}
-
-	public void setVisualizationEnable(int aEnable)
-	{
-		Soloud_setVisualizationEnable(objhandle, aEnable);
-	}
-
-	public float[] calcFFT()
-	{
-		return Soloud_calcFFT(objhandle);
-	}
-
-	public float[] getWave()
-	{
-		return Soloud_getWave(objhandle);
-	}
-
-	public uint getLoopCount(uint aVoiceHandle)
-	{
-		return Soloud_getLoopCount(objhandle, aVoiceHandle);
-	}
-
-	public uint createVoiceGroup()
-	{
-		return Soloud_createVoiceGroup(objhandle);
-	}
-
-	public int destroyVoiceGroup(uint aVoiceGroupHandle)
-	{
-		return Soloud_destroyVoiceGroup(objhandle, aVoiceGroupHandle);
-	}
-
-	public int addVoiceToGroup(uint aVoiceGroupHandle, uint aVoiceHandle)
-	{
-		return Soloud_addVoiceToGroup(objhandle, aVoiceGroupHandle, aVoiceHandle);
-	}
-
-	public int isVoiceGroup(uint aVoiceGroupHandle)
-	{
-		return Soloud_isVoiceGroup(objhandle, aVoiceGroupHandle);
-	}
-
-	public int isVoiceGroupEmpty(uint aVoiceGroupHandle)
-	{
-		return Soloud_isVoiceGroupEmpty(objhandle, aVoiceGroupHandle);
-	}
-
-	public void update3dAudio()
-	{
-		Soloud_update3dAudio(objhandle);
-	}
-
-	public int set3dSoundSpeed(float aSpeed)
-	{
-		return Soloud_set3dSoundSpeed(objhandle, aSpeed);
-	}
-
-	public float get3dSoundSpeed()
-	{
-		return Soloud_get3dSoundSpeed(objhandle);
-	}
-
-	public void set3dListenerParameters(float aPosX, float aPosY, float aPosZ, float aAtX, float aAtY, float aAtZ, float aUpX, float aUpY, float aUpZ, float aVelocityX = 0.0f, float aVelocityY = 0.0f, float aVelocityZ = 0.0f)
-	{
-		Soloud_set3dListenerParametersEx(objhandle, aPosX, aPosY, aPosZ, aAtX, aAtY, aAtZ, aUpX, aUpY, aUpZ, aVelocityX, aVelocityY, aVelocityZ);
-	}
-
-	public void set3dListenerPosition(float aPosX, float aPosY, float aPosZ)
-	{
-		Soloud_set3dListenerPosition(objhandle, aPosX, aPosY, aPosZ);
-	}
-
-	public void set3dListenerAt(float aAtX, float aAtY, float aAtZ)
-	{
-		Soloud_set3dListenerAt(objhandle, aAtX, aAtY, aAtZ);
-	}
-
-	public void set3dListenerUp(float aUpX, float aUpY, float aUpZ)
-	{
-		Soloud_set3dListenerUp(objhandle, aUpX, aUpY, aUpZ);
-	}
-
-	public void set3dListenerVelocity(float aVelocityX, float aVelocityY, float aVelocityZ)
-	{
-		Soloud_set3dListenerVelocity(objhandle, aVelocityX, aVelocityY, aVelocityZ);
-	}
-
-	public void set3dSourceParameters(uint aVoiceHandle, float aPosX, float aPosY, float aPosZ, float aVelocityX = 0.0f, float aVelocityY = 0.0f, float aVelocityZ = 0.0f)
-	{
-		Soloud_set3dSourceParametersEx(objhandle, aVoiceHandle, aPosX, aPosY, aPosZ, aVelocityX, aVelocityY, aVelocityZ);
-	}
-
-	public void set3dSourcePosition(uint aVoiceHandle, float aPosX, float aPosY, float aPosZ)
-	{
-		Soloud_set3dSourcePosition(objhandle, aVoiceHandle, aPosX, aPosY, aPosZ);
-	}
-
-	public void set3dSourceVelocity(uint aVoiceHandle, float aVelocityX, float aVelocityY, float aVelocityZ)
-	{
-		Soloud_set3dSourceVelocity(objhandle, aVoiceHandle, aVelocityX, aVelocityY, aVelocityZ);
-	}
-
-	public void set3dSourceMinMaxDistance(uint aVoiceHandle, float aMinDistance, float aMaxDistance)
-	{
-		Soloud_set3dSourceMinMaxDistance(objhandle, aVoiceHandle, aMinDistance, aMaxDistance);
-	}
-
-	public void set3dSourceAttenuation(uint aVoiceHandle, uint aAttenuationModel, float aAttenuationRolloffFactor)
-	{
-		Soloud_set3dSourceAttenuation(objhandle, aVoiceHandle, aAttenuationModel, aAttenuationRolloffFactor);
-	}
-
-	public void set3dSourceDopplerFactor(uint aVoiceHandle, float aDopplerFactor)
-	{
-		Soloud_set3dSourceDopplerFactor(objhandle, aVoiceHandle, aDopplerFactor);
-	}
+    public enum WASAPI = 6;
+    public enum AUTO = 0;
+    public enum CLIP_ROUNDOFF = 1;
+    public enum SDL2 = 2;
+    public enum ENABLE_VISUALIZATION = 2;
+    public enum SDL = 1;
+    public enum PORTAUDIO = 3;
+    public enum OPENAL = 8;
+    public enum BACKEND_MAX = 9;
+    public enum XAUDIO2 = 5;
+    public enum WINMM = 4;
+    public enum OSS = 7;
+
+    public SoloudObject soloudObject;
+    alias soloudObject this;
+
+    public static create()
+    {
+        return Soloud(SoloudObject(Soloud_create()));
+    }
+
+    public void destroy()
+    {
+        Soloud_destroy(objhandle);
+    }
+
+    public int init(uint aFlags = CLIP_ROUNDOFF, uint aBackend = AUTO, uint aSamplerate = AUTO, uint aBufferSize = AUTO)
+    {
+        return Soloud_initEx(objhandle, aFlags, aBackend, aSamplerate, aBufferSize);
+    }
+
+    public void deinit()
+    {
+        Soloud_deinit(objhandle);
+    }
+
+    public uint getVersion()
+    {
+        return Soloud_getVersion(objhandle);
+    }
+
+    public const(char)* getErrorString(int aErrorCode)
+    {
+        return Soloud_getErrorString(objhandle, aErrorCode);
+    }
+
+    public uint play(SoloudObject aSound, float aVolume = 1.0f, float aPan = 0.0f, int aPaused = 0, uint aBus = 0)
+    {
+        return Soloud_playEx(objhandle, aSound.objhandle, aVolume, aPan, aPaused, aBus);
+    }
+
+    public uint playClocked(double aSoundTime, SoloudObject aSound, float aVolume = 1.0f, float aPan = 0.0f, uint aBus = 0)
+    {
+        return Soloud_playClockedEx(objhandle, aSoundTime, aSound.objhandle, aVolume, aPan, aBus);
+    }
+
+    public uint play3d(SoloudObject aSound, float aPosX, float aPosY, float aPosZ, float aVelX = 0.0f, float aVelY = 0.0f, float aVelZ = 0.0f, float aVolume = 1.0f, int aPaused = 0, uint aBus = 0)
+    {
+        return Soloud_play3dEx(objhandle, aSound.objhandle, aPosX, aPosY, aPosZ, aVelX, aVelY, aVelZ, aVolume, aPaused, aBus);
+    }
+
+    public uint play3dClocked(double aSoundTime, SoloudObject aSound, float aPosX, float aPosY, float aPosZ, float aVelX = 0.0f, float aVelY = 0.0f, float aVelZ = 0.0f, float aVolume = 1.0f, uint aBus = 0)
+    {
+        return Soloud_play3dClockedEx(objhandle, aSoundTime, aSound.objhandle, aPosX, aPosY, aPosZ, aVelX, aVelY, aVelZ, aVolume, aBus);
+    }
+
+    public void seek(uint aVoiceHandle, double aSeconds)
+    {
+        Soloud_seek(objhandle, aVoiceHandle, aSeconds);
+    }
+
+    public void stop(uint aVoiceHandle)
+    {
+        Soloud_stop(objhandle, aVoiceHandle);
+    }
+
+    public void stopAll()
+    {
+        Soloud_stopAll(objhandle);
+    }
+
+    public void stopAudioSource(SoloudObject aSound)
+    {
+        Soloud_stopAudioSource(objhandle, aSound.objhandle);
+    }
+
+    public void setFilterParameter(uint aVoiceHandle, uint aFilterId, uint aAttributeId, float aValue)
+    {
+        Soloud_setFilterParameter(objhandle, aVoiceHandle, aFilterId, aAttributeId, aValue);
+    }
+
+    public float getFilterParameter(uint aVoiceHandle, uint aFilterId, uint aAttributeId)
+    {
+        return Soloud_getFilterParameter(objhandle, aVoiceHandle, aFilterId, aAttributeId);
+    }
+
+    public void fadeFilterParameter(uint aVoiceHandle, uint aFilterId, uint aAttributeId, float aTo, double aTime)
+    {
+        Soloud_fadeFilterParameter(objhandle, aVoiceHandle, aFilterId, aAttributeId, aTo, aTime);
+    }
+
+    public void oscillateFilterParameter(uint aVoiceHandle, uint aFilterId, uint aAttributeId, float aFrom, float aTo, double aTime)
+    {
+        Soloud_oscillateFilterParameter(objhandle, aVoiceHandle, aFilterId, aAttributeId, aFrom, aTo, aTime);
+    }
+
+    public double getStreamTime(uint aVoiceHandle)
+    {
+        return Soloud_getStreamTime(objhandle, aVoiceHandle);
+    }
+
+    public int getPause(uint aVoiceHandle)
+    {
+        return Soloud_getPause(objhandle, aVoiceHandle);
+    }
+
+    public float getVolume(uint aVoiceHandle)
+    {
+        return Soloud_getVolume(objhandle, aVoiceHandle);
+    }
+
+    public float getPan(uint aVoiceHandle)
+    {
+        return Soloud_getPan(objhandle, aVoiceHandle);
+    }
+
+    public float getSamplerate(uint aVoiceHandle)
+    {
+        return Soloud_getSamplerate(objhandle, aVoiceHandle);
+    }
+
+    public int getProtectVoice(uint aVoiceHandle)
+    {
+        return Soloud_getProtectVoice(objhandle, aVoiceHandle);
+    }
+
+    public uint getActiveVoiceCount()
+    {
+        return Soloud_getActiveVoiceCount(objhandle);
+    }
+
+    public int isValidVoiceHandle(uint aVoiceHandle)
+    {
+        return Soloud_isValidVoiceHandle(objhandle, aVoiceHandle);
+    }
+
+    public float getRelativePlaySpeed(uint aVoiceHandle)
+    {
+        return Soloud_getRelativePlaySpeed(objhandle, aVoiceHandle);
+    }
+
+    public float getPostClipScaler()
+    {
+        return Soloud_getPostClipScaler(objhandle);
+    }
+
+    public float getGlobalVolume()
+    {
+        return Soloud_getGlobalVolume(objhandle);
+    }
+
+    public void setGlobalVolume(float aVolume)
+    {
+        Soloud_setGlobalVolume(objhandle, aVolume);
+    }
+
+    public void setPostClipScaler(float aScaler)
+    {
+        Soloud_setPostClipScaler(objhandle, aScaler);
+    }
+
+    public void setPause(uint aVoiceHandle, int aPause)
+    {
+        Soloud_setPause(objhandle, aVoiceHandle, aPause);
+    }
+
+    public void setPauseAll(int aPause)
+    {
+        Soloud_setPauseAll(objhandle, aPause);
+    }
+
+    public void setRelativePlaySpeed(uint aVoiceHandle, float aSpeed)
+    {
+        Soloud_setRelativePlaySpeed(objhandle, aVoiceHandle, aSpeed);
+    }
+
+    public void setProtectVoice(uint aVoiceHandle, int aProtect)
+    {
+        Soloud_setProtectVoice(objhandle, aVoiceHandle, aProtect);
+    }
+
+    public void setSamplerate(uint aVoiceHandle, float aSamplerate)
+    {
+        Soloud_setSamplerate(objhandle, aVoiceHandle, aSamplerate);
+    }
+
+    public void setPan(uint aVoiceHandle, float aPan)
+    {
+        Soloud_setPan(objhandle, aVoiceHandle, aPan);
+    }
+
+    public void setPanAbsolute(uint aVoiceHandle, float aLVolume, float aRVolume)
+    {
+        Soloud_setPanAbsolute(objhandle, aVoiceHandle, aLVolume, aRVolume);
+    }
+
+    public void setVolume(uint aVoiceHandle, float aVolume)
+    {
+        Soloud_setVolume(objhandle, aVoiceHandle, aVolume);
+    }
+
+    public void setDelaySamples(uint aVoiceHandle, uint aSamples)
+    {
+        Soloud_setDelaySamples(objhandle, aVoiceHandle, aSamples);
+    }
+
+    public void fadeVolume(uint aVoiceHandle, float aTo, double aTime)
+    {
+        Soloud_fadeVolume(objhandle, aVoiceHandle, aTo, aTime);
+    }
+
+    public void fadePan(uint aVoiceHandle, float aTo, double aTime)
+    {
+        Soloud_fadePan(objhandle, aVoiceHandle, aTo, aTime);
+    }
+
+    public void fadeRelativePlaySpeed(uint aVoiceHandle, float aTo, double aTime)
+    {
+        Soloud_fadeRelativePlaySpeed(objhandle, aVoiceHandle, aTo, aTime);
+    }
+
+    public void fadeGlobalVolume(float aTo, double aTime)
+    {
+        Soloud_fadeGlobalVolume(objhandle, aTo, aTime);
+    }
+
+    public void schedulePause(uint aVoiceHandle, double aTime)
+    {
+        Soloud_schedulePause(objhandle, aVoiceHandle, aTime);
+    }
+
+    public void scheduleStop(uint aVoiceHandle, double aTime)
+    {
+        Soloud_scheduleStop(objhandle, aVoiceHandle, aTime);
+    }
+
+    public void oscillateVolume(uint aVoiceHandle, float aFrom, float aTo, double aTime)
+    {
+        Soloud_oscillateVolume(objhandle, aVoiceHandle, aFrom, aTo, aTime);
+    }
+
+    public void oscillatePan(uint aVoiceHandle, float aFrom, float aTo, double aTime)
+    {
+        Soloud_oscillatePan(objhandle, aVoiceHandle, aFrom, aTo, aTime);
+    }
+
+    public void oscillateRelativePlaySpeed(uint aVoiceHandle, float aFrom, float aTo, double aTime)
+    {
+        Soloud_oscillateRelativePlaySpeed(objhandle, aVoiceHandle, aFrom, aTo, aTime);
+    }
+
+    public void oscillateGlobalVolume(float aFrom, float aTo, double aTime)
+    {
+        Soloud_oscillateGlobalVolume(objhandle, aFrom, aTo, aTime);
+    }
+
+    public void setGlobalFilter(uint aFilterId, SoloudObject aFilter)
+    {
+        Soloud_setGlobalFilter(objhandle, aFilterId, aFilter.objhandle);
+    }
+
+    public void setVisualizationEnable(int aEnable)
+    {
+        Soloud_setVisualizationEnable(objhandle, aEnable);
+    }
+
+    public float[] calcFFT()
+    {
+        return Soloud_calcFFT(objhandle);
+    }
+
+    public float[] getWave()
+    {
+        return Soloud_getWave(objhandle);
+    }
+
+    public uint getLoopCount(uint aVoiceHandle)
+    {
+        return Soloud_getLoopCount(objhandle, aVoiceHandle);
+    }
+
+    public uint createVoiceGroup()
+    {
+        return Soloud_createVoiceGroup(objhandle);
+    }
+
+    public int destroyVoiceGroup(uint aVoiceGroupHandle)
+    {
+        return Soloud_destroyVoiceGroup(objhandle, aVoiceGroupHandle);
+    }
+
+    public int addVoiceToGroup(uint aVoiceGroupHandle, uint aVoiceHandle)
+    {
+        return Soloud_addVoiceToGroup(objhandle, aVoiceGroupHandle, aVoiceHandle);
+    }
+
+    public int isVoiceGroup(uint aVoiceGroupHandle)
+    {
+        return Soloud_isVoiceGroup(objhandle, aVoiceGroupHandle);
+    }
+
+    public int isVoiceGroupEmpty(uint aVoiceGroupHandle)
+    {
+        return Soloud_isVoiceGroupEmpty(objhandle, aVoiceGroupHandle);
+    }
+
+    public void update3dAudio()
+    {
+        Soloud_update3dAudio(objhandle);
+    }
+
+    public int set3dSoundSpeed(float aSpeed)
+    {
+        return Soloud_set3dSoundSpeed(objhandle, aSpeed);
+    }
+
+    public float get3dSoundSpeed()
+    {
+        return Soloud_get3dSoundSpeed(objhandle);
+    }
+
+    public void set3dListenerParameters(float aPosX, float aPosY, float aPosZ, float aAtX, float aAtY, float aAtZ, float aUpX, float aUpY, float aUpZ, float aVelocityX = 0.0f, float aVelocityY = 0.0f, float aVelocityZ = 0.0f)
+    {
+        Soloud_set3dListenerParametersEx(objhandle, aPosX, aPosY, aPosZ, aAtX, aAtY, aAtZ, aUpX, aUpY, aUpZ, aVelocityX, aVelocityY, aVelocityZ);
+    }
+
+    public void set3dListenerPosition(float aPosX, float aPosY, float aPosZ)
+    {
+        Soloud_set3dListenerPosition(objhandle, aPosX, aPosY, aPosZ);
+    }
+
+    public void set3dListenerAt(float aAtX, float aAtY, float aAtZ)
+    {
+        Soloud_set3dListenerAt(objhandle, aAtX, aAtY, aAtZ);
+    }
+
+    public void set3dListenerUp(float aUpX, float aUpY, float aUpZ)
+    {
+        Soloud_set3dListenerUp(objhandle, aUpX, aUpY, aUpZ);
+    }
+
+    public void set3dListenerVelocity(float aVelocityX, float aVelocityY, float aVelocityZ)
+    {
+        Soloud_set3dListenerVelocity(objhandle, aVelocityX, aVelocityY, aVelocityZ);
+    }
+
+    public void set3dSourceParameters(uint aVoiceHandle, float aPosX, float aPosY, float aPosZ, float aVelocityX = 0.0f, float aVelocityY = 0.0f, float aVelocityZ = 0.0f)
+    {
+        Soloud_set3dSourceParametersEx(objhandle, aVoiceHandle, aPosX, aPosY, aPosZ, aVelocityX, aVelocityY, aVelocityZ);
+    }
+
+    public void set3dSourcePosition(uint aVoiceHandle, float aPosX, float aPosY, float aPosZ)
+    {
+        Soloud_set3dSourcePosition(objhandle, aVoiceHandle, aPosX, aPosY, aPosZ);
+    }
+
+    public void set3dSourceVelocity(uint aVoiceHandle, float aVelocityX, float aVelocityY, float aVelocityZ)
+    {
+        Soloud_set3dSourceVelocity(objhandle, aVoiceHandle, aVelocityX, aVelocityY, aVelocityZ);
+    }
+
+    public void set3dSourceMinMaxDistance(uint aVoiceHandle, float aMinDistance, float aMaxDistance)
+    {
+        Soloud_set3dSourceMinMaxDistance(objhandle, aVoiceHandle, aMinDistance, aMaxDistance);
+    }
+
+    public void set3dSourceAttenuation(uint aVoiceHandle, uint aAttenuationModel, float aAttenuationRolloffFactor)
+    {
+        Soloud_set3dSourceAttenuation(objhandle, aVoiceHandle, aAttenuationModel, aAttenuationRolloffFactor);
+    }
+
+    public void set3dSourceDopplerFactor(uint aVoiceHandle, float aDopplerFactor)
+    {
+        Soloud_set3dSourceDopplerFactor(objhandle, aVoiceHandle, aDopplerFactor);
+    }
 
 }
 
 public struct BiquadResonantFilter
 {
 pure @safe nothrow @nogc:
-	public enum NONE = 0;
-	public enum HIGHPASS = 2;
-	public enum WET = 0;
-	public enum LOWPASS = 1;
-	public enum SAMPLERATE = 1;
-	public enum BANDPASS = 3;
-	public enum FREQUENCY = 2;
-	public enum RESONANCE = 3;
+    public enum NONE = 0;
+    public enum HIGHPASS = 2;
+    public enum WET = 0;
+    public enum LOWPASS = 1;
+    public enum SAMPLERATE = 1;
+    public enum BANDPASS = 3;
+    public enum FREQUENCY = 2;
+    public enum RESONANCE = 3;
 
-	public SoloudObject soloudObject;
-	alias soloudObject this;
+    public SoloudObject soloudObject;
+    alias soloudObject this;
 
-	public static create()
-	{
-		return BiquadResonantFilter(SoloudObject(BiquadResonantFilter_create()));
-	}
+    public static create()
+    {
+        return BiquadResonantFilter(SoloudObject(BiquadResonantFilter_create()));
+    }
 
-	~this()
-	{
-		BiquadResonantFilter_destroy(objhandle);
-	}
+    public void destroy()
+    {
+        BiquadResonantFilter_destroy(objhandle);
+    }
 
-	public int setParams(int aType, float aSampleRate, float aFrequency, float aResonance)
-	{
-		return BiquadResonantFilter_setParams(objhandle, aType, aSampleRate, aFrequency, aResonance);
-	}
+    public int setParams(int aType, float aSampleRate, float aFrequency, float aResonance)
+    {
+        return BiquadResonantFilter_setParams(objhandle, aType, aSampleRate, aFrequency, aResonance);
+    }
 
 }
 
@@ -440,103 +440,103 @@ public struct Bus
 {
 pure @safe nothrow @nogc:
 
-	public SoloudObject soloudObject;
-	alias soloudObject this;
+    public SoloudObject soloudObject;
+    alias soloudObject this;
 
-	public static create()
-	{
-		return Bus(SoloudObject(Bus_create()));
-	}
+    public static create()
+    {
+        return Bus(SoloudObject(Bus_create()));
+    }
 
-	~this()
-	{
-		Bus_destroy(objhandle);
-	}
+    public void destroy()
+    {
+        Bus_destroy(objhandle);
+    }
 
-	public void setFilter(uint aFilterId, SoloudObject aFilter)
-	{
-		Bus_setFilter(objhandle, aFilterId, aFilter.objhandle);
-	}
+    public void setFilter(uint aFilterId, SoloudObject aFilter)
+    {
+        Bus_setFilter(objhandle, aFilterId, aFilter.objhandle);
+    }
 
-	public uint play(SoloudObject aSound, float aVolume = 1.0f, float aPan = 0.0f, int aPaused = 0)
-	{
-		return Bus_playEx(objhandle, aSound.objhandle, aVolume, aPan, aPaused);
-	}
+    public uint play(SoloudObject aSound, float aVolume = 1.0f, float aPan = 0.0f, int aPaused = 0)
+    {
+        return Bus_playEx(objhandle, aSound.objhandle, aVolume, aPan, aPaused);
+    }
 
-	public uint playClocked(double aSoundTime, SoloudObject aSound, float aVolume = 1.0f, float aPan = 0.0f)
-	{
-		return Bus_playClockedEx(objhandle, aSoundTime, aSound.objhandle, aVolume, aPan);
-	}
+    public uint playClocked(double aSoundTime, SoloudObject aSound, float aVolume = 1.0f, float aPan = 0.0f)
+    {
+        return Bus_playClockedEx(objhandle, aSoundTime, aSound.objhandle, aVolume, aPan);
+    }
 
-	public uint play3d(SoloudObject aSound, float aPosX, float aPosY, float aPosZ, float aVelX = 0.0f, float aVelY = 0.0f, float aVelZ = 0.0f, float aVolume = 1.0f, int aPaused = 0)
-	{
-		return Bus_play3dEx(objhandle, aSound.objhandle, aPosX, aPosY, aPosZ, aVelX, aVelY, aVelZ, aVolume, aPaused);
-	}
+    public uint play3d(SoloudObject aSound, float aPosX, float aPosY, float aPosZ, float aVelX = 0.0f, float aVelY = 0.0f, float aVelZ = 0.0f, float aVolume = 1.0f, int aPaused = 0)
+    {
+        return Bus_play3dEx(objhandle, aSound.objhandle, aPosX, aPosY, aPosZ, aVelX, aVelY, aVelZ, aVolume, aPaused);
+    }
 
-	public uint play3dClocked(double aSoundTime, SoloudObject aSound, float aPosX, float aPosY, float aPosZ, float aVelX = 0.0f, float aVelY = 0.0f, float aVelZ = 0.0f, float aVolume = 1.0f)
-	{
-		return Bus_play3dClockedEx(objhandle, aSoundTime, aSound.objhandle, aPosX, aPosY, aPosZ, aVelX, aVelY, aVelZ, aVolume);
-	}
+    public uint play3dClocked(double aSoundTime, SoloudObject aSound, float aPosX, float aPosY, float aPosZ, float aVelX = 0.0f, float aVelY = 0.0f, float aVelZ = 0.0f, float aVolume = 1.0f)
+    {
+        return Bus_play3dClockedEx(objhandle, aSoundTime, aSound.objhandle, aPosX, aPosY, aPosZ, aVelX, aVelY, aVelZ, aVolume);
+    }
 
-	public void setVisualizationEnable(int aEnable)
-	{
-		Bus_setVisualizationEnable(objhandle, aEnable);
-	}
+    public void setVisualizationEnable(int aEnable)
+    {
+        Bus_setVisualizationEnable(objhandle, aEnable);
+    }
 
-	public float[] calcFFT()
-	{
-		return Bus_calcFFT(objhandle);
-	}
+    public float[] calcFFT()
+    {
+        return Bus_calcFFT(objhandle);
+    }
 
-	public float[] getWave()
-	{
-		return Bus_getWave(objhandle);
-	}
+    public float[] getWave()
+    {
+        return Bus_getWave(objhandle);
+    }
 
-	public void setLooping(int aLoop)
-	{
-		Bus_setLooping(objhandle, aLoop);
-	}
+    public void setLooping(int aLoop)
+    {
+        Bus_setLooping(objhandle, aLoop);
+    }
 
-	public void set3dMinMaxDistance(float aMinDistance, float aMaxDistance)
-	{
-		Bus_set3dMinMaxDistance(objhandle, aMinDistance, aMaxDistance);
-	}
+    public void set3dMinMaxDistance(float aMinDistance, float aMaxDistance)
+    {
+        Bus_set3dMinMaxDistance(objhandle, aMinDistance, aMaxDistance);
+    }
 
-	public void set3dAttenuation(uint aAttenuationModel, float aAttenuationRolloffFactor)
-	{
-		Bus_set3dAttenuation(objhandle, aAttenuationModel, aAttenuationRolloffFactor);
-	}
+    public void set3dAttenuation(uint aAttenuationModel, float aAttenuationRolloffFactor)
+    {
+        Bus_set3dAttenuation(objhandle, aAttenuationModel, aAttenuationRolloffFactor);
+    }
 
-	public void set3dDopplerFactor(float aDopplerFactor)
-	{
-		Bus_set3dDopplerFactor(objhandle, aDopplerFactor);
-	}
+    public void set3dDopplerFactor(float aDopplerFactor)
+    {
+        Bus_set3dDopplerFactor(objhandle, aDopplerFactor);
+    }
 
-	public void set3dProcessing(int aDo3dProcessing)
-	{
-		Bus_set3dProcessing(objhandle, aDo3dProcessing);
-	}
+    public void set3dProcessing(int aDo3dProcessing)
+    {
+        Bus_set3dProcessing(objhandle, aDo3dProcessing);
+    }
 
-	public void set3dListenerRelative(int aListenerRelative)
-	{
-		Bus_set3dListenerRelative(objhandle, aListenerRelative);
-	}
+    public void set3dListenerRelative(int aListenerRelative)
+    {
+        Bus_set3dListenerRelative(objhandle, aListenerRelative);
+    }
 
-	public void set3dDistanceDelay(int aDistanceDelay)
-	{
-		Bus_set3dDistanceDelay(objhandle, aDistanceDelay);
-	}
+    public void set3dDistanceDelay(int aDistanceDelay)
+    {
+        Bus_set3dDistanceDelay(objhandle, aDistanceDelay);
+    }
 
-	public void set3dCollider(SoloudObject aCollider, int aUserData = 0)
-	{
-		Bus_set3dColliderEx(objhandle, aCollider.objhandle, aUserData);
-	}
+    public void set3dCollider(SoloudObject aCollider, int aUserData = 0)
+    {
+        Bus_set3dColliderEx(objhandle, aCollider.objhandle, aUserData);
+    }
 
-	public void stop()
-	{
-		Bus_stop(objhandle);
-	}
+    public void stop()
+    {
+        Bus_stop(objhandle);
+    }
 
 }
 
@@ -544,104 +544,104 @@ public struct EchoFilter
 {
 pure @safe nothrow @nogc:
 
-	public SoloudObject soloudObject;
-	alias soloudObject this;
+    public SoloudObject soloudObject;
+    alias soloudObject this;
 
-	public static create()
-	{
-		return EchoFilter(SoloudObject(EchoFilter_create()));
-	}
+    public static create()
+    {
+        return EchoFilter(SoloudObject(EchoFilter_create()));
+    }
 
-	~this()
-	{
-		EchoFilter_destroy(objhandle);
-	}
+    public void destroy()
+    {
+        EchoFilter_destroy(objhandle);
+    }
 
-	public int setParams(float aDelay, float aDecay = 0.7f, float aFilter = 0.0f)
-	{
-		return EchoFilter_setParamsEx(objhandle, aDelay, aDecay, aFilter);
-	}
+    public int setParams(float aDelay, float aDecay = 0.7f, float aFilter = 0.0f)
+    {
+        return EchoFilter_setParamsEx(objhandle, aDelay, aDecay, aFilter);
+    }
 
 }
 
 public struct FFTFilter
 {
 pure @safe nothrow @nogc:
-	public enum OVER = 0;
-	public enum MULTIPLY = 2;
-	public enum SUBTRACT = 1;
+    public enum OVER = 0;
+    public enum MULTIPLY = 2;
+    public enum SUBTRACT = 1;
 
-	public SoloudObject soloudObject;
-	alias soloudObject this;
+    public SoloudObject soloudObject;
+    alias soloudObject this;
 
-	public static create()
-	{
-		return FFTFilter(SoloudObject(FFTFilter_create()));
-	}
+    public static create()
+    {
+        return FFTFilter(SoloudObject(FFTFilter_create()));
+    }
 
-	~this()
-	{
-		FFTFilter_destroy(objhandle);
-	}
+    public void destroy()
+    {
+        FFTFilter_destroy(objhandle);
+    }
 
-	public int setParameters(int aShift, int aCombine = 0, float aScale = 0.002f)
-	{
-		return FFTFilter_setParametersEx(objhandle, aShift, aCombine, aScale);
-	}
+    public int setParameters(int aShift, int aCombine = 0, float aScale = 0.002f)
+    {
+        return FFTFilter_setParametersEx(objhandle, aShift, aCombine, aScale);
+    }
 
 }
 
 public struct FlangerFilter
 {
 pure @safe nothrow @nogc:
-	public enum FREQ = 2;
-	public enum WET = 0;
-	public enum DELAY = 1;
+    public enum FREQ = 2;
+    public enum WET = 0;
+    public enum DELAY = 1;
 
-	public SoloudObject soloudObject;
-	alias soloudObject this;
+    public SoloudObject soloudObject;
+    alias soloudObject this;
 
-	public static create()
-	{
-		return FlangerFilter(SoloudObject(FlangerFilter_create()));
-	}
+    public static create()
+    {
+        return FlangerFilter(SoloudObject(FlangerFilter_create()));
+    }
 
-	~this()
-	{
-		FlangerFilter_destroy(objhandle);
-	}
+    public void destroy()
+    {
+        FlangerFilter_destroy(objhandle);
+    }
 
-	public int setParams(float aDelay, float aFreq)
-	{
-		return FlangerFilter_setParams(objhandle, aDelay, aFreq);
-	}
+    public int setParams(float aDelay, float aFreq)
+    {
+        return FlangerFilter_setParams(objhandle, aDelay, aFreq);
+    }
 
 }
 
 public struct LofiFilter
 {
 pure @safe nothrow @nogc:
-	public enum BITDEPTH = 2;
-	public enum WET = 0;
-	public enum SAMPLERATE = 1;
+    public enum BITDEPTH = 2;
+    public enum WET = 0;
+    public enum SAMPLERATE = 1;
 
-	public SoloudObject soloudObject;
-	alias soloudObject this;
+    public SoloudObject soloudObject;
+    alias soloudObject this;
 
-	public static create()
-	{
-		return LofiFilter(SoloudObject(LofiFilter_create()));
-	}
+    public static create()
+    {
+        return LofiFilter(SoloudObject(LofiFilter_create()));
+    }
 
-	~this()
-	{
-		LofiFilter_destroy(objhandle);
-	}
+    public void destroy()
+    {
+        LofiFilter_destroy(objhandle);
+    }
 
-	public int setParams(float aSampleRate, float aBitdepth)
-	{
-		return LofiFilter_setParams(objhandle, aSampleRate, aBitdepth);
-	}
+    public int setParams(float aSampleRate, float aBitdepth)
+    {
+        return LofiFilter_setParams(objhandle, aSampleRate, aBitdepth);
+    }
 
 }
 
@@ -649,73 +649,73 @@ public struct Modplug
 {
 pure @safe nothrow @nogc:
 
-	public SoloudObject soloudObject;
-	alias soloudObject this;
+    public SoloudObject soloudObject;
+    alias soloudObject this;
 
-	public static create()
-	{
-		return Modplug(SoloudObject(Modplug_create()));
-	}
+    public static create()
+    {
+        return Modplug(SoloudObject(Modplug_create()));
+    }
 
-	~this()
-	{
-		Modplug_destroy(objhandle);
-	}
+    public void destroy()
+    {
+        Modplug_destroy(objhandle);
+    }
 
-	public int load(const(char)* aFilename)
-	{
-		return Modplug_load(objhandle, aFilename);
-	}
+    public int load(const(char)* aFilename)
+    {
+        return Modplug_load(objhandle, aFilename);
+    }
 
-	public void setLooping(int aLoop)
-	{
-		Modplug_setLooping(objhandle, aLoop);
-	}
+    public void setLooping(int aLoop)
+    {
+        Modplug_setLooping(objhandle, aLoop);
+    }
 
-	public void set3dMinMaxDistance(float aMinDistance, float aMaxDistance)
-	{
-		Modplug_set3dMinMaxDistance(objhandle, aMinDistance, aMaxDistance);
-	}
+    public void set3dMinMaxDistance(float aMinDistance, float aMaxDistance)
+    {
+        Modplug_set3dMinMaxDistance(objhandle, aMinDistance, aMaxDistance);
+    }
 
-	public void set3dAttenuation(uint aAttenuationModel, float aAttenuationRolloffFactor)
-	{
-		Modplug_set3dAttenuation(objhandle, aAttenuationModel, aAttenuationRolloffFactor);
-	}
+    public void set3dAttenuation(uint aAttenuationModel, float aAttenuationRolloffFactor)
+    {
+        Modplug_set3dAttenuation(objhandle, aAttenuationModel, aAttenuationRolloffFactor);
+    }
 
-	public void set3dDopplerFactor(float aDopplerFactor)
-	{
-		Modplug_set3dDopplerFactor(objhandle, aDopplerFactor);
-	}
+    public void set3dDopplerFactor(float aDopplerFactor)
+    {
+        Modplug_set3dDopplerFactor(objhandle, aDopplerFactor);
+    }
 
-	public void set3dProcessing(int aDo3dProcessing)
-	{
-		Modplug_set3dProcessing(objhandle, aDo3dProcessing);
-	}
+    public void set3dProcessing(int aDo3dProcessing)
+    {
+        Modplug_set3dProcessing(objhandle, aDo3dProcessing);
+    }
 
-	public void set3dListenerRelative(int aListenerRelative)
-	{
-		Modplug_set3dListenerRelative(objhandle, aListenerRelative);
-	}
+    public void set3dListenerRelative(int aListenerRelative)
+    {
+        Modplug_set3dListenerRelative(objhandle, aListenerRelative);
+    }
 
-	public void set3dDistanceDelay(int aDistanceDelay)
-	{
-		Modplug_set3dDistanceDelay(objhandle, aDistanceDelay);
-	}
+    public void set3dDistanceDelay(int aDistanceDelay)
+    {
+        Modplug_set3dDistanceDelay(objhandle, aDistanceDelay);
+    }
 
-	public void set3dCollider(SoloudObject aCollider, int aUserData = 0)
-	{
-		Modplug_set3dColliderEx(objhandle, aCollider.objhandle, aUserData);
-	}
+    public void set3dCollider(SoloudObject aCollider, int aUserData = 0)
+    {
+        Modplug_set3dColliderEx(objhandle, aCollider.objhandle, aUserData);
+    }
 
-	public void setFilter(uint aFilterId, SoloudObject aFilter)
-	{
-		Modplug_setFilter(objhandle, aFilterId, aFilter.objhandle);
-	}
+    public void setFilter(uint aFilterId, SoloudObject aFilter)
+    {
+        Modplug_setFilter(objhandle, aFilterId, aFilter.objhandle);
+    }
 
-	public void stop()
-	{
-		Modplug_stop(objhandle);
-	}
+    public void stop()
+    {
+        Modplug_stop(objhandle);
+    }
 
 }
 
@@ -723,119 +723,119 @@ public struct Prg
 {
 pure @safe nothrow @nogc:
 
-	public SoloudObject soloudObject;
-	alias soloudObject this;
+    public SoloudObject soloudObject;
+    alias soloudObject this;
 
-	public static create()
-	{
-		return Prg(SoloudObject(Prg_create()));
-	}
+    public static create()
+    {
+        return Prg(SoloudObject(Prg_create()));
+    }
 
-	~this()
-	{
-		Prg_destroy(objhandle);
-	}
+    public void destroy()
+    {
+        Prg_destroy(objhandle);
+    }
 
-	public uint rand()
-	{
-		return Prg_rand(objhandle);
-	}
+    public uint rand()
+    {
+        return Prg_rand(objhandle);
+    }
 
-	public void srand(int aSeed)
-	{
-		Prg_srand(objhandle, aSeed);
-	}
+    public void srand(int aSeed)
+    {
+        Prg_srand(objhandle, aSeed);
+    }
 
 }
 
 public struct Sfxr
 {
 pure @safe nothrow @nogc:
-	public enum HURT = 4;
-	public enum LASER = 1;
-	public enum BLIP = 6;
-	public enum JUMP = 5;
-	public enum COIN = 0;
-	public enum EXPLOSION = 2;
-	public enum POWERUP = 3;
+    public enum HURT = 4;
+    public enum LASER = 1;
+    public enum BLIP = 6;
+    public enum JUMP = 5;
+    public enum COIN = 0;
+    public enum EXPLOSION = 2;
+    public enum POWERUP = 3;
 
-	public SoloudObject soloudObject;
-	alias soloudObject this;
+    public SoloudObject soloudObject;
+    alias soloudObject this;
 
-	public static create()
-	{
-		return Sfxr(SoloudObject(Sfxr_create()));
-	}
+    public static create()
+    {
+        return Sfxr(SoloudObject(Sfxr_create()));
+    }
 
-	~this()
-	{
-		Sfxr_destroy(objhandle);
-	}
+    public void destroy()
+    {
+        Sfxr_destroy(objhandle);
+    }
 
-	public void resetParams()
-	{
-		Sfxr_resetParams(objhandle);
-	}
+    public void resetParams()
+    {
+        Sfxr_resetParams(objhandle);
+    }
 
-	public int loadParams(const(char)* aFilename)
-	{
-		return Sfxr_loadParams(objhandle, aFilename);
-	}
+    public int loadParams(const(char)* aFilename)
+    {
+        return Sfxr_loadParams(objhandle, aFilename);
+    }
 
-	public int loadPreset(int aPresetNo, int aRandSeed)
-	{
-		return Sfxr_loadPreset(objhandle, aPresetNo, aRandSeed);
-	}
+    public int loadPreset(int aPresetNo, int aRandSeed)
+    {
+        return Sfxr_loadPreset(objhandle, aPresetNo, aRandSeed);
+    }
 
-	public void setLooping(int aLoop)
-	{
-		Sfxr_setLooping(objhandle, aLoop);
-	}
+    public void setLooping(int aLoop)
+    {
+        Sfxr_setLooping(objhandle, aLoop);
+    }
 
-	public void set3dMinMaxDistance(float aMinDistance, float aMaxDistance)
-	{
-		Sfxr_set3dMinMaxDistance(objhandle, aMinDistance, aMaxDistance);
-	}
+    public void set3dMinMaxDistance(float aMinDistance, float aMaxDistance)
+    {
+        Sfxr_set3dMinMaxDistance(objhandle, aMinDistance, aMaxDistance);
+    }
 
-	public void set3dAttenuation(uint aAttenuationModel, float aAttenuationRolloffFactor)
-	{
-		Sfxr_set3dAttenuation(objhandle, aAttenuationModel, aAttenuationRolloffFactor);
-	}
+    public void set3dAttenuation(uint aAttenuationModel, float aAttenuationRolloffFactor)
+    {
+        Sfxr_set3dAttenuation(objhandle, aAttenuationModel, aAttenuationRolloffFactor);
+    }
 
-	public void set3dDopplerFactor(float aDopplerFactor)
-	{
-		Sfxr_set3dDopplerFactor(objhandle, aDopplerFactor);
-	}
+    public void set3dDopplerFactor(float aDopplerFactor)
+    {
+        Sfxr_set3dDopplerFactor(objhandle, aDopplerFactor);
+    }
 
-	public void set3dProcessing(int aDo3dProcessing)
-	{
-		Sfxr_set3dProcessing(objhandle, aDo3dProcessing);
-	}
+    public void set3dProcessing(int aDo3dProcessing)
+    {
+        Sfxr_set3dProcessing(objhandle, aDo3dProcessing);
+    }
 
-	public void set3dListenerRelative(int aListenerRelative)
-	{
-		Sfxr_set3dListenerRelative(objhandle, aListenerRelative);
-	}
+    public void set3dListenerRelative(int aListenerRelative)
+    {
+        Sfxr_set3dListenerRelative(objhandle, aListenerRelative);
+    }
 
-	public void set3dDistanceDelay(int aDistanceDelay)
-	{
-		Sfxr_set3dDistanceDelay(objhandle, aDistanceDelay);
-	}
+    public void set3dDistanceDelay(int aDistanceDelay)
+    {
+        Sfxr_set3dDistanceDelay(objhandle, aDistanceDelay);
+    }
 
-	public void set3dCollider(SoloudObject aCollider, int aUserData = 0)
-	{
-		Sfxr_set3dColliderEx(objhandle, aCollider.objhandle, aUserData);
-	}
+    public void set3dCollider(SoloudObject aCollider, int aUserData = 0)
+    {
+        Sfxr_set3dColliderEx(objhandle, aCollider.objhandle, aUserData);
+    }
 
-	public void setFilter(uint aFilterId, SoloudObject aFilter)
-	{
-		Sfxr_setFilter(objhandle, aFilterId, aFilter.objhandle);
-	}
+    public void setFilter(uint aFilterId, SoloudObject aFilter)
+    {
+        Sfxr_setFilter(objhandle, aFilterId, aFilter.objhandle);
+    }
 
-	public void stop()
-	{
-		Sfxr_stop(objhandle);
-	}
+    public void stop()
+    {
+        Sfxr_stop(objhandle);
+    }
 
 }
 
@@ -843,73 +843,73 @@ public struct Speech
 {
 pure @safe nothrow @nogc:
 
-	public SoloudObject soloudObject;
-	alias soloudObject this;
+    public SoloudObject soloudObject;
+    alias soloudObject this;
 
-	public static create()
-	{
-		return Speech(SoloudObject(Speech_create()));
-	}
+    public static create()
+    {
+        return Speech(SoloudObject(Speech_create()));
+    }
 
-	~this()
-	{
-		Speech_destroy(objhandle);
-	}
+    public void destroy()
+    {
+        Speech_destroy(objhandle);
+    }
 
-	public int setText(const(char)* aText)
-	{
-		return Speech_setText(objhandle, aText);
-	}
+    public int setText(const(char)* aText)
+    {
+        return Speech_setText(objhandle, aText);
+    }
 
-	public void setLooping(int aLoop)
-	{
-		Speech_setLooping(objhandle, aLoop);
-	}
+    public void setLooping(int aLoop)
+    {
+        Speech_setLooping(objhandle, aLoop);
+    }
 
-	public void set3dMinMaxDistance(float aMinDistance, float aMaxDistance)
-	{
-		Speech_set3dMinMaxDistance(objhandle, aMinDistance, aMaxDistance);
-	}
+    public void set3dMinMaxDistance(float aMinDistance, float aMaxDistance)
+    {
+        Speech_set3dMinMaxDistance(objhandle, aMinDistance, aMaxDistance);
+    }
 
-	public void set3dAttenuation(uint aAttenuationModel, float aAttenuationRolloffFactor)
-	{
-		Speech_set3dAttenuation(objhandle, aAttenuationModel, aAttenuationRolloffFactor);
-	}
+    public void set3dAttenuation(uint aAttenuationModel, float aAttenuationRolloffFactor)
+    {
+        Speech_set3dAttenuation(objhandle, aAttenuationModel, aAttenuationRolloffFactor);
+    }
 
-	public void set3dDopplerFactor(float aDopplerFactor)
-	{
-		Speech_set3dDopplerFactor(objhandle, aDopplerFactor);
-	}
+    public void set3dDopplerFactor(float aDopplerFactor)
+    {
+        Speech_set3dDopplerFactor(objhandle, aDopplerFactor);
+    }
 
-	public void set3dProcessing(int aDo3dProcessing)
-	{
-		Speech_set3dProcessing(objhandle, aDo3dProcessing);
-	}
+    public void set3dProcessing(int aDo3dProcessing)
+    {
+        Speech_set3dProcessing(objhandle, aDo3dProcessing);
+    }
 
-	public void set3dListenerRelative(int aListenerRelative)
-	{
-		Speech_set3dListenerRelative(objhandle, aListenerRelative);
-	}
+    public void set3dListenerRelative(int aListenerRelative)
+    {
+        Speech_set3dListenerRelative(objhandle, aListenerRelative);
+    }
 
-	public void set3dDistanceDelay(int aDistanceDelay)
-	{
-		Speech_set3dDistanceDelay(objhandle, aDistanceDelay);
-	}
+    public void set3dDistanceDelay(int aDistanceDelay)
+    {
+        Speech_set3dDistanceDelay(objhandle, aDistanceDelay);
+    }
 
-	public void set3dCollider(SoloudObject aCollider, int aUserData = 0)
-	{
-		Speech_set3dColliderEx(objhandle, aCollider.objhandle, aUserData);
-	}
+    public void set3dCollider(SoloudObject aCollider, int aUserData = 0)
+    {
+        Speech_set3dColliderEx(objhandle, aCollider.objhandle, aUserData);
+    }
 
-	public void setFilter(uint aFilterId, SoloudObject aFilter)
-	{
-		Speech_setFilter(objhandle, aFilterId, aFilter.objhandle);
-	}
+    public void setFilter(uint aFilterId, SoloudObject aFilter)
+    {
+        Speech_setFilter(objhandle, aFilterId, aFilter.objhandle);
+    }
 
-	public void stop()
-	{
-		Speech_stop(objhandle);
-	}
+    public void stop()
+    {
+        Speech_stop(objhandle);
+    }
 
 }
 
@@ -917,83 +917,83 @@ public struct Wav
 {
 pure @safe nothrow @nogc:
 
-	public SoloudObject soloudObject;
-	alias soloudObject this;
+    public SoloudObject soloudObject;
+    alias soloudObject this;
 
-	public static create()
-	{
-		return Wav(SoloudObject(Wav_create()));
-	}
+    public static create()
+    {
+        return Wav(SoloudObject(Wav_create()));
+    }
 
-	~this()
-	{
-		Wav_destroy(objhandle);
-	}
+    public void destroy()
+    {
+        Wav_destroy(objhandle);
+    }
 
-	public int load(const(char)* aFilename)
-	{
-		return Wav_load(objhandle, aFilename);
-	}
+    public int load(const(char)* aFilename)
+    {
+        return Wav_load(objhandle, aFilename);
+    }
 
-	public int loadMem(ubyte* aMem, uint aLength)
-	{
-		return Wav_loadMem(objhandle, aMem, aLength);
-	}
+    public int loadMem(ubyte* aMem, uint aLength)
+    {
+        return Wav_loadMem(objhandle, aMem, aLength);
+    }
 
-	public double getLength()
-	{
-		return Wav_getLength(objhandle);
-	}
+    public double getLength()
+    {
+        return Wav_getLength(objhandle);
+    }
 
-	public void setLooping(int aLoop)
-	{
-		Wav_setLooping(objhandle, aLoop);
-	}
+    public void setLooping(int aLoop)
+    {
+        Wav_setLooping(objhandle, aLoop);
+    }
 
-	public void set3dMinMaxDistance(float aMinDistance, float aMaxDistance)
-	{
-		Wav_set3dMinMaxDistance(objhandle, aMinDistance, aMaxDistance);
-	}
+    public void set3dMinMaxDistance(float aMinDistance, float aMaxDistance)
+    {
+        Wav_set3dMinMaxDistance(objhandle, aMinDistance, aMaxDistance);
+    }
 
-	public void set3dAttenuation(uint aAttenuationModel, float aAttenuationRolloffFactor)
-	{
-		Wav_set3dAttenuation(objhandle, aAttenuationModel, aAttenuationRolloffFactor);
-	}
+    public void set3dAttenuation(uint aAttenuationModel, float aAttenuationRolloffFactor)
+    {
+        Wav_set3dAttenuation(objhandle, aAttenuationModel, aAttenuationRolloffFactor);
+    }
 
-	public void set3dDopplerFactor(float aDopplerFactor)
-	{
-		Wav_set3dDopplerFactor(objhandle, aDopplerFactor);
-	}
+    public void set3dDopplerFactor(float aDopplerFactor)
+    {
+        Wav_set3dDopplerFactor(objhandle, aDopplerFactor);
+    }
 
-	public void set3dProcessing(int aDo3dProcessing)
-	{
-		Wav_set3dProcessing(objhandle, aDo3dProcessing);
-	}
+    public void set3dProcessing(int aDo3dProcessing)
+    {
+        Wav_set3dProcessing(objhandle, aDo3dProcessing);
+    }
 
-	public void set3dListenerRelative(int aListenerRelative)
-	{
-		Wav_set3dListenerRelative(objhandle, aListenerRelative);
-	}
+    public void set3dListenerRelative(int aListenerRelative)
+    {
+        Wav_set3dListenerRelative(objhandle, aListenerRelative);
+    }
 
-	public void set3dDistanceDelay(int aDistanceDelay)
-	{
-		Wav_set3dDistanceDelay(objhandle, aDistanceDelay);
-	}
+    public void set3dDistanceDelay(int aDistanceDelay)
+    {
+        Wav_set3dDistanceDelay(objhandle, aDistanceDelay);
+    }
 
-	public void set3dCollider(SoloudObject aCollider, int aUserData = 0)
-	{
-		Wav_set3dColliderEx(objhandle, aCollider.objhandle, aUserData);
-	}
+    public void set3dCollider(SoloudObject aCollider, int aUserData = 0)
+    {
+        Wav_set3dColliderEx(objhandle, aCollider.objhandle, aUserData);
+    }
 
-	public void setFilter(uint aFilterId, SoloudObject aFilter)
-	{
-		Wav_setFilter(objhandle, aFilterId, aFilter.objhandle);
-	}
+    public void setFilter(uint aFilterId, SoloudObject aFilter)
+    {
+        Wav_setFilter(objhandle, aFilterId, aFilter.objhandle);
+    }
 
-	public void stop()
-	{
-		Wav_stop(objhandle);
-	}
+    public void stop()
+    {
+        Wav_stop(objhandle);
+    }
 
 }
 
@@ -1001,78 +1001,78 @@ public struct WavStream
 {
 pure @safe nothrow @nogc:
 
-	public SoloudObject soloudObject;
-	alias soloudObject this;
+    public SoloudObject soloudObject;
+    alias soloudObject this;
 
-	public static create()
-	{
-		return WavStream(SoloudObject(WavStream_create()));
-	}
+    public static create()
+    {
+        return WavStream(SoloudObject(WavStream_create()));
+    }
 
-	~this()
-	{
-		WavStream_destroy(objhandle);
-	}
+    public void destroy()
+    {
+        WavStream_destroy(objhandle);
+    }
 
-	public int load(const(char)* aFilename)
-	{
-		return WavStream_load(objhandle, aFilename);
-	}
+    public int load(const(char)* aFilename)
+    {
+        return WavStream_load(objhandle, aFilename);
+    }
 
-	public double getLength()
-	{
-		return WavStream_getLength(objhandle);
-	}
+    public double getLength()
+    {
+        return WavStream_getLength(objhandle);
+    }
 
-	public void setLooping(int aLoop)
-	{
-		WavStream_setLooping(objhandle, aLoop);
-	}
+    public void setLooping(int aLoop)
+    {
+        WavStream_setLooping(objhandle, aLoop);
+    }
 
-	public void set3dMinMaxDistance(float aMinDistance, float aMaxDistance)
-	{
-		WavStream_set3dMinMaxDistance(objhandle, aMinDistance, aMaxDistance);
-	}
+    public void set3dMinMaxDistance(float aMinDistance, float aMaxDistance)
+    {
+        WavStream_set3dMinMaxDistance(objhandle, aMinDistance, aMaxDistance);
+    }
 
-	public void set3dAttenuation(uint aAttenuationModel, float aAttenuationRolloffFactor)
-	{
-		WavStream_set3dAttenuation(objhandle, aAttenuationModel, aAttenuationRolloffFactor);
-	}
+    public void set3dAttenuation(uint aAttenuationModel, float aAttenuationRolloffFactor)
+    {
+        WavStream_set3dAttenuation(objhandle, aAttenuationModel, aAttenuationRolloffFactor);
+    }
 
-	public void set3dDopplerFactor(float aDopplerFactor)
-	{
-		WavStream_set3dDopplerFactor(objhandle, aDopplerFactor);
-	}
+    public void set3dDopplerFactor(float aDopplerFactor)
+    {
+        WavStream_set3dDopplerFactor(objhandle, aDopplerFactor);
+    }
 
-	public void set3dProcessing(int aDo3dProcessing)
-	{
-		WavStream_set3dProcessing(objhandle, aDo3dProcessing);
-	}
+    public void set3dProcessing(int aDo3dProcessing)
+    {
+        WavStream_set3dProcessing(objhandle, aDo3dProcessing);
+    }
 
-	public void set3dListenerRelative(int aListenerRelative)
-	{
-		WavStream_set3dListenerRelative(objhandle, aListenerRelative);
-	}
+    public void set3dListenerRelative(int aListenerRelative)
+    {
+        WavStream_set3dListenerRelative(objhandle, aListenerRelative);
+    }
 
-	public void set3dDistanceDelay(int aDistanceDelay)
-	{
-		WavStream_set3dDistanceDelay(objhandle, aDistanceDelay);
-	}
+    public void set3dDistanceDelay(int aDistanceDelay)
+    {
+        WavStream_set3dDistanceDelay(objhandle, aDistanceDelay);
+    }
 
-	public void set3dCollider(SoloudObject aCollider, int aUserData = 0)
-	{
-		WavStream_set3dColliderEx(objhandle, aCollider.objhandle, aUserData);
-	}
+    public void set3dCollider(SoloudObject aCollider, int aUserData = 0)
+    {
+        WavStream_set3dColliderEx(objhandle, aCollider.objhandle, aUserData);
+    }
 
-	public void setFilter(uint aFilterId, SoloudObject aFilter)
-	{
-		WavStream_setFilter(objhandle, aFilterId, aFilter.objhandle);
-	}
+    public void setFilter(uint aFilterId, SoloudObject aFilter)
+    {
+        WavStream_setFilter(objhandle, aFilterId, aFilter.objhandle);
+    }
 
-	public void stop()
-	{
-		WavStream_stop(objhandle);
-	}
+    public void stop()
+    {
+        WavStream_stop(objhandle);
+    }
 
 }
 private static extern(C) int* Soloud_create();

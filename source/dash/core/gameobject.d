@@ -42,7 +42,7 @@ struct ObjectStateFlags
 }
 
 /// A tuple of a resource and a gameobject reference
-alias GameObjectResource    = Tuple!( Resource, "resource", GameObject, "object" );
+alias GameObjectResource = Tuple!( Resource, "resource", GameObject, "object" );
 
 /**
  * Manages all components and transform in the world. Can be overridden.
@@ -350,6 +350,45 @@ public:
             else
                 addChild( GameObject.create( childDesc ) );
         }
+    }
+
+    /**
+     * Refresh the component of the given type.
+     *
+     * Params:
+     *  componentType = The type of teh component to refresh.
+     *  desc =          The new description of the component.
+     */
+    final void refreshComponent( ClassInfo componentType, Component.Description desc )
+    {
+        if( auto comp = componentType in componentList )
+        {
+            comp.refresh( desc );
+        }
+    }
+
+    /**
+     * Refresh the component of the given type.
+     *
+     * Params:
+     *  ComponentType = The type of teh component to refresh.
+     *  desc =          The new description of the component.
+     */
+    final void refreshComponent( ComponentType )( Component.Description desc )
+    {
+        refreshComponent( typeid(ComponentType), desc );
+    }
+
+    /**
+     * Refresh the component of the given type.
+     *
+     * Params:
+     *  componentName = The type of teh component to refresh.
+     *  desc =          The new description of the component.
+     */
+    final void refreshComponent( string componentName, Component.Description desc )
+    {
+        refreshComponent( getDescription( componentName ).componentType, desc );
     }
 
     /**

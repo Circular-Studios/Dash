@@ -196,7 +196,7 @@ public:
 }
 
 /// A tuple of a resource and an asset
-alias AssetResource         = Tuple!( Resource, "resource", Asset, "asset" );
+alias AssetResource = Tuple!( Resource, "resource", Asset, "asset" );
 
 abstract class Asset
 {

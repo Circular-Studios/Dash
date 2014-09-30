@@ -10,6 +10,8 @@ import derelict.assimp3.assimp;
 import std.string: fromStringz;
 import std.conv: to;
 
+mixin( registerComponents!() );
+
 /**
  * Animation object which handles all animation specific to the gameobject
  */
@@ -17,34 +19,46 @@ class Animation : Component
 {
 private:
     /// Asset animation that the gameobject is animating based off of
+    @ignore
     AnimationData _animationData;
     /// Current animation out of all the animations in the asset animation
+    @ignore
     int _currentAnim;
     /// Current time of the animation
+    @ignore
     float _currentAnimTime;
     /// Bone transforms for the current pose
+    @ignore
     mat4f[] _currBoneTransforms;
     /// If the gameobject should be animating
+    @ignore
     bool _animating;
 
     /// Animation to return to if _animateOnce is true
+    @ignore
     int _returnAnimation;
     /// If the animation is animating once, then returning to _returnAnimation
+    @ignore
     bool _animateOnce;
 
 public:
     /// Bone transforms for the current pose (Passed to the shader)
     mixin( Property!_currBoneTransforms );
 
+    this()
+    {
+        _currentAnim = 0;
+        _currentAnimTime = 0.0f;
+        _animating = true;
+    }
+
     /**
      * Create animation object based on asset animation
      */
     this( AnimationData assetAnimation )
     {
-        _currentAnim = 0;
-        _currentAnimTime = 0.0f;
+        this();
         _animationData = assetAnimation;
-        _animating = true;
     }
 
     /**

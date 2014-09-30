@@ -9,9 +9,9 @@ public:
 /// Status of a request
 enum Status
 {
-    ok,
-    warning,
-    error,
+    ok = 0,
+    warning = 1,
+    error = 2,
 }
 /// Easy to handle response struct.
 struct EventResponse

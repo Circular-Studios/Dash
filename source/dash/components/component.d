@@ -42,6 +42,11 @@ public:
      * Create a description from the this parameter.
      */
     final const(Description) description() @property
+    in
+    {
+        assert( getDescription( typeid(this) ), "No description found for type: " ~ typeid(this).name );
+    }
+    body
     {
         return getDescription( typeid(this) ).create( this );
     }
@@ -116,7 +121,15 @@ public:
          // Serializers for vibe
         final $type to$type() const
         {
-            return getDescription( typeid(this) ).serializeDescriptionTo$type( cast()this );
+            if( auto desc = getDescription( componentType ) )
+            {
+                return desc.serializeDescriptionTo$type( cast()this );
+            }
+            else
+            {
+                logError( "Description of type ", typeid(this).name, " not found! Did you forget a mixin(registerComponents!())?" );
+                return $type();
+            }
         }
         static Description from$type( $type data )
         {
@@ -161,7 +174,7 @@ enum registerComponents( string modName = __MODULE__ ) = q{
         import mod = $modName;
 
         // Foreach definition in the module (classes, structs, functions, etc.)
-        foreach( memberName; __traits( allMembers, mod ) )
+        foreach( memberName; __traits( allMembers, mod ) ) static if( __traits( compiles, __traits( getMember, mod, memberName ) ) )
         {
             // Alais to the member
             alias member = helper!( __traits( getMember, mod, memberName ) );

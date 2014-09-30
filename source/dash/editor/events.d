@@ -18,11 +18,12 @@ struct EventResponse
 {
     Status status;
     string message;
+    Json data;
 }
 /// Shortcut to generate response.
-EventResponse res( Status s, string m )
+EventResponse res( DataType = Json )( Status s, string m = "success", DataType d = DataType.init )
 {
-    return EventResponse( s, m );
+    return EventResponse( s, m, d.serializeToJson() );
 }
 
 struct response
@@ -30,7 +31,7 @@ struct response
     @disable this();
 
     /// Basic ok response.
-    enum ok = EventResponse( Status.ok, "success" );
+    alias ok = partial!( res, Status.ok );
     /// Warning response
     alias warning = partial!( res, Status.warning );
     /// Error response
@@ -41,9 +42,13 @@ package:
 void registerGameEvents( Editor ed, DGame game )
 {
     // Triggers an engine refresh
-    ed.registerEventHandler!( Json, EventResponse )( "dgame:refresh", ( Json json ) {
+    ed.registerEventHandler!( Json, EventResponse )( "dgame:refresh", ( _ ) {
         game.currentState = EngineState.Refresh;
         return response.ok;
+    } );
+
+    ed.registerEventHandler!( Json, EventResponse )( "dgame:scene:get_objects", ( _ ) {
+        return response.ok( "success", game.activeScene.objects );
     } );
 }
 

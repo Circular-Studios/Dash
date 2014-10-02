@@ -394,6 +394,8 @@ private:
             buttonPrevious = buttonCurrent;
             buttonCurrent = buttonStaging;
 
+	    logDebug(buttonCurrent);
+
             foreach( state; diffButtons )
                 if( auto buttonEvent = state[ 0 ] in buttonEvents )
                     foreach( event; *buttonEvent )
@@ -627,9 +629,9 @@ public:
     {
         Tuple!( InputEnum, T )[] differences;
 
-        for( uint ii = 0; ii < keys.length; ++ii )
-            if( this[ ii ] != other[ ii ] )
-                differences ~= tuple( cast(InputEnum)ii, this[ ii ] );
+	foreach( size_t index, T value; keys)
+	    if( value != other[ index ] )
+		differences ~= tuple( cast(InputEnum)index, value );
 
         return differences;
     }

@@ -394,8 +394,6 @@ private:
             buttonPrevious = buttonCurrent;
             buttonCurrent = buttonStaging;
 
-	    logDebug(buttonCurrent);
-
             foreach( state; diffButtons )
                 if( auto buttonEvent = state[ 0 ] in buttonEvents )
                     foreach( event; *buttonEvent )

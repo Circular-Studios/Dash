@@ -34,7 +34,7 @@ public:
      */
     this( string name = "" )
     {
-        super( Resource( "" ) );
+        super( internalResource );
         diffuse = specular = defaultTex;
         normal = defaultNormal;
         this.name = name;
@@ -207,7 +207,7 @@ class Texture : AssetRef!TextureAsset
     static Texture def;
 
     if( !def )
-        def = new Texture( new TextureAsset( [cast(ubyte)0, cast(ubyte)0, cast(ubyte)0, cast(ubyte)255].ptr, Resource( "" ) ) );
+        def = new Texture( new TextureAsset( [cast(ubyte)0, cast(ubyte)0, cast(ubyte)0, cast(ubyte)255].ptr, internalResource ) );
 
     return def;
 }
@@ -220,7 +220,7 @@ class Texture : AssetRef!TextureAsset
     static Texture def;
 
     if( !def )
-        def = new Texture( new TextureAsset( [cast(ubyte)255, cast(ubyte)127, cast(ubyte)127, cast(ubyte)255].ptr, Resource( "" ) ) );
+        def = new Texture( new TextureAsset( [cast(ubyte)255, cast(ubyte)127, cast(ubyte)127, cast(ubyte)255].ptr, internalResource ) );
 
     return def;
 }

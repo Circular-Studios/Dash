@@ -280,6 +280,8 @@ private:
         override T createInstance() const
         {
             T comp = new T;
+            comp.lastDesc = cast()this;
+
             foreach( fieldName; __traits( allMembers, T ) )
             {
                 enum idx = fieldList.map!(f => f.name).countUntil( fieldName );

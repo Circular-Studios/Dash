@@ -16,7 +16,6 @@ final class Scene
 {
 private:
     GameObject _root;
-    GameObject[][Resource] goResources;
 
 package:
     GameObject[uint] objectById;
@@ -52,9 +51,7 @@ public:
             {
                 auto newObj = GameObject.create( desc );
                 _root.addChild( newObj );
-                goResources[ file ] ~= newObj;
-
-                logDebug( "Adding object ", newObj.name, " with diffuse: ", newObj.material.diffuse );
+                objectsByResource[ file ] ~= GameObjectResource( file, newObj );
             }
         }
     }
@@ -91,7 +88,34 @@ public:
     final void refresh()
     {
         // Iterate over each file, and it's objects
-        //TODO: Implement
+        foreach_reverse( file; objectsByResource.keys )
+        {
+            auto objReses = objectsByResource[ file ];
+
+            if( file.exists() )
+            {
+                if( file.needsRefresh() )
+                {
+                    auto descs = deserializeMultiFile!( GameObject.Description )( file );
+                    assert( descs.length == objReses.length, "Adding or removing objects from a file is currently unsupported." );
+
+                    foreach( i, objRes; objReses )
+                    {
+                        objRes.object.refresh( descs[ i ] );
+                    }
+                }
+            }
+            else
+            {
+                foreach( objRes; objReses )
+                {
+                    objRes.object.shutdown();
+                    removeChild( objRes.object );
+                }
+
+                objectsByResource.remove( file );
+            }
+        }
     }
 
     /**

@@ -177,7 +177,7 @@ public:
         _height = h;
         glBuffer = new ubyte[_width*_height*4];
 
-        super( cast(ubyte*)null, Resource( "" ) );
+        super( cast(ubyte*)null, internalResource );
 
         version( Windows )
         {

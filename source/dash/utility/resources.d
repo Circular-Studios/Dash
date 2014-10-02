@@ -49,6 +49,8 @@ Resource[] scanDirectory( string path, string pattern = "" )
             .array();
 }
 
+enum internalResource = Resource( true );
+
 /**
  * Represents a resource on the file system.
  */
@@ -65,12 +67,8 @@ public:
      */
     this( string filePath )
     {
-        if( filePath.length == 0 )
-            invalid = true;
-        else if( filePath.isFile() )
-            _fullPath = filePath.absolutePath().buildNormalizedPath();
-        else
-            throw new Exception( "invalid file name." );
+        assert( filePath.isFile(), "Invalid file name." );
+        _fullPath = filePath.absolutePath().buildNormalizedPath();
     }
 
     /**
@@ -95,11 +93,11 @@ public:
     /// The extensino of the file.
     @property string extension()        { return _fullPath.extension(); }
     /// Checks if the file still exists.
-    bool exists() @property             { return invalid || fullPath.isFile(); }
+    bool exists() @property             { return isInternal || fullPath.isFile(); }
     /// Converts to a std.stdio.File
     File* getFile( string mode = "r" )
     {
-        if( invalid )
+        if( isInternal )
             return null;
 
         if( !file )
@@ -115,7 +113,7 @@ public:
      */
     ubyte[] read()
     {
-        if( invalid )
+        if( isInternal )
             return [];
 
         markRead();
@@ -129,7 +127,7 @@ public:
      */
     string readText()
     {
-        if( invalid )
+        if( isInternal )
             return "";
 
         markRead();
@@ -143,7 +141,7 @@ public:
      */
     bool needsRefresh()
     {
-        if( invalid )
+        if( isInternal )
             return false;
 
         return fullPath.timeLastModified > timeRead;
@@ -151,13 +149,19 @@ public:
 
 private:
     string _fullPath;
-    bool invalid;
+    bool isInternal;
     std.stdio.File* file;
     SysTime timeRead;
 
+    this( bool internal )
+    {
+        isInternal = internal;
+        _fullPath = "__internal";
+    }
+
     void markRead()
     {
-        if( !invalid )
+        if( !isInternal )
             timeRead = fullPath.timeLastModified();
     }
 }

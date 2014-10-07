@@ -2,12 +2,10 @@
  * Defines audio related classes, such as the listener and emitter
  */
 module dash.components.audio;
-import dash.core.properties;
-import dash.components.component;
-import dash.utility, dash.utility.soloud;
+import dash.core.properties, dash.components, dash.utility, dash.utility.soloud;
 import std.string;
 
-mixin( registerComponents!q{dash.components.audio} );
+mixin( registerComponents!() );
 
 /**
  * Listener object that hears sounds and sends them to the audio output device

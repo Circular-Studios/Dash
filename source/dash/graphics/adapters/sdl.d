@@ -73,14 +73,14 @@ public:
         loadProperties();
         window.setSize( width, height );
 
-	resizeDefferedRenderBuffer();
+        resizeDefferedRenderBuffer();
         glViewport( 0, 0, width, height );
     }
 
     override void refresh()
     {
         resize();
-	swapBuffers();
+        swapBuffers();
     }
 
     override void swapBuffers()
@@ -96,7 +96,7 @@ public:
 
     override void closeWindow()
     {
-	    window.close();
+        window.close();
 
     }
 
@@ -126,14 +126,14 @@ public:
                     break;
                 }
                 
-		//On keypress
+                //On keypress
                 case SDL_KEYDOWN:
-		    Keyboard.setButtonState( cast(Keyboard.Buttons)event.key.keysym.sym, true );
-		    break;
+                    Keyboard.setButtonState( cast(Keyboard.Buttons)event.key.keysym.sym, true );
+                    break;
 
-		//On keyrelease
+                //On keyrelease
                 case SDL_KEYUP:
-		    Keyboard.setButtonState( cast(Keyboard.Buttons)event.key.keysym.sym, false );
+                    Keyboard.setButtonState( cast(Keyboard.Buttons)event.key.keysym.sym, false );
                     break;
 
                 // Handle quitting.
@@ -142,12 +142,12 @@ public:
                     break;
 
                 case SDL_MOUSEWHEEL:
-		    Mouse.setAxisState( Mouse.Axes.ScrollWheel, Mouse.getAxisState( Mouse.Axes.ScrollWheel ) + ( ( cast(int)event.wheel.y >> 16 ) / 120 ) );
-		    break;
+                    Mouse.setAxisState( Mouse.Axes.ScrollWheel, Mouse.getAxisState( Mouse.Axes.ScrollWheel ) + ( ( cast(int)event.wheel.y >> 16 ) / 120 ) );
+                    break;
 
                 case SDL_APP_TERMINATING:
-		    shutdown();
-		    break;
+                    shutdown();
+                    break;
 
                 case SDL_APP_LOWMEMORY:
                 case SDL_APP_WILLENTERBACKGROUND:

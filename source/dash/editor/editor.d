@@ -198,21 +198,18 @@ protected:
 
 package:
     /// The message key for callbacks
-    package enum CallbackMessageKey = "__callback__";
+    enum CallbackMessageKey = "__callback__";
 
     alias InternalEventHandler = void delegate( EventMessage );
     alias EventHandlerTuple = Tuple!(UUID, "id", InternalEventHandler, "handler");
 
-    EventMessage[] pendingEvents;
-    EventHandlerTuple[][string] eventHandlers;
-    InternalEventHandler[UUID] callbacks;
-
+    /// Register an event from the front end.
     final void queueEvent( EventMessage msg )
     {
         pendingEvents ~= msg;
     }
 
-    /// Register a 
+    /// Register a message internally, after generating a handler for it.
     final UUID registerInternalMessageHandler( string key, InternalEventHandler handler )
     {
         auto id = randomUUID();
@@ -220,11 +217,13 @@ package:
         return id;
     }
 
+    /// If a send call requests a callback, register it.
     final void registerCallbackHandler( UUID id, InternalEventHandler handler )
     {
         callbacks[ id ] = handler;
     }
 
+    /// Register built-in event handlers.
     final void registerDefaultEvents()
     {
         registerInternalMessageHandler( CallbackMessageKey, &handleCallback );
@@ -251,4 +250,9 @@ package:
             logFatal( "Callback reference lost: ", msg.callbackId );
         }
     }
+
+private:
+    EventMessage[] pendingEvents;
+    EventHandlerTuple[][string] eventHandlers;
+    InternalEventHandler[UUID] callbacks;
 }

@@ -56,6 +56,17 @@ public:
         glContext.makeCurrent();
 
         DerelictGL3.reload();
+
+        if(config.graphics.vsync)
+        {
+                SDL_GL_SetSwapInterval(1); 
+                logDebug("vsync enabled!");
+        }
+        else
+        {
+                SDL_GL_SetSwapInterval(0); 
+                logDebug("vsync disabled!");
+        }
     }
 
     override void shutdown()

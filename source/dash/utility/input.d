@@ -333,11 +333,11 @@ public:
 //alias Keyboard;
 version(UseSDL2)
 
-	alias Keyboard = InputSystem!( KeyboardButtonsSDL, void );
+    alias Keyboard = InputSystem!( KeyboardButtonsSDL, void );
 
 else
 
-	alias Keyboard  = InputSystem!( KeyboardButtonsWin, void );
+    alias Keyboard  = InputSystem!( KeyboardButtonsWin, void );
 
 alias Mouse     = InputSystem!( MouseButtons, MouseAxes );
 
@@ -595,10 +595,10 @@ public:
 
     ref typeof(this) opAssign( const ref typeof(this) other )
     {
-	foreach(size_t index, T value; other.keys)
-	{
-		keys[index] = value;
-	}
+    foreach(size_t index, T value; other.keys)
+    {
+        keys[index] = value;
+    }
 
         return this;
     }
@@ -606,13 +606,13 @@ public:
     T opIndex( size_t keyCode ) 
     {
 
-	//If the key being pressed doesn't have 
-	//an entry in keys, add it, and set it
-	//to the default value
-	if(!(keyCode in keys))
-		keys[ keyCode ] = T();
+    //If the key being pressed doesn't have 
+    //an entry in keys, add it, and set it
+    //to the default value
+    if(!(keyCode in keys))
+        keys[ keyCode ] = T();
 
-	return keys[ keyCode ];
+    return keys[ keyCode ];
 
     }
 
@@ -627,9 +627,9 @@ public:
     {
         Tuple!( InputEnum, T )[] differences;
 
-	foreach( size_t index, T value; keys)
-	    if( value != other[ index ] )
-		differences ~= tuple( cast(InputEnum)index, value );
+    foreach( size_t index, T value; keys)
+        if( value != other[ index ] )
+        differences ~= tuple( cast(InputEnum)index, value );
 
         return differences;
     }

@@ -38,8 +38,7 @@
 
     "versions": [
         "DashUseGl3n",
-        "VibeCustomMain",
-        "UseSDL2"
+        "VibeCustomMain"
     ],
 
     "-ddoxFilterArgs": [ "--min-protection=Protected" ],

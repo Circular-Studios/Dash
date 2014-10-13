@@ -6,7 +6,7 @@ import dash.graphics.adapters.adapter;
 import dash.utility;
 
 import derelict.opengl3.gl3, gfm.sdl2;
-import std.string;
+import std.string, std.file;
 
 class Sdl : OpenGL
 {
@@ -46,6 +46,17 @@ public:
             SDL_WINDOW_OPENGL );
 
         window.setTitle( DGame.instance.title );
+
+        string iconPath = Resources.Textures ~ "/icon.bmp";
+
+        if( exists( iconPath ) )
+        {
+                SDLImage imageLib = new SDLImage( sdl, 0 );
+                SDL2Surface icon = imageLib.load( iconPath );
+                SDL_SetWindowIcon( SDL_GetWindowFromID( window.id() ) , icon.handle() );
+        }
+        else
+                logDebug("Could not find icon.bmp in Textures folder!");
 
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0); 

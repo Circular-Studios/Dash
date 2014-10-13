@@ -331,7 +331,7 @@ public:
 }
 
 //alias Keyboard;
-version(UseSDL2)
+version(DashUseSDL2)
 
     alias Keyboard = InputSystem!( KeyboardButtonsSDL, void );
 

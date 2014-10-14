@@ -52,8 +52,7 @@ public:
         if( exists( iconPath ) )
         {
                 SDLImage imageLib = new SDLImage( sdl, 0 );
-                SDL2Surface icon = imageLib.load( iconPath );
-                SDL_SetWindowIcon( SDL_GetWindowFromID( window.id() ) , icon.handle() );
+                window.setIcon( imageLib.load( iconPath ) );
         }
         else
                 logDebug("Could not find icon.bmp in Textures folder!");

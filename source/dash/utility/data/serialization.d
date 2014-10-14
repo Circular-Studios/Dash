@@ -66,7 +66,7 @@ T deserializeFile( T )( Resource file, SerializationMode mode = SerializationMod
 
     T handleYaml()
     {
-        return deserializeYaml!T( Loader.fromString( cast(char[])file.readText() ).load() );
+        return deserializeYaml!T( Loader( file.fullPath ).load() );
     }
 
     final switch( mode ) with( SerializationMode )
@@ -113,8 +113,7 @@ T[] deserializeMultiFile( T )( Resource file, SerializationMode mode = Serializa
     {
         import std.algorithm: map;
         import std.array: array;
-        return Loader
-            .fromString( cast(char[])file.readText() )
+        return Loader( file.fullPath )
             .loadAll()
             .map!( node => node.deserializeYaml!T() )
             .array();

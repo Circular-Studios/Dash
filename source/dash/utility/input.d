@@ -3,6 +3,7 @@
  */
 module dash.utility.input;
 import dash.utility, dash.core, dash.graphics;
+import gfm.sdl2;
 
 import yaml;
 import derelict.opengl3.gl3;
@@ -215,6 +216,9 @@ public:
     {
         version( Windows )
         {
+            if( !Win32GL.get() )
+                return vec2ui();
+
             import dash.graphics;
             import win32.windows;
             POINT i;
@@ -326,7 +330,15 @@ public:
     }
 }
 
-alias Keyboard  = InputSystem!( KeyboardButtons, void );
+//alias Keyboard;
+version(DashUseSDL2)
+
+    alias Keyboard = InputSystem!( KeyboardButtonsSDL, void );
+
+else
+
+    alias Keyboard  = InputSystem!( KeyboardButtonsWin, void );
+
 alias Mouse     = InputSystem!( MouseButtons, MouseAxes );
 
 private:
@@ -574,40 +586,50 @@ private:
 struct State( T, InputEnum ) if( is( InputEnum == enum ) )
 {
 private:
-    enum totalSize = Inputs.END;
+    //enum totalSize = Inputs.END;
+    enum totalSize = EnumMembers!Inputs.length;
     alias StorageType = T;
     alias Inputs = InputEnum;
 public:
-    T[ totalSize ] keys;
+    T[ size_t ] keys;
 
     ref typeof(this) opAssign( const ref typeof(this) other )
     {
-        for( uint ii = 0; ii < other.keys.length; ++ii )
-            keys[ ii ] = other.keys[ ii ];
+    foreach(size_t index, T value; other.keys)
+    {
+        keys[index] = value;
+    }
 
         return this;
     }
 
-    T opIndex( size_t keyCode ) const
+    T opIndex( size_t keyCode ) 
     {
-        return keys[ keyCode ];
+
+    //If the key being pressed doesn't have 
+    //an entry in keys, add it, and set it
+    //to the default value
+    if(!(keyCode in keys))
+        keys[ keyCode ] = T();
+
+    return keys[ keyCode ];
+
     }
 
     T opIndexAssign( T newValue, size_t keyCode )
     {
-        if( keyCode < totalSize )
-            keys[ keyCode ] = newValue;
+        keys[ keyCode ] = newValue;
 
         return newValue;
     }
 
-    Tuple!( InputEnum, T )[] opBinary( string Op : "-" )( const ref typeof(this) other )
+    Tuple!( InputEnum, T )[] opBinary( string Op : "-" )( ref typeof(this) other )
     {
         Tuple!( InputEnum, T )[] differences;
 
-        for( uint ii = 0; ii < keys.length; ++ii )
-            if( this[ ii ] != other[ ii ] )
-                differences ~= tuple( cast(InputEnum)ii, this[ ii ] );
+    foreach( size_t index, T value; keys)
+        if( value != other[ index ] )
+        differences ~= tuple( cast(InputEnum)index, value );
 
         return differences;
     }
@@ -644,7 +666,7 @@ enum MouseAxes
  *
  * From: http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
  */
-enum KeyboardButtons: uint
+enum KeyboardButtonsWin: uint
 {
     Cancel      = 0x03, /// Control-break
     //Unused    = 0x07,
@@ -771,6 +793,140 @@ enum KeyboardButtons: uint
     ControlRight= 0xA3, /// Right control key
     AltLeft     = 0xA4, /// Left Alt key
     AltRight    = 0xA5, /// Right Alt key
+    END,
+}
+
+
+enum KeyboardButtonsSDL: uint
+{
+    Cancel      = SDLK_CANCEL, /// Control-break
+    //Unused    = 0x07,
+    Backspace   = SDLK_BACKSPACE, /// Backspace key
+    Tab         = SDLK_TAB, /// Tab key
+    //Reserved  = 0x0A-0x0B,
+    Clear       = SDLK_CLEAR, /// Clear key
+    Return      = SDLK_RETURN, /// Enter key
+    //Undefined = 0x0E-0x0F
+    // * See Left/Right Shift, Ctrl, Alt below *
+    //Shift       = SDLK_LSHIFT, /// Shift key
+    //Control     = SDLK_LCTRL, /// Control key
+    //Alt         = SDLK_LALT, /// Menu/alt key
+    //
+    Pause       = SDLK_PAUSE, /// Pause key
+    CapsLock    = SDLK_CAPSLOCK,
+    //Who Cares = 0x15-0x1A,
+    Escape      = SDLK_ESCAPE,
+    //Who Cares = 0x1C-0x1F
+    Space       = SDLK_SPACE, /// Space bar
+    PageUp      = SDLK_PAGEUP, /// Page Up/Prior key
+    PageDown    = SDLK_PAGEDOWN, /// Page Down/Next key
+    End         = SDLK_END, /// End key
+    Home        = SDLK_HOME, /// Home key
+    Left        = SDLK_LEFT, /// Left arrow key
+    Up          = SDLK_UP, /// Up arrow key
+    Right       = SDLK_RIGHT, /// Right arrow key
+    Down        = SDLK_DOWN, /// Down arrow key
+    Select      = SDLK_SELECT, /// Select key
+    Print       = SDLK_PRINTSCREEN, /// Print key
+    PrintScreen = SDLK_PRINTSCREEN, /// Print Screen/Snapshot key
+    Execute     = SDLK_EXECUTE, /// Execute key
+    Insert      = SDLK_INSERT, /// Insert key
+    Delete      = SDLK_DELETE, /// Delete key
+    Help        = SDLK_HELP, /// Help key
+    Keyboard0   = SDLK_0, /// 0 key
+    Keyboard1   = SDLK_1, /// 1 key
+    Keyboard2   = SDLK_2, /// 2 key
+    Keyboard3   = SDLK_3, /// 3 key
+    Keyboard4   = SDLK_4, /// 4 key
+    Keyboard5   = SDLK_5, /// 5 key
+    Keyboard6   = SDLK_6, /// 6 key
+    Keyboard7   = SDLK_7, /// 7 key
+    Keyboard8   = SDLK_8, /// 8 key
+    Keyboard9   = SDLK_9, /// 9 key
+    //Unused    = 0x3A-0x40
+    A           = SDLK_a, /// A key
+    B           = SDLK_b, /// B key
+    C           = SDLK_c, /// C key
+    D           = SDLK_d, /// D key
+    E           = SDLK_e, /// E key
+    F           = SDLK_f, /// F key
+    G           = SDLK_g, /// G key
+    H           = SDLK_h, /// H key
+    I           = SDLK_i, /// I key
+    J           = SDLK_j, /// J key
+    K           = SDLK_k, /// K key
+    L           = SDLK_l, /// L key
+    M           = SDLK_m, /// M key
+    N           = SDLK_n, /// N key
+    O           = SDLK_o, /// O key
+    P           = SDLK_p, /// P key
+    Q           = SDLK_q, /// Q key
+    R           = SDLK_r, /// R key
+    S           = SDLK_s, /// S key
+    T           = SDLK_t, /// T key
+    U           = SDLK_u, /// U key
+    V           = SDLK_v, /// V key
+    W           = SDLK_w, /// W key
+    X           = SDLK_x, /// X key
+    Y           = SDLK_y, /// Y key
+    Z           = SDLK_z, /// Z key
+    GuiLeft     = SDLK_LGUI, /// Left GUI key
+    GuiRight    = SDLK_RGUI, /// Right GUI key
+    Apps        = SDLK_APPLICATION, /// Applications key
+    //Reserved  = 0x5E
+    Sleep       = SDLK_SLEEP, /// Sleep key
+    Numpad0     = SDLK_KP_0, /// 0 key
+    Numpad1     = SDLK_KP_1, /// 1 key
+    Numpad2     = SDLK_KP_2, /// 2 key
+    Numpad3     = SDLK_KP_3, /// 3 key
+    Numpad4     = SDLK_KP_4, /// 4 key
+    Numpad5     = SDLK_KP_5, /// 5 key
+    Numpad6     = SDLK_KP_6, /// 6 key
+    Numpad7     = SDLK_KP_7, /// 7 key
+    Numpad8     = SDLK_KP_8, /// 8 key
+    Numpad9     = SDLK_KP_9, /// 9 key
+    // * Unused *
+    //Multiply    = 0x6A, /// Multiply key
+    //Add         = 0x6B, /// Addition key
+    //Separator   = 0x6C, /// Seperator key
+    //Subtract    = 0x6D, /// Subtraction key
+    //Decimal     = 0x6E, /// Decimal key
+    //Divide      = 0x6F, /// Division key
+    F1          = SDLK_F1, /// Function 1 key
+    F2          = SDLK_F2, /// Function 2 key
+    F3          = SDLK_F3, /// Function 3 key
+    F4          = SDLK_F4, /// Function 4 key
+    F5          = SDLK_F5, /// Function 5 key
+    F6          = SDLK_F6, /// Function 6 key
+    F7          = SDLK_F7, /// Function 7 key
+    F8          = SDLK_F8, /// Function 8 key
+    F9          = SDLK_F9, /// Function 9 key
+    F10         = SDLK_F10, /// Function 10 key
+    F11         = SDLK_F11, /// Function 11 key
+    F12         = SDLK_F12, /// Function 12 key
+    F13         = SDLK_F13, /// Function 13 key
+    F14         = SDLK_F14, /// Function 14 key
+    F15         = SDLK_F15, /// Function 15 key
+    F16         = SDLK_F16, /// Function 16 key
+    F17         = SDLK_F17, /// Function 17 key
+    F18         = SDLK_F18, /// Function 18 key
+    F19         = SDLK_F19, /// Function 19 key
+    F20         = SDLK_F20, /// Function 20 key
+    F21         = SDLK_F21, /// Function 21 key
+    F22         = SDLK_F22, /// Function 22 key
+    F23         = SDLK_F23, /// Function 23 key
+    F24         = SDLK_F24, /// Function 24 key
+    //Unused    = 0x88-0x8F,
+    NumLock     = SDLK_NUMLOCKCLEAR, /// Num Lock key
+    ScrollLock  = SDLK_SCROLLLOCK, /// Scroll Lock key
+    //OEM       = 0x92-0x96,
+    //Unused    = 0x97-0x9F,
+    ShiftLeft   = SDLK_LSHIFT, /// Left shift key
+    ShiftRight  = SDLK_LSHIFT, /// Right shift key
+    ControlLeft = SDLK_LCTRL, /// Left control key
+    ControlRight= SDLK_RCTRL, /// Right control key
+    AltLeft     = SDLK_LALT, /// Left Alt key
+    AltRight    = SDLK_RALT, /// Right Alt key
     END,
 }
 

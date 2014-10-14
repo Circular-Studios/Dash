@@ -23,7 +23,7 @@ enum OutputType
     Error,
     /// Messages of the level don't go to output.
     /// That used with minLoggingLevel and minOutputLevel
-    /// to suppress any message. 
+    /// to suppress any message.
     Muted
 }
 
@@ -86,7 +86,9 @@ void logDebug( A... )( A messages )
 void bench( alias func )( lazy string name )
 {
     import std.datetime, core.time;
-    logDebug( name, " time:\t\t\t", cast(Duration)benchmark!func( 1 ) );
+
+    auto result = cast(Duration)benchmark!func( 1 );
+    logDebug( name, " time:\t\t\t", result );
 }
 
 /// Global instance of logger
@@ -112,12 +114,12 @@ synchronized final class GlobalLogger : StyledStrictLogger!(OutputType
                 )
 {
     enum DEFAULT_LOG_NAME = "dash-preinit.log";
-    
+
     this()
     {
         super(DEFAULT_LOG_NAME);
     }
-    
+
     /**
     *   Loads verbosity from config.
     */
@@ -127,23 +129,23 @@ synchronized final class GlobalLogger : StyledStrictLogger!(OutputType
         string newFileName = config.logging.filePath;
         if( newFileName )
         {
-            string oldFileName = this.name; 
+            string oldFileName = this.name;
             try
             {
                 this.name = newFileName;
-            } 
+            }
             catch( Exception e )
             {
                 std.stdio.writeln( "Error: Failed to reload new log location from '",oldFileName,"' to '",newFileName,"'" );
                 std.stdio.writeln( "Reason: ", e.msg );
                 debug std.stdio.writeln( e.toString );
-                
+
                 // Try to rollback
-                scope(failure) {} 
+                scope(failure) {}
                 this.name = oldFileName;
             }
         }
-        
+
         // Try to get output verbosity from config
         debug minOutputLevel = cast(OutputType)config.logging.debug_.outputVerbosity;
         else minOutputLevel = cast(OutputType)config.logging.release.outputVerbosity; 

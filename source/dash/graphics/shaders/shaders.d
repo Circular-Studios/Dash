@@ -321,12 +321,17 @@ public:
     /**
      * Binds a UI's texture
      */
-     final void bindUI( UserInterface ui )
-     {
+    final void bindUI( UserInterface ui )
+    {
+        // This is part of a bigger problem. But in the interest of dope screenshots...
+        version( OSX )
+        if( !ui.view )
+            return;
+
         glUniform1i( UITexture, 0 );
         glActiveTexture( GL_TEXTURE0 );
         glBindTexture( GL_TEXTURE_2D, ui.view.glID );
-     }
+    }
 
     /**
      * Bind an ambient light

@@ -67,8 +67,8 @@ public:
         bool backfaceCulling = true;
         @rename( "VSync" ) @optional
         bool vsync = false;
-        @rename( "OpenGL3.3" ) @optional
-	    bool usingGl33 = false;
+        @rename( "OpenGL33" ) @optional
+        bool usingGl33 = false;
     }
 
     static struct UserInterfaceSettings

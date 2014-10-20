@@ -141,7 +141,7 @@ private:
     uint _programID, _vertexShaderID, _fragmentShaderID;
     string _shaderName;
     auto versionRegex = ctRegex!r"\#version\s400";
-    auto layoutRegex = ctRegex!r"layout\(location\s\=\s[0-9]\)\s";
+    auto layoutRegex = ctRegex!r"layout\(location\s\=\s[0-9]+\)\s";
 
 public:
     /// The program ID for the shader

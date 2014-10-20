@@ -7,7 +7,7 @@ import dash.graphics.shaders.glsl;
 
 import derelict.opengl3.gl3;
 
-import std.string, std.traits, std.algorithm, std.array;
+import std.string, std.traits, std.algorithm, std.array, std.regex;
 
 /*
  * String constants for our shader uniforms
@@ -140,6 +140,8 @@ final package class Shader
 private:
     uint _programID, _vertexShaderID, _fragmentShaderID;
     string _shaderName;
+    auto versionRegex = ctRegex!r"\#version\s400";
+    auto layoutRegex = ctRegex!r"layout\(location\s\=\s[0-9]\)\s";
 
 public:
     /// The program ID for the shader
@@ -170,10 +172,35 @@ public:
             auto fragmentFile = Resource( fragment );
             string vertexBody = vertexFile.readText();
             string fragmentBody = fragmentFile.readText();
+
+            //If we're using OpenGL 3.3 then we need to
+            //change our GLSL version to match, and remove
+            //any layout(location = x) qualifiers (they
+            //aren't supported in GLSL 330)
+            if(config.graphics.usingGl33)
+            {
+                    vertexBody = replaceAll(vertexBody, layoutRegex, ""); 
+                    vertexBody = replaceAll(vertexBody, versionRegex, "#version 330"); 
+
+                    fragmentBody = replaceAll(fragmentBody, layoutRegex, ""); 
+                    fragmentBody = replaceAll(fragmentBody, versionRegex, "#version 330"); 
+
+                    logDebug( vertexBody );
+            }
+
             compile( vertexBody, fragmentBody );
         }
         else
         {
+            if(config.graphics.usingGl33)
+            {
+                    vertex = replaceAll(vertex, layoutRegex, ""); 
+                    vertex = replaceAll(vertex, versionRegex, "#version 330"); 
+
+                    fragment = replaceAll(fragment, layoutRegex, ""); 
+                    fragment = replaceAll(fragment, versionRegex, "#version 330"); 
+            }
+
             compile( vertex, fragment );
         }
 

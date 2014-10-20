@@ -431,7 +431,10 @@ public:
 
         glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
-        uiPass();
+        //ui is currently broken on Linux
+        //TODO: Repair the UI on Linux systems
+        version(!linux)
+                uiPass();
 
         // put it on the screen
         swapBuffers();

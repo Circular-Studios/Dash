@@ -1,11 +1,11 @@
 ---
 layout: default
-title: Guides
-section: guides/index
+title: Welcome
+section: index
 ---
-# Guides
+# Dash Docs
 ---
 
-[Getting Started](gettingstarted.html)
-[Prefabs](prefabs.html)
-[Scripts](scripts.html)
+Welcome to the Dash documentation, tutorials, and help site! We are constantly adding content, so check back often.
+
+To get started, check out the links on the left.

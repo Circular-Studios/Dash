@@ -6,7 +6,7 @@ import dash.graphics.adapters.adapter;
 import dash.utility;
 
 import derelict.opengl3.gl3, gfm.sdl2;
-import std.string;
+import std.string, std.file;
 
 class Sdl : OpenGL
 {
@@ -59,11 +59,32 @@ public:
     }
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
+        string iconPath = Resources.Textures ~ "/icon.bmp";
+
+        if( exists( iconPath ) )
+        {
+                SDLImage imageLib = new SDLImage( sdl, 0 );
+                window.setIcon( imageLib.load( iconPath ) );
+        }
+        else
+                logDebug("Could not find icon.bmp in Textures folder!");
+
         //context = SDL_GL_CreateContext( window );
         glContext = new SDL2GLContext( window );
         glContext.makeCurrent();
 
         DerelictGL3.reload();
+
+        if(config.graphics.vsync)
+        {
+                SDL_GL_SetSwapInterval(1); 
+                logDebug("vsync enabled!");
+        }
+        else
+        {
+                SDL_GL_SetSwapInterval(0); 
+                logDebug("vsync disabled!");
+        }
     }
 
     override void shutdown()

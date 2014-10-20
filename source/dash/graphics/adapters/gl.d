@@ -433,7 +433,8 @@ public:
 
         //ui is currently broken on Linux
         //TODO: Repair the UI on Linux systems
-        version(!linux)
+        version(linux){}
+        else
                 uiPass();
 
         // put it on the screen

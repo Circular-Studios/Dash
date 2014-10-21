@@ -2,10 +2,16 @@
  * Defines InputSystem and State, which are used for defining an input device (keyboard, mouse, gamepad, etc.)
  */
 module dash.utility.input.inputsystem;
+import dash.utility.input.input;
 
 import std.typecons, std.traits;
 
 package:
+/// The type each button is stored as.
+alias ButtonStorageType = bool;
+/// The type each axis is stored as.
+alias AxisStorageType   = float;
+
 /**
  * Defines a system of inputs, buttons, axes or both.
  *
@@ -62,6 +68,8 @@ package:
                 if( auto buttonEvent = state[ 0 ] in buttonEvents )
                     foreach( event; *buttonEvent )
                         event( state[ 0 ], state[ 1 ] );
+
+            Input.processDiffs!(typeof(this))( diffButtons );
         }
         static if( HasAxes )
         {
@@ -72,6 +80,8 @@ package:
                 if( auto axisEvent = state[ 0 ] in axisEvents )
                     foreach( event; *axisEvent )
                         event( state[ 0 ], state[ 1 ] );
+
+            Input.processDiffs!(typeof(this))( diffAxis );
         }
     }
 
@@ -81,8 +91,6 @@ static if( HasButtons )
 public:
     /// The enum of buttons that the input system has.
     alias Buttons           = ButtonState.Inputs;
-    /// The type each button is stored as.
-    alias ButtonStorageType = bool;
     /// A delegate that takes the changed button and the new state.
     alias ButtonEvent       = void delegate( Buttons, ButtonStorageType );
     /// A delegate that takes the changed button.
@@ -188,8 +196,6 @@ static if( HasAxes )
 public:
     /// The enum of axes that the input system has.
     alias Axes              = AxisState.Inputs;
-    /// The type each axis is stored as.
-    alias AxisStorageType   = float;
     /// A delegate that takes the changed axis and the new state.
     alias AxisEvent         = void delegate( Axes, AxisStorageType );
 

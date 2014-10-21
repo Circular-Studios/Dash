@@ -6,7 +6,12 @@ import dash.utility, dash.core, dash.graphics;
 
 import yaml;
 import derelict.opengl3.gl3;
-import std.conv, std.uuid;
+import std.algorithm, std.conv, std.uuid;
+
+/// The event type for button events.
+package alias ButtonEvent = void delegate( ButtonStorageType );
+/// The event type for axis events.
+package alias AxisEvent   = void delegate( AxisStorageType );
 
 /**
  * Manages all input events.
@@ -28,10 +33,19 @@ private:
         Mouse.Buttons[] mouseButtons;
 
         //@rename( "MouseAxes" ) @optional
-        //Mouse.Axes[] mouseAxes;
+        @ignore
+        Mouse.Axes[] mouseAxes;
     }
+
+    /// Bindings directly from Config/Input
     Binding[string] bindings;
+    /// The file the bindings came from.
     Resource bindingFile = Resource( "" );
+
+    /// The registered button events.
+    Tuple!( UUID, ButtonEvent )[][ string ] buttonEvents;
+    /// The registered axis events.
+    Tuple!( UUID, AxisEvent )[][ string ] axisEvents;
 
 public:
     /**
@@ -64,6 +78,50 @@ public:
     {
         Keyboard.update();
         Mouse.update();
+    }
+
+    /// Called by InputSystem to report changed inputs.
+    package void processDiffs( InputSystem, InputEnum, StateRep )( Tuple!( InputEnum, StateRep )[] diffs )
+    {
+        // Iterate over each diff.
+        foreach( diff; diffs )
+        {
+            // Iterate over each binding.
+            foreach( name, binding; bindings )
+            {
+                // Get the array of bindings to check and events to call.
+                static if( is( InputEnum == Keyboard.Buttons ) )
+                {
+                    auto bindingArray = binding.keyboardButtons;
+                    auto eventArray = buttonEvents;
+                }
+                else static if( is( InputEnum == Mouse.Buttons ) )
+                {
+                    auto bindingArray = binding.mouseButtons;
+                    auto eventArray = buttonEvents;
+                }
+                else static if( is( InputEnum == Mouse.Axes ) )
+                {
+                    auto bindingArray = binding.mouseAxes;
+                    auto eventArray = axisEvents;
+                }
+                else static assert( false, "InputEnum unsupported." );
+
+                // Check the binding for the changed input.
+                bindingsLoop:
+                foreach( button; bindingArray )
+                {
+                    if( button == diff[ 0 ] && name in eventArray )
+                    {
+                        foreach( eventTup; eventArray[ name ] )
+                        {
+                            eventTup[ 1 ]( diff[ 1 ] );
+                            break bindingsLoop;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -99,6 +157,7 @@ public:
 
                 return 0.0f;
             }
+            else static assert( false, "Unsupported return type." );
         }
 
         throw new Exception( "Input " ~ input ~ " not bound." );
@@ -122,6 +181,104 @@ public:
             foreach( mb; binding.mouseButtons )
                 if( Mouse.isButtonDown( mb, checkPrevious ) )
                     return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if a given button is down.
+     *
+     * Params:
+     *      buttonName =        The name of the button to check.
+     *      checkPrevious =     Whether or not to make sure the button was down last frame.
+     */
+    bool isButtonUp( string buttonName, bool checkPrevious = false )
+    {
+        if( auto binding = buttonName in bindings )
+        {
+            foreach( key; binding.keyboardButtons )
+                if( Keyboard.isButtonUp( key, checkPrevious ) )
+                    return true;
+
+            foreach( mb; binding.mouseButtons )
+                if( Mouse.isButtonUp( mb, checkPrevious ) )
+                    return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Add an event for when a button state changes.
+     *
+     * Params:
+     *  buttonName =            The binding name of the button for the event.
+     *  event =                 The event to call when the button changes.
+     *
+     * Returns: The id of the new event.
+     */
+    UUID addButtonEvent( string buttonName, ButtonEvent event )
+    {
+        auto id = randomUUID();
+        buttonEvents[ buttonName ] ~= tuple( id, event );
+        return id;
+    }
+
+    /**
+     * Add an event for when a button goes down.
+     *
+     * Params:
+     *  buttonName =            The binding name of the button for the event.
+     *  event =                 The event to call when the button changes.
+     *
+     * Returns: The id of the new event.
+     */
+    UUID addButtonDownEvent( string buttonName, ButtonEvent event )
+    {
+        return addButtonEvent( buttonName, ( newState ) { if( newState ) event( newState ); } );
+    }
+
+    /**
+     * Add an event for when a button goes up.
+     *
+     * Params:
+     *  buttonName =            The binding name of the button for the event.
+     *  event =                 The event to call when the button changes.
+     *
+     * Returns: The id of the new event.
+     */
+    UUID addButtonUpEvent( string buttonName, ButtonEvent event )
+    {
+        return addButtonEvent( buttonName, ( newState ) { if( !newState ) event( newState ); } );
+    }
+
+    /**
+     * Remove a button event.
+     *
+     * Params:
+     *  buttonName =            The binding name of the button for the event.
+     *  event =                 The event to call when the button changes.
+     *
+     * Returns: The id of the new event.
+     */
+    bool removeButtonEvent( UUID id )
+    {
+        foreach( name, ref eventGroup; buttonEvents )
+        {
+            auto i = eventGroup.countUntil!( tup => tup[ 0 ] == id );
+
+            if( i == -1 )
+                continue;
+
+            // Get tasks after one being removed.s
+            auto end = eventGroup[ i+1..$ ];
+            // Get tasks before one being removed.
+            eventGroup = eventGroup[ 0..i ];
+            // Add end back.
+            eventGroup ~= end;
+
+            return true;
         }
 
         return false;

@@ -149,7 +149,6 @@ enum KeyboardButtonsWin: uint
     END,
 }
 
-
 enum KeyboardButtonsSDL: uint
 {
     Cancel      = SDLK_CANCEL, /// Control-break

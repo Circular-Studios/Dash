@@ -145,6 +145,7 @@ public:
      *      buttonCode =    The code of the button to add the event to.
      *      func =          The function to call when the button state changes.
      */
+    deprecated( "Use Input.addButtonEvent with a binding instead." )
     void addButtonEvent( Buttons buttonCode, ButtonEvent func )
     {
         buttonEvents[ buttonCode ] ~= func;
@@ -153,6 +154,7 @@ public:
     /**
      * Add a button event only when the button is down.
      */
+    deprecated( "Use Input.addButtonDownEvent with a binding instead." )
     void addButtonDownEvent( Buttons buttonCode, ButtonStateEvent func )
     {
         addButtonEvent( buttonCode, ( Buttons buttonCode, ButtonStorageType newState ) { if( newState ) func( buttonCode ); } );
@@ -161,6 +163,7 @@ public:
     /**
      * Add a button event only when the button is up.
      */
+    deprecated( "Use Input.addButtonUpEvent with a binding instead." )
     void addButtonUpEvent( Buttons buttonCode, ButtonStateEvent func )
     {
         addButtonEvent( buttonCode, ( Buttons buttonCode, ButtonStorageType newState ) { if( !newState ) func( buttonCode ); } );
@@ -219,6 +222,7 @@ public:
      *      axis =      The name of the input to add the event to.
      *      event =     The event to trigger when the axis state changes.
      */
+    deprecated( "Use Input.addAxisEvent with a binding instead." )
     void addAxisEvent( Axes axis, AxisEvent event )
     {
         axisEvents[ axis ] ~= event;
@@ -279,7 +283,7 @@ public:
         // an entry in keys, add it, and set it
         // to the default value
         if( !( keyCode in keys ) )
-            keys[ keyCode ] = T();
+            keys[ keyCode ] = cast(T)0;
 
         return keys[ keyCode ];
     }
@@ -304,7 +308,7 @@ public:
 
     void reset()
     {
-        for( uint ii = 0; ii < keys.length; ++ii )
-            keys[ ii ] = 0;
+        foreach( ii; keys.keys )
+            keys[ ii ] = cast(T)0;
     }
 }

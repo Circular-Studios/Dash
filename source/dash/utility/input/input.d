@@ -32,8 +32,7 @@ private:
         @rename( "Mouse" ) @byName @optional
         Mouse.Buttons[] mouseButtons;
 
-        //@rename( "MouseAxes" ) @optional
-        @ignore
+        @rename( "MouseAxes" ) @byName @optional
         Mouse.Axes[] mouseAxes;
     }
 
@@ -251,6 +250,22 @@ public:
     UUID addButtonUpEvent( string buttonName, ButtonEvent event )
     {
         return addButtonEvent( buttonName, ( newState ) { if( !newState ) event( newState ); } );
+    }
+
+    /**
+     * Add an event for when an axis changes.
+     *
+     * Params:
+     *  axisName =              The binding name of the axis for the event.
+     *  event =                 The event to call when the button changes.
+     *
+     * Returns: The id of the new event.
+     */
+    UUID addAxisEvent( string axisName, AxisEvent event )
+    {
+        auto id = randomUUID();
+        axisEvents[ axisName ] ~= tuple( id, event );
+        return id;
     }
 
     /**

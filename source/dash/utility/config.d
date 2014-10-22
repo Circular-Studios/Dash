@@ -87,7 +87,7 @@ public:
 
 static:
     @ignore
-    private Resource resource = Resource( "" );
+    private Resource resource = internalResource;
 
     void initialize()
     {

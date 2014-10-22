@@ -20,13 +20,13 @@ public:
     @rename( "Name" )
     string name;
     /// The diffuse (or color) map.
-    @rename( "Diffuse" ) @asArray
+    @rename( "Diffuse" ) @asArray @optional
     Texture diffuse;
     /// The normal map, which specifies which way a face is pointing at a given pixel.
-    @rename( "Normal" ) @asArray
+    @rename( "Normal" ) @asArray @optional
     Texture normal;
     /// The specular map, which specifies how shiny a given point is.
-    @rename( "Specular" ) @asArray
+    @rename( "Specular" ) @asArray @optional
     Texture specular;
 
     /**
@@ -34,7 +34,7 @@ public:
      */
     this( string name = "" )
     {
-        super( Resource( "" ) );
+        super( internalResource );
         diffuse = specular = defaultTex;
         normal = defaultNormal;
         this.name = name;
@@ -104,9 +104,9 @@ protected:
      *
      * Params:
      */
-    this( ubyte* buffer, string filePath = "" )
+    this( ubyte* buffer, Resource filePath )
     {
-        super( Resource( filePath ) );
+        super( filePath );
         glGenTextures( 1, &_glID );
         glBindTexture( GL_TEXTURE_2D, glID );
         updateBuffer( buffer );
@@ -142,9 +142,9 @@ public:
      *
      * Params:
      */
-    this( string filePath )
+    this( Resource filePath )
     {
-        auto imageData = loadFreeImage( filePath );
+        auto imageData = loadFreeImage( filePath.fullPath );
 
         this( cast(ubyte*)FreeImage_GetBits( imageData ), filePath );
 
@@ -207,7 +207,7 @@ class Texture : AssetRef!TextureAsset
     static Texture def;
 
     if( !def )
-        def = new Texture( new TextureAsset( [cast(ubyte)0, cast(ubyte)0, cast(ubyte)0, cast(ubyte)255].ptr ) );
+        def = new Texture( new TextureAsset( [cast(ubyte)0, cast(ubyte)0, cast(ubyte)0, cast(ubyte)255].ptr, internalResource ) );
 
     return def;
 }
@@ -220,7 +220,7 @@ class Texture : AssetRef!TextureAsset
     static Texture def;
 
     if( !def )
-        def = new Texture( new TextureAsset( [cast(ubyte)255, cast(ubyte)127, cast(ubyte)127, cast(ubyte)255].ptr ) );
+        def = new Texture( new TextureAsset( [cast(ubyte)255, cast(ubyte)127, cast(ubyte)127, cast(ubyte)255].ptr, internalResource ) );
 
     return def;
 }

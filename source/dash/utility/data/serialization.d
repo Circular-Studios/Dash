@@ -37,7 +37,7 @@ Tuple!( T, Resource ) deserializeFileByName( T )( string fileName, Serialization
 
     auto files = fileName.dirName.scanDirectory( fileName.baseName ~ ".*" );
     return files.empty
-        ? tuple( T.init, Resource( "" ) )
+        ? tuple( T.init, internalResource )
         : tuple( deserializeFile!T( files.front ), files.front );
 }
 

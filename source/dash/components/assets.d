@@ -75,34 +75,31 @@ public:
         DerelictASSIMP3.load();
 
         // Make sure fbxs are supported.
-        assert(aiIsExtensionSupported(".fbx".toStringz), "fbx format isn't supported by assimp instance!");
+        assert( aiIsExtensionSupported( ".fbx".toStringz ), "fbx format isn't supported by assimp instance!" );
+
+        enum aiImportOptions = aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType;
 
         // Load the unitSquare
-        unitSquare = new Mesh( new MeshAsset( "", aiImportFileFromMemory(
+        unitSquare = new Mesh( new MeshAsset( internalResource, aiImportFileFromMemory(
                                         unitSquareMesh.toStringz(), unitSquareMesh.length,
-                                        aiProcess_CalcTangentSpace | aiProcess_Triangulate |
-                                        aiProcess_JoinIdenticalVertices | aiProcess_SortByPType,
-                                        "obj" ).mMeshes[0] ) );
+                                        aiImportOptions, "obj" ).mMeshes[0] ) );
 
         foreach( file; scanDirectory( Resources.Meshes ) )
         {
             // Load mesh
-            const aiScene* scene = aiImportFile( file.fullPath.toStringz,
-                                                 aiProcess_CalcTangentSpace | aiProcess_Triangulate |
-                                                 aiProcess_JoinIdenticalVertices | aiProcess_SortByPType );
+            const aiScene* scene = aiImportFile( file.fullPath.toStringz, aiImportOptions );
             assert( scene, "Failed to load scene file '" ~ file.fullPath ~ "' Error: " ~ aiGetErrorString().fromStringz() );
-
-            // If animation data, add animation
-            if( file.baseFileName in meshes )
-                logWarning( "Mesh ", file.baseFileName, " exsists more than once." );
 
             // Add mesh
             if( scene.mNumMeshes > 0 )
             {
-                auto newMesh = new MeshAsset( file.fullPath, scene.mMeshes[ 0 ] );
+                if( file.baseFileName in meshes )
+                    logWarning( "Mesh ", file.baseFileName, " exsists more than once." );
+
+                auto newMesh = new MeshAsset( file, scene.mMeshes[ 0 ] );
 
                 if( scene.mNumAnimations > 0 )
-                    newMesh.animationData = new AnimationData( scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
+                    newMesh.animationData = new AnimationData( file, scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
 
                 meshes[ file.baseFileName ] = newMesh;
             }
@@ -120,7 +117,7 @@ public:
             if( file.baseFileName in textures )
                logWarning( "Texture ", file.baseFileName, " exists more than once." );
 
-            textures[ file.baseFileName ] = new TextureAsset( file.fullPath );
+            textures[ file.baseFileName ] = new TextureAsset( file );
         }
 
         foreach( res; scanDirectory( Resources.Materials ) )
@@ -132,6 +129,7 @@ public:
                 if( mat.name in materials )
                     logWarning( "Material ", mat.name, " exists more than once." );
 
+                mat.resource = res;
                 materials[ mat.name ] = mat;
                 materialResources[ res ] ~= mat;
             }
@@ -209,10 +207,6 @@ public:
     /**
      * Creates asset with resource.
      */
-    this()
-    {
-        resource = Resource( "" );
-    }
     this( Resource res )
     {
         resource = res;
@@ -240,6 +234,12 @@ public:
     this( AssetType ass )
     {
         asset = ass;
+    }
+
+    /// Is the asset null?
+    bool isNull() @property const pure @safe nothrow 
+    {
+        return asset is null;
     }
 
     /// Gets a reference to it's asset.

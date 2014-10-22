@@ -164,9 +164,9 @@ public:
      *      mesh =          Assimp mesh/bone object
      *      nodeHierarchy = Hierarchy of bones/filler nodes used for the animation
      */
-    this( const(aiAnimation**) animations, int numAnimations, const(aiMesh*) mesh, const(aiNode*) nodeHierarchy )
+    this( Resource res, const(aiAnimation**) animations, int numAnimations, const(aiMesh*) mesh, const(aiNode*) nodeHierarchy )
     {
-        super( Resource( "" ) );
+        super( res );
 
         for( int i = 0; i < nodeHierarchy.mNumChildren; i++)
         {

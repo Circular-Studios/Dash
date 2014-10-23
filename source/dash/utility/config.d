@@ -67,6 +67,8 @@ public:
         bool backfaceCulling = true;
         @rename( "VSync" ) @optional
         bool vsync = false;
+        @rename( "OpenGL33" ) @optional
+        bool usingGl33 = false;
     }
 
     static struct UserInterfaceSettings
@@ -85,7 +87,7 @@ public:
 
 static:
     @ignore
-    private Resource resource = Resource( "" );
+    private Resource resource = internalResource;
 
     void initialize()
     {

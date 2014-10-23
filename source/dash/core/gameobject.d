@@ -41,6 +41,10 @@ struct ObjectStateFlags
     }
 }
 
+/// A tuple of a resource and a gameobject reference
+alias GameObjectResource = Tuple!( Resource, "resource", GameObject, "object" );
+GameObjectResource[][Resource] objectsByResource;
+
 /**
  * Manages all components and transform in the world. Can be overridden.
  */
@@ -50,7 +54,7 @@ private:
     GameObject _parent;
     GameObject[] _children;
     Prefab _prefab;
-    Component[TypeInfo] componentList;
+    Component[ClassInfo] componentList;
     string _name;
     bool canChangeName;
     static uint nextId = 1;
@@ -61,7 +65,18 @@ private:
     }.replaceMap( [ "$property": Type.stringof.toLower, "$type": Type.stringof ] );
 
 package:
+    /// THIS IS ONLY SET IF THIS OBJECT IS SCENE _ROOT
     Scene scene;
+
+    /// Searche the parent tree until we find the scene object
+    Scene findScene()
+    {
+        // Get root object
+        GameObject par;
+        for( par = this; par.parent; par = par.parent ) { }
+        
+        return par.scene;
+    }
 
 public:
     /**
@@ -90,7 +105,7 @@ public:
         Description[] children;
 
         @rename( "Components" ) @optional
-        Component[] components;
+        Component.Description[] components;
     }
 
     /// The current transform of the object.
@@ -124,12 +139,40 @@ public:
     mixin( Property!_parent );
     /// All of the objects which list this as parent
     mixin( Property!_children );
-    /// The name of the object.
-    mixin( Getter!_name );
     /// The prefab that this object is based on.
     mixin( Property!_prefab );
-    /// ditto
-    mixin( ConditionalSetter!( _name, q{canChangeName}, AccessModifier.Public ) );
+    /// The name of the object.
+    mixin( Property!( _name, AccessModifier.Package ) );
+    /// Change the name of the object.
+    void changeName( string newName )
+    in
+    {
+        assert( newName && newName.length, "Invalid name given." );
+    }
+    body
+    {
+        // Ignore an unchanging name.
+        if( name == newName )
+        {
+            return;
+        }
+        else if( canChangeName || DGame.instance.currentState == EngineState.Editor )
+        {
+            // Update mappings in the scene.
+            if( auto scene = findScene() )
+            {
+                scene.idByName.remove( name );
+                scene.idByName[ newName ] = id;
+            }
+
+            // Change the name.
+            name = newName;
+        }
+        else
+        {
+            throw new Exception( "Unable to rename gameobject at this time." );
+        }
+    }
     /// The ID of the object.
     immutable uint id;
     /// The current update settings
@@ -146,7 +189,7 @@ public:
      * Returns:
      *  A new game object with components and info pulled from desc.
      */
-    static GameObject create( Description desc )
+    static GameObject create( const Description desc )
     {
         GameObject obj;
 
@@ -184,7 +227,7 @@ public:
         // Add components
         foreach( component; desc.components )
         {
-            obj.addComponent( component );
+            obj.addComponent( component.createInstance() );
         }
 
         // Init components
@@ -208,7 +251,7 @@ public:
         desc.prefabName = prefab ? prefab.name : null;
         desc.transform = transform.toDescription();
         desc.children = children.map!( child => child.toDescription() ).array();
-        desc.components = componentList.values.dup;
+        desc.components = componentList.values.map!( comp => cast()comp.description ).array();
         return desc;
     }
 
@@ -302,7 +345,84 @@ public:
      */
     final void refresh( Description node )
     {
-        //TODO: Implement
+        if( name != node.name )
+            changeName( node.name );
+
+        transform.refresh( node.transform );
+
+        // Refresh components
+        bool[string] componentExists = zip( StoppingPolicy.shortest, componentList.byKey.map!( k => k.name ), false.repeat ).assocArray();
+        foreach( compDesc; node.components )
+        {
+            // Found it!
+            componentExists[ compDesc.componentType.name ] = true;
+
+            // Refresh, or add if it's new
+            if( auto comp = compDesc.componentType in componentList )
+                comp.refresh( compDesc );
+            else
+                addComponent( compDesc.createInstance() );
+        }
+
+        // Remove old components
+        foreach( key; componentExists.keys.filter!( k => !componentExists[k] ) )
+            componentList.remove( cast(ClassInfo)ClassInfo.find( key ) );
+
+        // Refresh children
+        bool[string] childrenExist = zip( StoppingPolicy.shortest, _children.map!( child => child.name ), false.repeat ).assocArray();
+        foreach( childDesc; node.children )
+        {
+            // Found it!
+            childrenExist[ childDesc.name ] = true;
+
+            // Refresh, or add if it's new
+            if( auto child = _children.filter!( child => child.name == childDesc.name ).front )
+                child.refresh( childDesc );
+            else
+                addChild( GameObject.create( childDesc ) );
+        }
+
+        foreach( key; childrenExist.keys.filter!( k => !childrenExist[k] ) )
+            childrenExist.remove( key );
+    }
+
+    /**
+     * Refresh the component of the given type.
+     *
+     * Params:
+     *  componentType = The type of teh component to refresh.
+     *  desc =          The new description of the component.
+     */
+    final void refreshComponent( ClassInfo componentType, Component.Description desc )
+    {
+        if( auto comp = componentType in componentList )
+        {
+            comp.refresh( desc );
+        }
+    }
+
+    /**
+     * Refresh the component of the given type.
+     *
+     * Params:
+     *  ComponentType = The type of teh component to refresh.
+     *  desc =          The new description of the component.
+     */
+    final void refreshComponent( ComponentType )( Component.Description desc )
+    {
+        refreshComponent( typeid(ComponentType), desc );
+    }
+
+    /**
+     * Refresh the component of the given type.
+     *
+     * Params:
+     *  componentName = The type of teh component to refresh.
+     *  desc =          The new description of the component.
+     */
+    final void refreshComponent( string componentName, Component.Description desc )
+    {
+        refreshComponent( getDescription( componentName ).componentType, desc );
     }
 
     /**
@@ -349,11 +469,9 @@ public:
         newChild.parent = this;
         newChild.canChangeName = false;
 
-        // Get root object
-        GameObject par;
-        for( par = this; par.parent; par = par.parent ) { }
+        Scene currentScene = findScene();
 
-        if( par.scene )
+        if( currentScene )
         {
             GameObject[] objectChildren;
             {
@@ -374,11 +492,10 @@ public:
             // If adding to the scene, make sure all new children are in.
             foreach( child; objectChildren )
             {
-                par.scene.objectById[ child.id ] = child;
-                par.scene.idByName[ child.name ] = child.id;
+                currentScene.objectById[ child.id ] = child;
+                currentScene.idByName[ child.name ] = child.id;
             }
         }
-
     }
 
     /**
@@ -394,15 +511,13 @@ public:
         oldChild.canChangeName = true;
         oldChild.parent = null;
 
-        // Get root object
-        GameObject par;
-        for( par = this; par.parent; par = par.parent ) { }
+        Scene currentScene = findScene();
 
         // Remove from scene.
-        if( par.scene )
+        if( currentScene )
         {
-            par.scene.objectById.remove( oldChild.id );
-            par.scene.idByName.remove( oldChild.name );
+            currentScene.objectById.remove( oldChild.id );
+            currentScene.idByName.remove( oldChild.name );
         }
     }
 }
@@ -426,6 +541,12 @@ private:
         position = vec3f( desc.position[] );
         rotation = fromEulerAngles( desc.rotation[ 0 ], desc.rotation[ 1 ], desc.rotation[ 2 ] );
         scale = vec3f( desc.scale[] );
+    }
+
+    void refresh( Description desc )
+    {
+        // TODO: Track if the transform actually changed.
+        this = desc;
     }
 
     /**

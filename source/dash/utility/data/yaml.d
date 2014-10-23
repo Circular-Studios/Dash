@@ -256,7 +256,7 @@ public:
     //
     void readDictionary( T )( scope void delegate( string ) field_handler )
     {
-        enforceYaml( m_current.isMapping );
+        enforceYaml( m_current.isMapping, "Yaml map expected, got a " ~ ( m_current.isScalar ? "scalar" : "sequence" ) ~ " instead." );
 
         auto old = m_current;
         foreach( string key, Node value; m_current )
@@ -269,7 +269,7 @@ public:
 
     void readArray( T )( scope void delegate( size_t ) size_callback, scope void delegate() entry_callback )
     {
-        enforceYaml( m_current.isSequence || m_current.isScalar );
+        enforceYaml( m_current.isSequence || m_current.isScalar, "Yaml scalar or sequence expected, got a map instead." );
 
         if( m_current.isSequence )
         {

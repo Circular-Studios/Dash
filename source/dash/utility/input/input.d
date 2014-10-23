@@ -39,7 +39,7 @@ private:
     /// Bindings directly from Config/Input
     Binding[string] bindings;
     /// The file the bindings came from.
-    Resource bindingFile = Resource( "" );
+    Resource bindingFile = internalResource;
 
     /// The registered button events.
     Tuple!( UUID, ButtonEvent )[][ string ] buttonEvents;

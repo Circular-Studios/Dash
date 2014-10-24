@@ -72,6 +72,30 @@ public:
     alias Description = .Description;
 }
 
+/**
+ * A self-registering component.
+ * Useful for when you receive circular dependency errors.
+ * Recommended for use only when extending Component directly.
+ *
+ * Params:
+ *  BaseType =          The type being registered.
+ *
+ * Examples:
+ * ---
+ * class MyComponent : ComponentReg!MyComponent
+ * {
+ *     // ...
+ * }
+ * ---
+ */
+abstract class ComponentReg( BaseType ) : Component
+{
+    static this()
+    {
+        componentMetadata!(Unqual!(BaseType)).register();
+    }
+}
+
 /// A map of all registered Component types to their descriptions
 private immutable(Description)[ClassInfo] descriptionsByClassInfo;
 private immutable(Description)[string] descriptionsByName;

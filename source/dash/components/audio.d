@@ -5,13 +5,11 @@ module dash.components.audio;
 import dash.core.properties, dash.components, dash.utility, dash.utility.soloud;
 import std.string;
 
-mixin( registerComponents!() );
-
 /**
  * Listener object that hears sounds and sends them to the audio output device
  * (usually attaced to the camera)
  */
-class Listener : Component
+class Listener : ComponentReg!Listener
 {
 private:
 
@@ -36,7 +34,7 @@ public:
 /**
  * Emitter object that plays sounds that listeners can hear
  */
-class Emitter : Component
+class Emitter : ComponentReg!Emitter
 {
 private:
     Modplug toPlay;

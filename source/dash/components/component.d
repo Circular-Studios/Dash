@@ -14,6 +14,20 @@ alias helper( alias T ) = T;
 alias helper( T... ) = T;
 alias helper() = TypeTuple!();
 
+template isSerializableField( alias field )
+{
+    import vibe.internal.meta.uda;
+
+public:
+    enum isSerializableField =
+        !isSomeFunction!field &&
+        isMutable!fieldType &&
+        !findFirstUDA!( IgnoreAttribute, field ).found;
+
+private:
+    alias fieldType = typeof(field);
+}
+
 /**
  * Interface for components to implement.
  */
@@ -323,13 +337,11 @@ private:
             static if( !memberName.among( "this", "~this", __traits( allMembers, Component ) ) &&
                         is( typeof( helper!( __traits( getMember, T, memberName ) ) ) ) )
             {
-                import vibe.internal.meta.uda;
-
                 alias member = helper!( __traits( getMember, T, memberName ) );
                 alias memberType = typeof(member);
 
                 // Process variables
-                static if( !isSomeFunction!member && !findFirstUDA!( IgnoreAttribute, member ).found )
+                static if( isSerializableField!member )
                 {
                     // Get string form of attributes
                     string attributesStr()

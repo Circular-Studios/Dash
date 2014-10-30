@@ -1,6 +1,6 @@
 {
     "name": "dash",
-    "description": "A 3D game engine in dlang.",
+    "description": "A free and open 3D game engine written in D.",
     "copyright": "Circular Studios 2013 - 2014",
     "license": "MIT",
     "homepage": "http://circularstudios.com",

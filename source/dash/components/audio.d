@@ -2,7 +2,7 @@
  * Defines audio related classes, such as the listener and emitter
  */
 module dash.components.audio;
-import dash.core.properties, dash.components, dash.utility, dash.utility.soloud;
+import dash.core.properties, dash.components, dash.utility, dash.utility.bindings.soloud;
 import std.string;
 
 /**

@@ -2,7 +2,7 @@
  * Defines the DGame class, the base class for all game logic.
  */
 module dash.core.dgame;
-import dash, dash.utility.awesomium;
+import dash;
 import core.memory;
 
 /**

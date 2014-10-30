@@ -2,7 +2,7 @@
  * Handles the creation and life cycle of UI objects and webview textures
  */
 module dash.components.userinterface;
-import dash.core, dash.utility.awesomium, dash.components, dash.utility, dash.graphics.graphics;
+import dash, dash.utility.bindings.awesomium;
 
 import std.string;
 

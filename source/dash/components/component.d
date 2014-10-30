@@ -57,7 +57,7 @@ public:
      */
     final const(Description) description() @property
     {
-        return getDescription( typeid(this) ).create( this );
+        return getDescription( typeid(this) ).fromComponent( this );
     }
 
     /**
@@ -139,7 +139,7 @@ public:
     abstract void refresh( Component comp, const Description newDesc );
 
     /// Creates a description from a component.
-    abstract const(Description) create( const Component comp ) const;
+    abstract const(Description) fromComponent( const Component comp ) const;
 
     /// Get the type of the component the description is for.
     @ignore
@@ -217,7 +217,7 @@ enum registerComponents( string modName = __MODULE__ ) = q{
 template componentMetadata( T ) if( isComponent!T )
 {
 public:
-    // Runtime function, registers serializers
+    /// Runtime function, registers serializers.
     void register()
     {
         immutable desc = new immutable SerializationDescription;
@@ -225,11 +225,24 @@ public:
         descriptionsByName[ T.stringof ] = desc;
     }
 
-    // Generate description
+    /// A list of fields on the component.
     enum fieldList = getFields();
 
+    /// The size of an instance of the component.
+    enum instanceSize = __traits( classInstanceSize, T );
+
 private:
-    // Generate actual struct
+    /**
+     * Generate actual description of a component.
+     *
+     * Contains:
+     *  * A represenetation of each field on the component at root level.
+     *  * A list of the fields ($(D fields)).
+     *  * A method to create a description from an instance of a component ($(D fromComponent)).
+     *  * A method to refresh an instance of the component with a newer description ($(D refresh)).
+     *  * A method to create an instance of the component ($(D createInstance)).
+     *  * The ClassInfo of the component ($(D componentType)).
+     */
     final class SerializationDescription : Description
     {
         mixin( { return reduce!( ( working, field ) {
@@ -260,7 +273,7 @@ private:
         }
 
         /// Create a description from a component.
-        override const(SerializationDescription) create( const Component comp ) const
+        override const(SerializationDescription) fromComponent( const Component comp ) const
         {
             auto theThing = cast(T)comp;
             auto desc = new SerializationDescription;

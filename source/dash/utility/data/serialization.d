@@ -1,7 +1,6 @@
 module dash.utility.data.serialization;
 import dash.utility.data.yaml;
-import dash.utility.resources;
-import dash.utility.math;
+import dash.utility.resources, dash.utility.math, dash.utility.output;
 
 import vibe.data.json, vibe.data.bson;
 import std.typecons: Tuple, tuple;
@@ -66,23 +65,31 @@ T deserializeFile( T )( Resource file, SerializationMode mode = SerializationMod
 
     T handleYaml()
     {
-        return deserializeYaml!T( Loader.fromString( cast(char[])file.readText() ).load() );
+        return deserializeYaml!T( Loader( file.fullPath ).load() );
     }
 
-    final switch( mode ) with( SerializationMode )
+    try
     {
-        case Json: return handleJson();
-        case Bson: return handleBson();
-        case Yaml: return handleYaml();
-        case Default:
-            switch( file.extension.toLower )
-            {
-                case ".json": return handleJson();
-                case ".bson": return handleBson();
-                case ".yaml":
-                case ".yml":  return handleYaml();
-                default: throw new Exception( "File extension " ~ file.extension.toLower ~ " not supported." );
-            }
+        final switch( mode ) with( SerializationMode )
+        {
+            case Json: return handleJson();
+            case Bson: return handleBson();
+            case Yaml: return handleYaml();
+            case Default:
+                switch( file.extension.toLower )
+                {
+                    case ".json": return handleJson();
+                    case ".bson": return handleBson();
+                    case ".yaml":
+                    case ".yml":  return handleYaml();
+                    default: throw new Exception( "File extension " ~ file.extension.toLower ~ " not supported." );
+                }
+        }
+    }
+    catch( Exception e )
+    {
+        logError( "Error deserializing file ", file.fileName, " to type ", T.stringof, ". ", e.msg );
+        return T.init;
     }
 }
 
@@ -113,27 +120,34 @@ T[] deserializeMultiFile( T )( Resource file, SerializationMode mode = Serializa
     {
         import std.algorithm: map;
         import std.array: array;
-        return Loader
-            .fromString( cast(char[])file.readText() )
+        return Loader( file.fullPath )
             .loadAll()
             .map!( node => node.deserializeYaml!T() )
             .array();
     }
 
-    final switch( mode ) with( SerializationMode )
+    try
     {
-        case Json: return handleJson();
-        case Bson: return handleBson();
-        case Yaml: return handleYaml();
-        case Default:
-            switch( file.extension.toLower )
-            {
-                case ".json": return handleJson();
-                case ".bson": return handleBson();
-                case ".yaml":
-                case ".yml":  return handleYaml();
-                default: throw new Exception( "File extension " ~ file.extension.toLower ~ " not supported." );
-            }
+        final switch( mode ) with( SerializationMode )
+        {
+            case Json: return handleJson();
+            case Bson: return handleBson();
+            case Yaml: return handleYaml();
+            case Default:
+                switch( file.extension.toLower )
+                {
+                    case ".json": return handleJson();
+                    case ".bson": return handleBson();
+                    case ".yaml":
+                    case ".yml":  return handleYaml();
+                    default: throw new Exception( "File extension " ~ file.extension.toLower ~ " not supported." );
+                }
+        }
+    }
+    catch( Exception e )
+    {
+        logError( "Error deserializing file ", file.fileName, " to type ", T.stringof, ". ", e.msg );
+        return [];
     }
 }
 
@@ -166,21 +180,28 @@ template serializeToFile( bool prettyPrint = true )
             Dumper( outPath ).dump( serializeToYaml( t ) );
         }
 
-        final switch( mode ) with( SerializationMode )
+        try
         {
-            case Json: handleJson(); break;
-            case Bson: handleBson(); break;
-            case Yaml: handleYaml(); break;
-            case Default:
-                switch( outPath.extension.toLower )
-                {
-                    case ".json": handleJson(); break;
-                    case ".bson": handleBson(); break;
-                    case ".yaml":
-                    case ".yml":  handleYaml(); break;
-                    default: throw new Exception( "File extension " ~ outPath.extension.toLower ~ " not supported." );
-                }
-                break;
+            final switch( mode ) with( SerializationMode )
+            {
+                case Json: handleJson(); break;
+                case Bson: handleBson(); break;
+                case Yaml: handleYaml(); break;
+                case Default:
+                    switch( outPath.extension.toLower )
+                    {
+                        case ".json": handleJson(); break;
+                        case ".bson": handleBson(); break;
+                        case ".yaml":
+                        case ".yml":  handleYaml(); break;
+                        default: throw new Exception( "File extension " ~ outPath.extension.toLower ~ " not supported." );
+                    }
+                    break;
+            }
+        }
+        catch( Exception e )
+        {
+            logError( "Error serializing ", T.stringof, " to file ", file.fileName, ". ", e.msg );
         }
     }
 }
@@ -224,8 +245,15 @@ enum hasSerializer( T ) = anySatisfy!( isSerializerFor!T, customSerializers );
 /// Get the serializer for a type
 template serializerFor( T )
 {
+    import dash.components.component;
+
     static if( hasSerializer!T )
         alias serializerFor = Filter!( isSerializerFor!T, customSerializers )[ 0 ];
+    else static if( is( T : Component ) )
+        alias serializerFor = CustomSerializer!( T, ComponentReference,
+                                                 t => ComponentReference( componentMetadata!T.name, t.id ),
+                                                 r => getComponent( r.id ),
+                                                 r => !r.id.empty && t.name );
     else
         alias serializerFor = defaultSerializer!T;
 }

@@ -5,7 +5,7 @@ module dash.components.component;
 import dash.core, dash.components, dash.graphics, dash.utility;
 
 import vibe.data.bson, vibe.data.json, dash.utility.data.yaml;
-import std.algorithm, std.array, std.string, std.traits, std.conv, std.typecons, std.uuid;
+import std.algorithm, std.array, std.string, std.traits, std.conv, std.typecons;
 
 /// Tests if a type can be created from yaml.
 enum isComponent(alias T) = is( T == class ) && is( T : Component ) && !__traits( isAbstractClass, T );
@@ -35,40 +35,13 @@ abstract class Component
 {
 private:
     /// The description from the last creation/refresh.
+    @ignore
     Description lastDesc;
 
-    /// The id of the component.
-    UUID _id;
-
 public:
-    this()
-    {
-        _id = randomUUID();
-        instantiatedComponents[ _id ] = this;
-    }
-
     /// The GameObject that owns this component.
     @ignore
     GameObject owner;
-
-    /// The id of the component.
-    @optional
-    UUID id() const pure nothrow @safe @property
-    {
-        return _id;
-    }
-    ///ditto
-    @optional
-    void id( UUID newId ) nothrow @safe @property
-    {
-        if( _id in instantiatedComponents )
-        {
-            instantiatedComponents.remove( _id );
-        }
-
-        _id = newId;
-        instantiatedComponents[ _id ] = this;
-    }
 
     /// The function called on initialization of the object.
     void initialize() { }
@@ -126,7 +99,6 @@ abstract class ComponentReg( BaseType ) : Component
 /// A map of all registered Component types to their descriptions
 private immutable(Description)[ClassInfo] descriptionsByClassInfo;
 private immutable(Description)[string] descriptionsByName;
-private Component[UUID] instantiatedComponents;
 
 immutable(Description) getDescription( ClassInfo type )
 {
@@ -136,16 +108,6 @@ immutable(Description) getDescription( ClassInfo type )
 immutable(Description) getDescription( string name )
 {
     return descriptionsByName.get( name, null );
-}
-
-Component getComponent( UUID id )
-{
-    return instantiatedComponents.get( id, null );
-}
-
-T getComponent( T )( UUID id ) if( is( T : Component ) )
-{
-    return cast(T)getComponent( id );
 }
 
 /// The description for the component
@@ -222,19 +184,6 @@ public:
         }
         static assert( is$typeSerializable!Description );
     } );
-}
-
-//package( dash )
-/**
- * Used when serializing components, stores the type name and the id of that component.
- */
-struct ComponentReference
-{
-    @rename( "Type" )
-    string type;
-
-    @rename( "Id" )
-    uint id;
 }
 
 /**

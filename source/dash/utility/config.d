@@ -4,6 +4,7 @@
 module dash.utility.config;
 import dash.utility.resources, dash.utility.output, dash.utility.data;
 
+import std.experimental.logger;
 import std.datetime;
 
 /**
@@ -36,18 +37,25 @@ public:
     static struct LoggerSettings
     {
         @rename( "FilePath" ) @optional
-        string filePath = null;
+        string filePath = "dash.log";
         @rename( "Debug" ) @optional
-        Verbosities debug_ = Verbosities( Verbosity.Debug, Verbosity.Debug );
+        Verbosities debug_ = Verbosities( LogLevel.all, LogLevel.all );
         @rename( "Release" ) @optional
-        Verbosities release = Verbosities( Verbosity.Off, Verbosity.High );
+        Verbosities release = Verbosities( LogLevel.off, LogLevel.error );
+
+        @ignore
+        Verbosities verbosities() const @property pure @safe nothrow @nogc
+        {
+            debug return debug_;
+            else  return release;
+        }
 
         static struct Verbosities
         {
             @rename( "OutputVerbosity" ) @optional @byName
-            Verbosity outputVerbosity = Verbosity.Low;
+            LogLevel outputVerbosity = LogLevel.info;
             @rename( "LoggingVerbosity" ) @optional @byName
-            Verbosity loggingVerbosity = Verbosity.Debug;
+            LogLevel loggingVerbosity = LogLevel.all;
         }
     }
 

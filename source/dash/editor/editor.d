@@ -123,34 +123,53 @@ public:
         void handler( EventMessage msg )
         {
             // Automatically deserialize received data to requested type.
+            DataType receivedData;
             try
             {
-                DataType receivedData = msg.value.deserializeJson!DataType;
+                receivedData = msg.value.deserializeJson!DataType;
             }
             catch( JSONException e )
             {
-                logError( "Error deserializing received message with key \"", key, "\" to ", __traits( identifier, DataType ), ": ", e.msg );
+                logError( "Error deserializing received message with key \"", key, "\" to ", DataType.stringof, ": ", e.msg );
                 return;
             }
 
-            static if(is( ResponseType == void ))
-            {
-                // Call the event handler.
-                event( receivedData );
-            }
-            else
-            {
-                // Call the event handler, and capture the result.
-                ResponseType res = event( receivedData );
+            // Create a message with the callback id, and the response of the event.
+            EventMessage newMsg;
+            newMsg.key = CallbackMessageKey;
+            newMsg.callbackId = msg.callbackId;
 
-                // Create a message with the callback id, and the response of the event.
-                EventMessage newMsg;
-                newMsg.key = CallbackMessageKey;
-                newMsg.value = res.serializeToJson();
-                newMsg.callbackId = msg.callbackId;
+            // Build response to send back
+            EventResponse res;
 
-                server.send( newMsg );
+            try
+            {
+                static if(is( ResponseType == void ))
+                {
+                    // Call the event handler.
+                    event( receivedData );
+                    res.data = Json( "success" );
+                }
+                else
+                {
+                    // Call the event handler, and capture the result.
+                    ResponseType result = event( receivedData );
+                    res.data = result.serializeToJson();
+                }
+
+                // If we've made it this far, it's a success
+                res.status = EventResponse.Status.ok;
             }
+            catch( Exception e )
+            {
+                // If failure, send exception.
+                res.status = EventResponse.Status.error;
+                res.data = e.exceptionToJson();
+            }
+
+            // Serialize response, and sent it across.
+            newMsg.value = res.serializeToJson();
+            server.send( newMsg );
         }
 
         return registerInternalMessageHandler( key, &handler );
@@ -278,4 +297,27 @@ private:
     EventMessage[] pendingEvents;
     EventHandlerTuple[][string] eventHandlers;
     InternalEventHandler[UUID] callbacks;
+}
+
+/// Easy to handle response struct.
+private struct EventResponse
+{
+    /// Status of a request
+    enum Status
+    {
+        ok = 0,
+        error = 2,
+    }
+
+    Status status;
+    Json data;
+}
+
+Json exceptionToJson( Exception e )
+{
+    Json except = Json.emptyObject;
+    except[ "msg"  ] = e.msg;
+    except[ "line" ] = e.line;
+    except[ "file" ] = e.file;
+    return except;
 }

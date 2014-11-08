@@ -6,24 +6,24 @@ import vibe.data.json;
 import std.typecons, std.functional;
 
 public:
-/// Status of a request
-enum Status
-{
-    ok = 0,
-    warning = 1,
-    error = 2,
-}
 /// Easy to handle response struct.
 struct EventResponse
 {
+    /// Status of a request
+    enum Status
+    {
+        ok = 0,
+        warning = 1,
+        error = 2,
+    }
+
     Status status;
-    string message;
     Json data;
 }
 /// Shortcut to generate response.
-EventResponse res( DataType = Json )( Status s, string m = "success", DataType d = DataType.init )
+EventResponse res( DataType = Json )( EventResponse.Status s, DataType d = DataType.init )
 {
-    return EventResponse( s, m, d.serializeToJson() );
+    return EventResponse( s, d.serializeToJson() );
 }
 
 struct response
@@ -31,11 +31,9 @@ struct response
     @disable this();
 
     /// Basic ok response.
-    alias ok = partial!( res, Status.ok );
-    /// Warning response
-    alias warning = partial!( res, Status.warning );
+    alias ok = partial!( res, EventResponse.Status.ok );
     /// Error response
-    alias error = partial!( res, Status.error );
+    alias error = partial!( res, EventResponse.Status.error );
 }
 
 package:
@@ -48,7 +46,7 @@ void registerGameEvents( Editor ed, DGame game )
     } );
 
     ed.registerEventHandler!( Json, EventResponse )( "dgame:scene:get_objects", ( _ ) {
-        return response.ok( "success", game.activeScene.objects );
+        return response.ok( game.activeScene.objects );
     } );
 }
 

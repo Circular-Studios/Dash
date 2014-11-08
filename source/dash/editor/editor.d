@@ -15,10 +15,6 @@ import std.uuid, std.typecons;
 class Editor
 {
 public:
-    // Event handlers
-    alias EventHandler( DataType ) = void delegate( DataType );
-    alias EventResponseHandler( DataType, ResponseType ) = ResponseType delegate( DataType );
-
     /**
      * Initializes the editor with a DGame instance.
      *
@@ -74,12 +70,23 @@ public:
     /**
      * Sends a message to all attached editors.
      *
+     * In most cases, you won't have to manually specify template parameters,
+     * they should be inferred.
+     *
      * Params:
      *  key =           The key of the event.
      *  value =         The data along side it.
      *  cb =            The callback to call when a response is received.
+     *
+     * Examples:
+     * ---
+     * // DataType inferred as string, ResponseType inferred as string.
+     * editor.send( "my_key", "my_value", ( string response ) {
+     *     // Handle response
+     * } );
+     * ---
      */
-    final void send( ResponseType = EventResponse, DataType )( string key, DataType value, EventHandler!ResponseType cb )
+    final void send( DataType, ResponseType )( string key, DataType value, void delegate( ResponseType ) cb )
     {
         UUID cbId = randomUUID();
         registerCallbackHandler( cbId, msg => cb( msg.value.deserializeJson!ResponseType ) );
@@ -91,7 +98,7 @@ public:
 
         server.send( msg );
     }
-    static assert(is(typeof( send!( string )( "key", "data", ( string response ) { } ) )));
+    static assert(is(typeof( send( "key", "data", ( string response ) { } ) )));
 
     /**
      * Registers an event callback, for when an event with the given key is received.
@@ -100,40 +107,56 @@ public:
      *  key =           The key of the event.
      *  event =         The handler to call.
      *
-     * Returns: The ID of the event, so it can be unregistered later.
-     */
-    final UUID registerEventHandler( DataType )( string key, EventHandler!DataType event )
-    {
-        return registerInternalMessageHandler( key, msg => event( msg.value.deserializeJson!DataType ) );
-    }
-    static assert(is(typeof( registerEventHandler!string( "key", ( string resp ) { } ) )));
-
-    /**
-     * Registers an event callback, for when an event with the given key is received.
-     *
-     * Params:
-     *  key =           The key of the event.
-     *  event =         The handler to call.
+     * * Examples:
+     * ---
+     * // DataType inferred as string, ResponseType inferred as string.
+     * editor.registerEventHandler( "loopback", ( string receivedData ) {
+     *     // Handle response
+     *     // Return your response, or nothing if signify success without response.
+     *     return receivedData;
+     * } );
      *
      * Returns: The ID of the event, so it can be unregistered later.
      */
-    final UUID registerEventHandler( DataType, ResponseType )( string key, EventResponseHandler!( DataType, ResponseType ) event )
+    final UUID registerEventHandler( DataType, ResponseType )( string key, ResponseType delegate( DataType ) event )
     {
         void handler( EventMessage msg )
         {
-            ResponseType res = event( msg.value.deserializeJson!DataType );
+            // Automatically deserialize received data to requested type.
+            try
+            {
+                DataType receivedData = msg.value.deserializeJson!DataType;
+            }
+            catch( JSONException e )
+            {
+                logError( "Error deserializing received message with key \"", key, "\" to ", __traits( identifier, DataType ), ": ", e.msg );
+                return;
+            }
 
-            EventMessage newMsg;
-            newMsg.key = CallbackMessageKey;
-            newMsg.value = res.serializeToJsonString();
-            newMsg.callbackId = msg.callbackId;
+            static if(is( ResponseType == void ))
+            {
+                // Call the event handler.
+                event( receivedData );
+            }
+            else
+            {
+                // Call the event handler, and capture the result.
+                ResponseType res = event( receivedData );
 
-            server.send( newMsg );
+                // Create a message with the callback id, and the response of the event.
+                EventMessage newMsg;
+                newMsg.key = CallbackMessageKey;
+                newMsg.value = res.serializeToJson();
+                newMsg.callbackId = msg.callbackId;
+
+                server.send( newMsg );
+            }
         }
 
         return registerInternalMessageHandler( key, &handler );
     }
-    static assert(is(typeof( registerEventHandler!( string, string )( "key", data => data ) )));
+    static assert(is(typeof( registerEventHandler( "key", ( string data ) { } ) )));
+    static assert(is(typeof( registerEventHandler( "key", ( string data ) => data ) )));
 
     /**
      * Unregisters an event callback.

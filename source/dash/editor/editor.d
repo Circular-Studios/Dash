@@ -59,11 +59,7 @@ public:
      */
     final void send( DataType )( string key, DataType value )
     {
-        EventMessage msg;
-        msg.key = key;
-        msg.value = value.serializeToJson();
-
-        server.send( msg );
+        send( key, value, ( Json res ) { } );
     }
     static assert(is(typeof( send( "key", "data" ) )));
 
@@ -89,7 +85,17 @@ public:
     final void send( DataType, ResponseType )( string key, DataType value, void delegate( ResponseType ) cb )
     {
         UUID cbId = randomUUID();
-        registerCallbackHandler( cbId, msg => cb( msg.value.deserializeJson!ResponseType ) );
+
+        void callbackHandler( EventMessage msg )
+        {
+            auto response = msg.value.deserializeJson!EventResponse;
+
+            if( response.status == EventResponse.Status.ok )
+                cb( response.data.deserializeJson!ResponseType );
+            else
+                throw response.data.deserializeJson!TransferableException().toException();
+        }
+        registerCallbackHandler( cbId, &callbackHandler );
 
         EventMessage msg;
         msg.key = key;
@@ -164,7 +170,7 @@ public:
             {
                 // If failure, send exception.
                 res.status = EventResponse.Status.error;
-                res.data = e.exceptionToJson();
+                res.data = TransferableException.fromException( e ).serializeToJson();
             }
 
             // Serialize response, and sent it across.
@@ -313,11 +319,24 @@ private struct EventResponse
     Json data;
 }
 
-Json exceptionToJson( Exception e )
+// Exception that can be serialized
+struct TransferableException
 {
-    Json except = Json.emptyObject;
-    except[ "msg"  ] = e.msg;
-    except[ "line" ] = e.line;
-    except[ "file" ] = e.file;
-    return except;
+    string msg;
+    size_t line;
+    string file;
+
+    static TransferableException fromException( Exception e )
+    {
+        TransferableException except;
+        except.msg = e.msg;
+        except.line = e.line;
+        except.file = e.file;
+        return except;
+    }
+
+    Exception toException()
+    {
+        return new Exception( msg, file, line );
+    }
 }

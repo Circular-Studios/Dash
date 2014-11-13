@@ -120,7 +120,7 @@ public:
             _currentAnimTime = startAnimTime;
         }
         else
-            logWarning( "Could not change to new animation, the animation did not exist." );
+            warning( "Could not change to new animation, the animation did not exist." );
     }
     /**
     * Runs an animation once, then returns
@@ -135,7 +135,7 @@ public:
             _currentAnimTime = 0;
         }
         else
-            logWarning( "Could not change to new animation, the animation did not exist." );
+            warning( "Could not change to new animation, the animation did not exist." );
     }
 
     /**

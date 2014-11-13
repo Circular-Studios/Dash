@@ -53,7 +53,7 @@ public:
                 }
                 else
                 {
-                    logFatal( "Unable to find ", name, " in $array." );
+                    errorf( "Unable to find %s in $array.", name );
                     return null;
                 }
             }
@@ -94,7 +94,7 @@ public:
             if( scene.mNumMeshes > 0 )
             {
                 if( file.baseFileName in meshes )
-                    logWarning( "Mesh ", file.baseFileName, " exsists more than once." );
+                    warning( "Mesh ", file.baseFileName, " exsists more than once." );
 
                 auto newMesh = new MeshAsset( file, scene.mMeshes[ 0 ] );
 
@@ -105,7 +105,7 @@ public:
             }
             else
             {
-                logWarning( "Assimp did not contain mesh data, ensure you are loading a valid mesh." );
+                warning( "Assimp did not contain mesh data, ensure you are loading a valid mesh." );
             }
 
             // Release mesh
@@ -115,7 +115,7 @@ public:
         foreach( file; scanDirectory( Resources.Textures ) )
         {
             if( file.baseFileName in textures )
-               logWarning( "Texture ", file.baseFileName, " exists more than once." );
+               warningf( "Texture %s exists more than once.", file.baseFileName );
 
             textures[ file.baseFileName ] = new TextureAsset( file );
         }
@@ -127,7 +127,7 @@ public:
             foreach( mat; newMat )
             {
                 if( mat.name in materials )
-                    logWarning( "Material ", mat.name, " exists more than once." );
+                    warningf( "Material %s exists more than once.", mat.name );
 
                 mat.resource = res;
                 materials[ mat.name ] = mat;
@@ -157,7 +157,7 @@ public:
                 }
                 else if( asset.resource.needsRefresh )
                 {
-                    logDebug( "Refreshing ", name, "." );
+                    tracef( "Refreshing %s.", name );
                     asset.refresh();
                 }
             }
@@ -179,7 +179,7 @@ public:
             foreach_reverse( name; $aaName.keys )
             {
                 if( !$aaName[ name ].isUsed )
-                    logWarning( "$friendlyName ", name, " not used during this run." );
+                    warningf( "$friendlyName %s not used during this run.", name );
 
                 $aaName[ name ].shutdown();
                 $aaName.remove( name );

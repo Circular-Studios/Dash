@@ -136,7 +136,7 @@ public:
             }
             catch( JSONException e )
             {
-                logError( "Error deserializing received message with key \"", key, "\" to ", DataType.stringof, ": ", e.msg );
+                errorf( "Error deserializing received message with key \"%s\" to %s: %s", key, DataType.stringof, e.msg );
                 return;
             }
 
@@ -239,7 +239,7 @@ protected:
             }
             else
             {
-                logWarning( "Invalid editor event received with key ", event.key );
+                warningf( "Invalid editor event received with key %s", event.key );
             }
         }
     }
@@ -295,7 +295,7 @@ package:
         }
         else
         {
-            logFatal( "Callback reference lost: ", msg.callbackId );
+            errorf( "Callback reference lost: %s", msg.callbackId );
         }
     }
 

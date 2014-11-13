@@ -2,7 +2,9 @@
  * Defines the Dash logger, using the std.logger proposal.
  */
 module dash.utility.output;
-public import std.experimental.logger;
+import std.experimental.logger;
+// Logging functions for the others
+public import std.experimental.logger: log, logf, trace, tracef, info, infof, warning, warningf, error, errorf, critical, criticalf, fatal, fatalf;
 
 import colorize;
 

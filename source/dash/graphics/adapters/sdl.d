@@ -49,25 +49,27 @@ public:
 
         if(config.graphics.usingGl33)
         {
-                SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-                SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3); 
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3); 
         }
         else
         {
-                SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-                SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0); 
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0); 
         }
-                SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
         string iconPath = Resources.Textures ~ "/icon.bmp";
 
         if( exists( iconPath ) )
         {
-                SDLImage imageLib = new SDLImage( sdl, 0 );
-                window.setIcon( imageLib.load( iconPath ) );
+            SDLImage imageLib = new SDLImage( sdl, 0 );
+            window.setIcon( imageLib.load( iconPath ) );
         }
         else
-                logDebug("Could not find icon.bmp in Textures folder!");
+        {
+            trace("Could not find icon.bmp in Textures folder!");
+        }
 
         //context = SDL_GL_CreateContext( window );
         glContext = new SDL2GLContext( window );
@@ -77,13 +79,13 @@ public:
 
         if(config.graphics.vsync)
         {
-                SDL_GL_SetSwapInterval(1); 
-                logDebug("vsync enabled!");
+            SDL_GL_SetSwapInterval(1); 
+            trace("vsync enabled!");
         }
         else
         {
-                SDL_GL_SetSwapInterval(0); 
-                logDebug("vsync disabled!");
+            SDL_GL_SetSwapInterval(0); 
+            trace("vsync disabled!");
         }
     }
 

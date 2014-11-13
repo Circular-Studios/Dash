@@ -104,7 +104,7 @@ public:
             // check for success
             if( glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE )
             {
-                logFatal("Shadow map frame buffer failure.");
+                fatal( "Shadow map frame buffer failure." );
                 assert(false);
             }
         }

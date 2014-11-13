@@ -43,7 +43,7 @@ public:
         {
             _view = new AwesomiumView( w, h, filePath, null );
         }
-        logDebug( "UI File: ", filePath );
+        tracef( "UI File: %s", filePath );
     }
 
     /**

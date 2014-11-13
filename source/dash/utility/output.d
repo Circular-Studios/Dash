@@ -36,24 +36,26 @@ void bench( alias func )( lazy string name )
 /**
  * Dash's custom logger.
  */
-class DashLogger : FileLogger
+abstract final class DashLogger
 {
-    static MultiLogger multiLogger;
-    static DashLogger  consoleLogger;
-    static DashLogger  fileLogger;
+    static MultiLogger          multiLogger;
+    static DashConsoleLogger    consoleLogger;
+    static DashFileLogger       fileLogger;
+    static DashEditorLogger     editorLogger;
 
     static this()
     {
         import dash.utility.config;
 
         // Create loggers
-        consoleLogger   = new DashLogger( config.logging.verbosities.outputVerbosity );
-        fileLogger      = new DashLogger( config.logging.verbosities.loggingVerbosity, config.logging.filePath );
+        consoleLogger   = new DashConsoleLogger( config.logging.verbosities.outputVerbosity );
+        fileLogger      = new DashFileLogger( config.logging.verbosities.loggingVerbosity, config.logging.filePath );
+        editorLogger    = new DashEditorLogger();
 
         // Create multilogger
         multiLogger = new MultiLogger( LogLevel.all );
         multiLogger.insertLogger( "Dash Console Logger", consoleLogger );
-        multiLogger.insertLogger( "Dash File Logger", fileLogger );
+        multiLogger.insertLogger( "Dash Editor Logger", editorLogger );
         stdlog = multiLogger;
     }
 
@@ -61,11 +63,57 @@ class DashLogger : FileLogger
     {
         import dash.utility.config;
 
+        // Reinitialize the logger with file path. 
+        multiLogger.removeLogger( "Dash File Logger" );
+        fileLogger = new DashFileLogger( config.logging.verbosities.loggingVerbosity, config.logging.filePath );
+        multiLogger.insertLogger( "Dash File Logger", fileLogger );
+
+        // Update levels of existing loggers.
         consoleLogger.logLevel  = config.logging.verbosities.outputVerbosity;
-        fileLogger.logLevel     = config.logging.verbosities.loggingVerbosity;
+    }
+}
+
+private:
+/// Logs messages to the console
+final class DashConsoleLogger : FileLogger
+{
+    this( LogLevel level )
+    {
+        import std.stdio: stdout;
+
+        super( stdout, level );
     }
 
-    override protected void writeLogMsg( ref LogEntry payload )
+    override void writeLogMsg( ref LogEntry payload )
+    {
+        import std.conv: to;
+        import std.path: baseName;
+        import std.array: appender;
+        import std.format: formattedWrite;
+
+        auto msg = appender!string;
+
+        // Log level and message
+        msg.formattedWrite(
+            "%s: %s",
+            payload.logLevel.to!string,
+            payload.msg,
+        );
+
+        // Color and log file
+        file.cwritef( msg.data.color( payload.logLevel.getColor(), bg.init, payload.logLevel.getMode() ) );
+    }
+}
+
+/// Logs messages to a file
+final class DashFileLogger : FileLogger
+{
+    this( LogLevel level, string filename )
+    {
+        super( filename, level );
+    }
+
+    override void writeLogMsg( ref LogEntry payload )
     {
         import std.conv: to;
         import std.path: baseName;
@@ -75,52 +123,43 @@ class DashLogger : FileLogger
         auto msg = appender!string;
 
         // Log file and line info in the console only
-        if( !isConsole )
-        {
-            msg.formattedWrite(
-                "[%s] {%s:%d} ",
-                payload.timestamp.toSimpleString(),
-                payload.file.baseName,
-                payload.line,
-            );
-        }
-        
-        // Log level and message
         msg.formattedWrite(
-            "%s: %s",
+            "[%s] {%s:%d} %s: %s",
+            payload.timestamp.toSimpleString(),
+            payload.file.baseName,
+            payload.line,
             payload.logLevel.to!string,
             payload.msg,
         );
 
         // Color and print the message
-        file.cwritef( "%s\n", isConsole
-                               ? msg.data.color( getColor( payload.logLevel ), bg.init, getMode( payload.logLevel ) )
-                               : msg.data );
+        logMsgPart( msg.data );
+        finishLogMsg();
     }
+}
 
-private:
-    bool isConsole;
-
-    this( LogLevel level, string fileName = null )
+/// Logs messages to the editor interface
+final class DashEditorLogger : Logger
+{
+    this()
     {
         import std.stdio: stdout;
 
-        if( !fileName )
-        {
-            super( stdout, level );
-            isConsole = true;
-        }
-        else
-        {
-            super( fileName, level );
-            isConsole = false;
-        }
+        // File not actually used for anything, but required by FileLogger
+        super( LogLevel.all );
     }
 
-    fg getColor( LogLevel level )
+    override void writeLogMsg( ref LogEntry payload )
     {
-        final switch( level ) with( LogLevel ) with( fg )
-        {
+        //TODO
+    }
+}
+
+/// Helper to get the color of the log level
+fg getColor( LogLevel level )
+{
+    final switch( level ) with( LogLevel ) with( fg )
+    {
         case trace:
         case info:
         case off:
@@ -132,19 +171,19 @@ private:
         case critical:
         case fatal:
             return red;
-        }
     }
+}
 
-    mode getMode( LogLevel level )
+/// Helper to get the print mode of the log level
+mode getMode( LogLevel level )
+{
+    switch( level ) with( LogLevel ) with( mode )
     {
-        switch( level ) with( LogLevel ) with( mode )
-        {
         case critical:
             return underline;
         case fatal:
             return bold;
         default:
             return init;
-        }
     }
 }

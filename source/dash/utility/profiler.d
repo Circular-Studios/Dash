@@ -18,18 +18,18 @@ public:
         profiler = new Profiler( profileData[] );
     }
 
-    void update() @nogc
+    void update()
     {
         if( profiler.outOfSpace )
             profiler.reset();
     }
 
-    Zone startZone( string name ) @nogc
+    Zone startZone( string name )
     {
         return Zone( profiler, name );
     }
 
-    EventRange eventRange() @property @nogc
+    EventRange eventRange() @property
     {
         return profiler.profileData.eventRange;
     }

@@ -65,7 +65,7 @@ abstract final class DashLogger
     {
         import dash.utility.config;
 
-        // Reinitialize the logger with file path. 
+        // Reinitialize the logger with file path.
         multiLogger.removeLogger( "Dash File Logger" );
         fileLogger = new DashFileLogger( config.logging.verbosities.loggingVerbosity, config.logging.filePath );
         multiLogger.insertLogger( "Dash File Logger", fileLogger );
@@ -104,6 +104,7 @@ final class DashConsoleLogger : FileLogger
 
         // Color and log file
         file.cwritef( msg.data.color( payload.logLevel.getColor(), bg.init, payload.logLevel.getMode() ) );
+        finishLogMsg();
     }
 }
 

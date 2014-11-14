@@ -95,6 +95,8 @@ public:
         // Loop until there is a quit message from the window or the user.
         while( currentState != EngineState.Quit )
         {
+            auto frameZone = DashProfiler.startZone( "Frame" );
+
             if( currentState == EngineState.Reset )
             {
                 stop();
@@ -120,8 +122,9 @@ public:
             Input.update();
 
             // Update webcore
-            if ( stateFlags.updateUI )
+            if( stateFlags.updateUI )
             {
+                auto uiUpdateZone = DashProfiler.startZone( "UI Update" );
                 UserInterface.updateAwesomium();
             }
 
@@ -129,36 +132,51 @@ public:
             //if( stateFlags.updatePhysics )
             //  PhysicsController.stepPhysics( Time.deltaTime );
 
-            if ( stateFlags.updateTasks )
+            if( stateFlags.updateTasks )
             {
+                auto taskZone = DashProfiler.startZone( "Tasks" );
                 executeTasks();
             }
 
-            if ( stateFlags.updateScene )
+            if( stateFlags.updateScene )
             {
+                auto sceneUpdateZone = DashProfiler.startZone( "Scene Update" );
                 activeScene.update();
             }
 
             // Do the updating of the child class.
-            onUpdate();
+            {
+                auto gameUpdateZone = DashProfiler.startZone( "Game Update" );
+                onUpdate();
+            }
 
             // Update the editor.
             //if( currentState == EngineState.Editor )
-            editor.update();
+            {
+                auto editorUpdateZone = DashProfiler.startZone( "Editor Update" );
+                editor.update();
+            }
 
             //////////////////////////////////////////////////////////////////////////
             // Draw
             //////////////////////////////////////////////////////////////////////////
 
-            activeScene.draw();
+            {
+                auto sceneDrawZone = DashProfiler.startZone( "Scene Draw" );
+                activeScene.draw();
+            }
 
             // Draw in child class
-            onDraw();
+            {
+                auto gameDrawZone = DashProfiler.startZone( "Game Draw" );
+                onDraw();
+            }
 
             // End drawing
-            Graphics.endDraw();
-
-            //break;
+            {
+                auto renderZone = DashProfiler.startZone( "Render" );
+                Graphics.endDraw();
+            }
         }
 
         stop();

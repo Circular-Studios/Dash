@@ -131,7 +131,7 @@ public:
                 }
                 if( maxBonesAttached > 4 )
                 {
-                    logWarning( filePath, " has more than 4 bones for some vertex, data will be truncated. (has ", maxBonesAttached, ")" );
+                    warningf( "%s has more than 4 bones for some vertex, data will be truncated. (has %s)", filePath, maxBonesAttached );
                 }
 
                 // For each vertex on each face
@@ -221,7 +221,7 @@ public:
         else
         {
             // Did not load
-            logFatal( "Mesh not loaded: ", filePath );
+            fatalf( "Mesh not loaded: %s", filePath );
         }
 
         // make and bind the VAO
@@ -311,7 +311,7 @@ public:
         }
         else
         {
-            logWarning( "Assimp did not contain mesh data, ensure you are loading a valid mesh." );
+            warning( "Assimp did not contain mesh data, ensure you are loading a valid mesh." );
             return;
         }
 

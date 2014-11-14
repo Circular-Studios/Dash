@@ -179,13 +179,13 @@ public:
             //aren't supported in GLSL 330)
             if(config.graphics.usingGl33)
             {
-                    vertexBody = replaceAll(vertexBody, layoutRegex, ""); 
-                    vertexBody = replaceAll(vertexBody, versionRegex, "#version 330"); 
+                vertexBody = replaceAll(vertexBody, layoutRegex, ""); 
+                vertexBody = replaceAll(vertexBody, versionRegex, "#version 330"); 
 
-                    fragmentBody = replaceAll(fragmentBody, layoutRegex, ""); 
-                    fragmentBody = replaceAll(fragmentBody, versionRegex, "#version 330"); 
+                fragmentBody = replaceAll(fragmentBody, layoutRegex, ""); 
+                fragmentBody = replaceAll(fragmentBody, versionRegex, "#version 330"); 
 
-                    logDebug( vertexBody );
+                trace( vertexBody );
             }
 
             compile( vertexBody, fragmentBody );
@@ -229,11 +229,11 @@ public:
         glGetShaderiv( vertexShaderID, GL_COMPILE_STATUS, &compileStatus );
         if( compileStatus != GL_TRUE )
         {
-            logFatal( shaderName ~ " Vertex Shader compile error" );
+            errorf( "%s Vertex Shader compile error", shaderName );
             char[1000] errorLog;
             auto info = errorLog.ptr;
             glGetShaderInfoLog( vertexShaderID, 1000, null, info );
-            logFatal( errorLog );
+            error( errorLog );
             assert(false);
         }
 
@@ -241,11 +241,11 @@ public:
         glGetShaderiv( fragmentShaderID, GL_COMPILE_STATUS, &compileStatus );
         if( compileStatus != GL_TRUE )
         {
-            logFatal( shaderName ~ " Fragment Shader compile error" );
+            errorf( "%s Fragment Shader compile error", shaderName );
             char[1000] errorLog;
             auto info = errorLog.ptr;
             glGetShaderInfoLog( fragmentShaderID, 1000, null, info );
-            logFatal( errorLog );
+            error( errorLog );
             assert(false);
         }
 
@@ -257,11 +257,11 @@ public:
         glGetProgramiv( programID, GL_LINK_STATUS, &compileStatus );
         if( compileStatus != GL_TRUE )
         {
-            logFatal( shaderName ~ " Shader program linking error" );
+            errorf( "%s Shader program linking error", shaderName );
             char[1000] errorLog;
             auto info = errorLog.ptr;
             glGetProgramInfoLog( programID, 1000, null, info );
-            logFatal( errorLog );
+            error( errorLog );
             assert(false);
         }
     }

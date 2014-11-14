@@ -63,7 +63,7 @@ public:
         }
         catch( Exception e )
         {
-            logError( "Error parsing config file:\n", e.toString() );
+            errorf( "Error parsing config file:%s\n", e.toString() );
         }
 
         Keyboard.initialize();
@@ -341,7 +341,7 @@ public:
     {
         if( !DGame.instance.activeScene )
         {
-            logWarning( "No active scene." );
+            warning( "No active scene." );
             return vec3f( 0.0f, 0.0f, 0.0f );
         }
 
@@ -349,7 +349,7 @@ public:
 
         if( !scene.camera )
         {
-            logWarning( "No camera on active scene." );
+            warning( "No camera on active scene." );
             return vec3f( 0.0f, 0.0f, 0.0f );
         }
         vec2ui mouse = mousePos();
@@ -394,7 +394,7 @@ public:
     {
         if( !DGame.instance.activeScene )
         {
-            logWarning( "No active scene." );
+            warning( "No active scene." );
             return null;
         }
 
@@ -402,7 +402,7 @@ public:
 
         if( !scene.camera )
         {
-            logWarning( "No camera on active scene." );
+            warning( "No camera on active scene." );
             return null;
         }
 

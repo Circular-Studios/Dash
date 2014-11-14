@@ -165,7 +165,7 @@ public:
             }
             else
             {
-                logError( "Description of type ", typeid(this).name, " not found! Did you forget a mixin(registerComponents!())?" );
+                errorf( "Description of type %s not found! Did you forget a mixin(registerComponents!())?", typeid(this).name );
                 return $type();
             }
         }
@@ -185,13 +185,13 @@ public:
                 }
                 else
                 {
-                    logWarning( "Component's \"Type\" not found: ", type.get!string );
+                    warningf( "Component's \"Type\" not found: %s", type.get!string );
                     return null;
                 }
             }
             else
             {
-                logWarning( "Component doesn't have \"Type\" field." );
+                warningf( "Component doesn't have \"Type\" field." );
                 return null;
             }
         }

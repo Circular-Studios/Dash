@@ -70,7 +70,7 @@ public:
                 }
             }
 
-            logFatal( "Deffered rendering Frame Buffer was not initialized correctly. Error: ", mapFramebufferError(status) );
+            fatalf( "Deffered rendering Frame Buffer was not initialized correctly. Error: %s", mapFramebufferError(status) );
             assert(false);
         }
     }
@@ -136,7 +136,7 @@ public:
     {
         if( !DGame.instance.activeScene )
         {
-            logWarning( "No active scene." );
+            warning( "No active scene." );
             return;
         }
 
@@ -144,7 +144,7 @@ public:
 
         if( !scene.camera )
         {
-            logWarning( "No camera on active scene." );
+            warning( "No camera on active scene." );
             return;
         }
 
@@ -313,7 +313,7 @@ public:
 
                 if( !ambientLights.empty )
                 {
-                    logWarning( "Only one ambient light per scene is utilized." );
+                    warning( "Only one ambient light per scene is utilized." );
                 }
             }
 

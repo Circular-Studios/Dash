@@ -88,7 +88,7 @@ T deserializeFile( T )( Resource file, SerializationMode mode = SerializationMod
     }
     catch( Exception e )
     {
-        logError( "Error deserializing file ", file.fileName, " to type ", T.stringof, ". ", e.msg );
+        errorf( "Error deserializing file %s to type %s: %s", file.fileName, T.stringof, e.msg );
         return T.init;
     }
 }
@@ -146,7 +146,7 @@ T[] deserializeMultiFile( T )( Resource file, SerializationMode mode = Serializa
     }
     catch( Exception e )
     {
-        logError( "Error deserializing file ", file.fileName, " to type ", T.stringof, ". ", e.msg );
+        errorf( "Error deserializing file %s to type %s: %s", file.fileName, T.stringof, e.msg );
         return [];
     }
 }
@@ -201,7 +201,7 @@ template serializeToFile( bool prettyPrint = true )
         }
         catch( Exception e )
         {
-            logError( "Error serializing ", T.stringof, " to file ", file.fileName, ". ", e.msg );
+            errorf( "Error serializing %s to file %s: %s", T.stringof, file.fileName, e.msg );
         }
     }
 }

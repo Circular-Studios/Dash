@@ -30,7 +30,7 @@ public:
             }
             else
             {
-                logWarning( "Prefab ", index, " not found." );
+                warningf( "Prefab %s not found.", index );
                 return null;
             }
         }

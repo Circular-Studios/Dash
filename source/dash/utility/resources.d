@@ -36,7 +36,7 @@ Resource[] scanDirectory( string path, string pattern = "" )
 
     if( !safePath.exists() )
     {
-        logDebug( path, " does not exist." );
+        tracef( "%s does not exist.", path );
         return [];
     }
 

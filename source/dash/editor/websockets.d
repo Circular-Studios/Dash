@@ -52,18 +52,18 @@ public:
             try msg = jsonStr.deserializeJson!EventMessage();
             catch( JSONException e )
             {
-                logError( "Invalid json string sent: ", jsonStr );
+                errorf( "Invalid json string sent: %s", jsonStr );
                 continue;
             }
 
             if( msg.key.length == 0 )
             {
-                logWarning( "Received a packet without a \"key.\"" );
+                warning( "Received a packet without a \"key.\"" );
                 continue;
             }
             if( msg.value.type == Json.Type.null_ || msg.value.type == Json.Type.undefined )
             {
-                logWarning( "Received a packet without a \"value.\"" );
+                warning( "Received a packet without a \"value.\"" );
                 continue;
             }
 

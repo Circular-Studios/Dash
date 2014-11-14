@@ -203,9 +203,8 @@ private:
         stateFlags = new GameStateFlags;
         stateFlags.resumeAll();
 
-        logDebug( "Initializing..." );
         bench!( { Config.initialize(); } )( "Config init" );
-        bench!( { Logger.initialize(); } )( "Logger init" );
+        bench!( { DashLogger.initialize(); } )( "Logger init" );
         bench!( { Input.initialize(); } )( "Input init" );
         bench!( { Graphics.initialize(); } )( "Graphics init" );
         bench!( { Assets.initialize(); } )( "Assets init" );

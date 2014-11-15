@@ -234,6 +234,7 @@ public:
     this( AssetType ass )
     {
         asset = ass;
+        initialize();
     }
 
     /// Is the asset null?

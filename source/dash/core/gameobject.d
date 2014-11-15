@@ -579,7 +579,7 @@ public:
 
         /// The position of the object.
         @rename( "Scale" ) @optional
-        float[3] scale = [ 0.0f, 0.0f, 0.0f ];
+        float[3] scale = [ 1.0f, 1.0f, 1.0f ];
     }
 
     /**

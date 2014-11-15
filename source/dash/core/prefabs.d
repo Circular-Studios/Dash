@@ -4,11 +4,7 @@
 module dash.core.prefabs;
 import dash.core, dash.components, dash.utility;
 
-import yaml;
-import gl3n.linalg;
-import std.variant;
-
-mixin( registerComponents!q{dash.core.prefabs} );
+mixin( registerComponents!() );
 
 /**
  * Prefabs manages prefabs and allows access to them.
@@ -28,7 +24,15 @@ public:
     {
         Prefab opIndex( string index )
         {
-            return prefabs[ index ];
+            if( auto fab = index in prefabs )
+            {
+                return *fab;
+            }
+            else
+            {
+                warningf( "Prefab %s not found.", index );
+                return null;
+            }
         }
 
         Prefab opIndexAssign( Prefab newFab, string index )
@@ -46,16 +50,14 @@ public:
         foreach( key; prefabs.keys )
             prefabs.remove( key );
 
-        foreach( objFile; loadYamlFiles( Resources.Prefabs ) )
+        foreach( res; scanDirectory( Resources.Prefabs ) )
         {
-            auto object = objFile[0];
-            auto name = object[ "Name" ].as!string;
-
-            //auto newFab = new Prefab( object );
-            auto newFab = cast(Prefab)createYamlObject[ "Prefab" ]( object );
-            newFab.name = name;
-            prefabs[ name ] = newFab;
-            prefabResources[ objFile[1] ] ~= newFab;
+            foreach( fabDesc; res.deserializeMultiFile!( GameObject.Description )() )
+            {
+                auto newFab = new Prefab( fabDesc, res );
+                prefabs[ newFab.name ] = newFab;
+                prefabResources[ res ] ~= newFab;
+            }
         }
     }
 
@@ -64,12 +66,7 @@ public:
      */
     void refresh()
     {
-        refreshYamlObjects!(
-            node => cast(Prefab)createYamlObject[ "Prefab" ]( node ),
-            node => node[ "Name" ].get!string in prefabs,
-            ( node, fab ) => prefabs[ node[ "Name" ].get!string ] = fab,
-            fab => prefabs.remove( fab.name ) )
-                ( prefabResources );
+        //TODO: Implement
     }
 
 private:
@@ -79,12 +76,23 @@ private:
 /**
  * A prefab that allows for quick object creation.
  */
-@yamlObject()
-final class Prefab : YamlObject
+final class Prefab : Asset
 {
 public:
     /// The name of the prefab.
-    mixin( Property!_name );
+    const(string) name() @property
+    {
+        return description.name;
+    }
+    /// The description to create objects from.
+    GameObject.Description description;
+
+    /// Creates a prefab from a description.
+    this( GameObject.Description desc, Resource filePath )
+    {
+        description = desc;
+        super( filePath );
+    }
 
     /**
      * Creates a GameObject instance from the prefab.
@@ -92,11 +100,8 @@ public:
      * Returns:
      *  The new GameObject from the Prefab.
      */
-    GameObject createInstance()
+    GameObject createInstance() const
     {
-        return GameObject.createFromYaml( yaml );
+        return GameObject.create( description );
     }
-
-private:
-    string _name;
 }

@@ -2,9 +2,9 @@
  * TODO
  */
 module dash.utility.resources;
-import dash.utility;
+import dash.utility.output;
 
-import std.file, std.path, std.stdio, std.array, std.datetime;
+import std.file, std.path, std.stdio, std.array, std.algorithm, std.datetime;
 
 /**
  * Paths to the different resource files.
@@ -15,15 +15,15 @@ enum Resources : string
     Materials = Home ~ "/Materials",
     Meshes = Home ~ "/Meshes",
     Textures = Home ~ "/Textures",
+    Audio = Home ~ "/Audio",
     Scripts = Home ~ "/Scripts",
     Prefabs = Home ~ "/Prefabs",
     Objects = Home ~ "/Objects",
     Shaders = Home ~ "/Shaders",
     UI = Home ~ "/UI",
     ConfigDir = Home ~ "/Config",
-    ConfigFile = ConfigDir ~ "/Config.yml",
-    InputBindings = ConfigDir ~ "/Input.yml",
-    CompactContentFile = Home ~ "/Content.yml",
+    ConfigFile = ConfigDir ~ "/Config",
+    InputBindings = ConfigDir ~ "/Input",
 }
 
 /**
@@ -36,25 +36,24 @@ Resource[] scanDirectory( string path, string pattern = "" )
 
     if( !safePath.exists() )
     {
-        logDebug( path, " does not exist." );
+        tracef( "%s does not exist.", path );
         return [];
     }
 
     // Start array
-    Resource[] files;
-
-    auto dirs = pattern.length
+    return ( pattern.length
                 ? safePath.dirEntries( pattern, SpanMode.breadth ).array
-                : safePath.dirEntries( SpanMode.breadth ).array;
-
-    // Find files
-    foreach( entry; dirs )
-        if( entry.isFile )
-            files ~= Resource( entry.name );
-
-    return files;
+                : safePath.dirEntries( SpanMode.breadth ).array )
+            .filter!( entry => entry.isFile )
+            .map!( entry => Resource( entry ) )
+            .array();
 }
 
+enum internalResource = Resource( true );
+
+/**
+ * Represents a resource on the file system.
+ */
 struct Resource
 {
 public:
@@ -68,14 +67,8 @@ public:
      */
     this( string filePath )
     {
-        if( filePath.length == 0 )
-            invalid = true;
-        else if( filePath.isFile() )
-            _fullPath = filePath.absolutePath().buildNormalizedPath();
-        else
-            throw new Exception( "invalid file name." );
-
-        markRead();
+        assert( filePath.isFile(), "Invalid file name." );
+        _fullPath = filePath.absolutePath().buildNormalizedPath();
     }
 
     /**
@@ -88,66 +81,23 @@ public:
     }
 
     /// The full path to the file.
-    @property string fullPath()       { return _fullPath; }
+    @property string fullPath()         { return _fullPath; }
     /// The relative path from the executable to the file.
-    @property string relativePath()
-    {
-        if( invalid )
-            return "";
-
-        if( !_relativePath )
-            _relativePath = _fullPath.relativePath();
-
-        return _relativePath;
-    }
+    @property string relativePath()     { return _fullPath.relativePath(); }
     /// The name of the file with its extension.
-    @property string fileName()
-    {
-        if( invalid )
-            return "";
-
-        if( !_fileName )
-            _fileName = _fullPath.baseName();
-
-        return _fileName;
-    }
+    @property string fileName()         { return _fullPath.baseName(); }
     /// The name of the file without its extension.
-    @property string baseFileName()
-    {
-        if( invalid )
-            return "";
-
-        if( !_baseFileName )
-            _baseFileName = fileName.stripExtension();
-
-        return _baseFileName;
-    }
+    @property string baseFileName()     { return fileName().stripExtension(); }
     /// The path to the directory containing the file.
-    @property string directory()
-    {
-        if( invalid )
-            return "";
-
-        if( !_directory )
-            _directory = _fullPath.dirName();
-
-        return _directory;
-    }
+    @property string directory()        { return _fullPath.dirName(); }
     /// The extensino of the file.
-    @property string extension()
-    {
-        if( invalid )
-            return "";
-
-        if( !_extension )
-            _extension = _fullPath.extension(  );
-
-        return _extension;
-    }
+    @property string extension()        { return _fullPath.extension(); }
+    /// Checks if the file still exists.
+    bool exists() @property             { return isInternal || fullPath.isFile(); }
     /// Converts to a std.stdio.File
     File* getFile( string mode = "r" )
     {
-        if( invalid )
+        if( isInternal )
             return null;
 
         if( !file )
@@ -163,7 +113,7 @@ public:
      */
     ubyte[] read()
     {
-        if( invalid )
+        if( isInternal )
             return [];
 
         markRead();
@@ -177,7 +127,7 @@ public:
      */
     string readText()
     {
-        if( invalid )
+        if( isInternal )
             return "";
 
         markRead();
@@ -191,39 +141,27 @@ public:
      */
     bool needsRefresh()
     {
-        if( invalid )
+        if( isInternal )
             return false;
 
         return fullPath.timeLastModified > timeRead;
     }
 
-    /**
-     * Checks if the file still exists.
-     *
-     * Returns: True if file exists.
-     */
-    bool exists()
-    {
-        if( invalid )
-            return true;
-
-        return fullPath.isFile();
-    }
-
 private:
     string _fullPath;
-    string _relativePath;
-    string _fileName;
-    string _baseFileName;
-    string _directory;
-    string _extension;
-    bool invalid;
+    bool isInternal;
     std.stdio.File* file;
     SysTime timeRead;
 
+    this( bool internal )
+    {
+        isInternal = internal;
+        _fullPath = "__internal";
+    }
+
     void markRead()
     {
-        if( !invalid )
+        if( !isInternal )
             timeRead = fullPath.timeLastModified();
     }
 }

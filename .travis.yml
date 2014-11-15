@@ -3,8 +3,7 @@ os:
   - linux
   - osx
 env:
-#  - DMD_VER=2.065.0 DUB_VER=0.9.21
-  - DMD_VER=2.066.0 DUB_VER=0.9.21
+  - DMD_VER=2.066.0 DUB_VER=0.9.22
 install:
   - bash .travis/setup_linux.sh
   - bash .travis/setup_osx.sh

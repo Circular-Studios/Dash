@@ -6,9 +6,8 @@ import dash.core, dash.components, dash.graphics, dash.utility;
 import dash.graphics.shaders.glsl;
 
 import derelict.opengl3.gl3;
-import gl3n.linalg;
 
-import std.string, std.traits, std.algorithm;
+import std.string, std.traits, std.algorithm, std.array, std.regex;
 
 /*
  * String constants for our shader uniforms
@@ -141,6 +140,8 @@ final package class Shader
 private:
     uint _programID, _vertexShaderID, _fragmentShaderID;
     string _shaderName;
+    auto versionRegex = ctRegex!r"\#version\s400";
+    auto layoutRegex = ctRegex!r"layout\(location\s\=\s[0-9]+\)\s";
 
 public:
     /// The program ID for the shader
@@ -171,10 +172,35 @@ public:
             auto fragmentFile = Resource( fragment );
             string vertexBody = vertexFile.readText();
             string fragmentBody = fragmentFile.readText();
+
+            //If we're using OpenGL 3.3 then we need to
+            //change our GLSL version to match, and remove
+            //any layout(location = x) qualifiers (they
+            //aren't supported in GLSL 330)
+            if(config.graphics.usingGl33)
+            {
+                vertexBody = replaceAll(vertexBody, layoutRegex, ""); 
+                vertexBody = replaceAll(vertexBody, versionRegex, "#version 330"); 
+
+                fragmentBody = replaceAll(fragmentBody, layoutRegex, ""); 
+                fragmentBody = replaceAll(fragmentBody, versionRegex, "#version 330"); 
+
+                trace( vertexBody );
+            }
+
             compile( vertexBody, fragmentBody );
         }
         else
         {
+            if(config.graphics.usingGl33)
+            {
+                    vertex = replaceAll(vertex, layoutRegex, ""); 
+                    vertex = replaceAll(vertex, versionRegex, "#version 330"); 
+
+                    fragment = replaceAll(fragment, layoutRegex, ""); 
+                    fragment = replaceAll(fragment, versionRegex, "#version 330"); 
+            }
+
             compile( vertex, fragment );
         }
 
@@ -203,11 +229,11 @@ public:
         glGetShaderiv( vertexShaderID, GL_COMPILE_STATUS, &compileStatus );
         if( compileStatus != GL_TRUE )
         {
-            logFatal( shaderName ~ " Vertex Shader compile error" );
+            errorf( "%s Vertex Shader compile error", shaderName );
             char[1000] errorLog;
             auto info = errorLog.ptr;
             glGetShaderInfoLog( vertexShaderID, 1000, null, info );
-            logFatal( errorLog );
+            error( errorLog );
             assert(false);
         }
 
@@ -215,11 +241,11 @@ public:
         glGetShaderiv( fragmentShaderID, GL_COMPILE_STATUS, &compileStatus );
         if( compileStatus != GL_TRUE )
         {
-            logFatal( shaderName ~ " Fragment Shader compile error" );
+            errorf( "%s Fragment Shader compile error", shaderName );
             char[1000] errorLog;
             auto info = errorLog.ptr;
             glGetShaderInfoLog( fragmentShaderID, 1000, null, info );
-            logFatal( errorLog );
+            error( errorLog );
             assert(false);
         }
 
@@ -231,11 +257,11 @@ public:
         glGetProgramiv( programID, GL_LINK_STATUS, &compileStatus );
         if( compileStatus != GL_TRUE )
         {
-            logFatal( shaderName ~ " Shader program linking error" );
+            errorf( "%s Shader program linking error", shaderName );
             char[1000] errorLog;
             auto info = errorLog.ptr;
             glGetProgramInfoLog( programID, 1000, null, info );
-            logFatal( errorLog );
+            error( errorLog );
             assert(false);
         }
     }
@@ -251,7 +277,7 @@ public:
     /**
      * Pass through for glUniform2f
      */
-    final void bindUniform2f( uint uniform, const vec2 value )
+    final void bindUniform2f( uint uniform, const vec2f value )
     {
         glUniform2f( uniform, value.x, value.y );
     }
@@ -260,7 +286,7 @@ public:
      * Pass through for glUniform 3f
      * Passes to the shader in XYZ order
      */
-    final void bindUniform3f( uint uniform, const vec3 value )
+    final void bindUniform3f( uint uniform, const vec3f value )
     {
         glUniform3f( uniform, value.x, value.y, value.z );
     }
@@ -276,7 +302,7 @@ public:
     /**
      *  pass through for glUniformMatrix4fv
      */
-    final void bindUniformMatrix4fv( uint uniform, mat4 matrix )
+    final void bindUniformMatrix4fv( uint uniform, mat4f matrix )
     {
         glUniformMatrix4fv( uniform, 1, true, matrix.value_ptr );
     }
@@ -284,17 +310,14 @@ public:
     /**
      * Bind an array of mat4s.
      */
-    final void bindUniformMatrix4fvArray( uint uniform, mat4[] matrices )
+    final void bindUniformMatrix4fvArray( uint uniform, mat4f[] matrices )
     {
-        float[] matptr;
+        auto matptr = appender!(float[]);
         foreach( matrix; matrices )
         {
-            for( int i = 0; i < 16; i++ )
-            {
-                matptr ~= matrix.value_ptr()[i];
-            }
+            matptr ~= matrix.value_ptr()[0..16];
         }
-        glUniformMatrix4fv( uniform, cast(int)matrices.length, true, matptr.ptr );
+        glUniformMatrix4fv( uniform, cast(int)matrices.length, true, matptr.data.ptr );
     }
 
     /**
@@ -304,6 +327,7 @@ public:
     in
     {
         assert( material, "Cannot bind null material." );
+        assert( material.diffuse && material.normal && material.specular, "Material must have diffuse, normal, and specular components." );
     }
     body
     {
@@ -324,12 +348,17 @@ public:
     /**
      * Binds a UI's texture
      */
-     final void bindUI( UserInterface ui )
-     {
+    final void bindUI( UserInterface ui )
+    {
+        // This is part of a bigger problem. But in the interest of dope screenshots...
+        version( OSX )
+        if( !ui.view )
+            return;
+
         glUniform1i( UITexture, 0 );
         glActiveTexture( GL_TEXTURE0 );
         glBindTexture( GL_TEXTURE_2D, ui.view.glID );
-     }
+    }
 
     /**
      * Bind an ambient light
@@ -352,9 +381,9 @@ public:
     /**
      * Bind a directional light after a modifying transform
      */
-    final void bindDirectionalLight( DirectionalLight light, mat4 transform )
+    final void bindDirectionalLight( DirectionalLight light, mat4f transform )
     {
-        bindUniform3f( LightDirection, ( transform * vec4( light.direction, 0.0f ) ).xyz );
+        bindUniform3f( LightDirection, ( transform * vec4f( light.direction, 0.0f ) ).xyz );
         bindUniform3f( LightColor, light.color );
         bindUniform1f( LightShadowless, cast(float)(!light.castShadows) );
     }
@@ -373,10 +402,10 @@ public:
     /**
      * Bind a point light after a modifying transform
      */
-    final void bindPointLight( PointLight light, mat4 transform )
+    final void bindPointLight( PointLight light, mat4f transform )
     {
         bindUniform3f( LightColor, light.color );
-        bindUniform3f( LightPosition, ( transform * vec4( light.owner.transform.worldPosition, 1.0f ) ).xyz);
+        bindUniform3f( LightPosition, ( transform * vec4f( light.owner.transform.worldPosition, 1.0f ) ).xyz);
         bindUniform1f( LightRadius, light.radius );
         bindUniform1f( LightFalloffRate, light.falloffRate );
     }
@@ -385,7 +414,7 @@ public:
     /**
      * Sets the eye position for lighting calculations
      */
-    final void setEyePosition( vec3 pos )
+    final void setEyePosition( vec3f pos )
     {
         glUniform3f( EyePosition, pos.x, pos.y, pos.z );
     }

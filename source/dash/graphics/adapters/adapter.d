@@ -2,9 +2,8 @@
 * Contains all core code for the Graphics adapters, which is similar across all platforms
 */
 module dash.graphics.adapters.adapter;
-import dash.core.properties, dash.components.userinterface, dash.utility.config;
+import dash.core.properties, dash.components.userinterface, dash.utility.config, dash.utility.math;
 
-import gl3n.linalg: vec2i;
 import std.typecons: BlackHole;
 
 alias NullAdapter = BlackHole!Adapter;
@@ -18,10 +17,6 @@ private:
     uint _width, _screenWidth;
     uint _height, _screenHeight;
     bool _fullscreen, _backfaceCulling, _vsync;
-
-protected:
-    // Do not add properties for:
-    UserInterface[] uis;
 
 public:
     /// Pixel width of the rendering area
@@ -81,24 +76,15 @@ public:
     /**
      * Read from the depth buffer at the given point.
      */
-    abstract float getDepthAtScreenPoint( vec2i point );
+    abstract float getDepthAtScreenPoint( vec2ui point );
 
     /**
      * Read from the depth buffer at the given point.
      */
-    abstract uint getObjectIDAtScreenPoint( vec2i point );
+    abstract uint getObjectIDAtScreenPoint( vec2ui point );
 
     /// TODO: Remove in favor of pipelines
     abstract void initializeDeferredRendering();
-
-    /*
-     * Adds a UI to be drawn over the objects in the scene
-     * UIs will be drawn ( and overlap ) in the order they are added
-     */
-    final void addUI( UserInterface ui )
-    {
-        uis ~= ui;
-    }
 
 protected:
     /**
@@ -106,7 +92,7 @@ protected:
      */
     final void loadProperties()
     {
-        fullscreen = config.find!bool( "Display.Fullscreen" );
+        fullscreen = config.display.fullscreen;
         if( fullscreen )
         {
             width = screenWidth;
@@ -114,11 +100,11 @@ protected:
         }
         else
         {
-            width = config.find!uint( "Display.Width" );
-            height = config.find!uint( "Display.Height" );
+            width = config.display.width;
+            height = config.display.height;
         }
 
-        backfaceCulling = config.find!bool( "Graphics.BackfaceCulling" );
-        vsync = config.find!bool( "Graphics.VSync" );
+        backfaceCulling = config.graphics.backfaceCulling;
+        vsync = config.graphics.vsync;
     }
 }

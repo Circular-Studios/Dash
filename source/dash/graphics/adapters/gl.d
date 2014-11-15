@@ -1,8 +1,7 @@
 module dash.graphics.adapters.gl;
 import dash.core, dash.components, dash.graphics;
-import dash.utility.output;
+import dash.utility.output, dash.utility.math;
 
-import gl3n.linalg, gl3n.frustum, gl3n.math;
 import derelict.opengl3.gl3;
 
 import std.algorithm, std.array;
@@ -71,7 +70,7 @@ public:
                 }
             }
 
-            logFatal( "Deffered rendering Frame Buffer was not initialized correctly. Error: ", mapFramebufferError(status) );
+            fatalf( "Deffered rendering Frame Buffer was not initialized correctly. Error: %s", mapFramebufferError(status) );
             assert(false);
         }
     }
@@ -107,7 +106,7 @@ public:
     /**
      * Read from the depth buffer at the given point.
      */
-    override float getDepthAtScreenPoint( vec2i point )
+    override float getDepthAtScreenPoint( vec2ui point )
     {
         float depth;
         glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
@@ -120,7 +119,7 @@ public:
     /**
      * Read from the depth buffer at the given point.
      */
-    override uint getObjectIDAtScreenPoint( vec2i point )
+    override uint getObjectIDAtScreenPoint( vec2ui point )
     {
         float fId;
         glBindFramebuffer( GL_FRAMEBUFFER, deferredFrameBuffer );
@@ -137,7 +136,7 @@ public:
     {
         if( !DGame.instance.activeScene )
         {
-            logWarning( "No active scene." );
+            warning( "No active scene." );
             return;
         }
 
@@ -145,7 +144,7 @@ public:
 
         if( !scene.camera )
         {
-            logWarning( "No camera on active scene." );
+            warning( "No camera on active scene." );
             return;
         }
 
@@ -165,53 +164,47 @@ public:
         auto pointLights = getLightsByType!PointLight;
         auto spotLights = getLightsByType!SpotLight;
 
-        mat4 projection = scene.camera.perspectiveMatrix;
-        mat4 invProj = scene.camera.inversePerspectiveMatrix;
+        mat4f projection = scene.camera.perspectiveMatrix;
+        mat4f invProj = scene.camera.inversePerspectiveMatrix;
 
-        void updateMatricies( GameObject current )
-        {
-            current.transform.updateMatrix();
-            foreach( child; current.children )
-                updateMatricies( child );
-        }
-        updateMatricies( scene.root );
+        scene.root.transform.updateMatrix();
 
         /**
         * Pass for all objects with Meshes
         */
         void geometryPass()
         {
-            foreach( object; scene.objects )
+            foreach( obj; scene.objects )
             {
-                if( object.mesh && object.stateFlags.drawMesh )
+                if( obj.mesh && obj.stateFlags.drawMesh )
                 {
-                    mat4 worldView = scene.camera.viewMatrix * object.transform.matrix;
-                    mat4 worldViewProj = projection * worldView;
+                    mat4f worldView = scene.camera.viewMatrix * obj.transform.matrix;
+                    mat4f worldViewProj = projection * worldView;
 
-                    if( !( object.mesh.boundingBox in Frustum( worldViewProj ) ) )
+                    if( !( obj.mesh.boundingBox in Frustum( worldViewProj ) ) )
                     {
                         // If we can't see an object, don't draw it.
                         continue;
                     }
 
                     // set the shader
-                    Shader shader = object.mesh.animated
+                    Shader shader = obj.mesh.animated
                         ? Shaders.animatedGeometry
                         : Shaders.geometry;
 
                     glUseProgram( shader.programID );
-                    glBindVertexArray( object.mesh.glVertexArray );
+                    glBindVertexArray( obj.mesh.glVertexArray );
 
                     shader.bindUniformMatrix4fv( shader.WorldView, worldView );
                     shader.bindUniformMatrix4fv( shader.WorldViewProjection, worldViewProj );
-                    shader.bindUniform1ui( shader.ObjectId, object.id );
+                    shader.bindUniform1ui( shader.ObjectId, obj.id );
 
-                    if( object.mesh.animated )
-                        shader.bindUniformMatrix4fvArray( shader.Bones, object.animation.currBoneTransforms );
+                    if( obj.mesh.animated )
+                        shader.bindUniformMatrix4fvArray( shader.Bones, obj.animation.currBoneTransforms );
 
-                    shader.bindMaterial( object.material );
+                    shader.bindMaterial( obj.material );
 
-                    glDrawElements( GL_TRIANGLES, object.mesh.numVertices, GL_UNSIGNED_INT, null );
+                    glDrawElements( GL_TRIANGLES, obj.mesh.numVertices, GL_UNSIGNED_INT, null );
 
                     glBindVertexArray(0);
                 }
@@ -232,13 +225,13 @@ public:
                     glViewport( 0, 0, light.shadowMapSize, light.shadowMapSize );
 
                     // determine the world space volume for all objects
-                    AABB frustum;
+                    box3f frustum;
                     foreach( object; scene.objects )
                     {
                         if( object.mesh && object.stateFlags.drawMesh )
                         {
-                            frustum.expand( (object.transform.matrix * vec4(object.mesh.boundingBox.min, 1.0f)).xyz );
-                            frustum.expand( (object.transform.matrix * vec4(object.mesh.boundingBox.max, 1.0f)).xyz );
+                            frustum.expandInPlace( (object.transform.matrix * vec4f(object.mesh.boundingBox.min, 1.0f)).xyz );
+                            frustum.expandInPlace( (object.transform.matrix * vec4f(object.mesh.boundingBox.max, 1.0f)).xyz );
                         }
                     }
 
@@ -320,7 +313,7 @@ public:
 
                 if( !ambientLights.empty )
                 {
-                    logWarning( "Only one ambient light per scene is utilized." );
+                    warning( "Only one ambient light per scene is utilized." );
                 }
             }
 
@@ -397,13 +390,11 @@ public:
             glUseProgram( shader.programID );
             glBindVertexArray( Assets.unitSquare.glVertexArray );
 
-            foreach( ui; uis )
-            {
-                shader.bindUniformMatrix4fv( shader.WorldProj,
-                                             scene.camera.orthogonalMatrix * ui.scaleMat );
-                shader.bindUI( ui );
-                glDrawElements( GL_TRIANGLES, Assets.unitSquare.numVertices, GL_UNSIGNED_INT, null );
-            }
+			auto ui = scene.ui;
+            shader.bindUniformMatrix4fv( shader.WorldProj,
+                                         scene.camera.orthogonalMatrix * ui.scaleMat );
+            shader.bindUI( ui );
+            glDrawElements( GL_TRIANGLES, Assets.unitSquare.numVertices, GL_UNSIGNED_INT, null );
 
             glBindVertexArray(0);
         }
@@ -438,7 +429,11 @@ public:
 
         glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
-        uiPass();
+        //ui is currently broken on Linux
+        //TODO: Repair the UI on Linux systems
+        version(linux){}
+        else
+            uiPass();
 
         // put it on the screen
         swapBuffers();
@@ -446,6 +441,5 @@ public:
         // clean up
         glBindVertexArray(0);
         glUseProgram(0);
-        uis = [];
     }
 }

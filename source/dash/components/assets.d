@@ -3,6 +3,7 @@
  */
 module dash.components.assets;
 import dash.core.properties, dash.components, dash.utility;
+import dash.utility.data.serialization;
 
 import std.string, std.array, std.algorithm;
 
@@ -16,24 +17,34 @@ abstract final class Assets
 {
 static:
 private:
-    Material[][Resource] materialResources;
+    MaterialAsset[][Resource] materialResources;
 
 package:
-    Mesh[string] meshes;
-    Texture[string] textures;
-    Material[string] materials;
+    MeshAsset[string] meshes;
+    TextureAsset[string] textures;
+    MaterialAsset[string] materials;
 
 public:
     /// Basic quad, generally used for billboarding.
     Mesh unitSquare;
 
     /**
+     * Get a reference to the asset with the given type and name.
+     */
+    AssetRefT get( AssetRefT )( string name ) if( is( AssetRefT AssetT : AssetRef!AssetT ) && !is( AssetRefT == AssetRef!AssetT ) )
+    {
+        static if( is( AssetRefT AssetT : AssetRef!AssetT ) )
+            return new AssetRefT( getAsset!AssetT( name ) );
+        else static assert( false );
+    }
+
+    /**
      * Get the asset with the given type and name.
      */
-    T get( T )( string name ) if( is( T == Mesh ) || is( T == Texture ) || is( T == Material ) || is( T == AssetAnimation ))
+    AssetT getAsset( AssetT )( string name ) if( is( AssetT : Asset ) )
     {
         enum get( Type, string array ) = q{
-            static if( is( T == $Type ) )
+            static if( is( AssetT == $Type ) )
             {
                 if( auto result = name in $array )
                 {
@@ -42,15 +53,15 @@ public:
                 }
                 else
                 {
-                    logFatal( "Unable to find ", name, " in $array." );
+                    errorf( "Unable to find %s in $array.", name );
                     return null;
                 }
             }
         }.replaceMap( [ "$array": array, "$Type": Type.stringof ] );
 
-        mixin( get!( Mesh, q{meshes} ) );
-        mixin( get!( Texture, q{textures} ) );
-        mixin( get!( Material, q{materials} ) );
+        mixin( get!( MeshAsset, q{meshes} ) );
+        mixin( get!( TextureAsset, q{textures} ) );
+        mixin( get!( MaterialAsset, q{materials} ) );
     }
 
     /**
@@ -64,40 +75,37 @@ public:
         DerelictASSIMP3.load();
 
         // Make sure fbxs are supported.
-        assert(aiIsExtensionSupported(".fbx".toStringz), "fbx format isn't supported by assimp instance!");
+        assert( aiIsExtensionSupported( ".fbx".toStringz ), "fbx format isn't supported by assimp instance!" );
+
+        enum aiImportOptions = aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType;
 
         // Load the unitSquare
-        unitSquare = new Mesh( "", aiImportFileFromMemory(
-                                        unitSquareMesh.toStringz, unitSquareMesh.length,
-                                        aiProcess_CalcTangentSpace | aiProcess_Triangulate |
-                                        aiProcess_JoinIdenticalVertices | aiProcess_SortByPType,
-                                        "obj" ).mMeshes[0] );
+        unitSquare = new Mesh( new MeshAsset( internalResource, aiImportFileFromMemory(
+                                        unitSquareMesh.toStringz(), unitSquareMesh.length,
+                                        aiImportOptions, "obj" ).mMeshes[0] ) );
 
         foreach( file; scanDirectory( Resources.Meshes ) )
         {
             // Load mesh
-            const aiScene* scene = aiImportFile( file.fullPath.toStringz,
-                                                 aiProcess_CalcTangentSpace | aiProcess_Triangulate |
-                                                 aiProcess_JoinIdenticalVertices | aiProcess_SortByPType );
+            const aiScene* scene = aiImportFile( file.fullPath.toStringz, aiImportOptions );
             assert( scene, "Failed to load scene file '" ~ file.fullPath ~ "' Error: " ~ aiGetErrorString().fromStringz() );
-
-            // If animation data, add animation
-            if( file.baseFileName in meshes )
-                logWarning( "Mesh ", file.baseFileName, " exsists more than once." );
 
             // Add mesh
             if( scene.mNumMeshes > 0 )
             {
-                auto newMesh = new Mesh( file.fullPath, scene.mMeshes[ 0 ] );
+                if( file.baseFileName in meshes )
+                    warning( "Mesh ", file.baseFileName, " exsists more than once." );
+
+                auto newMesh = new MeshAsset( file, scene.mMeshes[ 0 ] );
 
                 if( scene.mNumAnimations > 0 )
-                    newMesh.animationData = new AssetAnimation( scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
+                    newMesh.animationData = new AnimationData( file, scene.mAnimations, scene.mNumAnimations, scene.mMeshes[ 0 ], scene.mRootNode );
 
                 meshes[ file.baseFileName ] = newMesh;
             }
             else
             {
-                logWarning( "Assimp did not contain mesh data, ensure you are loading a valid mesh." );
+                warning( "Assimp did not contain mesh data, ensure you are loading a valid mesh." );
             }
 
             // Release mesh
@@ -107,22 +115,24 @@ public:
         foreach( file; scanDirectory( Resources.Textures ) )
         {
             if( file.baseFileName in textures )
-               logWarning( "Texture ", file.baseFileName, " exists more than once." );
+               warningf( "Texture %s exists more than once.", file.baseFileName );
 
-            textures[ file.baseFileName ] = new Texture( file.fullPath );
+            textures[ file.baseFileName ] = new TextureAsset( file );
         }
 
-        foreach( objFile; loadYamlFiles( Resources.Materials ) )
+        foreach( res; scanDirectory( Resources.Materials ) )
         {
-            Node object = objFile[ 0 ];
-            auto name = object[ "Name" ].as!string;
+            auto newMat = deserializeMultiFile!MaterialAsset( res );
 
-            if( name in materials )
-                logWarning( "Material ", name, " exists more than once." );
+            foreach( mat; newMat )
+            {
+                if( mat.name in materials )
+                    warningf( "Material %s exists more than once.", mat.name );
 
-            auto newMat = cast(Material)createYamlObject[ "Material" ]( object );
-            materials[ name ] = newMat;
-            materialResources[ objFile[ 1 ] ] ~= newMat;
+                mat.resource = res;
+                materials[ mat.name ] = mat;
+                materialResources[ res ] ~= mat;
+            }
         }
 
         meshes.rehash();
@@ -147,7 +157,7 @@ public:
                 }
                 else if( asset.resource.needsRefresh )
                 {
-                    logDebug( "Refreshing ", name, "." );
+                    tracef( "Refreshing %s.", name );
                     asset.refresh();
                 }
             }
@@ -157,12 +167,7 @@ public:
         mixin( refresh!q{textures} );
 
         // Iterate over each file, and it's materials
-        refreshYamlObjects!(
-            node => cast(Material)createYamlObject[ "Material" ]( node ),
-            node => node[ "Name" ].get!string in materials,
-            ( node, mat ) => materials[ node[ "Name" ].get!string ] = mat,
-            mat => materials.remove( mat.name ) )
-                ( materialResources );
+        //TODO: Implement
     }
 
     /**
@@ -174,7 +179,7 @@ public:
             foreach_reverse( name; $aaName.keys )
             {
                 if( !$aaName[ name ].isUsed )
-                    logWarning( "$friendlyName ", name, " not used during this run." );
+                    warningf( "$friendlyName %s not used during this run.", name );
 
                 $aaName[ name ].shutdown();
                 $aaName.remove( name );
@@ -187,24 +192,62 @@ public:
     }
 }
 
-abstract class Asset : Component
+abstract class Asset
 {
 private:
     bool _isUsed;
-    Resource _resource;
 
 public:
     /// Whether or not the material is actually used.
     mixin( Property!( _isUsed, AccessModifier.Package ) );
     /// The resource containing this asset.
-    mixin( RefGetter!_resource );
+    @ignore
+    Resource resource;
 
     /**
      * Creates asset with resource.
      */
-    this( Resource resource )
+    this( Resource res )
     {
-        _resource = resource;
+        resource = res;
+    }
+
+    void initialize() { }
+    void update() { }
+    void refresh() { }
+    void shutdown() { }
+}
+
+/**
+ * A reference to an asset.
+ */
+abstract class AssetRef( AssetType ) : Component if( is( AssetType : Asset ) )
+{
+public:
+    @ignore
+    AssetType asset;
+
+    @rename( "Asset" )
+    string assetName;
+
+    this() { }
+    this( AssetType ass )
+    {
+        asset = ass;
+        initialize();
+    }
+
+    /// Is the asset null?
+    bool isNull() @property const pure @safe nothrow 
+    {
+        return asset is null;
+    }
+
+    /// Gets a reference to it's asset.
+    override void initialize()
+    {
+        if( !asset && assetName )
+            asset = Assets.getAsset!AssetType( assetName );
     }
 }
 

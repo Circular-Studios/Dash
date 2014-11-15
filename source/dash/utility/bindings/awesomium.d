@@ -1,4 +1,4 @@
-module dash.utility.awesomium;
+module dash.utility.bindings.awesomium;
 
 version( Windows ):
 

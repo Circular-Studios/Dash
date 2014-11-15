@@ -2,7 +2,7 @@
  * Defines the static class Config, which handles all configuration options.
  */
 module dash.utility.config;
-import dash.utility.resources, dash.utility.output, dash.utility.data;
+import dash.utility.resources, dash.utility.data;
 
 import std.experimental.logger;
 import std.datetime;

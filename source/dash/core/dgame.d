@@ -203,6 +203,10 @@ private:
         stateFlags = new GameStateFlags;
         stateFlags.resumeAll();
 
+        // This is so that the bench marks will log properly,
+        // and config options will be update upon second call.
+        DashLogger.setDefaults();
+
         bench!( { Config.initialize(); } )( "Config init" );
         bench!( { DashLogger.initialize(); } )( "Logger init" );
         bench!( { Input.initialize(); } )( "Input init" );

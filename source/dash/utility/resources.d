@@ -2,7 +2,7 @@
  * TODO
  */
 module dash.utility.resources;
-import dash.utility;
+import dash.utility.output;
 
 import std.file, std.path, std.stdio, std.array, std.algorithm, std.datetime;
 

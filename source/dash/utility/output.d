@@ -45,7 +45,7 @@ abstract final class DashLogger
     static DashFileLogger       fileLogger;
     static DashEditorLogger     editorLogger;
 
-    static this()
+    static void setDefaults()
     {
         import dash.utility.config;
 

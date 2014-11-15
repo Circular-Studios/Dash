@@ -168,7 +168,6 @@ public:
 //package(dash):
     version( Windows )
     awe_webview* webView;
-    version( Windows )
     ubyte[] glBuffer;
 
     this( uint w, uint h, string filePath, GameObject owner, bool localFilePath = true )

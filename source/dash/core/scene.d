@@ -66,10 +66,13 @@ public:
         destroy( _root );
         _root = new GameObject;
 
-		ui.shutdown();
-		destroy( ui );
-		// TODO: Can be built automatically by config
-		ui = null;
+        if( ui )
+        {
+            ui.shutdown();
+            destroy( ui );
+            // TODO: Can be built automatically by config
+            ui = null;
+        }
     }
 
     /**
@@ -77,7 +80,8 @@ public:
      */
     final void update()
     {
-		ui.update();
+        if( ui )
+            ui.update();
         _root.update();
     }
 

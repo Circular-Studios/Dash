@@ -161,13 +161,15 @@ public:
 class AwesomiumView : TextureAsset
 {
 private:
-	const(awe_renderbuffer)* renderBuffer;
+    version( Windows )
+    const(awe_renderbuffer)* renderBuffer;
 
 public:
 //package(dash):
-	awe_webview* webView;
-	version( Windows )
-	ubyte[] glBuffer;
+    version( Windows )
+    awe_webview* webView;
+    version( Windows )
+    ubyte[] glBuffer;
 
     this( uint w, uint h, string filePath, GameObject owner, bool localFilePath = true )
     {

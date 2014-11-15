@@ -2,7 +2,7 @@
  * Defines the DGame class, the base class for all game logic.
  */
 module dash.core.dgame;
-import dash, dash.utility.awesomium;
+import dash;
 import core.memory;
 
 /**
@@ -30,7 +30,7 @@ struct GameStateFlags
     bool updateScene;
     bool updateUI;
     bool updateTasks;
-	bool autoRefresh;
+    bool autoRefresh;
     //bool updatePhysics;
 
     /**
@@ -203,12 +203,12 @@ private:
         stateFlags = new GameStateFlags;
         stateFlags.resumeAll();
 
-        logDebug( "Initializing..." );
         bench!( { Config.initialize(); } )( "Config init" );
-        bench!( { Logger.initialize(); } )( "Logger init" );
+        bench!( { DashLogger.initialize(); } )( "Logger init" );
         bench!( { Input.initialize(); } )( "Input init" );
         bench!( { Graphics.initialize(); } )( "Graphics init" );
         bench!( { Assets.initialize(); } )( "Assets init" );
+        bench!( { Audio.initialize(); } )( "Audio init" );
         bench!( { Prefabs.initialize(); } )( "Prefabs init" );
         bench!( { UserInterface.initializeAwesomium(); } )( "UI init" );
         bench!( { editor.initialize( this ); } )( "Editor init" );
@@ -228,6 +228,7 @@ private:
         UserInterface.shutdownAwesomium();
         Assets.shutdown();
         Graphics.shutdown();
+        Audio.shutdown();
     }
 
     /**

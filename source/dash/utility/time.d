@@ -106,7 +106,7 @@ void updateTime()
     second += delta;
     if( second >= 1.seconds )
     {
-        logDebug( "Framerate: ", frameCount );
+        tracef( "Framerate: %d", frameCount );
         second = Duration.zero;
         frameCount = 0;
     }

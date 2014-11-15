@@ -1,178 +1,192 @@
 /**
- * Defines the static Output class, which handles all output to the console window.
+ * Defines the Dash logger, using the std.logger proposal.
  */
 module dash.utility.output;
-import dash.utility.config;
-import dlogg.strict;
-import std.conv;
-import std.stdio;
-import std.functional;
+import std.experimental.logger;
+// Logging functions for the others
+public import std.experimental.logger: log, logf, trace, tracef, info, infof, warning, warningf, error, errorf, critical, criticalf, fatal, fatalf;
+
+import colorize;
+
+deprecated( "Use trace() instead" )
+alias logDebug = trace;
+deprecated( "Use info() instead" )
+alias logInfo = info;
+deprecated( "Use info() instead" )
+alias logNotice = info;
+deprecated( "Use warning() instead" )
+alias logWarning = warning;
+deprecated( "Use error() instead" )
+alias logError = error;
+deprecated( "Use fatal() instead" )
+alias logFatal = fatal;
 
 /**
-*   Custom logging level type for global logger.
+* Benchmark the running of a function, and log the result to the debug buffer.
+*
+* Params:
+*  func =              The function to benchmark
+*  name =              The name to print in the log
 */
-enum OutputType
-{
-    /// Debug messages, aren't compiled in release version
-    Debug,
-    /// Diagnostic messages about program state
-    Info,
-    /// Non fatal errors
-    Warning,
-    /// Fatal errors that usually stop application
-    Error,
-    /// Messages of the level don't go to output.
-    /// That used with minLoggingLevel and minOutputLevel
-    /// to suppress any message. 
-    Muted
-}
-
-/**
- * The levels of output available.
- */
-enum Verbosity
-{
-    /// Show me everything++.
-    /// Debug msgs are cut off in release
-    /// version.
-    Debug,
-    /// Show me everything.
-    High,
-    /// Show me things that shouldn't have happened.
-    Medium,
-    /// I only care about things gone horribly wrong.
-    Low,
-    /// I like to live on the edge.
-    Off,
-}
-
-/**
- * Wrapper for logging into default logger instance
- *
- * Params:
- *   type     - level of logging
- *   messages - compile-time tuple of printable things
- *              to be written into the log.
- */
-void log( A... )( OutputType type, lazy A messages )
-{
-    Logger.log( messages.text, type );
-}
-/// Wrapper for logging with Info level
-alias logInfo     = curry!( log, OutputType.Info );
-alias logNotice   = logInfo;
-/// Wrapper for logging with Warning level
-alias logWarning    = curry!( log, OutputType.Warning );
-/// Wrapper for logging with Error level
-alias logError      = curry!( log, OutputType.Error );
-alias logFatal      = logError;
-
-/// Special case is debug logging
-/**
- *   Debug messages are removed in release build.
- */
-void logDebug( A... )( A messages )
-{
-   debug Logger.log( messages.text, OutputType.Debug );
-}
-
-/**
- * Benchmark the running of a function, and log the result to the debug buffer.
- *
- * Params:
- *  func =              The function to benchmark
- *  name =              The name to print in the log
- */
 void bench( alias func )( lazy string name )
 {
     import std.datetime, core.time;
-    logDebug( name, " time:\t\t\t", cast(Duration)benchmark!func( 1 ) );
-}
-
-/// Global instance of logger
-shared GlobalLogger Logger;
-
-shared static this()
-{
-    Logger = new shared GlobalLogger;
+    auto result = cast(Duration)benchmark!func( 1 );
+    tracef( "%s time:\t\t\t%s", name, result );
 }
 
 /**
-*   Children of StyledStrictLogger with $(B initialize) method to
-*   handle loading verbosity from config.
-*
-*   Overwrites default style to use with local OutputType.
-*/
-synchronized final class GlobalLogger : StyledStrictLogger!(OutputType
-                , OutputType.Debug,   "Debug: %1$s",   "[%2$s] Debug: %1$s"
-                , OutputType.Info,    "Info: %1$s",    "[%2$s] Info: %1$s"
-                , OutputType.Warning, "Warning: %1$s", "[%2$s] Warning: %1$s"
-                , OutputType.Error,   "Error: %1$s",   "[%2$s] Error: %1$s"
-                , OutputType.Muted,   "",              ""
-                )
+ * Dash's custom logger.
+ */
+abstract final class DashLogger
 {
-    enum DEFAULT_LOG_NAME = "dash-preinit.log";
-    
+    static MultiLogger          multiLogger;
+    static DashConsoleLogger    consoleLogger;
+    static DashFileLogger       fileLogger;
+    static DashEditorLogger     editorLogger;
+
+    static this()
+    {
+        import dash.utility.config;
+
+        // Create loggers
+        consoleLogger   = new DashConsoleLogger( config.logging.verbosities.outputVerbosity );
+        fileLogger      = new DashFileLogger( config.logging.verbosities.loggingVerbosity, config.logging.filePath );
+        editorLogger    = new DashEditorLogger();
+
+        // Create multilogger
+        multiLogger = new MultiLogger( LogLevel.all );
+        multiLogger.insertLogger( "Dash Console Logger", consoleLogger );
+        multiLogger.insertLogger( "Dash Editor Logger", editorLogger );
+        stdlog = multiLogger;
+    }
+
+    static void initialize()
+    {
+        import dash.utility.config;
+
+        // Reinitialize the logger with file path.
+        multiLogger.removeLogger( "Dash File Logger" );
+        fileLogger = new DashFileLogger( config.logging.verbosities.loggingVerbosity, config.logging.filePath );
+        multiLogger.insertLogger( "Dash File Logger", fileLogger );
+
+        // Update levels of existing loggers.
+        consoleLogger.logLevel  = config.logging.verbosities.outputVerbosity;
+    }
+}
+
+private:
+/// Logs messages to the console
+final class DashConsoleLogger : FileLogger
+{
+    this( LogLevel level )
+    {
+        import std.stdio: stdout;
+
+        super( stdout, level );
+    }
+
+    override void writeLogMsg( ref LogEntry payload )
+    {
+        import std.conv: to;
+        import std.path: baseName;
+        import std.array: appender;
+        import std.format: formattedWrite;
+
+        auto msg = appender!string;
+
+        // Log level and message
+        msg.formattedWrite(
+            "%s: %s",
+            payload.logLevel.to!string,
+            payload.msg,
+        );
+
+        // Color and log file
+        file.cwritef( msg.data.color( payload.logLevel.getColor(), bg.init, payload.logLevel.getMode() ) );
+        finishLogMsg();
+    }
+}
+
+/// Logs messages to a file
+final class DashFileLogger : FileLogger
+{
+    this( LogLevel level, string filename )
+    {
+        super( filename, level );
+    }
+
+    override void writeLogMsg( ref LogEntry payload )
+    {
+        import std.conv: to;
+        import std.path: baseName;
+        import std.array: appender;
+        import std.format: formattedWrite;
+
+        auto msg = appender!string;
+
+        // Log file and line info in the console only
+        msg.formattedWrite(
+            "[%s] {%s:%d} %s: %s",
+            payload.timestamp.toSimpleString(),
+            payload.file.baseName,
+            payload.line,
+            payload.logLevel.to!string,
+            payload.msg,
+        );
+
+        // Color and print the message
+        logMsgPart( msg.data );
+        finishLogMsg();
+    }
+}
+
+/// Logs messages to the editor interface
+final class DashEditorLogger : Logger
+{
     this()
     {
-        super(DEFAULT_LOG_NAME);
+        import std.stdio: stdout;
+
+        // File not actually used for anything, but required by FileLogger
+        super( LogLevel.all );
     }
-    
-    /**
-    *   Loads verbosity from config.
-    */
-    final void initialize()
+
+    override void writeLogMsg( ref LogEntry payload )
     {
-        debug enum section = "Debug";
-        else  enum section = "Release";
-        
-        enum LognameSection = "Logging.FilePath";
-        enum OutputVerbositySection = "Logging."~section~".OutputVerbosity";
-        enum LoggingVerbositySection = "Logging."~section~".LoggingVerbosity";
-        
-        // Try to get new path for logging
-        string newFileName;
-        if( config.tryFind( LognameSection, newFileName ) )
-        {
-            string oldFileName = this.name; 
-            try
-            {
-                this.name = newFileName;
-            } 
-            catch( Exception e )
-            {
-                std.stdio.writeln( "Error: Failed to reload new log location from '",oldFileName,"' to '",newFileName,"'" );
-                std.stdio.writeln( "Reason: ", e.msg );
-                debug std.stdio.writeln( e.toString );
-                
-                // Try to rollback
-                scope(failure) {} 
-                this.name = oldFileName;
-            }
-        }
-        
-        // Try to get output verbosity from config
-        Verbosity outputVerbosity;
-        if( config.tryFind( OutputVerbositySection, outputVerbosity ) )
-        {
-            minOutputLevel = cast(OutputType)( outputVerbosity ); 
-        } 
-        else
-        {
-            debug minOutputLevel = OutputType.Info;
-            else minOutputLevel = OutputType.Warning; 
-        }
-        
-        // Try to get logging verbosity from config
-        Verbosity loggingVerbosity;
-        if( config.tryFind( LoggingVerbositySection, loggingVerbosity ) )
-        {
-            minLoggingLevel = cast(OutputType)( loggingVerbosity );
-        } 
-        else
-        {
-            debug minLoggingLevel = OutputType.Info;
-            else minLoggingLevel = OutputType.Warning; 
-        }
+        //TODO
+    }
+}
+
+/// Helper to get the color of the log level
+fg getColor( LogLevel level )
+{
+    final switch( level ) with( LogLevel ) with( fg )
+    {
+        case trace:
+        case info:
+        case off:
+        case all:
+            return init;
+        case warning:
+            return yellow;
+        case error:
+        case critical:
+        case fatal:
+            return red;
+    }
+}
+
+/// Helper to get the print mode of the log level
+mode getMode( LogLevel level )
+{
+    switch( level ) with( LogLevel ) with( mode )
+    {
+        case critical:
+            return underline;
+        case fatal:
+            return bold;
+        default:
+            return init;
     }
 }

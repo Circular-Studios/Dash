@@ -16,7 +16,6 @@ final class Scene
 {
 private:
     GameObject _root;
-    GameObject[][Resource] goResources;
 
 package:
     GameObject[uint] objectById;
@@ -25,6 +24,8 @@ package:
 public:
     /// The camera to render with.
     Camera camera;
+    Listener listener;
+
     /// The root object of the scene.
     mixin( Getter!_root );
 
@@ -43,12 +44,15 @@ public:
      */
     final void loadObjects( string objectPath = "" )
     {
-        foreach( ymlFile; buildNormalizedPath( Resources.Objects, objectPath ).loadYamlFiles() )
+        foreach( file; buildNormalizedPath( Resources.Objects, objectPath ).scanDirectory() )
         {
-            // Create the object
-            auto newObj = GameObject.createFromYaml( ymlFile[ 0 ] );
-            _root.addChild( newObj );
-            goResources[ ymlFile[ 1 ] ] ~= newObj;
+            // Create the objects
+            foreach( desc; file.deserializeMultiFile!( GameObject.Description )() )
+            {
+                auto newObj = GameObject.create( desc );
+                _root.addChild( newObj );
+                objectsByResource[ file ] ~= GameObjectResource( file, newObj );
+            }
         }
     }
 
@@ -57,6 +61,8 @@ public:
      */
     final void clear()
     {
+        _root.shutdown();
+        destroy( _root );
         _root = new GameObject;
     }
 
@@ -82,12 +88,34 @@ public:
     final void refresh()
     {
         // Iterate over each file, and it's objects
-        refreshYamlObjects!(
-            GameObject.createFromYaml,
-            node => this[ node[ "Name" ].get!string ],
-            ( node, obj ) => _root.addChild( obj ),
-            ( obj ) { if( obj.parent ) obj.parent.removeChild( obj ); } )
-                ( goResources );
+        foreach_reverse( file; objectsByResource.keys )
+        {
+            auto objReses = objectsByResource[ file ];
+
+            if( file.exists() )
+            {
+                if( file.needsRefresh() )
+                {
+                    auto descs = deserializeMultiFile!( GameObject.Description )( file );
+                    assert( descs.length == objReses.length, "Adding or removing objects from a file is currently unsupported." );
+
+                    foreach( i, objRes; objReses )
+                    {
+                        objRes.object.refresh( descs[ i ] );
+                    }
+                }
+            }
+            else
+            {
+                foreach( objRes; objReses )
+                {
+                    objRes.object.shutdown();
+                    removeChild( objRes.object );
+                }
+
+                objectsByResource.remove( file );
+            }
+        }
     }
 
     /**

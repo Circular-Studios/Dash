@@ -2,9 +2,9 @@
  * Handles the creation and life cycle of UI objects and webview textures
  */
 module dash.components.userinterface;
-import dash.core;
-import dash.utility.awesomium, dash.components, dash.utility, dash.graphics.graphics;
-import std.string, gl3n.linalg;
+import dash, dash.utility.bindings.awesomium;
+
+import std.string;
 
 /**
  * User interface objects handle drawing/updating an AwesomiumView over the screen
@@ -14,7 +14,7 @@ class UserInterface
 private:
     uint _height;
     uint _width;
-    mat4 _scaleMat;
+    mat4f _scaleMat;
     AwesomiumView _view;
     // TODO: Handle JS
 
@@ -34,7 +34,7 @@ public:
      */
     this( uint w, uint h, string filePath )
     {
-        _scaleMat = mat4.identity;
+        _scaleMat = mat4f.identity;
         _scaleMat[0][0] = cast(float)w/2.0f;
         _scaleMat[1][1] = cast(float)h/2.0f;
         _height = h;
@@ -43,7 +43,7 @@ public:
         {
             _view = new AwesomiumView( w, h, filePath, null );
         }
-        logDebug( "UI File: ", filePath );
+        tracef( "UI File: %s", filePath );
     }
 
     /**
@@ -163,7 +163,7 @@ public:
 /**
  * Creates an Awesomium web view texture
  */
-class AwesomiumView : Texture
+class AwesomiumView : TextureAsset
 {
 private:
     version( Windows )
@@ -176,9 +176,8 @@ public:
         _width = w;
         _height = h;
         glBuffer = new ubyte[_width*_height*4];
-        this.owner = owner;
 
-        super( cast(ubyte*)null );
+        super( cast(ubyte*)null, internalResource );
 
         version( Windows )
         {

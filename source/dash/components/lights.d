@@ -6,30 +6,28 @@ module dash.components.lights;
 import dash.core, dash.components, dash.graphics;
 import dash.utility;
 
-import gl3n.linalg, gl3n.aabb;
 import derelict.opengl3.gl3;
+import std.math;
 
-mixin( registerComponents!q{dash.components.lights} );
+mixin( registerComponents!() );
 
 /**
  * Base class for lights.
  */
 abstract class Light : Component
 {
-private:
-    bool _castShadows;
-
 public:
     /// The color the light gives off.
-    @field( "Color" )
-    vec3 color;
+    @rename( "Color" ) @optional
+    vec3f color;
     /// If it should cast shadows
-    mixin( Property!( _castShadows ) );
+    @rename( "CastShadows" ) @optional
+    bool castShadows;
 
-    this( vec3 color )
+    this( vec3f color )
     {
         this.color = color;
-        _castShadows = false;
+        castShadows = false;
     }
 
     override void update() { }
@@ -39,10 +37,9 @@ public:
 /**
  * Ambient Light
  */
-@yamlComponent()
 class AmbientLight : Light
 {
-    this( vec3 color = vec3() )
+    this( vec3f color = vec3f( 1.0f ) )
     {
         super( color );
     }
@@ -51,19 +48,18 @@ class AmbientLight : Light
 /**
  * Directional Light
  */
-@yamlComponent()
 class DirectionalLight : Light
 {
 private:
     uint _shadowMapFrameBuffer;
     uint _shadowMapTexture;
-    mat4 _projView;
+    mat4f _projView;
     int _shadowMapSize;
 
 public:
     /// The direction the light points in.
-    @field( "Direction" )
-    vec3 direction;
+    @rename( "Direction" ) @optional
+    vec3f direction;
     /// The FrameBuffer for the shadowmap.
     mixin( Property!( _shadowMapFrameBuffer ) );
     /// The shadow map's depth texture.
@@ -71,11 +67,16 @@ public:
     mixin( Property!( _projView ) );
     mixin( Property!( _shadowMapSize ) );
 
-    this( vec3 color = vec3(), vec3 direction = vec3(), bool castShadows = false )
+    this( vec3f color = vec3f( 1.0f ), vec3f direction = vec3f( 0.0f ), bool castShadows = false )
     {
         this.direction = direction;
         super( color );
         this.castShadows = castShadows;
+    }
+
+    /// Initializes the lights.
+    override void initialize()
+    {
         if( castShadows )
         {
             // generate framebuffer for shadow map
@@ -103,7 +104,7 @@ public:
             // check for success
             if( glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE )
             {
-                logFatal("Shadow map frame buffer failure.");
+                fatal( "Shadow map frame buffer failure." );
                 assert(false);
             }
         }
@@ -112,49 +113,49 @@ public:
     /**
      * calculates the light's projection and view matrices, and combines them
      */
-    void calculateProjView( AABB frustum )
+    void calculateProjView( box3f frustum )
     {
         // determine the center of the frustum
-        vec3 center = vec3( ( frustum.min + frustum.max ).x/2.0f,
+        vec3f center = vec3f( ( frustum.min + frustum.max ).x/2.0f,
                                           ( frustum.min + frustum.max ).y/2.0f,
                                           ( frustum.min + frustum.max ).z/2.0f );
 
         // determine the rotation for the viewing axis
         // adapted from http://lolengine.net/blog/2013/09/18/beautiful-maths-quaternion-from-vectors
-        vec3 lDirNorm = direction.normalized;
-        vec3 baseAxis = vec3( 0, 0, -1 );
+        vec3f lDirNorm = direction.normalized;
+        vec3f baseAxis = vec3f( 0, 0, -1 );
         float cosTheta = dot( lDirNorm, baseAxis );
         float halfCosX2 = sqrt( 0.5f * (1.0f + cosTheta) ) * 2.0f;
-        vec3 w = cross( lDirNorm, baseAxis );
-        quat rotation = quat( halfCosX2/2, w.x / halfCosX2, w.y / halfCosX2, w.z / halfCosX2 );
+        vec3f w = cross( lDirNorm, baseAxis );
+        quatf rotation = quatf( halfCosX2/2, w.x / halfCosX2, w.y / halfCosX2, w.z / halfCosX2 );
 
         // determine the x,y,z axes
-        float cosPitch = cos( rotation.pitch );
-        float sinPitch = sin( rotation.pitch );
-        float cosYaw = cos( rotation.yaw );
-        float sinYaw = sin( rotation.yaw );
-        vec3 xaxis = vec3( cosYaw, 0.0f, -sinYaw );
-        vec3 yaxis = vec3( sinYaw * sinPitch, cosPitch, cosYaw * sinPitch );
-        vec3 zaxis = vec3( sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw );
+        vec3f eulers = rotation.toEulerAngles();
+        float cosPitch = cos( eulers.x );
+        float sinPitch = sin( eulers.x );
+        float cosYaw = cos( eulers.y );
+        float sinYaw = sin( eulers.y );
+        vec3f xaxis = vec3f( cosYaw, 0.0f, -sinYaw );
+        vec3f yaxis = vec3f( sinYaw * sinPitch, cosPitch, cosYaw * sinPitch );
+        vec3f zaxis = vec3f( sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw );
 
         // build the view matrix
-        mat4 viewMatrix;
+        mat4f viewMatrix;
         ///*
-        viewMatrix.clear(0.0f);
-        viewMatrix[ 0 ] = xaxis.vector ~ -( xaxis * center );
-        viewMatrix[ 1 ] = yaxis.vector ~ -( yaxis * center );
-        viewMatrix[ 2 ] = zaxis.vector ~ -( zaxis * center );
-        viewMatrix[ 3 ] = [ 0, 0, 0, 1 ];
+        viewMatrix[ 0 ] = vec4f( xaxis, -xaxis.dot( center ) ).vector;
+        viewMatrix[ 1 ] = vec4f( yaxis, -yaxis.dot( center ) ).vector;
+        viewMatrix[ 2 ] = vec4f( zaxis, -zaxis.dot( center ) ).vector;
+        viewMatrix[ 3 ] = vec4f( 0, 0, 0, 1 ).vector;
         /*/
         // using lookAt works for everying but a light direction of (0,+/-1,0)
         light.view = Camera.lookAt( center - light.direction.normalized, center ); //*/
 
         // get frustum in view space
-        frustum.min = (viewMatrix * vec4(frustum.min,1.0f)).xyz;
-        frustum.max = (viewMatrix * vec4(frustum.max,1.0f)).xyz;
+        frustum.min = (viewMatrix * vec4f(frustum.min,1.0f)).xyz;
+        frustum.max = (viewMatrix * vec4f(frustum.max,1.0f)).xyz;
 
         // get mins and maxes in view space
-        vec3 mins, maxes;
+        vec3f mins, maxes;
         for( int i = 0; i < 3; i++ )
         {
             if( frustum.min.vector[ i ] < frustum.max.vector[ i ] )
@@ -170,28 +171,27 @@ public:
         }
 
         float magicNumber = 1.5f; // literally the worst
-        projView = mat4.orthographic( mins.x * magicNumber, maxes.x* magicNumber, mins.y* magicNumber , maxes.y* magicNumber, maxes.z* magicNumber, mins.z* magicNumber ) * viewMatrix;
+        projView = mat4f.orthographic( mins.x * magicNumber, maxes.x* magicNumber, mins.y* magicNumber , maxes.y* magicNumber, maxes.z* magicNumber, mins.z* magicNumber ) * viewMatrix;
     }
 }
 
 /**
  * Point Light
  */
-@yamlComponent()
 class PointLight : Light
 {
 private:
-    mat4 _matrix;
+    mat4f _matrix;
 
 public:
     /// The area that lighting will be calculated for.
-    @field( "Radius" )
+    @rename( "Radius" )
     float radius;
     /// The light's exponential attenuation modifier.
-    @field( "FalloffRate" )
+    @rename( "FalloffRate" )
     float falloffRate;
 
-    this( vec3 color = vec3(), float radius = 0.0f, float falloffRate = 0.0f )
+    this( vec3f color = vec3f( 1.0f ), float radius = 0.0f, float falloffRate = 0.0f )
     {
         this.radius = radius;
         this.falloffRate = falloffRate;
@@ -205,15 +205,15 @@ public:
      *
      * Returns:
      */
-    public mat4 getTransform()
+    public mat4f getTransform()
     {
-        _matrix = mat4.identity;
+        _matrix = mat4f.identity;
         // Scale
         _matrix[ 0 ][ 0 ] = radius;
         _matrix[ 1 ][ 1 ] = radius;
         _matrix[ 2 ][ 2 ] = radius;
         // Translate
-        vec3 position = owner.transform.worldPosition;
+        vec3f position = owner.transform.worldPosition;
         _matrix[ 0 ][ 3 ] = position.x;
         _matrix[ 1 ][ 3 ] = position.y;
         _matrix[ 2 ][ 3 ] = position.z;
@@ -225,11 +225,10 @@ public:
 /**
  * SpotLight Stub
  */
-@yamlComponent()
 class SpotLight : Light
 {
 public:
-    this( vec3 color = vec3() )
+    this( vec3f color = vec3f() )
     {
         super( color );
     }

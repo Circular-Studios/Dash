@@ -154,7 +154,33 @@ final class DashEditorLogger : Logger
 
     override void writeLogMsg( ref LogEntry payload )
     {
-        //TODO
+        import dash.core.dgame;
+
+        static struct LogMessage
+        {
+            string file;
+            int line;
+            string funcName;
+            string prettyFuncName;
+            string moduleName;
+            LogLevel logLevel;
+            string timestamp;
+            string msg;
+
+            this( LogEntry entry )
+            {
+                file = entry.file;
+                line = entry.line;
+                funcName = entry.funcName;
+                prettyFuncName = entry.prettyFuncName;
+                moduleName = entry.moduleName;
+                logLevel = entry.logLevel;
+                timestamp = entry.timestamp.toSimpleString();
+                msg = entry.msg;
+            }
+        }
+
+        DGame.instance.editor.send( "dash:logger:message", LogMessage( payload ) );
     }
 }
 

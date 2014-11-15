@@ -288,14 +288,18 @@ package:
     {
         // If it's a callback, dispatch it as such.
         UUID id = msg.callbackId.parseUUID();
-        if( auto cb = id in callbacks )
+        if( id.empty )
+        {
+            error( "Callback received with empty id" );
+        }
+        else if( auto cb = id in callbacks )
         {
             (*cb)( msg );
             callbacks.remove( id );
         }
         else
         {
-            errorf( "Callback reference lost: %s", msg.callbackId );
+            errorf( "Callback reference lost: %s", id );
         }
     }
 

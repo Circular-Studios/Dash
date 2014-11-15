@@ -58,16 +58,11 @@ public:
             auto mousePos = Input.mousePos();
             awe_webview_inject_mouse_move( _view.webView, cast(int)mousePos.x,cast(int)( Graphics.height - mousePos.y ) );
 
+			auto mouseUp = Mouse.isButtonUp(Mouse.Buttons.Left, true);
+			if( mouseUp ) awe_webview_inject_mouse_up( _view.webView, awe_mousebutton.AWE_MB_LEFT );
+
             _view.update();
         }
-    }
-
-    /**
-     * Draw UI view
-     */
-    void draw()
-    {
-        Graphics.addUI( this );
     }
 
     /**
@@ -166,11 +161,14 @@ public:
 class AwesomiumView : TextureAsset
 {
 private:
-    version( Windows )
-    awe_webview* webView;
-    ubyte[] glBuffer;
+	const(awe_renderbuffer)* renderBuffer;
 
 public:
+//package(dash):
+	awe_webview* webView;
+	version( Windows )
+	ubyte[] glBuffer;
+
     this( uint w, uint h, string filePath, GameObject owner, bool localFilePath = true )
     {
         _width = w;
@@ -210,12 +208,12 @@ public:
         version( Windows )
         if ( webView && webView.awe_webview_is_dirty() )
         {
-            const(awe_renderbuffer)* buffer = webView.awe_webview_render();
+            renderBuffer = webView.awe_webview_render();
 
             // Ensure the buffer exists
-            if ( buffer !is null ) {
+			if ( renderBuffer !is null ) {
 
-                buffer.awe_renderbuffer_copy_to( glBuffer.ptr, awe_renderbuffer_get_rowspan( buffer ), 4, false, true );
+				renderBuffer.awe_renderbuffer_copy_to( glBuffer.ptr, awe_renderbuffer_get_rowspan( renderBuffer ), 4, false, true );
 
                 updateBuffer( glBuffer.ptr );
             }

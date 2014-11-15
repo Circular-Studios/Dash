@@ -11,11 +11,12 @@ import std.string, std.file;
 class Sdl : OpenGL
 {
 private:
-    SDL2 sdl;
     SDL2Window window;
     SDL2GLContext glContext;
 
 public:
+    SDL2 sdl;
+    
     static @property Sdl get() { return cast(Sdl)Graphics.adapter; }
 
     override void initialize()

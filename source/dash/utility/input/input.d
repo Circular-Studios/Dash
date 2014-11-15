@@ -306,10 +306,20 @@ public:
      */
     vec2ui mousePos()
     {
-        version( Windows )
+        version( DashUseSDL2 )
+        {
+            import dash.graphics;
+
+            if( !Sdl.get() )
+                return vec2ui( 0, 0 );
+
+            auto mouse = Sdl.get().sdl.mouse;
+            return vec2ui( cast(uint)mouse.x, cast(uint)( Graphics.height - mouse.y ) );
+        }
+        else version( Windows )
         {
             if( !Win32GL.get() )
-                return vec2ui();
+                return vec2ui( 0, 0 );
 
             import dash.graphics;
             import win32.windows;
@@ -317,18 +327,11 @@ public:
             GetCursorPos( &i );
             ScreenToClient( Win32GL.get().hWnd, &i );
 
-            // Adjust for border
-            if( !Graphics.adapter.fullscreen )
-            {
-                i.x -= GetSystemMetrics( SM_CXBORDER );
-                i.y -= GetSystemMetrics( SM_CYBORDER );
-            }
-
             return vec2ui( i.x, Graphics.height - i.y );
         }
         else
         {
-            return vec2ui();
+            return vec2ui( 0, 0 );
         }
     }
 

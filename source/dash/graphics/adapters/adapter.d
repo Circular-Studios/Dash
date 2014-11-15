@@ -18,10 +18,6 @@ private:
     uint _height, _screenHeight;
     bool _fullscreen, _backfaceCulling, _vsync;
 
-protected:
-    // Do not add properties for:
-    UserInterface[] uis;
-
 public:
     /// Pixel width of the rendering area
     mixin( Property!_width );
@@ -89,15 +85,6 @@ public:
 
     /// TODO: Remove in favor of pipelines
     abstract void initializeDeferredRendering();
-
-    /*
-     * Adds a UI to be drawn over the objects in the scene
-     * UIs will be drawn ( and overlap ) in the order they are added
-     */
-    final void addUI( UserInterface ui )
-    {
-        uis ~= ui;
-    }
 
 protected:
     /**

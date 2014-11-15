@@ -175,7 +175,44 @@ public:
      */
     void setButtonState( Buttons buttonCode, ButtonStorageType newState )
     {
-        buttonStaging[ buttonCode ] = newState;
+		// HACK: Don't mind me.
+		import dash.utility.input.mouse, dash.core.dgame, dash.graphics.graphics;
+		import dash.utility.bindings.awesomium;
+		static if( is( Buttons == MouseButtons ) )
+		{
+			if( buttonCode == MouseButtons.Left )
+			{
+				auto ui = DGame.instance.activeScene.ui;
+				auto mousePos = Input.mousePos;
+				auto offset = ( Graphics.width * (mousePos.y - 1) + mousePos.x ) * 4;
+				auto transparency = ui.view.glBuffer[ offset + 3 ];
+
+				import dash.utility.output;
+				tracef( "Transparency at point %d, %d: %d", cast(int)mousePos.x, cast(int)( Graphics.height - mousePos.y ), transparency );
+
+				if( ui && newState && transparency > 0 )
+				{
+					awe_webview_inject_mouse_down( ui.view.webView, awe_mousebutton.AWE_MB_LEFT );
+				}
+				else
+				{
+					buttonStaging[ buttonCode ] = newState;
+
+					if( !newState )
+					{
+						awe_webview_inject_mouse_up( ui.view.webView, awe_mousebutton.AWE_MB_LEFT );
+					}
+				}
+			}
+			else
+			{
+				buttonStaging[ buttonCode ] = newState;
+			}
+		}
+		else
+		{				
+			buttonStaging[ buttonCode ] = newState;
+		}
     }
 
 private:

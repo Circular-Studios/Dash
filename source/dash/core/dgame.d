@@ -88,8 +88,6 @@ public:
      */
     final void run()
     {
-        // Init tasks
-        //TaskManager.initialize();
         start();
 
         GC.collect();

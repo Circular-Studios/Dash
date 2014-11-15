@@ -174,7 +174,7 @@ public:
                     break;
 
                 case SDL_MOUSEWHEEL:
-                    Mouse.setAxisState( Mouse.Axes.ScrollWheel, Mouse.getAxisState( Mouse.Axes.ScrollWheel ) + ( ( cast(int)event.wheel.y >> 16 ) / 120 ) );
+                    Mouse.setAxisState( Mouse.Axes.ScrollWheel, Mouse.getAxisState( Mouse.Axes.ScrollWheel ) + event.wheel.y );
                     break;
 
                 case SDL_APP_TERMINATING:

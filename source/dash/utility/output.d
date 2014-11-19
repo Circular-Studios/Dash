@@ -146,8 +146,6 @@ final class DashEditorLogger : Logger
 {
     this()
     {
-        import std.stdio: stdout;
-
         // File not actually used for anything, but required by FileLogger
         super( LogLevel.all );
     }

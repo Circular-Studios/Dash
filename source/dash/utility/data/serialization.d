@@ -209,8 +209,8 @@ template serializeToFile( bool prettyPrint = true )
 /// Supported serialization formats.
 enum serializationFormats = tuple( "Json", "Bson", "Yaml" );
 
-/// Type to use when defining custom 
-struct CustomSerializer( _T, _Rep, alias _ser, alias _deser, alias _check = (_) => true )
+/// Type to use when defining custom
+struct CustomSerializer( _T, _Rep, alias _ser, alias _deser, alias _check )
     if( is( typeof( _ser( _T.init ) ) == _Rep ) &&
         is( typeof( _deser( _Rep.init ) ) == _T ) &&
         is( typeof( _check( _Rep.init ) ) == bool ) )
@@ -245,15 +245,8 @@ enum hasSerializer( T ) = anySatisfy!( isSerializerFor!T, customSerializers );
 /// Get the serializer for a type
 template serializerFor( T )
 {
-    import dash.components.component;
-
     static if( hasSerializer!T )
         alias serializerFor = Filter!( isSerializerFor!T, customSerializers )[ 0 ];
-    else static if( is( T : Component ) )
-        alias serializerFor = CustomSerializer!( T, ComponentReference,
-                                                 t => ComponentReference( componentMetadata!T.name, t.id ),
-                                                 r => getComponent( r.id ),
-                                                 r => !r.id.empty && t.name );
     else
         alias serializerFor = defaultSerializer!T;
 }

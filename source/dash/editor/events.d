@@ -54,4 +54,21 @@ void registerObjectEvents( Editor ed, DGame game )
             throw new Exception( "Object " ~ req.objectName ~ " not found." );
         }
     } );
+
+    // Refresh a transform
+    static struct TransformRefreshRequest
+    {
+        string objectName;
+        Transform.Description description;
+    }
+    ed.registerEventHandler( "object:transform:refresh", ( TransformRefreshRequest req ) {
+        if( auto obj = game.activeScene[ req.objectName ] )
+        {
+            obj.transform.refresh( req.description );
+        }
+        else
+        {
+            throw new Exception( "Object " ~ req.objectName ~ " not found." );
+        }
+    } );
 }

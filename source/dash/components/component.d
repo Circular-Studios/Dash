@@ -359,8 +359,8 @@ private:
                     if( mixin( field.name ) != mixin( "new SerializationDescription()." ~ field.name ) )
                     {
                         // Deserialize it for the component
-                        mixin( "auto ser = "~field.serializer~".deserialize(this."~field.name~");" );
-                        // Copy the new value to the component
+                        mixin( "auto rep = cast("~field.serializer~".Rep)this."~field.name~";" );
+                        mixin( "auto ser = "~field.serializer~".deserialize(rep);" );
                         mixin( "comp."~field.name~" = ser;" );
                     }
                 }
@@ -408,9 +408,17 @@ private:
                         return attrs.join( ", " ).to!string;
                     }
 
+                    template SerializedType( T )
+                    {
+                        static if( is( T U : U[] ) )
+                            alias SerializedType = SerializedType!U;
+                        else
+                            alias SerializedType = T;
+                    }
+
                     // Get required module import name
-                    static if( __traits( compiles, moduleName!( typeof( member ) ) ) )
-                        enum modName = moduleName!(typeof(member));
+                    static if( __traits( compiles, moduleName!( SerializedType!memberType ) ) )
+                        enum modName = moduleName!( SerializedType!memberType );
                     else
                         enum modName = null;
 

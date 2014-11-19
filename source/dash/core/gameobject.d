@@ -528,7 +528,7 @@ public:
  * and can generate a World matrix, worldPosition/Rotation (based on parents' transforms)
  * as well as forward, up, and right axes based on rotation
  */
-private struct Transform
+struct Transform
 {
 private:
     vec3f _prevPos;
@@ -541,12 +541,6 @@ private:
         position = vec3f( desc.position[] );
         rotation = fromEulerAngles( desc.rotation[ 0 ], desc.rotation[ 1 ], desc.rotation[ 2 ] );
         scale = vec3f( desc.scale[] );
-    }
-
-    void refresh( Description desc )
-    {
-        // TODO: Track if the transform actually changed.
-        this = desc;
     }
 
     /**
@@ -580,6 +574,12 @@ public:
         /// The position of the object.
         @rename( "Scale" ) @optional
         float[3] scale = [ 1.0f, 1.0f, 1.0f ];
+    }
+
+    void refresh( Description desc )
+    {
+        // TODO: Track if the transform actually changed.
+        this = desc;
     }
 
     /**

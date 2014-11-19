@@ -153,6 +153,7 @@ final class DashEditorLogger : Logger
     override void writeLogMsg( ref LogEntry payload )
     {
         import dash.core.dgame;
+        import std.conv: to;
 
         static struct LogMessage
         {
@@ -162,6 +163,7 @@ final class DashEditorLogger : Logger
             string prettyFuncName;
             string moduleName;
             LogLevel logLevel;
+            string logLevelLabel;
             string timestamp;
             string msg;
 
@@ -173,6 +175,7 @@ final class DashEditorLogger : Logger
                 prettyFuncName = entry.prettyFuncName;
                 moduleName = entry.moduleName;
                 logLevel = entry.logLevel;
+                logLevelLabel = entry.logLevel.to!string;
                 timestamp = entry.timestamp.toSimpleString();
                 msg = entry.msg;
             }

@@ -14,7 +14,7 @@ void registerGameEvents( Editor ed, DGame game )
     } );
 
     ed.registerEventHandler( "dgame:scene:get_objects", ( Json _ ) {
-        return game.activeScene.objects;
+        return game.activeScene.root.children;
     } );
 }
 

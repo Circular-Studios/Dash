@@ -3,9 +3,17 @@ module dash.utility.profiler;
 // Enable profiler in debug mode.
 debug version = DashUseProfiler;
 
-version( DashUseProfiler ):
-import tharsis.prof;
-public import tharsis.prof: Zone;
+version( DashUseProfiler )
+{
+    import tharsis.prof;
+    public import tharsis.prof: Zone;
+
+    private enum profileDataSize = Profiler.maxEventBytes * 1024;
+}
+else
+{
+    struct Zone { }
+}
 
 abstract class DashProfiler
 {
@@ -13,27 +21,40 @@ static:
 public:
     void initialize()
     {
-        tharsis = new Profiler( profileData[] );
+        version( DashUseProfiler )
+        {
+            tharsis = new Profiler( profileData[] );
+        }
     }
 
     void update()
     {
-        import std.array: array;
-        import dash.core.dgame: DGame;
+        version( DashUseProfiler )
+        {
+            import std.array: array;
+            import std.algorithm: map;
+            import dash.core.dgame: DGame;
 
             DGame.instance.editor.send( "dash:perf:zone_data", tharsis.profileData.zoneRange.map!( z => DashZone( z ) ) .array );
 
-        tharsis.reset();
+            tharsis.reset();
+        }
     }
 
     Zone startZone( string name )
     {
-        return Zone( tharsis, name );
+        version( DashUseProfiler )
+            return Zone( tharsis, name );
+        else
+            return Zone();
     }
 
 private:
-    Profiler tharsis;
-    ubyte[Profiler.maxEventBytes * 1024] profileData;
+    version( DashUseProfiler )
+    {
+        Profiler tharsis;
+        ubyte[profileDataSize] profileData;
+    }
 }
 
 private struct DashZone

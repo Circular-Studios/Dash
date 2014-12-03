@@ -21,7 +21,7 @@ public:
         import std.array: array;
         import dash.core.dgame: DGame;
 
-        DGame.instance.editor.send( "dash:perf:zone_data", tharsis.profileData.zoneRange.array );
+            DGame.instance.editor.send( "dash:perf:zone_data", tharsis.profileData.zoneRange.map!( z => DashZone( z ) ) .array );
 
         tharsis.reset();
     }
@@ -34,4 +34,27 @@ public:
 private:
     Profiler tharsis;
     ubyte[Profiler.maxEventBytes * 1024] profileData;
+}
+
+private struct DashZone
+{
+    uint id;
+    uint parentID;
+    ushort nestLevel;
+    ulong startTime;
+    ulong duration;
+    string info;
+    ulong endTime;
+
+    this( ZoneData zone )
+    {
+        import std.conv: to;
+        id = zone.id;
+        parentID = zone.parentID;
+        nestLevel = zone.nestLevel;
+        startTime = zone.startTime;
+        duration = zone.duration;
+        info = zone.info.to!string;
+        endTime = zone.endTime;
+    }
 }

@@ -95,88 +95,93 @@ public:
         // Loop until there is a quit message from the window or the user.
         while( currentState != EngineState.Quit )
         {
-            auto frameZone = DashProfiler.startZone( "Frame" );
-
-            if( currentState == EngineState.Reset )
+            // Frame Zone
             {
-                stop();
-                start();
-                GC.collect();
-            }
-            else if( currentState == EngineState.Refresh )
-            {
-                refresh();
-            }
+                auto frameZone = DashProfiler.startZone( "Frame" );
 
-            //////////////////////////////////////////////////////////////////////////
-            // Update
-            //////////////////////////////////////////////////////////////////////////
+                if( currentState == EngineState.Reset )
+                {
+                    stop();
+                    start();
+                    GC.collect();
+                }
+                else if( currentState == EngineState.Refresh )
+                {
+                    refresh();
+                }
 
-            // Platform specific program stuff
-            Graphics.messageLoop();
+                //////////////////////////////////////////////////////////////////////////
+                // Update
+                //////////////////////////////////////////////////////////////////////////
 
-            // Update time
-            Time.update();
+                // Platform specific program stuff
+                Graphics.messageLoop();
 
-            // Update input
-            Input.update();
+                // Update time
+                Time.update();
 
-            // Update webcore
-            if( stateFlags.updateUI )
-            {
-                auto uiUpdateZone = DashProfiler.startZone( "UI Update" );
-                UserInterface.updateAwesomium();
-            }
+                // Update input
+                Input.update();
 
-            // Update physics
-            //if( stateFlags.updatePhysics )
-            //  PhysicsController.stepPhysics( Time.deltaTime );
+                // Update webcore
+                if( stateFlags.updateUI )
+                {
+                    auto uiUpdateZone = DashProfiler.startZone( "UI Update" );
+                    UserInterface.updateAwesomium();
+                }
 
-            if( stateFlags.updateTasks )
-            {
-                auto taskZone = DashProfiler.startZone( "Tasks" );
-                executeTasks();
-            }
+                // Update physics
+                //if( stateFlags.updatePhysics )
+                //  PhysicsController.stepPhysics( Time.deltaTime );
 
-            if( stateFlags.updateScene )
-            {
-                auto sceneUpdateZone = DashProfiler.startZone( "Scene Update" );
-                activeScene.update();
-            }
+                if( stateFlags.updateTasks )
+                {
+                    auto taskZone = DashProfiler.startZone( "Tasks" );
+                    executeTasks();
+                }
 
-            // Do the updating of the child class.
-            {
-                auto gameUpdateZone = DashProfiler.startZone( "Game Update" );
-                onUpdate();
-            }
+                if( stateFlags.updateScene )
+                {
+                    auto sceneUpdateZone = DashProfiler.startZone( "Scene Update" );
+                    activeScene.update();
+                }
 
-            // Update the editor.
-            //if( currentState == EngineState.Editor )
-            {
-                auto editorUpdateZone = DashProfiler.startZone( "Editor Update" );
-                editor.update();
-            }
+                // Do the updating of the child class.
+                {
+                    auto gameUpdateZone = DashProfiler.startZone( "Game Update" );
+                    onUpdate();
+                }
 
-            //////////////////////////////////////////////////////////////////////////
-            // Draw
-            //////////////////////////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////////////////////////
+                // Draw
+                //////////////////////////////////////////////////////////////////////////
 
-            {
-                auto sceneDrawZone = DashProfiler.startZone( "Scene Draw" );
-                activeScene.draw();
-            }
+                {
+                    auto sceneDrawZone = DashProfiler.startZone( "Scene Draw" );
+                    activeScene.draw();
+                }
 
-            // Draw in child class
-            {
-                auto gameDrawZone = DashProfiler.startZone( "Game Draw" );
-                onDraw();
-            }
+                // Draw in child class
+                {
+                    auto gameDrawZone = DashProfiler.startZone( "Game Draw" );
+                    onDraw();
+                }
 
-            // End drawing
-            {
-                auto renderZone = DashProfiler.startZone( "Render" );
-                Graphics.endDraw();
-            }
+                // End drawing
+                {
+                    auto renderZone = DashProfiler.startZone( "Render" );
+                    Graphics.endDraw();
+                }
+
+                // Update the editor.
+                {
+                    auto editorUpdateZone = DashProfiler.startZone( "Editor Update" );
+                    editor.update();
+                }
+            } // Frame zone
+
+            // Update the profiler
+            DashProfiler.update();
         }
 
         stop();
@@ -223,6 +228,7 @@ private:
         // and config options will be update upon second call.
         DashLogger.setDefaults();
 
+        bench!( { DashProfiler.initialize(); } )( "Profiler init" );
         bench!( { Config.initialize(); } )( "Config init" );
         bench!( { DashLogger.initialize(); } )( "Logger init" );
         bench!( { Input.initialize(); } )( "Input init" );

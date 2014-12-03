@@ -7,33 +7,31 @@ version( DashUseProfiler ):
 import tharsis.prof;
 public import tharsis.prof: Zone;
 
-abstract final class DashProfiler
+abstract class DashProfiler
 {
 static:
 public:
-    Profiler profiler;
-
-    static this()
+    void initialize()
     {
-        profiler = new Profiler( profileData[] );
+        tharsis = new Profiler( profileData[] );
     }
 
     void update()
     {
-        if( profiler.outOfSpace )
-            profiler.reset();
+        import std.array: array;
+        import dash.core.dgame: DGame;
+
+        DGame.instance.editor.send( "dash:perf:zone_data", tharsis.profileData.zoneRange.array );
+
+        tharsis.reset();
     }
 
     Zone startZone( string name )
     {
-        return Zone( profiler, name );
-    }
-
-    EventRange eventRange() @property
-    {
-        return profiler.profileData.eventRange;
+        return Zone( tharsis, name );
     }
 
 private:
+    Profiler tharsis;
     ubyte[Profiler.maxEventBytes * 1024] profileData;
 }

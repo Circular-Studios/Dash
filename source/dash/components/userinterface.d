@@ -6,6 +6,18 @@ import dash, dash.utility.bindings.awesomium;
 
 import std.string;
 
+private awe_string* dToAwe( string str )
+{
+    return awe_string_create_from_ascii( str.ptr, str.length );
+}
+
+private string aweToD( const(awe_string)* str )
+{
+    string dStr = new string( awe_string_get_length( str ) );
+    awe_string_to_utf8( str, (cast(char[])dStr).ptr, dStr.length );
+    return dStr;
+}
+
 /**
  * User interface objects handle drawing/updating an AwesomiumView over the screen
  */
@@ -200,6 +212,15 @@ public:
 
             // Destroy our URL string
             urlString.awe_string_destroy();
+
+            awe_webview_set_callback_js_callback( webView, &jsCallbackHandler );
+
+            awe_webview_create_object( webView, dToAwe( "dash" ) );
+            awe_webview_set_object_callback( webView, dToAwe( "dash" ), dToAwe( "callFunction" ) );
+
+            awe_webview_set_callback_js_console_message( webView, ( caller, message, line_number, source ) {
+                infof( "JS message (%s:%d): %s", source.aweToD(), line_number, message.aweToD() );
+            } );
         }
     }
 
@@ -212,9 +233,9 @@ public:
             renderBuffer = webView.awe_webview_render();
 
             // Ensure the buffer exists
-			if ( renderBuffer !is null ) {
+            if ( renderBuffer !is null ) {
 
-				renderBuffer.awe_renderbuffer_copy_to( glBuffer.ptr, awe_renderbuffer_get_rowspan( renderBuffer ), 4, false, true );
+                renderBuffer.awe_renderbuffer_copy_to( glBuffer.ptr, awe_renderbuffer_get_rowspan( renderBuffer ), 4, false, true );
 
                 updateBuffer( glBuffer.ptr );
             }
@@ -227,5 +248,63 @@ public:
         destroy( glBuffer );
         version( Windows )
         webView.awe_webview_destroy();
+    }
+
+    void registerCallback( Args... )( string name, void delegate( Args ) cb )
+    {
+        void jsHandler( const(awe_jsarray)* jsargs )
+        {
+            import std.typecons;
+            Tuple!Args convertedArgs;
+
+            foreach( i, ArgT; Args )
+            {
+                auto jsarg = jsargs.awe_jsarray_get_element( i + 1 );
+
+                static if( is( ArgT == string ) )
+                {
+                    convertedArgs[ i ] = jsarg.awe_jsvalue_to_string().aweToD();
+                }
+                else static if( is( ArgT == int ) )
+                {
+                    convertedArgs[ i ] = jsarg.awe_jsvalue_to_integer();
+                }
+                else static if( is( ArgT == double ) )
+                {
+                    convertedArgs[ i ] = jsarg.awe_jsvalue_to_double();
+                }
+                else static if( is( ArgT == bool ) )
+                {
+                    convertedArgs[ i ] = jsarg.awe_jsvalue_to_bool();
+                }
+                else static assert( false, "Unsupported type " ~ __traits(identifier, ArgT) ~ ". Please use string, int, double, or bool." );
+            }
+
+            cb( convertedArgs.expand );
+        }
+
+        handlers[ name ] = &jsHandler;
+    }
+
+private:
+    static void delegate( const(awe_jsarray)* args )[string] handlers;
+
+    extern(C)
+    static void jsCallbackHandler( awe_webview* caller,
+                                   const(awe_string)* object_name,
+                                   const(awe_string)* callback_name,
+                                   const(awe_jsarray)* arguments )
+    {
+        assert( awe_jsarray_get_size( arguments ) > 0, "Must at least pass function name." );
+
+        // Get the name of the function to call
+        auto funcName = awe_jsarray_get_element( arguments, 0 );
+        assert( awe_jsvalue_get_type( funcName ) == awe_jsvalue_type.JSVALUE_TYPE_STRING, "First argument should be function name." );
+
+        // Convert the name to a D string
+        auto funcNameStr = awe_jsvalue_to_string( funcName ).aweToD();
+
+        // Call the handler
+        handlers[ funcNameStr ]( arguments );
     }
 }

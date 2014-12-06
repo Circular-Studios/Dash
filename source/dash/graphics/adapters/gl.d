@@ -390,13 +390,11 @@ public:
             glUseProgram( shader.programID );
             glBindVertexArray( Assets.unitSquare.glVertexArray );
 
-            foreach( ui; uis )
-            {
-                shader.bindUniformMatrix4fv( shader.WorldProj,
-                                             scene.camera.orthogonalMatrix * ui.scaleMat );
-                shader.bindUI( ui );
-                glDrawElements( GL_TRIANGLES, Assets.unitSquare.numVertices, GL_UNSIGNED_INT, null );
-            }
+			auto ui = scene.ui;
+            shader.bindUniformMatrix4fv( shader.WorldProj,
+                                         scene.camera.orthogonalMatrix * ui.scaleMat );
+            shader.bindUI( ui );
+            glDrawElements( GL_TRIANGLES, Assets.unitSquare.numVertices, GL_UNSIGNED_INT, null );
 
             glBindVertexArray(0);
         }
@@ -435,7 +433,7 @@ public:
         //TODO: Repair the UI on Linux systems
         version(linux){}
         else
-                uiPass();
+            uiPass();
 
         // put it on the screen
         swapBuffers();
@@ -443,6 +441,5 @@ public:
         // clean up
         glBindVertexArray(0);
         glUseProgram(0);
-        uis = [];
     }
 }

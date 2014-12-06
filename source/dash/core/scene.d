@@ -25,6 +25,7 @@ public:
     /// The camera to render with.
     Camera camera;
     Listener listener;
+	UserInterface ui;
 
     /// The root object of the scene.
     mixin( Getter!_root );
@@ -64,6 +65,14 @@ public:
         _root.shutdown();
         destroy( _root );
         _root = new GameObject;
+
+        if( ui )
+        {
+            ui.shutdown();
+            destroy( ui );
+            // TODO: Can be built automatically by config
+            ui = null;
+        }
     }
 
     /**
@@ -71,6 +80,8 @@ public:
      */
     final void update()
     {
+        if( ui )
+            ui.update();
         _root.update();
     }
 

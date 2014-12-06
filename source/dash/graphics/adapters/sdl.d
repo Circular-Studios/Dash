@@ -11,11 +11,12 @@ import std.string, std.file;
 class Sdl : OpenGL
 {
 private:
-    SDL2 sdl;
     SDL2Window window;
     SDL2GLContext glContext;
 
 public:
+    SDL2 sdl;
+    
     static @property Sdl get() { return cast(Sdl)Graphics.adapter; }
 
     override void initialize()
@@ -173,7 +174,7 @@ public:
                     break;
 
                 case SDL_MOUSEWHEEL:
-                    Mouse.setAxisState( Mouse.Axes.ScrollWheel, Mouse.getAxisState( Mouse.Axes.ScrollWheel ) + ( ( cast(int)event.wheel.y >> 16 ) / 120 ) );
+                    Mouse.setAxisState( Mouse.Axes.ScrollWheel, Mouse.getAxisState( Mouse.Axes.ScrollWheel ) + event.wheel.y );
                     break;
 
                 case SDL_APP_TERMINATING:

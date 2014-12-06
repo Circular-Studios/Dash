@@ -45,7 +45,7 @@ abstract final class DashLogger
     static DashFileLogger       fileLogger;
     static DashEditorLogger     editorLogger;
 
-    static this()
+    static void setDefaults()
     {
         import dash.utility.config;
 
@@ -146,15 +146,42 @@ final class DashEditorLogger : Logger
 {
     this()
     {
-        import std.stdio: stdout;
-
         // File not actually used for anything, but required by FileLogger
         super( LogLevel.all );
     }
 
     override void writeLogMsg( ref LogEntry payload )
     {
-        //TODO
+        import dash.core.dgame;
+        import std.conv: to;
+
+        static struct LogMessage
+        {
+            string file;
+            int line;
+            string funcName;
+            string prettyFuncName;
+            string moduleName;
+            LogLevel logLevel;
+            string logLevelLabel;
+            string timestamp;
+            string msg;
+
+            this( LogEntry entry )
+            {
+                file = entry.file;
+                line = entry.line;
+                funcName = entry.funcName;
+                prettyFuncName = entry.prettyFuncName;
+                moduleName = entry.moduleName;
+                logLevel = entry.logLevel;
+                logLevelLabel = entry.logLevel.to!string;
+                timestamp = entry.timestamp.toSimpleString();
+                msg = entry.msg;
+            }
+        }
+
+        DGame.instance.editor.send( "dash:logger:message", LogMessage( payload ) );
     }
 }
 

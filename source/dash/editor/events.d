@@ -14,7 +14,7 @@ void registerGameEvents( Editor ed, DGame game )
     } );
 
     ed.registerEventHandler( "dgame:scene:get_objects", ( Json _ ) {
-        return game.activeScene.objects;
+        return game.activeScene.root.children;
     } );
 }
 
@@ -48,6 +48,23 @@ void registerObjectEvents( Editor ed, DGame game )
         if( auto obj = game.activeScene[ req.objectName ] )
         {
             obj.refreshComponent( req.componentName, req.description );
+        }
+        else
+        {
+            throw new Exception( "Object " ~ req.objectName ~ " not found." );
+        }
+    } );
+
+    // Refresh a transform
+    static struct TransformRefreshRequest
+    {
+        string objectName;
+        Transform.Description description;
+    }
+    ed.registerEventHandler( "object:transform:refresh", ( TransformRefreshRequest req ) {
+        if( auto obj = game.activeScene[ req.objectName ] )
+        {
+            obj.transform.refresh( req.description );
         }
         else
         {

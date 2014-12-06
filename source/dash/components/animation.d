@@ -71,7 +71,7 @@ public:
             // Update currentanimtime based on deltatime and animations fps
             _currentAnimTime += Time.deltaTime * 24.0f;
 
-            if( _currentAnimTime >= _animationData.animationSet[ _currentAnim ].duration * 24 - 1 )
+            if( _currentAnimTime >= _animationData.animationSet[ _currentAnim ].duration - 1 )
             {
                 _currentAnimTime = 0.0f;
 
@@ -81,11 +81,11 @@ public:
                     _currentAnim = _returnAnimation;
                 }
             }
-        }
 
-        // Calculate and store array of bonetransforms to pass to the shader
-        currBoneTransforms = _animationData.getTransformsAtTime( _currentAnim, _currentAnimTime );
-    }
+			// Calculate and store array of bonetransforms to pass to the shader
+			currBoneTransforms = _animationData.getTransformsAtTime( _currentAnim, _currentAnimTime );
+		}
+	}
 
     /**
     * Continue animating.
@@ -108,7 +108,15 @@ public:
     {
         _animating = false;
         _currentAnimTime = 0.0f;
+
+		// Do this once more
+		currBoneTransforms = _animationData.getTransformsAtTime( _currentAnim, _currentAnimTime );
     }
+	bool IsPlaying()
+	{
+		return _animating;
+	}
+
     /**
      * Switches the current animation
      */
@@ -124,7 +132,7 @@ public:
 			}
 			else
 			{
-				logWarning( "Changed animation successfully, yet animation time to start at was out of bounds." );
+				warning( "Changed animation successfully, yet animation time to start at was out of bounds." );
 				_currentAnimTime = 0;
 			}
             
@@ -160,15 +168,15 @@ public:
 	}*/
 
 	/**
-    * Runs an animation once, then returns to previous one
+    * Runs an animation once, then returns to a specific one
     */
-    void runAnimationOnce( int animNumber, int returnAnimNumber )
+    void runAnimationOnce( int animNumber )
     {
         if( animNumber < _animationData.animationSet.length )
         {
             _animateOnce = true;
+			_returnAnimation = _currentAnim;
             _currentAnim = animNumber;
-            _returnAnimation = returnAnimNumber;
             _currentAnimTime = 0;
         }
         else
@@ -228,11 +236,11 @@ public:
             }
         }
 
-        for( int ii = 0; ii < numAnimations; ii++)
-            addAnimationSet( animations[ ii ], 24 );
-    }
+		//for( int ii = 0; ii < numAnimations; ii++)
+		//addAnimationSet( animations[ ii ], 24 );
+	}
 
-    /**
+	/**
      * Returns the animation as an addible component.
      */
     Animation getComponent()
@@ -302,10 +310,11 @@ public:
         return -1;
     }
 
-    void addAnimationSet( const(aiAnimation*) animation, int fps )
+	public void addAnimationSet( string animName, const(aiAnimation*) animation, int fps )
     {
         AnimationSet newAnimSet;
-        newAnimSet.duration = cast(float)animation.mDuration;
+		newAnimSet.animName = animName;
+		newAnimSet.duration = cast(float)animation.mDuration;
         newAnimSet.fps = fps;
         for( int i = 0; i < _numberOfBones; i++)
         {
@@ -313,6 +322,8 @@ public:
         }
         addPoses( animation, boneHierarchy, newAnimSet );
         _animationSet ~= newAnimSet;
+
+		warning( "Animation set duration: ", newAnimSet.duration);
     }
     void addPoses( const(aiAnimation*) animation, Bone currBone, AnimationSet newAnimSet )
     {
@@ -508,6 +519,7 @@ public:
      */
     struct AnimationSet
     {
+		string animName;
         float duration;
         float fps;
         BonePose[] bonePoses;

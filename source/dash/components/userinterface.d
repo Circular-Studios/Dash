@@ -6,16 +6,19 @@ import dash, dash.utility.bindings.awesomium;
 
 import std.string;
 
-private awe_string* dToAwe( string str )
+version( Windows )
 {
-    return awe_string_create_from_ascii( str.ptr, str.length );
-}
+    private awe_string* dToAwe( string str )
+    {
+        return awe_string_create_from_ascii( str.ptr, str.length );
+    }
 
-private string aweToD( const(awe_string)* str )
-{
-    string dStr = new string( awe_string_get_length( str ) );
-    awe_string_to_utf8( str, (cast(char[])dStr).ptr, dStr.length );
-    return dStr;
+    private string aweToD( const(awe_string)* str )
+    {
+        string dStr = new string( awe_string_get_length( str ) );
+        awe_string_to_utf8( str, (cast(char[])dStr).ptr, dStr.length );
+        return dStr;
+    }
 }
 
 /**
@@ -287,8 +290,10 @@ public:
     }
 
 private:
+    version( Windows )
     static void delegate( const(awe_jsarray)* args )[string] handlers;
 
+    version( Windows )
     extern(C)
     static void jsCallbackHandler( awe_webview* caller,
                                    const(awe_string)* object_name,

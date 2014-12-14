@@ -37,10 +37,14 @@ body {
   background: url("../img/cover.png") center fixed no-repeat;
   background-size: cover; }
 
-.jumbotron h1 {
+.jumbotron {
   color: white;
-  margin-top: 167px;
   text-align: center; }
+
+.jumbotron img {
+  margin-top: 100px;
+  margin-bottom: 20px;
+}
 
 #main {
   background: url("../img/shattered_@2X.png") repeat; }
@@ -50,7 +54,7 @@ body {
 
 #info {
   margin-bottom: 40px; }
-  #info #dash-info {
+  #info .dash-info {
     font-size: 14pt; }
 
 #facts {

@@ -83,8 +83,8 @@ public:
         unitSquare = new Mesh( new MeshAsset( internalResource, aiImportFileFromMemory(
                                         unitSquareMesh.toStringz(), unitSquareMesh.length,
                                         aiImportOptions, "obj" ).mMeshes[0] ) );
-			
-		foreach( file; scanDirectory( Resources.Meshes ) )
+            
+        foreach( file; scanDirectory( Resources.Meshes ) )
         {
             // Load mesh
             const aiScene* scene = aiImportFile( file.fullPath.toStringz, aiImportOptions );
@@ -112,35 +112,31 @@ public:
             aiReleaseImport( scene );
         }
 
-		// Load animations
-		foreach( file; scanDirectory( Resources.Animation ) )
-		{
-			// Get the folder name (The mesh name)
-			import std.path: dirSeparator;
-			auto meshName = file.directory;
-			while( meshName.countUntil( dirSeparator ) >= 0 )
-				meshName = meshName[ meshName.countUntil( dirSeparator )+1..$ ];
+        // Load animations
+        foreach( file; scanDirectory( Resources.Animation ) )
+        {
+            // Get the folder name (The mesh name)
+            import std.path: dirSeparator;
+            auto meshName = file.directory;
+            while( meshName.countUntil( dirSeparator ) >= 0 )
+                meshName = meshName[ meshName.countUntil( dirSeparator )+1..$ ];
 
-			warning( "Animation name: ", file.baseFileName );
-
-			// If animation and the animations mesh exists
-			if( meshes[ meshName ].animationData )
-			{
-				// Load scene
-				const aiScene* scene = aiImportFile( file.fullPath.toStringz, aiImportOptions );
-				assert( scene, "Failed to load scene file '" ~ file.fullPath ~ "' Error: " ~ aiGetErrorString().fromStringz() );
-				
-				if( scene.mNumAnimations > 0 )
-				{
-					meshes[ meshName ].animationData.addAnimationSet( file.baseFileName, scene.mAnimations[ 0 ], 24 ); // ?
-
-					warning( "Number of animations: ", meshes[ meshName ].animationData.animationSet.length );
-				}
-				
-				// Release scene
-				aiReleaseImport( scene );
-			}
-		}
+            // If animation and the animations mesh exists
+            if( meshes[ meshName ].animationData )
+            {
+                // Load scene
+                const aiScene* scene = aiImportFile( file.fullPath.toStringz, aiImportOptions );
+                assert( scene, "Failed to load scene file '" ~ file.fullPath ~ "' Error: " ~ aiGetErrorString().fromStringz() );
+                
+                if( scene.mNumAnimations > 0 )
+                {
+                    meshes[ meshName ].animationData.addAnimationSet( file.baseFileName, scene.mAnimations[ 0 ], 24 ); // ?
+                }
+                
+                // Release scene
+                aiReleaseImport( scene );
+            }
+        }
 
         foreach( file; scanDirectory( Resources.Textures ) )
         {

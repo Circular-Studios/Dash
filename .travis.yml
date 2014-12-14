@@ -1,19 +1,19 @@
 language: d
+d:
+  - dmd-2.066.1
+matrix:
+  allow_failures:
+    - os: osx
 os:
   - linux
   - osx
-env:
-  - DMD_VER=2.066.0 DUB_VER=0.9.22
 install:
-  - bash .travis/setup_linux.sh
-  - bash .travis/setup_osx.sh
-  # Install dub
-  - DUB_TAR=dub-${DUB_VER}-${TRAVIS_OS_NAME}-x86_64.tar.gz
-  - wget http://code.dlang.org/files/${DUB_TAR}
-  - sudo tar -C /usr/local/bin -zxf ${DUB_TAR}
-  # Install x11
-  - sudo dub fetch x11 --version="~>1.0"
-script: sudo dub test
+  - sudo cp ./lib/$TRAVIS_OS_NAME/* /usr/lib
+  - bash .travis/setup_linux
+  - bash .travis/setup_osx
+script:
+  - dub fetch x11 --version="~>1.0"
+  - dub test --compiler=${DC}
 notifications:
   webhooks:
     urls:

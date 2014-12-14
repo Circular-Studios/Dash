@@ -1,5 +1,6 @@
 markdown: redcarpet
 redcarpet:
     extensions: [ "tables", "fenced_code_blocks", "strikethrough", "disable_indented_code_blocks", "superscript" ]
-url: http://circularstudios.com/dash
+url: http://dash.circularstudios.com
+landing: index.html
 api: /api/latest/

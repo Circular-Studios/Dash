@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Dash Docs - Scripts</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <!-- Le styles -->
+    <link href="http://dash.circularstudios.com/assets/css/bootstrap.css" rel="stylesheet" />
+    <style>
+      /* 60px to make the container go all the way
+      to the bottom of the topbar */
+      body { padding-top: 60px; }
+    </style>
+    <link href="http://dash.circularstudios.com/assets/css/bootstrap-responsive.css" rel="stylesheet" />
+    <link href="http://dash.circularstudios.com/assets/css/docs.css" rel="stylesheet" />
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" type="image/png" href="http://dash.circularstudios.com/assets/img/dash-logo.png" />
+  </head>
+  <body>
+    <!--<a href="https://github.com/driftyco/jetstrap-docs"><img style="position: absolute; z-index: 10000; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>-->
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a href="index.html/" class="brand"><img src="http://dash.circularstudios.com/assets/img/Dash.png"></a>
+          <ul class="nav pull-right">
+            <li><a href="https://github.com/Circular-Studios/Dash">Dash on GitHub</a></li>
+            <li><a href="http://dash.circularstudios.com/api/latest">API Documentation</a></li>
+            <li><a href="http://circularstudios.com">Circular Studios</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="span3">
+          <ul id="menu" class="nav nav-list" data-spy="affix">
+            <li class="nav-header">DASH DOCS</li>
+            <li data-section="index"><a href="http://dash.circularstudios.com/">Home</a></li>
+            <li class="nav-header">GUIDES</li>
+            <li data-section="guides/gettingstarted"><a href="http://dash.circularstudios.com/guides/gettingstarted.html">Getting Started</a></li>
+            <li data-section="guides/prefabs"><a href="http://dash.circularstudios.com/guides/prefabs.html">Prefabs</a></li>
+            <li data-section="guides/scripts"><a href="http://dash.circularstudios.com/guides/scripts.html">Scripts</a></li>
+            <li class="nav-header">SCHEMAS</li>
+            <li data-section="guides/schemas/objects"><a href="http://dash.circularstudios.com/guides/schemas/objects.html">Objects</a></li>
+            <li data-section="guides/schemas/materials"><a href="http://dash.circularstudios.com/guides/schemas/materials.html">Materials</a></li>
+          </ul>
+        </div>
+        <div class="span9">
+<h1>Scripts</h1>
+
+<hr>
+
+<h3>The Game Script</h3>
+
+<p>You should always have a game script, or a script that is not attached to an
+object that controls game state. The class should extend
+<a href="/api/latest//core/dgame/DGame.html"><code>DGame</code></a>, and extend any or all
+of the following:</p>
+
+<ul>
+<li><a href="/api/latest//core/dgame/DGame.title.html"><code>title</code></a>: The title of the window (for the title bar and taskbar).</li>
+<li><a href="/api/latest//core/dgame/DGame.onInitialize.html"><code>onInitialize</code></a>: Called when the game is starting.</li>
+<li><a href="/api/latest//core/dgame/DGame.onUpdate.html"><code>onUpdate</code></a>: Called every frame on the update cycle.</li>
+<li><a href="/api/latest//core/dgame/DGame.onDraw.html"><code>onDraw</code></a>: Called every frame before rendering.</li>
+<li><a href="/api/latest//core/dgame/DGame.onShutdown.html"><code>onShutdown</code></a>: Called on shutdown.</li>
+<li><a href="/api/latest//core/dgame/DGame.onRefresh.html"><code>onRefresh</code></a>: Called when assets are refreshing.</li>
+</ul>
+
+<h3>Component Scripts</h3>
+
+<p>Component scripts are any scripts you would want to attach to an object. The
+class extend the <a href="/api/latest//components/component/Component.html"><code>Component</code></a>
+class. If you want them to be addable through YAML, you should annotate the class
+with <a href="/api/latest//components/component/yamlComponent.html"><code>@yamlComponent()</code></a>.
+You should also add a mixin of
+<a href="/api/latest//components/component/registerComponents.html"><code>registerComponents</code></a>
+(with the template parameter being the name of the current module) anywhere in
+your scripts, but it is recommended to add it in the module you&#39;re registering.
+You should also annotate each member with
+<a href="/api/latest//components/component/field.html"><code>@field()</code></a>, with an
+optional parameter that is what you want the name of the field to be in the YAML.
+The template parameter is the <a href="#loaders">loader</a> you want to use for the parameter,
+which overrides the loader (if there is one) for the type of the field.</p>
+
+<p>An example script might look like this:</p>
+<div class="highlight"><pre><code class="language-d" data-lang="d"><span class="k">import</span> <span class="n">dash</span><span class="p">.</span><span class="n">components</span><span class="p">,</span> <span class="n">dash</span><span class="p">.</span><span class="n">utility</span><span class="p">;</span>
+
+<span class="nd">@yamlComponent</span><span class="p">()</span>
+<span class="k">class</span> <span class="n">MyComponent</span> <span class="p">:</span> <span class="n">Component</span>
+<span class="p">{</span>
+    <span class="nd">@field</span><span class="p">()</span>
+    <span class="kt">float</span> <span class="n">x</span><span class="p">;</span>
+    <span class="nd">@field</span><span class="p">(</span> <span class="s">&quot;Y&quot;</span> <span class="p">)</span>
+    <span class="kt">float</span> <span class="n">y</span><span class="p">;</span>
+
+    <span class="k">override</span> <span class="kt">void</span> <span class="n">initialize</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">logNotice</span><span class="p">(</span> <span class="s">&quot;Initializing!&quot;</span> <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>An object definition that uses it might look like this:</p>
+<div class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span class="nn">---</span>
+<span class="l-Scalar-Plain">Name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Object3</span>
+<span class="l-Scalar-Plain">Mesh</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MeshX</span>
+<span class="l-Scalar-Plain">Material</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">MaterialY</span>
+<span class="l-Scalar-Plain">MyComponent</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">x</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1.0</span>
+    <span class="l-Scalar-Plain">Y</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">10.2</span>
+</code></pre></div>
+<p><div id="loaders" /></p>
+
+<h3>Loaders</h3>
+
+<p>Loaders can be specified on subclasses of <code>YamlObject</code> and
+<a href="/api/latest//components/component/field.html"><code>@field()</code></a>s. They
+exist so that you may add a field or component to an object that has already
+been created. A good example is <a href="/api/latest//components/mesh/Mesh.html"><code>Mesh</code></a>es,
+which rely on loaders because they are not created from YAML, but instead from
+files. They&#39;re annotation looks something like this:</p>
+<div class="highlight"><pre><code class="language-d" data-lang="d"><span class="nd">@yamlComponent</span><span class="p">!(</span> <span class="s">q{</span><span class="n">name</span> <span class="p">=&gt;</span> <span class="n">Assets</span><span class="p">.</span><span class="n">get</span><span class="p">!</span><span class="n">Mesh</span><span class="p">(</span> <span class="n">name</span> <span class="p">)</span><span class="s">}</span> <span class="p">)()</span>
+<span class="k">class</span> <span class="n">Mesh</span> <span class="p">:</span> <span class="n">Asset</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</code></pre></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="http://dash.circularstudios.com/assets/js/bootstrap.js"></script>
+    <script>
+      $( '#menu [data-section="guides/scripts"]' ).addClass( 'active' );
+    </script>
+  </body>
+</html>

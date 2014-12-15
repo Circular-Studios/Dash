@@ -94,7 +94,7 @@ public:
             if( scene.mNumMeshes > 0 )
             {
                 if( file.baseFileName in meshes )
-                    warning( "Mesh ", file.baseFileName, " exsists more than once." );
+                    warning( "Mesh ", file.baseFileName, " exists more than once." );
 
                 auto newMesh = new MeshAsset( file, scene.mMeshes[ 0 ] );
 
@@ -119,10 +119,10 @@ public:
             import std.path: dirSeparator;
             auto meshName = file.directory;
             while( meshName.countUntil( dirSeparator ) >= 0 )
-                meshName = meshName[ meshName.countUntil( dirSeparator )+1..$ ];
+                meshName = meshName[ meshName.countUntil( dirSeparator ) + 1..$ ];
 
-            // If animation and the animations mesh exists
-            if( meshes[ meshName ].animationData )
+            // If animations mesh exists and animation
+            if( meshName in meshes && meshes[ meshName ].animationData )
             {
                 // Load scene
                 const aiScene* scene = aiImportFile( file.fullPath.toStringz, aiImportOptions );
@@ -132,10 +132,18 @@ public:
                 {
                     meshes[ meshName ].animationData.addAnimationSet( file.baseFileName, scene.mAnimations[ 0 ], 24 ); // ?
                 }
+				else
+				{
+					warning( "Could not add the animation. This animation folder name refers to the ", meshName, " mesh, yet does not have animation on it.");
+				}
                 
                 // Release scene
                 aiReleaseImport( scene );
             }
+			else
+			{
+				warning( "Could not add the animation. Either there is no 'Animations' folder or this animation folder name refers to a non-existing ", meshName, " mesh.");
+			}
         }
 
         foreach( file; scanDirectory( Resources.Textures ) )

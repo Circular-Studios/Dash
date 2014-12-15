@@ -12,7 +12,7 @@ import std.file, std.path, std.stdio, std.array, std.algorithm, std.datetime;
 enum Resources : string
 {
     Home = "..",
-    Animation = Home ~ "/Animation",
+    Animation = Home ~ "/Animations",
     Materials = Home ~ "/Materials",
     Meshes = Home ~ "/Meshes",
     Textures = Home ~ "/Textures",

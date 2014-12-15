@@ -229,6 +229,21 @@ UUID scheduleDelayedTask( Duration delay, void delegate() dg )
         }
     } );
 }
+///
+unittest
+{
+    bool taskRan = false;
+
+    scheduleDelayedTask( 1.seconds, { taskRan = true; } );
+
+    while( scheduledTasks.length )
+    {
+        executeTasks();
+        Time.update();
+    }
+
+    assert( taskRan );
+}
 
 /**
  * Schedule a task to be executed on an interval, until the task returns true.

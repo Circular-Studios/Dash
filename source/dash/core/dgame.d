@@ -96,89 +96,85 @@ public:
         while( currentState != EngineState.Quit )
         {
             // Frame Zone
+            auto frameZone = DashProfiler.startZone( "Frame" );
+
+            if( currentState == EngineState.Reset )
             {
-                auto frameZone = DashProfiler.startZone( "Frame" );
+                stop();
+                start();
+                GC.collect();
+            }
+            else if( currentState == EngineState.Refresh )
+            {
+                refresh();
+            }
 
-                if( currentState == EngineState.Reset )
-                {
-                    stop();
-                    start();
-                    GC.collect();
-                }
-                else if( currentState == EngineState.Refresh )
-                {
-                    refresh();
-                }
+            //////////////////////////////////////////////////////////////////////////
+            // Update
+            //////////////////////////////////////////////////////////////////////////
 
-                //////////////////////////////////////////////////////////////////////////
-                // Update
-                //////////////////////////////////////////////////////////////////////////
+            // Platform specific program stuff
+            Graphics.messageLoop();
 
-                // Platform specific program stuff
-                Graphics.messageLoop();
+            // Update time
+            Time.update();
 
-                // Update time
-                Time.update();
+            // Update input
+            Input.update();
 
-                // Update input
-                Input.update();
+            // Update webcore
+            if( stateFlags.updateUI )
+            {
+                auto uiUpdateZone = DashProfiler.startZone( "UI Update" );
+                UserInterface.updateAwesomium();
+            }
 
-                // Update webcore
-                if( stateFlags.updateUI )
-                {
-                    auto uiUpdateZone = DashProfiler.startZone( "UI Update" );
-                    UserInterface.updateAwesomium();
-                }
+            // Update physics
+            //if( stateFlags.updatePhysics )
+            //  PhysicsController.stepPhysics( Time.deltaTime );
 
-                // Update physics
-                //if( stateFlags.updatePhysics )
-                //  PhysicsController.stepPhysics( Time.deltaTime );
+            if( stateFlags.updateTasks )
+            {
+                auto taskZone = DashProfiler.startZone( "Tasks" );
+                executeTasks();
+            }
 
-                if( stateFlags.updateTasks )
-                {
-                    auto taskZone = DashProfiler.startZone( "Tasks" );
-                    executeTasks();
-                }
+            if( stateFlags.updateScene )
+            {
+                auto sceneUpdateZone = DashProfiler.startZone( "Scene Update" );
+                activeScene.update();
+            }
 
-                if( stateFlags.updateScene )
-                {
-                    auto sceneUpdateZone = DashProfiler.startZone( "Scene Update" );
-                    activeScene.update();
-                }
+            // Do the updating of the child class.
+            auto gameUpdateZone = DashProfiler.startZone( "Game Update" );
+            onUpdate();
+            gameUpdateZone.destroy();
 
-                // Do the updating of the child class.
-                {
-                    auto gameUpdateZone = DashProfiler.startZone( "Game Update" );
-                    onUpdate();
-                }
+            //////////////////////////////////////////////////////////////////////////
+            // Draw
+            //////////////////////////////////////////////////////////////////////////
 
-                //////////////////////////////////////////////////////////////////////////
-                // Draw
-                //////////////////////////////////////////////////////////////////////////
+            auto sceneDrawZone = DashProfiler.startZone( "Scene Draw" );
+            activeScene.draw();
+            sceneDrawZone.destroy();
 
-                {
-                    auto sceneDrawZone = DashProfiler.startZone( "Scene Draw" );
-                    activeScene.draw();
-                }
+            // Draw in child class
+            auto gameDrawZone = DashProfiler.startZone( "Game Draw" );
+            onDraw();
+            gameDrawZone.destroy();
 
-                // Draw in child class
-                {
-                    auto gameDrawZone = DashProfiler.startZone( "Game Draw" );
-                    onDraw();
-                }
+            // End drawing
+            auto renderZone = DashProfiler.startZone( "Render" );
+            Graphics.endDraw();
+            renderZone.destroy();
 
-                // End drawing
-                {
-                    auto renderZone = DashProfiler.startZone( "Render" );
-                    Graphics.endDraw();
-                }
+            // Update the editor.
+            auto editorUpdateZone = DashProfiler.startZone( "Editor Update" );
+            editor.update();
+            editorUpdateZone.destroy();
 
-                // Update the editor.
-                {
-                    auto editorUpdateZone = DashProfiler.startZone( "Editor Update" );
-                    editor.update();
-                }
-            } // Frame zone
+            // End the  frame zone.
+            frameZone.destroy();
 
             // Update the profiler
             DashProfiler.update();

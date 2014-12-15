@@ -52,7 +52,7 @@ public:
     }
 
     /**
-     * Create animation object based on asset a nimation
+     * Create animation object based on asset animation
      */
     this( AnimationData assetAnimation )
     {
@@ -240,9 +240,6 @@ public:
                 boneHierarchy = makeBonesFromHierarchy( mesh, nodeHierarchy.mChildren[ i ] );
             }
         }
-
-        //for( int ii = 0; ii < numAnimations; ii++)
-        //addAnimationSet( animations[ ii ], 24 );
     }
 
     /**

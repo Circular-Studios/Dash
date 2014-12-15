@@ -83,7 +83,7 @@ public:
         unitSquare = new Mesh( new MeshAsset( internalResource, aiImportFileFromMemory(
                                         unitSquareMesh.toStringz(), unitSquareMesh.length,
                                         aiImportOptions, "obj" ).mMeshes[0] ) );
-            
+
         foreach( file; scanDirectory( Resources.Meshes ) )
         {
             // Load mesh

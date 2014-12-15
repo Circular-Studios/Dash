@@ -1,12 +1,18 @@
 language: d
 d:
   - dmd-2.066.1
-matrix:
-  allow_failures:
-    - os: osx
+  - ldc-0.15.1
+  - gdc-4.9.0
 os:
   - linux
   - osx
+
+matrix:
+  allow_failures:
+    - os: osx
+    - d: ldc-0.15.1
+    - d: gdc-4.9.0
+
 install:
   - sudo cp ./lib/$TRAVIS_OS_NAME/* /usr/lib
   - bash .travis/setup_linux
@@ -14,6 +20,7 @@ install:
 script:
   - dub fetch x11 --version="~>1.0"
   - dub test --compiler=${DC}
+
 notifications:
   webhooks:
     urls:

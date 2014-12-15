@@ -112,6 +112,32 @@ public:
             aiReleaseImport( scene );
         }
 
+        // Load animations
+        foreach( file; scanDirectory( Resources.Animation ) )
+        {
+            // Get the folder name (The mesh name)
+            import std.path: dirSeparator;
+            auto meshName = file.directory;
+            while( meshName.countUntil( dirSeparator ) >= 0 )
+                meshName = meshName[ meshName.countUntil( dirSeparator )+1..$ ];
+
+            // If animation and the animations mesh exists
+            if( meshes[ meshName ].animationData )
+            {
+                // Load scene
+                const aiScene* scene = aiImportFile( file.fullPath.toStringz, aiImportOptions );
+                assert( scene, "Failed to load scene file '" ~ file.fullPath ~ "' Error: " ~ aiGetErrorString().fromStringz() );
+                
+                if( scene.mNumAnimations > 0 )
+                {
+                    meshes[ meshName ].animationData.addAnimationSet( file.baseFileName, scene.mAnimations[ 0 ], 24 ); // ?
+                }
+                
+                // Release scene
+                aiReleaseImport( scene );
+            }
+        }
+
         foreach( file; scanDirectory( Resources.Textures ) )
         {
             if( file.baseFileName in textures )

@@ -23,7 +23,7 @@ private:
     AnimationData _animationData;
     /// Current animation out of all the animations in the asset animation
     @ignore
-    int _currentAnim;
+    string _currentAnim;
     /// Current time of the animation
     @ignore
     float _currentAnimTime;
@@ -36,7 +36,7 @@ private:
 
     /// Animation to return to if _animateOnce is true
     @ignore
-    int _returnAnimation;
+    string _returnAnimation;
     /// If the animation is animating once, then returning to _returnAnimation
     @ignore
     bool _animateOnce;
@@ -47,7 +47,6 @@ public:
 
     this()
     {
-        _currentAnim = 0;
         _currentAnimTime = 0.0f;
         _animating = true;
     }
@@ -59,6 +58,9 @@ public:
     {
         this();
         _animationData = assetAnimation;
+        // Change to passing in desired start animation
+        if( _animationData._animationSet.length > 0 )
+            _currentAnim = _animationData._animationSet.keys[ 0 ];
     }
 
     /**
@@ -71,7 +73,7 @@ public:
             // Update currentanimtime based on deltatime and animations fps
             _currentAnimTime += Time.deltaTime * 24.0f;
 
-            if( _currentAnimTime >= _animationData.animationSet[ _currentAnim ].duration * 24 - 1 )
+            if( _currentAnimTime >= _animationData.animationSet[ _currentAnim ].duration - 1 )
             {
                 _currentAnimTime = 0.0f;
 
@@ -81,10 +83,10 @@ public:
                     _currentAnim = _returnAnimation;
                 }
             }
-        }
 
-        // Calculate and store array of bonetransforms to pass to the shader
-        currBoneTransforms = _animationData.getTransformsAtTime( _currentAnim, _currentAnimTime );
+            // Calculate and store array of bonetransforms to pass to the shader
+            currBoneTransforms = _animationData.getTransformsAtTime( _currentAnim, _currentAnimTime );
+        }
     }
 
     /**
@@ -108,30 +110,78 @@ public:
     {
         _animating = false;
         _currentAnimTime = 0.0f;
+
+        // Do this once more
+        currBoneTransforms = _animationData.getTransformsAtTime( _currentAnim, _currentAnimTime );
     }
+    bool IsPlaying()
+    {
+        return _animating;
+    }
+
     /**
      * Switches the current animation
      */
-    void changeAnimation( int animNumber, int startAnimTime )
+    void changeAnimation( string animName, uint startAnimTime )
     {
-        if( animNumber < _animationData.animationSet.length )
+        if( animName in _animationData._animationSet )
         {
-            _currentAnim = animNumber;
-            _currentAnimTime = startAnimTime;
+            _currentAnim = animName;
+
+            if( startAnimTime < _animationData.animationSet[_currentAnim].duration )
+            {
+                _currentAnimTime = startAnimTime;
+            }
+            else
+            {
+                warning( "Changed animation successfully, yet animation time to start at was out of bounds." );
+                _currentAnimTime = 0;
+            }
+            
+            // Update the transforms to the new animation (In case it is the start or the animation is stopped)
+            currBoneTransforms = _animationData.getTransformsAtTime( _currentAnim, _currentAnimTime );
         }
         else
             warning( "Could not change to new animation, the animation did not exist." );
     }
-    /**
-    * Runs an animation once, then returns
-    */
-    void runAnimationOnce( int animNumber, int returnAnimNumber )
+
+    /// (Not fully Setup Yet)
+    /*unittest
     {
-        if( animNumber < _animationData.animationSet.length )
+        import std.stdio;
+        writeln( "Dash change animation unittest:" );
+
+        // Setup instance
+        _animationData = new AssetAnimation( );
+        _animationData.animationSet ~= new AnimationSet();
+        _animationData.animationSet ~= new AnimationSet();
+
+        //writeln( "basic" );
+        changeAnimation(1, 0);
+        assert( _currentAnim == 1);
+        assert( _currentAnimTime == 0);
+
+        //writeln( "anim# out of bounds" );
+        changeAnimation(50, 0);
+        assert( _currentAnim == 1);
+        assert( _currentAnimTime == 0);
+
+        //writeln( "start time out of bounds" );
+        changeAnimation(1, 100000);
+        assert( _currentAnim == 1);
+        assert( _currentAnimTime == 0);
+    }*/
+
+    /**
+    * Runs an animation once, then returns to a specific one
+    */
+    void runAnimationOnce( string animName )
+    {
+        if( animName in _animationData._animationSet )
         {
             _animateOnce = true;
-            _currentAnim = animNumber;
-            _returnAnimation = returnAnimNumber;
+            _returnAnimation = _currentAnim;
+            _currentAnim = animName;
             _currentAnimTime = 0;
         }
         else
@@ -154,7 +204,7 @@ class AnimationData : Asset
 {
 private:
     /// List of animations, containing all of the information specific to each
-    AnimationSet[] _animationSet;
+    AnimationSet[string] _animationSet;
     /// Amount of bones
     int _numberOfBones;
     /// Hierarchy of bones for this animation
@@ -190,9 +240,6 @@ public:
                 boneHierarchy = makeBonesFromHierarchy( mesh, nodeHierarchy.mChildren[ i ] );
             }
         }
-
-        for( int ii = 0; ii < numAnimations; ii++)
-            addAnimationSet( animations[ ii ], 24 );
     }
 
     /**
@@ -265,9 +312,10 @@ public:
         return -1;
     }
 
-    void addAnimationSet( const(aiAnimation*) animation, int fps )
+    public void addAnimationSet( string animName, const(aiAnimation*) animation, int fps )
     {
         AnimationSet newAnimSet;
+        newAnimSet.animName = animName;
         newAnimSet.duration = cast(float)animation.mDuration;
         newAnimSet.fps = fps;
         for( int i = 0; i < _numberOfBones; i++)
@@ -275,7 +323,7 @@ public:
             newAnimSet.bonePoses ~= new BonePose();
         }
         addPoses( animation, boneHierarchy, newAnimSet );
-        _animationSet ~= newAnimSet;
+        _animationSet[ animName ] = newAnimSet;
     }
     void addPoses( const(aiAnimation*) animation, Bone currBone, AnimationSet newAnimSet )
     {
@@ -322,7 +370,7 @@ public:
      *
      * Returns: The boneTransforms, returned to the gameobject animation component
      */
-    mat4f[] getTransformsAtTime( int animationNumber, float time )
+    mat4f[] getTransformsAtTime( string animationName, float time )
     {
         mat4f[] boneTransforms = new mat4f[ _numberOfBones ];
 
@@ -332,7 +380,7 @@ public:
             boneTransforms[ i ] = mat4f.identity;
         }
 
-        fillTransforms( animationSet[ animationNumber ].bonePoses, boneTransforms, boneHierarchy, time, mat4f.identity );
+        fillTransforms( animationSet[ animationName ].bonePoses, boneTransforms, boneHierarchy, time, mat4f.identity );
 
         return boneTransforms;
     }
@@ -471,6 +519,7 @@ public:
      */
     struct AnimationSet
     {
+        string animName;
         float duration;
         float fps;
         BonePose[] bonePoses;

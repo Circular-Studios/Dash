@@ -1,6 +1,7 @@
 /**
 * TODO
 */
+deprecated( "Please use SDL adapter instead." )
 module dash.graphics.adapters.win32gl;
 
 version( Windows ):

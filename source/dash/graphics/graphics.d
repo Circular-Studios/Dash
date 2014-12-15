@@ -20,35 +20,22 @@ public static:
      */
     final void initialize()
     {
-        version( DashUseSDL2 )
-        {
-            adapter = new Sdl;
-        }
-        else version( DashUseNativeAdapter )
+        version( DashUseNativeAdapter )
         {
             version( Windows )
             {
+                import dash.graphics.adapters.win32gl;
                 adapter = new Win32GL;
             }
             else version( linux )
             {
+                import dash.graphics.adapters.linux;
                 adapter = new Linux;
             }
         }
         else
         {
-            version( Windows )
-            {
-                adapter = new Win32GL;
-            }
-            else version( linux )
-            {
-                adapter = new Linux;
-            }
-            else
-            {
-                adapter = new Sdl;
-            }
+            adapter = new Sdl;
         }
 
         adapter.initialize();

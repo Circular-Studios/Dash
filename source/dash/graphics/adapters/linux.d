@@ -1,6 +1,7 @@
 ﻿/**
 * TODO
 */
+deprecated( "Please use SDL adapter instead." )
 module dash.graphics.adapters.linux;
 
 version( linux ):

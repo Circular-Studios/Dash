@@ -306,33 +306,8 @@ public:
      */
     vec2ui mousePos()
     {
-        version( DashUseSDL2 )
-        {
-            import dash.graphics;
-
-            if( !Sdl.get() )
-                return vec2ui( 0, 0 );
-
-            auto mouse = Sdl.get().sdl.mouse;
-            return vec2ui( cast(uint)mouse.x, cast(uint)( Graphics.height - mouse.y ) );
-        }
-        else version( Windows )
-        {
-            if( !Win32GL.get() )
-                return vec2ui( 0, 0 );
-
-            import dash.graphics;
-            import win32.windows;
-            POINT i;
-            GetCursorPos( &i );
-            ScreenToClient( Win32GL.get().hWnd, &i );
-
-            return vec2ui( i.x, Graphics.height - i.y );
-        }
-        else
-        {
-            return vec2ui( 0, 0 );
-        }
+        return vec2ui( cast(uint)Mouse.getAxisState( Mouse.Axes.XPos ),
+                       cast(uint)Mouse.getAxisState( Mouse.Axes.YPos ) );
     }
 
     /**

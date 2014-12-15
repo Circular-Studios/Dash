@@ -38,6 +38,10 @@
     "sourcePaths": [ "source/" ],
     "importPaths": [ "source/" ],
 
+    "sourceFiles": [ 
+        "third_party/DWinProgramming/win32/windef.d"
+    ],
+
     "versions": [
         "DashUseGl3n",
         "VibeCustomMain"

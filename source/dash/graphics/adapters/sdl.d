@@ -182,6 +182,11 @@ public:
                     shutdown();
                     break;
 
+                case SDL_MOUSEMOTION:
+                    Mouse.setAxisState( Mouse.Axes.XPos, event.motion.x );
+                    Mouse.setAxisState( Mouse.Axes.YPos, event.motion.y );
+                    break;
+
                 case SDL_APP_LOWMEMORY:
                 case SDL_APP_WILLENTERBACKGROUND:
                 case SDL_APP_DIDENTERBACKGROUND:
@@ -191,7 +196,6 @@ public:
                 case SDL_SYSWMEVENT:
                 case SDL_TEXTEDITING:
                 case SDL_TEXTINPUT:
-                case SDL_MOUSEMOTION:
                 case SDL_JOYAXISMOTION:
                 case SDL_JOYBALLMOTION:
                 case SDL_JOYHATMOTION:

@@ -49,9 +49,15 @@ private LRESULT WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
             break;
         // On mouse scroll
         case WM_MOUSEWHEEL:
-            Mouse.setAxisState( Mouse.Axes.ScrollWheel, Mouse.getAxisState( Mouse.Axes.ScrollWheel ) + ( ( cast(int)wParam >> 16 ) / 120 ) );
+            Mouse.setAxisState( Mouse.Axes.ScrollWheel, Mouse.getAxisState( Mouse.Axes.ScrollWheel ) + ( HIWORD( wParam ) / WHEEL_DELTA ) );
             break;
             // If no change, send to default windows handler
+        // On mouse move
+        case WM_MOUSEMOVE:
+            Mouse.setAxisState( Mouse.Axes.XPos, LOWORD( wParam ) );
+            Mouse.setAxisState( Mouse.Axes.YPos, HIWORD( wParam ) );
+            break;
+
         default:
             return DefWindowProc( hWnd, message, wParam, lParam );
     }

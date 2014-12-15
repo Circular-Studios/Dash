@@ -57,10 +57,22 @@ body {
 }
 
 .jumbotron {
+	color: white;
+
 	h1 {
 		color: white;
 		margin-top: 167px;
 		text-align: center;
+	}
+
+	.inner.cover {
+		margin-top: 75px;
+		text-align: center;
+
+		img {
+			margin-left: auto;
+			margin-right: auto;
+		}
 	}
 }
 
@@ -84,7 +96,14 @@ body {
 	background-color: rgba(64, 64, 64, 0.30);
 	padding-top: 20px;
 	padding-bottom: 40px;
+	padding-left: 40px;
+	padding-right: 40px;
 	margin-bottom: 40px;
+
+	i {
+		margin-top: 10px;
+		margin-bottom: 15px;
+	}
 
 	img {
 		margin: 30px auto 20px auto;
@@ -92,7 +111,7 @@ body {
 	}
 
 	p {
-		margin: 0px 50px;
+		margin: 0px 5px;
 	}
 }
 
@@ -102,6 +121,7 @@ body {
 	img {
 		margin: 20px auto 20px auto;
 		display: block;
+		height: 416px;
 	}
 }
 
@@ -133,14 +153,28 @@ body {
   }
 }
 
-@media only screen and (min-width: 320px) and (max-width: 667px) {
+@media only screen and (min-width: 320px) and (max-width: 767px) {
+
+	#games {
+
+		img {
+			width: 300px;
+			height: auto;
+		}
+	}
 	#cover {
 		/*background:url('../images/cover-mobile.png') center fixed no-repeat;*/
-		background-position: -750px 0px;
+		background-position: -955px 0px;
 	}
 
 	#facts {
 		padding-top: 10px;
+
+		i {
+			margin-left: auto;
+			margin-right: auto;
+			display: block;
+		}
 	}
 
 	.footer {

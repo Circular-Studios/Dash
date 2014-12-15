@@ -38,10 +38,6 @@
     "sourcePaths": [ "source/" ],
     "importPaths": [ "source/" ],
 
-    "sourceFiles": [ 
-        "third_party/DWinProgramming/win32/windef.d"
-    ],
-
     "versions": [
         "DashUseGl3n",
         "VibeCustomMain"
@@ -50,6 +46,9 @@
     "-ddoxFilterArgs": [ "--min-protection=Protected" ],
 
     "importPaths-windows": [ "third_party/DWinProgramming" ],
+    "sourceFiles-windows": [ 
+        "third_party/DWinProgramming/win32/windef.d"
+    ],
     "preBuildCommands-windows": [
         "robocopy $PACKAGE_DIR\\lib\\windows\\ .\\ /MIR /XX /NFL /NDL /NJH /NJS || (exit 0)"
     ],

@@ -1,0 +1,6 @@
+#!/bin/bash
+# Only run on Linux
+if [[ $TRAVIS_OS_NAME == "linux" ]]; then
+    # Install other dependencies
+    sudo apt-get install libfreeimage-dev libjpeg62-dev libevent-dev libssl-dev
+fi

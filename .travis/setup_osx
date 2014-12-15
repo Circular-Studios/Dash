@@ -1,0 +1,8 @@
+#!/bin/bash
+# Only run on OSX
+if [[ $TRAVIS_OS_NAME == "osx" ]]; then
+    # Install Brew dependencies
+    brew update
+    brew install freeimage
+    brew install libevent
+fi

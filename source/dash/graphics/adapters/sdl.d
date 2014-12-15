@@ -184,7 +184,7 @@ public:
 
                 case SDL_MOUSEMOTION:
                     Mouse.setAxisState( Mouse.Axes.XPos, event.motion.x );
-                    Mouse.setAxisState( Mouse.Axes.YPos, event.motion.y );
+                    Mouse.setAxisState( Mouse.Axes.YPos, Graphics.height - event.motion.y );
                     break;
 
                 case SDL_APP_LOWMEMORY:

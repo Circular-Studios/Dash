@@ -257,6 +257,7 @@ public:
     */
     override void swapBuffers()
     {
+        auto zone = DashProfiler.startZone( "Swap Buffers" );
         SwapBuffers( deviceContext );
     }
 

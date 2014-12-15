@@ -51,12 +51,12 @@ public:
         if(config.graphics.usingGl33)
         {
             SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3); 
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
         }
         else
         {
             SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0); 
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
         }
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
@@ -80,12 +80,12 @@ public:
 
         if(config.graphics.vsync)
         {
-            SDL_GL_SetSwapInterval(1); 
+            SDL_GL_SetSwapInterval(1);
             trace("vsync enabled!");
         }
         else
         {
-            SDL_GL_SetSwapInterval(0); 
+            SDL_GL_SetSwapInterval(0);
             trace("vsync disabled!");
         }
     }
@@ -117,6 +117,7 @@ public:
 
     override void swapBuffers()
     {
+        auto zone = DashProfiler.startZone( "Swap Buffers" );
         window.swapBuffers();
     }
 
@@ -157,7 +158,7 @@ public:
                     Mouse.setButtonState( button, event.button.state == SDL_PRESSED );
                     break;
                 }
-                
+
                 //On keypress
                 case SDL_KEYDOWN:
                     Keyboard.setButtonState( cast(Keyboard.Buttons)event.key.keysym.sym, true );

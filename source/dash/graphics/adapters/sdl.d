@@ -33,14 +33,6 @@ public:
         // Load properties from config.
         loadProperties();
 
-        //SDL_Init( SDL_INIT_VIDEO );
-
-        /*window = SDL_CreateWindow(
-            DGame.instance.title.toStringz(),
-            SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-            width, height,
-            SDL_WINDOW_OPENGL
-        );*/
         window = new SDL2Window( sdl,
             ( screenWidth - width ) / 2, ( screenHeight - height ) / 2,
             width, height,
@@ -72,7 +64,6 @@ public:
             trace("Could not find icon.bmp in Textures folder!");
         }
 
-        //context = SDL_GL_CreateContext( window );
         glContext = new SDL2GLContext( window );
         glContext.makeCurrent();
 
@@ -88,13 +79,11 @@ public:
             SDL_GL_SetSwapInterval(0);
             trace("vsync disabled!");
         }
+        resize();
     }
 
     override void shutdown()
     {
-        /*SDL_GL_DeleteContext( context );
-        SDL_DestroyWindow( window );
-        SDL_Quit();*/
         glContext.close();
         window.close();
         sdl.close();
@@ -103,7 +92,24 @@ public:
     override void resize()
     {
         loadProperties();
-        window.setSize( width, height );
+
+        switch(config.display.windowMode)
+        {
+            case WindowType.Fullscreen:
+                trace("Setting main window to Fullscreen mode!");
+                window.setFullscreenSetting( SDL_WINDOW_FULLSCREEN );
+                break;
+            case WindowType.FullscreenDesktop:
+                trace("Setting main window to FullscreenDesktop mode!");
+                window.setFullscreenSetting( SDL_WINDOW_FULLSCREEN_DESKTOP );
+                break;
+            case WindowType.Windowed:
+            default: 
+                trace("Setting main window to Windowed mode!");
+                window.setFullscreenSetting( 0 );
+                window.setSize( width, height );
+                break;
+        }
 
         resizeDefferedRenderBuffer();
         glViewport( 0, 0, width, height );

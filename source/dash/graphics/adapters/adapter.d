@@ -16,7 +16,8 @@ abstract class Adapter
 private:
     uint _width, _screenWidth;
     uint _height, _screenHeight;
-    bool _fullscreen, _backfaceCulling, _vsync;
+    bool _backfaceCulling, _vsync;
+    WindowType _mainWindowType;
 
 public:
     /// Pixel width of the rendering area
@@ -27,12 +28,14 @@ public:
     mixin( Property!_height );
     /// Pixel height of the actual window
     mixin( Property!_screenHeight );
-    /// If the screen properties match the rendering dimensions
-    mixin( Property!_fullscreen );
     /// Hiding backsides of triangles
     mixin( Property!_backfaceCulling );
     /// Vertical Syncing
     mixin( Property!_vsync );
+    /// The type for our main window
+    /// (Fullscreen, FullscreenDesktop, or Windowed)
+    mixin( Property!_mainWindowType );
+
     /**
      * Initializes the Adapter, called in loading
      */
@@ -92,8 +95,8 @@ protected:
      */
     final void loadProperties()
     {
-        fullscreen = config.display.fullscreen;
-        if( fullscreen )
+        mainWindowType = config.display.windowMode;
+        if( mainWindowType == WindowType.Fullscreen || mainWindowType == WindowType.FullscreenDesktop)
         {
             width = screenWidth;
             height = screenHeight;

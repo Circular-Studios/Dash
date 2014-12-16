@@ -17,6 +17,15 @@ const(Config) config() @property
     return configInst;
 }
 
+
+
+enum WindowType
+{
+    Fullscreen,
+    FullscreenDesktop,
+    Windowed
+}
+
 /**
  * Static class which handles the configuration options and YAML interactions.
  */
@@ -61,12 +70,13 @@ public:
 
     static struct DisplaySettings
     {
-        @rename( "Fullscreen" )
-        bool fullscreen;
+        @rename( "WindowType" ) @optional @byName
+        WindowType windowMode = WindowType.Windowed;
         @rename( "Height" ) @optional
         uint height = 1920;
         @rename( "Width" ) @optional
         uint width = 720;
+
     }
 
     static struct GraphicsSettings

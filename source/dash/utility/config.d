@@ -17,13 +17,12 @@ const(Config) config() @property
     return configInst;
 }
 
-
-
 enum WindowType
 {
     Fullscreen,
-    FullscreenDesktop,
-    Windowed
+    FullscreenWindowed,
+    Windowed,
+    BorderlessWindow
 }
 
 /**
@@ -76,7 +75,6 @@ public:
         uint height = 1920;
         @rename( "Width" ) @optional
         uint width = 720;
-
     }
 
     static struct GraphicsSettings

@@ -93,21 +93,32 @@ public:
     {
         loadProperties();
 
-        switch(config.display.windowMode)
+        bool bordered = false;
+        
+        switch( windowType )
         {
             case WindowType.Fullscreen:
                 trace("Setting main window to Fullscreen mode!");
                 window.setFullscreenSetting( SDL_WINDOW_FULLSCREEN );
                 break;
-            case WindowType.FullscreenDesktop:
-                trace("Setting main window to FullscreenDesktop mode!");
-                window.setFullscreenSetting( SDL_WINDOW_FULLSCREEN_DESKTOP );
-                break;
+            case WindowType.FullscreenWindowed:
+                trace("Setting main window to Fullscreen Windowed mode!");
+                bordered = false;
+                width = screenWidth;
+                height = screenHeight;
+                goto default;
             case WindowType.Windowed:
-            default: 
                 trace("Setting main window to Windowed mode!");
+                bordered = true;
+                goto default;
+            case WindowType.BorderlessWindow:
+                trace("Setting main window to Borderless Windowed mode!");
+                bordered = false;
+                goto default;
+            default: 
                 window.setFullscreenSetting( 0 );
                 window.setSize( width, height );
+                window.setBordered( bordered );
                 break;
         }
 

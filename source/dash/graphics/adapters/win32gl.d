@@ -214,7 +214,7 @@ public:
 
         loadProperties();
 
-        if( mainWindowType == WindowType.Fullscreen )
+        if( windowType == WindowType.Fullscreen )
         {
             width = screenWidth;
             height = screenHeight;
@@ -225,7 +225,7 @@ public:
             style |= DWS_WINDOWED;
         }
 
-        if( _wasFullscreen != ( mainWindowType == WindowType.Fullscreen) )
+        if( _wasFullscreen != ( windowType == WindowType.Fullscreen ) )
         {
             SetWindowLong( hWnd, GWL_STYLE, style );
             SetWindowPos( hWnd, null, ( screenWidth - width ) / 2, ( screenHeight - height ) / 2,
@@ -234,7 +234,7 @@ public:
                           SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED );
         }
 
-        _wasFullscreen = ( mainWindowType == WindowType.Fullscreen);
+        _wasFullscreen = ( windowType == WindowType.Fullscreen );
 
         resizeDefferedRenderBuffer();
 
@@ -281,7 +281,7 @@ public:
     */
     final void openWindow( bool showWindow )
     {
-        hWnd = CreateWindowEx( 0, DGame.instance.title.ptr, DGame.instance.title.ptr, (mainWindowType == WindowType.Fullscreen ) ? DWS_FULLSCREEN : DWS_WINDOWED,
+        hWnd = CreateWindowEx( 0, DGame.instance.title.ptr, DGame.instance.title.ptr, ( windowType == WindowType.Fullscreen ) ? DWS_FULLSCREEN : DWS_WINDOWED,
                                ( screenWidth - width ) / 2, ( screenHeight - height ) / 2, width, height,
                               null, null, hInstance, null );
 

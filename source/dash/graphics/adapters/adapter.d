@@ -17,7 +17,7 @@ private:
     uint _width, _screenWidth;
     uint _height, _screenHeight;
     bool _backfaceCulling, _vsync;
-    WindowType _mainWindowType;
+    WindowType _windowType;
 
 public:
     /// Pixel width of the rendering area
@@ -34,7 +34,7 @@ public:
     mixin( Property!_vsync );
     /// The type for our main window
     /// (Fullscreen, FullscreenDesktop, or Windowed)
-    mixin( Property!_mainWindowType );
+    mixin( Property!_windowType );
 
     /**
      * Initializes the Adapter, called in loading
@@ -95,8 +95,8 @@ protected:
      */
     final void loadProperties()
     {
-        mainWindowType = config.display.windowMode;
-        if( mainWindowType == WindowType.Fullscreen || mainWindowType == WindowType.FullscreenDesktop)
+        windowType = config.display.windowMode;
+        if( windowType == WindowType.Fullscreen)
         {
             width = screenWidth;
             height = screenHeight;

@@ -9,7 +9,6 @@ os:
 
 matrix:
   allow_failures:
-    - os: osx
     - d: ldc-0.15.1
     - d: gdc-4.9.0
 

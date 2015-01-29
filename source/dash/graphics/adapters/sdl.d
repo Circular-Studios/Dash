@@ -16,15 +16,21 @@ private:
 
 public:
     SDL2 sdl;
-    
+
     static @property Sdl get() { return cast(Sdl)Graphics.adapter; }
 
     override void initialize()
     {
+        import dash.utility.output: DashLogger;
+
         // Initialize OpenGL
         DerelictGL3.load();
         // Initialize SDL
-        sdl = new SDL2( null );
+        sdl = new SDL2( DashLogger.multiLogger );
+        sdl.subSystemInit( SDL_INIT_VIDEO );
+        sdl.subSystemInit( SDL_INIT_EVENTS );
+        sdl.subSystemInit( SDL_INIT_JOYSTICK );
+        sdl.subSystemInit( SDL_INIT_GAMECONTROLLER );
 
         // Get screen size.
         screenWidth = sdl.firstDisplaySize().x;

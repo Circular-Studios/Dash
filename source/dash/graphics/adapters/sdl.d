@@ -39,14 +39,6 @@ public:
         // Load properties from config.
         loadProperties();
 
-        //SDL_Init( SDL_INIT_VIDEO );
-
-        /*window = SDL_CreateWindow(
-            DGame.instance.title.toStringz(),
-            SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-            width, height,
-            SDL_WINDOW_OPENGL
-        );*/
         window = new SDL2Window( sdl,
             ( screenWidth - width ) / 2, ( screenHeight - height ) / 2,
             width, height,
@@ -78,7 +70,6 @@ public:
             trace("Could not find icon.bmp in Textures folder!");
         }
 
-        //context = SDL_GL_CreateContext( window );
         glContext = new SDL2GLContext( window );
         glContext.makeCurrent();
 
@@ -94,13 +85,11 @@ public:
             SDL_GL_SetSwapInterval(0);
             trace("vsync disabled!");
         }
+        resize();
     }
 
     override void shutdown()
     {
-        /*SDL_GL_DeleteContext( context );
-        SDL_DestroyWindow( window );
-        SDL_Quit();*/
         glContext.close();
         window.close();
         sdl.close();
@@ -109,7 +98,35 @@ public:
     override void resize()
     {
         loadProperties();
-        window.setSize( width, height );
+
+        bool bordered = false;
+        
+        switch( windowType )
+        {
+            case WindowType.Fullscreen:
+                trace("Setting main window to Fullscreen mode!");
+                window.setFullscreenSetting( SDL_WINDOW_FULLSCREEN );
+                break;
+            case WindowType.FullscreenWindowed:
+                trace("Setting main window to Fullscreen Windowed mode!");
+                bordered = false;
+                width = screenWidth;
+                height = screenHeight;
+                goto default;
+            case WindowType.Windowed:
+                trace("Setting main window to Windowed mode!");
+                bordered = true;
+                goto default;
+            case WindowType.BorderlessWindow:
+                trace("Setting main window to Borderless Windowed mode!");
+                bordered = false;
+                goto default;
+            default: 
+                window.setFullscreenSetting( 0 );
+                window.setSize( width, height );
+                window.setBordered( bordered );
+                break;
+        }
 
         resizeDefferedRenderBuffer();
         glViewport( 0, 0, width, height );

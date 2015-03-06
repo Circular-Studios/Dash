@@ -74,7 +74,7 @@ MyComponent:
 Loaders can be specified on subclasses of `YamlObject` and
 [`@field()`]({{ site.api }}/components/component/field.html)s. They
 exist so that you may add a field or component to an object that has already
-been created. A good example is [`Mesh`]({{ site.api }}/components/mesh/Mesh.html)es,
+been created. A good example is [`Meshes`]({{ site.api }}/components/mesh/Mesh.html),
 which rely on loaders because they are not created from YAML, but instead from
 files. They're annotation looks something like this:
 

@@ -15,7 +15,6 @@
     </style>
     <link href="http://dash.circularstudios.com/assets/css/bootstrap-responsive.css" rel="stylesheet" />
     <link href="http://dash.circularstudios.com/assets/css/docs.css" rel="stylesheet" />
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -52,7 +51,7 @@
           </ul>
         </div>
         <div class="span9">
-<h1>Scripts</h1>
+          <h1>Scripts</h1>
 
 <hr>
 
@@ -121,7 +120,7 @@ which overrides the loader (if there is one) for the type of the field.</p>
 <p>Loaders can be specified on subclasses of <code>YamlObject</code> and
 <a href="/api/latest//components/component/field.html"><code>@field()</code></a>s. They
 exist so that you may add a field or component to an object that has already
-been created. A good example is <a href="/api/latest//components/mesh/Mesh.html"><code>Mesh</code></a>es,
+been created. A good example is <a href="/api/latest//components/mesh/Mesh.html"><code>Meshes</code></a>,
 which rely on loaders because they are not created from YAML, but instead from
 files. They&#39;re annotation looks something like this:</p>
 <div class="highlight"><pre><code class="language-d" data-lang="d"><span class="nd">@yamlComponent</span><span class="p">!(</span> <span class="s">q{</span><span class="n">name</span> <span class="p">=&gt;</span> <span class="n">Assets</span><span class="p">.</span><span class="n">get</span><span class="p">!</span><span class="n">Mesh</span><span class="p">(</span> <span class="n">name</span> <span class="p">)</span><span class="s">}</span> <span class="p">)()</span>
@@ -131,7 +130,7 @@ files. They&#39;re annotation looks something like this:</p>
       </div>
     </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="http://dash.circularstudios.com/assets/js/bootstrap.js"></script>
     <script>
       $( '#menu [data-section="guides/scripts"]' ).addClass( 'active' );

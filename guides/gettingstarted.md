@@ -8,14 +8,15 @@ section: guides/gettingstarted
 
 ### Installation and Setup
 
-The first step is to install the [*dmd*](TODO) compiler toolchain and
-[*dub*](TODO), D's package manager.
+The first step is to install the [*dmd*](http://dlang.org/download.html)
+compiler toolchain and
+ [*dub*](http://code.dlang.org/download), D's package manager.
 
 The next thing to do is install the Dash Command Line Utility from
 [GitHub](https://github.com/Circular-Studios/Dash-CLI/releases). On Windows,
 simply run the installer. On other platforms extract the zip file, and link the
 executable into somewhere in your path (**NOTE**: The `empty-game.zip` file must
-remain along side the executable).
+remain alongside the executable).
 
 That's it! You're ready to start making games with Dash.
 
@@ -30,11 +31,11 @@ as a blank game script. Here's what all the folders are for:
 | Folder    | Description
 |:----------|:-----------
 | Binaries  | This is where the compiled executable for your project goes. You shouldn't need to change anything in here.
-| Config    | This is where your config files go (`Config.yml` and `Input.yml`). `Config.yml` contains all of the settings for your game, and `Input.yml` contains all of the key bindings. You can learn more about key bindings [here](TODO).
-| Materials | This is where your materials go. These are YAML objects which define what textures to place on objects for which role. You can learn about them [here](TODO).
-| Meshes    | This is where all of your exported meshes go. You can find a list of supported formats [here](TODO).
-| Objects   | This is where all of your object definitions go. These are YAML objects that place things in your world. You can learn more about them [here](TODO).
+| Config    | This is where your config files go (`Config.yml` and `Input.yml`). `Config.yml` contains all of the settings for your game, and `Input.yml` contains all of the key bindings. You can learn more about key bindings [here](#).
+| Materials | This is where your materials go. These are YAML objects which define what textures to place on objects for which role. You can learn about them [here](#).
+| Meshes    | This is where all of your exported meshes go. You can find a list of supported formats [here](#).
+| Objects   | This is where all of your object definitions go. These are YAML objects that place things in your world. You can learn more about them [here](#).
 | Prefabs   | This is where all of your prefab definitions go. These are YAML objects that allow you to create `GameObject`s much more easily. You can learn more about them [here]({{ site.url }}/guides/prefabs.html).
-| Scripts   | This is where all of your scripts go. You should have one that manages the game itself, and then one for every component you define. You can learn more about them [here](TODO).
-| Textures  | This is where all of your textures go. You can fine a list of supported formats [here](TODO).
-| UI        | This is where all of your UI files go. You can learn more about UIs [here](TODO).
+| Scripts   | This is where all of your scripts go. You should have one that manages the game itself, and then one for every component you define. You can learn more about them [here](#).
+| Textures  | This is where all of your textures go. You can fine a list of supported formats [here](#).
+| UI        | This is where all of your UI files go. You can learn more about UIs [here](#).

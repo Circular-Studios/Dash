@@ -102,17 +102,17 @@ abstract class ComponentReg( BaseType ) : Component
 }
 
 /// A map of all registered Component types to their descriptions
-private immutable(Description)[ClassInfo] descriptionsByClassInfo;
-private immutable(Description)[string] descriptionsByName;
+private Rebindable!( immutable Description )[ClassInfo] descriptionsByClassInfo;
+private Rebindable!( immutable Description )[string] descriptionsByName;
 
 immutable(Description) getDescription( ClassInfo type )
 {
-    return descriptionsByClassInfo.get( type, null );
+    return descriptionsByClassInfo.get( type, Rebindable!( immutable Description )( null ) );
 }
 
 immutable(Description) getDescription( string name )
 {
-    return descriptionsByName.get( name, null );
+    return descriptionsByName.get( name, Rebindable!( immutable Description )( null ) );
 }
 
 /// The description for the component

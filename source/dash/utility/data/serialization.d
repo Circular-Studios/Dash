@@ -253,8 +253,8 @@ template serializerFor( T )
 
 /// A tuple of all supported serializers
 alias customSerializers = TypeTuple!(
-    CustomSerializer!( vec2f, float[], vec => vec.vector[], arr => vec2f( arr ), arr => arr.length == 2 ),
-    CustomSerializer!( vec3f, float[], vec => vec.vector[], arr => vec3f( arr ), arr => arr.length == 3 ),
+    CustomSerializer!( vec2f, float[], vec => [ vec.x, vec.y ], arr => vec2f( arr ), arr => arr.length == 2 ),
+    CustomSerializer!( vec3f, float[], vec => [ vec.x, vec.y, vec.z ], arr => vec3f( arr ), arr => arr.length == 3 ),
     CustomSerializer!( quatf, float[], vec => vec.toEulerAngles.vector[], arr => fromEulerAngles( arr ), arr => arr.length == 3 ),
 );
 static assert( hasSerializer!vec2f );

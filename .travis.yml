@@ -18,6 +18,8 @@ install:
   - bash .travis/setup_osx
 script:
   - dub fetch x11 --version="~>1.0"
+  - dub fetch derelict-sdl2 --version="==1.9.5"
+  - dub upgrade
   - dub test --compiler=${DC}
 
 notifications:

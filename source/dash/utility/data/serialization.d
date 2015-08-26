@@ -2,7 +2,7 @@ module dash.utility.data.serialization;
 import dash.utility.data.yaml;
 import dash.utility.resources, dash.utility.math, dash.utility.output;
 
-import vibe.data.json, vibe.data.bson;
+import vibe.data.json, vibe.data.bson, vibe.data.serialization;
 import std.typecons: Tuple, tuple;
 import std.typetuple;
 import std.math;
@@ -55,17 +55,17 @@ T deserializeFile( T )( Resource file, SerializationMode mode = SerializationMod
 
     T handleJson()
     {
-        return deserializeJson!T( file.readText().parseJsonString() );
+        return deserialize!(JsonSerializer, T)( file.readText().parseJsonString() );
     }
 
     T handleBson()
     {
-        return deserializeBson!T( Bson( Bson.Type.object, file.read().idup ) );
+        return deserialize!(BsonSerializer, T)( Bson( Bson.Type.object, file.read().idup ) );
     }
 
     T handleYaml()
     {
-        return deserializeYaml!T( Loader( file.fullPath ).load() );
+        return deserialize!(YamlSerializer, T)( Loader( file.fullPath ).load() );
     }
 
     try

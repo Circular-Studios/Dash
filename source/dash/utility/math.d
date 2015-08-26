@@ -69,6 +69,8 @@ public:
     // Other functions
     import gl3n.frustum;
     import gl3n.math;
+
+    import gl3n.util: is_vector, is_quaternion;
 }
 else version( DashUseGfmMath )
 {

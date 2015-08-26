@@ -209,57 +209,65 @@ template serializeToFile( bool prettyPrint = true )
 /// Supported serialization formats.
 enum serializationFormats = tuple( "Json", "Bson", "Yaml" );
 
-/// Type to use when defining custom
-struct CustomSerializer( _T, _Rep, alias _ser, alias _deser, alias _check )
-    if( is( typeof( _ser( _T.init ) ) == _Rep ) &&
-        is( typeof( _deser( _Rep.init ) ) == _T ) &&
-        is( typeof( _check( _Rep.init ) ) == bool ) )
+private template VectorPolicy(VecType) if(is_vector!VecType)
 {
-    /// The type being serialized
-    alias T = _T;
-    /// The serialized representation
-    alias Rep = _Rep;
-    /// Function to convert the type to its rep
-    alias serialize = _ser;
-    /// Function to convert the rep to the type
-    alias deserialize = _deser;
-    /// Function called to ensure the representation is valid
-    alias check = _check;
+private:
+    alias T = VecType.vt;
+    enum len = VecType.dimension;
+
+public:
+    T[] toRepresentation(VecType value)
+    {
+        return value.vector.dup();
+    }
+
+    VecType fromRepresentation(T[] rep)
+    {
+        VecType value;
+        value.vector = rep[0..len];
+        return value;
+    }
+}
+private template QuatPolicy(QuatType) if(is_quaternion!QuatType)
+{
+private:
+    alias T = QuatType.qt;
+    enum len = 4;
+
+public:
+    T[] toRepresentation(QuatType value)
+    {
+        return value.quaternion.dup();
+    }
+
+    QuatType fromRepresentation(T[] rep)
+    {
+        QuatType value;
+        value.quaternion = rep[0..len];
+        return value;
+    }
 }
 
-/// For calling templated templates.
-template PApply( alias Target, T... )
+static assert(isPolicySerializable!(VectorPolicy, vec2f));
+static assert(isPolicySerializable!(VectorPolicy, vec3f));
+static assert(isPolicySerializable!(VectorPolicy, vec4f));
+static assert(isPolicySerializable!(QuatPolicy, quatf));
+
+unittest
 {
-    alias PApply( U... ) = Target!( T, U );
+    void testPolicy(alias Policy, SerType)(SerType val)
+    {
+        assert(Policy!SerType.fromRepresentation(Policy!SerType.toRepresentation(val)),
+               "Failed to translate " ~ SerType.stringof);
+    }
+
+    testPolicy!VectorPolicy(vec2f(0, 1));
+    testPolicy!VectorPolicy(vec3f(0, 1, 2));
+    testPolicy!VectorPolicy(vec4f(0, 1, 2, 3));
+    testPolicy!QuatPolicy(  quatf(0, 1, 2, 3));
 }
 
-/// Checks if a serializer is for a type.
-enum serializerTypesMatch( Type, alias CS ) = is( CS.T == Type );
-
-/// Predicate for std.typetupple
-alias isSerializerFor( T ) = PApply!( serializerTypesMatch, T );
-
-/// Does a given type have a serializer
-enum hasSerializer( T ) = anySatisfy!( isSerializerFor!T, customSerializers );
-
-/// Get the serializer for a type
-template serializerFor( T )
-{
-    static if( hasSerializer!T )
-        alias serializerFor = Filter!( isSerializerFor!T, customSerializers )[ 0 ];
-    else
-        alias serializerFor = defaultSerializer!T;
-}
-
-/// A tuple of all supported serializers
-alias customSerializers = TypeTuple!(
-    CustomSerializer!( vec2f, float[], vec => [ vec.x, vec.y ], arr => vec2f( arr ), arr => arr.length == 2 ),
-    CustomSerializer!( vec3f, float[], vec => [ vec.x, vec.y, vec.z ], arr => vec3f( arr ), arr => arr.length == 3 ),
-    CustomSerializer!( quatf, float[], vec => vec.toEulerAngles.vector[], arr => fromEulerAngles( arr ), arr => arr.length == 3 ),
-);
-static assert( hasSerializer!vec2f );
-static assert( hasSerializer!vec3f );
-static assert( hasSerializer!quatf );
-
-/// Serializer for all other types
-alias defaultSerializer( T ) = CustomSerializer!( T, T, t => t, t => t, t => true );
+alias Policies = ChainedPolicy!(
+        VectorPolicy,
+        QuatPolicy
+    );

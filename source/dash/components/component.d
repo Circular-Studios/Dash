@@ -376,75 +376,8 @@ private:
     } // SerializationDescription
 
     /// Get a list of fields on the type
-    Description.Field[] getFields( size_t idx = 0 )( Description.Field[] fields = [] )
+    Description.Field[] getFields()
     {
-        static if( idx == __traits( allMembers, T ).length )
-        {
-            return fields;
-        }
-        else
-        {
-            enum memberName = helper!( __traits( allMembers, T )[ idx ] );
-
-            // Make sure member is accessable and that we care about it
-            static if( !memberName.among( "this", "~this", __traits( allMembers, Component ) ) &&
-                        is( typeof( helper!( __traits( getMember, T, memberName ) ) ) ) )
-            {
-                alias member = helper!( __traits( getMember, T, memberName ) );
-                alias memberType = typeof(member);
-
-                // Process variables
-                static if( isSerializableField!member )
-                {
-                    // Get string form of attributes
-                    string attributesStr()
-                    {
-                        import std.conv;
-                        string[] attrs;
-                        foreach( attr; __traits( getAttributes, member ) )
-                        {
-                            attrs ~= attr.to!string;
-                        }
-                        return attrs.join( ", " ).to!string;
-                    }
-
-                    template SerializedType( T )
-                    {
-                        static if( is( T U : U[] ) )
-                            alias SerializedType = SerializedType!U;
-                        else
-                            alias SerializedType = T;
-                    }
-
-                    // Get required module import name
-                    static if( __traits( compiles, moduleName!( SerializedType!memberType ) ) )
-                        enum modName = moduleName!( SerializedType!memberType );
-                    else
-                        enum modName = null;
-
-                    // Get the serializer for the type
-                    alias serializer = serializerFor!memberType;
-                    alias descMemberType = serializer.Rep;
-                    // Generate field
-                    return getFields!( idx + 1 )( fields ~
-                        Description.Field(
-                            memberName,
-                            fullyQualifiedName!(Unqual!descMemberType),
-                            attributesStr,
-                            modName,
-                            serializer.stringof
-                        )
-                    );
-                }
-                else
-                {
-                    return getFields!( idx + 1 )( fields );
-                }
-            }
-            else
-            {
-                return getFields!( idx + 1 )( fields );
-            }
-        }
+        return [];
     }
 }

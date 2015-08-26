@@ -21,7 +21,7 @@
         "derelict-fi": "~>1.0",
         "derelict-assimp3": "~>1.0",
         "dyaml": "==0.5.2",
-        "gl3n": "==1.1.0",
+        "gl3n": "==1.2.0",
         "gfm:sdl2": "==2.3.26",
         "logger": "==0.3.3",
         "colorize": "==1.0.5",
@@ -65,8 +65,8 @@
         "soloud_x86"
     ],
 
-    "preBuildCommands-linux": [
-        "cp $PACKAGE_DIR/lib/linux/* /usr/lib/ || true"
+    "lflags-linux": [
+        "-L$PACKAGE_DIR/lib/$TRAVIS_OS_NAME"
     ],
     "libs-linux": [
         "soloud_x86"

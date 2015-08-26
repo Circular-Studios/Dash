@@ -9,24 +9,33 @@ d:
 os:
   - linux
   - osx
+sudo: false
+addons:
+  apt:
+    packages:
+      - libfreeimage-dev
+      - libjpeg62-dev
+      - libevent-dev
+      - libssl-dev
 
 matrix:
   allow_failures:
-    - d: dmd-2.067.1
     - d: dmd-2.068.0
     - d: ldc-0.15.1
     - d: ldc-0.15.2-beta2
     - d: gdc-4.9.2
 
 install:
-  - sudo cp ./lib/$TRAVIS_OS_NAME/* /usr/lib
-  - bash .travis/setup_linux
+    # Add ./lib/$TRAVIS_OS_NAME to the lib path
+  - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`/lib/$TRAVIS_OS_NAME
+  - export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:`pwd`/lib/$TRAVIS_OS_NAME
   - bash .travis/setup_osx
 script:
   - dub fetch x11 --version="~>1.0"
-  - dub fetch derelict-sdl2 --version="==1.9.5"
   - dub upgrade
-  - dub test --compiler=${DC}
+  - echo $TRAVIS_OS_NAME
+  - echo $LD_LIBRARY_PATH
+  - dub test --compiler=${DC} --verbose
 
 notifications:
   webhooks:

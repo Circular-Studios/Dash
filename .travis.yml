@@ -21,6 +21,9 @@ addons:
 
 matrix:
   allow_failures:
+    - os: osx
+    - d: dmd-2.066.1
+    - d: dmd-2.067.1
     - d: ldc-0.15.1
     - d: ldc-0.15.2-beta2
     - d: gdc-4.9.2

@@ -6,7 +6,7 @@ module dash.components.lights;
 import dash.core, dash.components, dash.graphics;
 import dash.utility;
 
-import derelict.opengl3.gl3;
+import derelict.opengl;
 import std.math;
 
 mixin( registerComponents!() );

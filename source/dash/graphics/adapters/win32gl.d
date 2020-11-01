@@ -10,7 +10,7 @@ import dash.core, dash.graphics, dash.utility;
 
 import win32.windef, win32.winuser, win32.winbase;
 import win32.wingdi : PIXELFORMATDESCRIPTOR, SetPixelFormat, SwapBuffers;
-import derelict.opengl3.gl3, derelict.opengl3.wgl, derelict.opengl3.wglext;
+import derelict.opengl;
 
 enum DWS_FULLSCREEN = WS_POPUP | WS_SYSMENU;
 enum DWS_WINDOWED = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;

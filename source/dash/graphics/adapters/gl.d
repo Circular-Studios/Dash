@@ -2,7 +2,7 @@ module dash.graphics.adapters.gl;
 import dash.core, dash.components, dash.graphics;
 import dash.utility.output, dash.utility.math;
 
-import derelict.opengl3.gl3;
+import derelict.opengl;
 
 import std.algorithm, std.array;
 

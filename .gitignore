@@ -178,6 +178,7 @@ test-results/
 # ========================
 
 .dub/
+.vscode/
 *.sln
 *.visualdproj
 *.dproj

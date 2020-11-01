@@ -9,7 +9,7 @@ import std.algorithm, std.array, std.string, std.traits, std.conv, std.typecons;
 
 /// Tests if a type can be created from yaml.
 enum isComponent(alias T) = is( T == class ) && is( T : Component ) && !__traits( isAbstractClass, T );
-private enum perSerializationFormat( string code ) = "".reduce!( ( working, type ) => working ~ code.replace( "$type", type ) )( serializationFormats );
+private enum perSerializationFormat( string code ) = "".reduce!( ( working, type ) => working ~ code.replace( "$type", type ) )( serializationModeNames );
 alias helper( alias T ) = T;
 alias helper( T... ) = T;
 alias helper() = TypeTuple!();
@@ -58,11 +58,11 @@ public:
     final const(Description) description() @property
     in
     {
-        assert( getDescription( typeid(this) ), "No description found for type: " ~ typeid(this).name );
+        assert( getDescriptionFactory( typeid(this) ), "No description found for type: " ~ typeid(this).name );
     }
     body
     {
-        return getDescription( typeid(this) ).fromComponent( this );
+        return getDescriptionFactory( typeid(this) ).fromComponent( this );
     }
 
     /**
@@ -102,49 +102,32 @@ abstract class ComponentReg( BaseType ) : Component
 }
 
 /// A map of all registered Component types to their descriptions
-private Rebindable!( immutable Description )[ClassInfo] descriptionsByClassInfo;
-private Rebindable!( immutable Description )[string] descriptionsByName;
+private Rebindable!( immutable DescriptionFactory )[ClassInfo] descriptionsByClassInfo;
+private Rebindable!( immutable DescriptionFactory )[string] descriptionsByName;
 
-immutable(Description) getDescription( ClassInfo type )
+immutable(DescriptionFactory) getDescriptionFactory( ClassInfo type )
 {
-    return descriptionsByClassInfo.get( type, Rebindable!( immutable Description )( null ) );
+    return descriptionsByClassInfo.get( type, Rebindable!( immutable DescriptionFactory )( null ) );
 }
 
-immutable(Description) getDescription( string name )
+immutable(DescriptionFactory) getDescriptionFactory( string name )
 {
-    return descriptionsByName.get( name, Rebindable!( immutable Description )( null ) );
+    return descriptionsByName.get( name, Rebindable!( immutable DescriptionFactory )( null ) );
 }
 
 /// The description for the component
 abstract class Description
 {
 public:
-    static struct Field
-    {
-    public:
-        string name;
-        string typeName;
-        string attributes;
-        string mod;
-        string serializer;
-    }
-
     /// The type of the component.
     @rename( "Type" )
     string type;
 
-    /// Get a list of teh fields on a component.
-    @ignore
-    abstract immutable(Field[]) fields() @property const;
-
     /// Create an instance of the component the description is for.
-    abstract Component createInstance() const;
+    abstract Component instantiate() const;
 
     /// Refresh a component by comparing descriptions.
     abstract void refresh( Component comp, const Description newDesc );
-
-    /// Creates a description from a component.
-    abstract const(Description) fromComponent( const Component comp ) const;
 
     /// Get the type of the component the description is for.
     @ignore
@@ -152,23 +135,8 @@ public:
 
     /// Serializers and deserializers
     mixin( perSerializationFormat!q{
-        // Overridable serializers
-        abstract $type serializeDescriptionTo$type( Description c ) const;
-        abstract Description deserializeFrom$type( $type node ) const;
-
          // Serializers for vibe
-        final $type to$type() const
-        {
-            if( auto desc = getDescription( componentType ) )
-            {
-                return desc.serializeDescriptionTo$type( cast()this );
-            }
-            else
-            {
-                errorf( "Description of type %s not found! Did you forget a mixin(registerComponents!())?", typeid(this).name );
-                return $type();
-            }
-        }
+        abstract $type to$type() const;
         static Description from$type( $type data )
         {
             // If it's Bson, convert it to a json object.
@@ -179,9 +147,11 @@ public:
 
             if( auto type = "Type" in d )
             {
-                if( auto desc = getDescription( type.get!string ) )
+                if( auto desc = getDescriptionFactory( type.get!string ) )
                 {
-                    return desc.deserializeFrom$type( data );
+                    DataContainer cont;
+                    cont = data;
+                    return desc.fromData(cont);
                 }
                 else
                 {
@@ -197,6 +167,24 @@ public:
         }
         static assert( is$typeSerializable!Description );
     } );
+}
+
+/**
+ * A Factory that creates descriptions for a Component type.
+ * Sub-classes are automatically generated per Component type.
+ * There should only be one instance per Component type.
+ */
+abstract class DescriptionFactory
+{
+public:
+    /// Get the type of the component the description is for.
+    abstract ClassInfo componentType() @property const;
+
+    /// Creates a description from a data represenetation;
+    abstract Description fromData(const DataContainer data) const;
+
+    /// Creates a description from a component.
+    abstract Description fromComponent(const Component comp) const;
 }
 
 /**
@@ -233,13 +221,10 @@ public:
     /// Runtime function, registers serializers.
     void register()
     {
-        immutable desc = new immutable SerializationDescription;
+        immutable desc = new immutable TemplatedDescriptionFactory;
         descriptionsByClassInfo[ typeid(T) ] = desc;
         descriptionsByName[ name ] = desc;
     }
-
-    /// A list of fields on the component.
-    enum fieldList = getFields();
 
     /// The size of an instance of the component.
     enum instanceSize = __traits( classInstanceSize, T );
@@ -248,6 +233,8 @@ public:
     enum name = __traits( identifier, T );
 
 private:
+    enum defaultSerializationMode = SerializationMode.Json;
+
     /**
      * Generate actual description of a component.
      *
@@ -256,59 +243,17 @@ private:
      *  * A list of the fields ($(D fields)).
      *  * A method to create a description from an instance of a component ($(D fromComponent)).
      *  * A method to refresh an instance of the component with a newer description ($(D refresh)).
-     *  * A method to create an instance of the component ($(D createInstance)).
+     *  * A method to create an instance of the component ($(D instantiate)).
      *  * The ClassInfo of the component ($(D componentType)).
      */
-    final class SerializationDescription : Description
+    final class TemplatedDescription : Description
     {
-        mixin( { return reduce!( ( working, field ) {
-            // Append required import for variable type
-            if( field.mod )         working ~= "import " ~ field.mod ~ ";\n";
-            // Append variable attributes
-            if( field.attributes )  working ~= "@(" ~ field.attributes ~ ")\n";
-            // Append variable declaration
-            return working ~ field.typeName ~ " " ~ field.name ~ ";\n";
-        } )( "", fieldList ); } () );
+    public:
+        DataContainer represenetation;
 
-        // Generate serializers for the type
-        mixin( perSerializationFormat!q{
-            override $type serializeDescriptionTo$type( Description desc ) const
-            {
-                return serializeTo$type( cast(SerializationDescription)desc );
-            }
-            override SerializationDescription deserializeFrom$type( $type node ) const
-            {
-                return deserialize$type!SerializationDescription( node );
-            }
-        } );
-
-        /// Get a list of field descriptions
-        override immutable(Description.Field[]) fields() const @property
+        this(DataContainer represenetation_)
         {
-            return fieldList;
-        }
-
-        /// Create a description from a component.
-        override const(SerializationDescription) fromComponent( const Component comp ) const
-        {
-            auto theThing = cast(T)comp;
-            auto desc = new SerializationDescription;
-            desc.type = name;
-
-            foreach( fieldName; __traits( allMembers, T ) )
-            {
-                enum idx = fieldList.map!(f => f.name).countUntil( fieldName );
-                static if( idx >= 0 )
-                {
-                    enum field = fieldList[ idx ];
-                    // Serialize the value for the description
-                    mixin( "auto ser = "~field.serializer~".serialize(theThing."~field.name~");" );
-                    // Copy the value to the description
-                    mixin( "desc."~field.name~" = ser;" );
-                }
-            }
-
-            return desc;
+            represenetation = represenetation_;
         }
 
         /// Refresh a component by comparing descriptions.
@@ -316,55 +261,23 @@ private:
         in
         {
             assert( cast(T)comp, "Component of the wrong type passed to the wrong description." );
-            assert( cast(SerializationDescription)desc, "Invalid description type." );
+            assert( cast(TemplatedDescription)desc, "Invalid description type." );
         }
         body
         {
-            auto t = cast(T)comp;
-            auto newDesc = cast(SerializationDescription)desc;
-
-            foreach( fieldName; __traits( allMembers, T ) )
-            {
-                enum idx = fieldList.map!(f => f.name).countUntil( fieldName );
-                static if( idx >= 0 )
-                {
-                    enum field = fieldList[ idx ];
-                    // Check if the field was actually changed, and that it hasn't changed on component
-                    if( mixin( field.name ) == mixin( "newDesc." ~ field.name ) )
-                    {
-                        // Copy the value into this description
-                        mixin( "this."~field.name~" = newDesc."~field.name~";" );
-                        // Deserialize it for the component
-                        mixin( "auto ser = "~field.serializer~".deserialize(newDesc."~field.name~");" );
-                        // Copy the new value to the component
-                        mixin( "t."~field.name~" = ser;" );
-                    }
-                }
-            }
+            // #TODO
         }
 
         /// Create a component from a description.
-        override T createInstance() const
+        override T instantiate() const
         {
-            T comp = new T;
-            comp.lastDesc = cast()this;
-
-            foreach( fieldName; __traits( allMembers, T ) )
-            {
-                enum idx = fieldList.map!(f => f.name).countUntil( fieldName );
-                static if( idx >= 0 )
+            T comp;
+            mixin(perSerializationFormat!q{
+                if (auto data = represenetation.peek!$type)
                 {
-                    enum field = fieldList[ idx ];
-                    // Check if the field was actually set
-                    if( mixin( field.name ) != mixin( "new SerializationDescription()." ~ field.name ) )
-                    {
-                        // Deserialize it for the component
-                        mixin( "auto rep = cast("~field.serializer~".Rep)this."~field.name~";" );
-                        mixin( "auto ser = "~field.serializer~".deserialize(rep);" );
-                        mixin( "comp."~field.name~" = ser;" );
-                    }
+                    comp = deserialize$type!(T)(cast()*data);
                 }
-            }
+            });
             return comp;
         }
 
@@ -373,11 +286,58 @@ private:
         {
             return typeid(T);
         }
-    } // SerializationDescription
 
-    /// Get a list of fields on the type
-    Description.Field[] getFields()
+        mixin(perSerializationFormat!q{
+            override $type to$type() const
+            {
+                $type rep;
+
+                if(auto desc = represenetation.peek!$type())
+                {
+                    // Return a copy of the represenetation
+                    static if(is($type == Yaml))
+                        rep = *desc;
+                    else
+                        rep = desc.clone();
+                }
+                else
+                {
+                    errorf("Description not stored as $type.");
+                }
+
+                return rep;
+            }
+        });
+    } // TemplatedDescription
+
+    final class TemplatedDescriptionFactory : DescriptionFactory
     {
-        return [];
-    }
+    public:
+        /// Get the type of the component the description is for.
+        override ClassInfo componentType() @property const
+        {
+            return typeid(T);
+        }
+
+        /// Creates a description from a data represenetation;
+        override TemplatedDescription fromData(const DataContainer data) const
+        {
+            return new TemplatedDescription(data);
+        }
+
+        /// Create a description from a component.
+        override TemplatedDescription fromComponent(const Component comp) const
+        in
+        {
+            assert(cast(T)comp, "Component instance passed in is of type "~typeid(comp).name~", not "~name);
+        }
+        body
+        {
+            mixin(q{alias serFun = serializeTo}~defaultSerializationMode.to!string~";");
+
+            TemplatedDescription desc;
+            desc.represenetation = serFun(comp);
+            return desc;
+        }
+    } // TemplatedDescriptionFactory
 }

@@ -4,8 +4,8 @@
 module dash.components.mesh;
 import dash.core, dash.components, dash.graphics, dash.utility;
 
-import derelict.opengl3.gl3, derelict.assimp3.assimp;
-import std.stdio, std.stream, std.format, std.math, std.string;
+import derelict.opengl, derelict.assimp3.assimp;
+import std.stdio, std.format, std.math, std.string;
 
 mixin( registerComponents!() );
 

@@ -1,7 +1,7 @@
 module dash.utility.data.yaml;
 import dash.utility.resources, dash.utility.output;
 
-public import yaml;
+public import dyaml;
 import vibe.data.serialization;
 import std.traits, std.range, std.typecons, std.variant;
 

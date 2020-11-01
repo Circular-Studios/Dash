@@ -203,21 +203,18 @@ public:
 class AnimationData : Asset
 {
 private:
-    /// List of animations, containing all of the information specific to each
-    AnimationSet[string] _animationSet;
-    /// Amount of bones
-    int _numberOfBones;
     /// Hierarchy of bones for this animation
     Bone boneHierarchy;
+
+package:
+    /// Whether or not the material is actually used.
     bool _isUsed;
 
 public:
     /// List of animations, containing all of the information specific to each
-    mixin( Property!_animationSet );
+    AnimationSet[string] animationSet;
     /// Amount of bones
-    mixin( Property!_numberOfBones );
-    /// Whether or not the material is actually used.
-    mixin( Property!( _isUsed, AccessModifier.Package ) );
+    int numberOfBones;
 
     /**
      * Create the assetanimation, parsing all of the animation data
@@ -273,7 +270,7 @@ public:
             bone = new Bone( name, boneNumber );
             bone.offset = convertAIMatrix( mesh.mBones[ bone.boneNumber ].mOffsetMatrix );
             bone.nodeOffset = convertAIMatrix( currNode.mTransformation );
-            _numberOfBones++;
+            numberOfBones++;
         }
 
         for( int i = 0; i < currNode.mNumChildren; i++ )

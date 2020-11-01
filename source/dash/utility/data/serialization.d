@@ -3,9 +3,13 @@ import dash.utility.data.yaml;
 import dash.utility.resources, dash.utility.math, dash.utility.output;
 
 import vibe.data.json, vibe.data.bson, vibe.data.serialization;
+import std.algorithm: map;
+import std.conv: to;
 import std.typecons: Tuple, tuple;
-import std.typetuple;
 import std.math;
+import std.traits: EnumMembers;
+import std.meta: staticMap;
+import std.variant: Algebraic;
 
 // Serialization attributes
 public import vibe.data.serialization: rename = name, asArray, byName, ignore, optional, isCustomSerializable;
@@ -20,6 +24,17 @@ enum SerializationMode
     Bson,
     Yaml,
 }
+
+/// Supported serialization formats.
+enum serializationModeNames = [EnumMembers!SerializationMode[1..$]].map!(to!string);
+enum serializationModeTypeids = [
+    SerializationMode.Json: typeid(Json),
+    SerializationMode.Bson: typeid(Bson),
+    SerializationMode.Yaml: typeid(Yaml),
+];
+
+/// A tagged union of all usable Data types
+alias DataContainer = Algebraic!(Json, Bson, Yaml);
 
 /**
  * Deserializes a file.
@@ -205,9 +220,6 @@ template serializeToFile( bool prettyPrint = true )
         }
     }
 }
-
-/// Supported serialization formats.
-enum serializationFormats = tuple( "Json", "Bson", "Yaml" );
 
 private template VectorPolicy(VecType) if(is_vector!VecType)
 {

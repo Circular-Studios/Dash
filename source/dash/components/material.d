@@ -4,8 +4,7 @@
 module dash.components.material;
 import dash.core, dash.components, dash.graphics, dash.utility;
 
-import yaml;
-import derelict.opengl3.gl3, derelict.freeimage.freeimage;
+import derelict.opengl, derelict.freeimage.freeimage;
 import std.variant, std.conv, std.string;
 
 mixin( registerComponents!() );
@@ -95,9 +94,6 @@ final class Material : AssetRef!MaterialAsset
 class TextureAsset : Asset
 {
 protected:
-    uint _width = 1;
-    uint _height = 1;
-    uint _glID;
 
     /**
      * TODO
@@ -130,12 +126,9 @@ protected:
     }
 
 public:
-    /// TODO
-    mixin( Property!_width );
-    /// TODO
-    mixin( Property!_height );
-    /// TODO
-    mixin( Property!_glID );
+    uint width = 1;
+    uint height = 1;
+    uint glID;
 
     /**
      * TODO

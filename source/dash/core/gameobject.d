@@ -4,7 +4,6 @@
 module dash.core.gameobject;
 import dash.core, dash.components, dash.graphics, dash.utility;
 
-import yaml;
 import std.conv, std.variant, std.array, std.algorithm, std.typecons, std.range, std.string, std.math;
 
 enum AnonymousName = "__anonymous";
@@ -74,7 +73,7 @@ package:
         // Get root object
         GameObject par;
         for( par = this; par.parent; par = par.parent ) { }
-        
+
         return par.scene;
     }
 
@@ -227,7 +226,7 @@ public:
         // Add components
         foreach( component; desc.components )
         {
-            obj.addComponent( component.createInstance() );
+            obj.addComponent( component.instantiate() );
         }
 
         // Init components
@@ -361,7 +360,7 @@ public:
             if( auto comp = compDesc.componentType in componentList )
                 comp.refresh( compDesc );
             else
-                addComponent( compDesc.createInstance() );
+                addComponent( compDesc.instantiate() );
         }
 
         // Remove old components
@@ -422,7 +421,7 @@ public:
      */
     final void refreshComponent( string componentName, Component.Description desc )
     {
-        refreshComponent( getDescription( componentName ).componentType, desc );
+        refreshComponent( getDescriptionFactory( componentName ).componentType, desc );
     }
 
     /**

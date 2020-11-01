@@ -5,7 +5,7 @@ import dash.graphics;
 import dash.graphics.adapters.adapter;
 import dash.utility;
 
-import derelict.opengl3.gl3, gfm.sdl2;
+import derelict.opengl, gfm.sdl2;
 import std.string, std.file;
 
 class Sdl : OpenGL

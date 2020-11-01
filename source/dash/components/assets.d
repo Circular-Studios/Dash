@@ -7,7 +7,6 @@ import dash.utility.data.serialization;
 
 import std.string, std.array, std.algorithm;
 
-import yaml;
 import derelict.freeimage.freeimage, derelict.assimp3.assimp;
 
 /**
@@ -220,12 +219,10 @@ public:
 
 abstract class Asset
 {
-private:
-    bool _isUsed;
+package:
+    bool isUsed;
 
 public:
-    /// Whether or not the material is actually used.
-    mixin( Property!( _isUsed, AccessModifier.Package ) );
     /// The resource containing this asset.
     @ignore
     Resource resource;

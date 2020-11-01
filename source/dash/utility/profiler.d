@@ -1,7 +1,7 @@
 module dash.utility.profiler;
 
 // Enable profiler in debug mode.
-debug version = DashUseProfiler;
+// debug version = DashUseProfiler;
 
 version( DashUseProfiler )
 {
@@ -54,28 +54,28 @@ private:
     {
         Profiler tharsis;
         ubyte[profileDataSize] profileData;
-    }
-}
 
-private struct DashZone
-{
-    uint id;
-    uint parentID;
-    ushort nestLevel;
-    ulong startTime;
-    ulong duration;
-    string info;
-    ulong endTime;
+        private struct DashZone
+        {
+            uint id;
+            uint parentID;
+            ushort nestLevel;
+            ulong startTime;
+            ulong duration;
+            string info;
+            ulong endTime;
 
-    this( ZoneData zone )
-    {
-        import std.conv: to;
-        id = zone.id;
-        parentID = zone.parentID;
-        nestLevel = zone.nestLevel;
-        startTime = zone.startTime;
-        duration = zone.duration;
-        info = zone.info.to!string;
-        endTime = zone.endTime;
+            this( ZoneData zone )
+            {
+                import std.conv: to;
+                id = zone.id;
+                parentID = zone.parentID;
+                nestLevel = zone.nestLevel;
+                startTime = zone.startTime;
+                duration = zone.duration;
+                info = zone.info.to!string;
+                endTime = zone.endTime;
+            }
+        }
     }
 }

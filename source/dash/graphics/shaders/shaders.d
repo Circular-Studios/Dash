@@ -5,7 +5,7 @@ module dash.graphics.shaders.shaders;
 import dash.core, dash.components, dash.graphics, dash.utility;
 import dash.graphics.shaders.glsl;
 
-import derelict.opengl3.gl3;
+import derelict.opengl;
 
 import std.string, std.traits, std.algorithm, std.array, std.regex;
 

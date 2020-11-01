@@ -4,9 +4,8 @@
 module dash.utility.input.input;
 import dash.utility, dash.core, dash.graphics;
 
-import yaml;
-import derelict.opengl3.gl3;
-import std.algorithm, std.conv, std.uuid;
+// import derelict.opengl3;
+import std.algorithm, std.conv, std.typecons, std.uuid;
 
 /// The event type for button events.
 package alias ButtonEvent = void delegate( ButtonStorageType );

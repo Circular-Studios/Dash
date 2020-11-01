@@ -4,7 +4,7 @@
 module dash.utility.time;
 import dash.utility;
 
-import std.datetime;
+import std.datetime.stopwatch;
 
 /**
  * Converts a duration to a float of seconds.

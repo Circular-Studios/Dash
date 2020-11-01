@@ -8,8 +8,8 @@ version( Windows ):
 
 import dash.core, dash.graphics, dash.utility;
 
-import win32.windef, win32.winuser, win32.winbase;
-import win32.wingdi : PIXELFORMATDESCRIPTOR, SetPixelFormat, SwapBuffers;
+import windows.windef, windows.winuser, windows.winbase;
+import windows.wingdi : PIXELFORMATDESCRIPTOR, SetPixelFormat, SwapBuffers;
 import derelict.opengl;
 
 enum DWS_FULLSCREEN = WS_POPUP | WS_SYSMENU;

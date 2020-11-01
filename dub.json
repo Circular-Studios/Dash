@@ -26,7 +26,8 @@
 		"gl3n": "1.3.1",
 		"logger": "0.3.3",
 		"msgpack-d": "1.0.3",
-		"vibe-d": "0.9.0",
+        "vibe-d": "0.9.0",
+		"windows-headers": "~>1.0.4",
 		"x11": {
 			"optional": true,
 			"version": "~>1"
@@ -47,12 +48,11 @@
 
     "-ddoxFilterArgs": [ "--min-protection=Protected" ],
 
-    "importPaths-windows": [ "third_party/DWinProgramming" ],
-    "sourceFiles-windows": [
-        "third_party/DWinProgramming/win32/windef.d"
-    ],
     "preBuildCommands-windows": [
         "robocopy $PACKAGE_DIR\\lib\\windows\\ .\\ /MIR /XX /NFL /NDL /NJH /NJS || (exit 0)"
+    ],
+    "versions-windows": [
+        "Windows10"
     ],
     "libs-windows": [
         "Awesomium", "soloud_dll_x86",

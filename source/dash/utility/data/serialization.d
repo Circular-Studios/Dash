@@ -27,11 +27,11 @@ enum SerializationMode
 
 /// Supported serialization formats.
 enum serializationModeNames = [EnumMembers!SerializationMode[1..$]].map!(to!string);
-enum serializationModeTypeids = [
-    SerializationMode.Json: typeid(Json),
-    SerializationMode.Bson: typeid(Bson),
-    SerializationMode.Yaml: typeid(Yaml),
-];
+// enum serializationModeTypeids = [
+//     SerializationMode.Json: typeid(Json),
+//     SerializationMode.Bson: typeid(Bson),
+//     SerializationMode.Yaml: typeid(Yaml),
+// ];
 
 /// A tagged union of all usable Data types
 alias DataContainer = Algebraic!(Json, Bson, Yaml);

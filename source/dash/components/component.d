@@ -135,7 +135,7 @@ public:
 
     /// Serializers and deserializers
     mixin( perSerializationFormat!q{
-         // Serializers for vibe
+        // Serializers for vibe
         abstract $type to$type() const;
         static Description from$type( $type data )
         {
@@ -165,7 +165,7 @@ public:
                 return null;
             }
         }
-        static assert( is$typeSerializable!Description );
+        // static assert( is$typeSerializable!Description );
     } );
 }
 
@@ -290,22 +290,16 @@ private:
         mixin(perSerializationFormat!q{
             override $type to$type() const
             {
-                $type rep;
-
                 if(auto desc = represenetation.peek!$type())
                 {
                     // Return a copy of the represenetation
-                    static if(is($type == Yaml))
-                        rep = *desc;
-                    else
-                        rep = desc.clone();
+                    return *desc;
                 }
                 else
                 {
                     errorf("Description not stored as $type.");
+                    return $type();   
                 }
-
-                return rep;
             }
         });
     } // TemplatedDescription

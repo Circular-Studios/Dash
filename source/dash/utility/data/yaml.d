@@ -4,6 +4,7 @@ import dash.utility.resources, dash.utility.output;
 public import dyaml;
 import vibe.data.serialization;
 import std.traits, std.range, std.typecons, std.variant;
+import std.conv: to;
 
 /// Convience alias
 alias Yaml = Node;
@@ -256,7 +257,7 @@ public:
     //
     void readDictionary( T )( scope void delegate( string ) field_handler )
     {
-        enforceYaml( m_current.isMapping, "Yaml map expected, got a " ~ ( m_current.isScalar ? "scalar" : "sequence" ) ~ " instead." );
+        enforceYaml( m_current.type == NodeType.mapping, "Yaml map expected, got a " ~ m_current.type.to!string ~ " instead." );
 
         auto old = m_current;
         foreach( string key, Node value; m_current )
@@ -267,28 +268,27 @@ public:
         m_current = old;
     }
 
+    void beginReadDictionaryEntry(Traits)(string name) {}
+    void endReadDictionaryEntry(Traits)(string name) {}
+
     void readArray( T )( scope void delegate( size_t ) size_callback, scope void delegate() entry_callback )
     {
-        enforceYaml( m_current.isSequence || m_current.isScalar, "Yaml scalar or sequence expected, got a map instead." );
+        enforceYaml( m_current.type == NodeType.sequence, "Yaml scalar or sequence expected, got a " ~ m_current.type.to!string ~ " instead." );
 
-        if( m_current.isSequence )
+        auto old = m_current;
+        size_callback( m_current.length );
+        foreach( Node ent; old )
         {
-            auto old = m_current;
-            size_callback( m_current.length );
-            foreach( Node ent; old )
-            {
-                m_current = ent;
-                entry_callback();
-            }
-            m_current = old;
-        }
-        else
-        {
+            m_current = ent;
             entry_callback();
         }
+        m_current = old;
     }
 
-    T readValue( T )()
+    void beginReadArrayEntry(Traits)(size_t index) {}
+    void endReadArrayEntry(Traits)(size_t index) {}
+
+    T readValue( T )() @system
     {
         static if( is( T == Node ) )
             return m_current;
@@ -298,7 +298,7 @@ public:
             return m_current.get!T();
     }
 
-    bool tryReadNull() { return m_current.isNull; }
+    bool tryReadNull(Traits)() { return m_current.type == NodeType.null_; }
 }
 
 unittest
@@ -329,6 +329,6 @@ unittest
 private:
 void enforceYaml( string file = __FILE__, size_t line = __LINE__ )( bool cond, lazy string message = "YAML exception" )
 {
-    import std.exception;
-    enforceEx!Exception(cond, message, file, line);
+    import std.exception: enforce;
+    enforce!Exception(cond, message, file, line);
 }

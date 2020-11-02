@@ -59,8 +59,8 @@ public:
         this();
         _animationData = assetAnimation;
         // Change to passing in desired start animation
-        if( _animationData._animationSet.length > 0 )
-            _currentAnim = _animationData._animationSet.keys[ 0 ];
+        if( _animationData.animationSet.length > 0 )
+            _currentAnim = _animationData.animationSet.keys[ 0 ];
     }
 
     /**
@@ -124,7 +124,7 @@ public:
      */
     void changeAnimation( string animName, uint startAnimTime )
     {
-        if( animName in _animationData._animationSet )
+        if( animName in _animationData.animationSet )
         {
             _currentAnim = animName;
 
@@ -177,7 +177,7 @@ public:
     */
     void runAnimationOnce( string animName )
     {
-        if( animName in _animationData._animationSet )
+        if( animName in _animationData.animationSet )
         {
             _animateOnce = true;
             _returnAnimation = _currentAnim;
@@ -315,12 +315,12 @@ public:
         newAnimSet.animName = animName;
         newAnimSet.duration = cast(float)animation.mDuration;
         newAnimSet.fps = fps;
-        for( int i = 0; i < _numberOfBones; i++)
+        for( int i = 0; i < numberOfBones; i++)
         {
             newAnimSet.bonePoses ~= new BonePose();
         }
         addPoses( animation, boneHierarchy, newAnimSet );
-        _animationSet[ animName ] = newAnimSet;
+        animationSet[ animName ] = newAnimSet;
     }
     void addPoses( const(aiAnimation*) animation, Bone currBone, AnimationSet newAnimSet )
     {
@@ -369,10 +369,10 @@ public:
      */
     mat4f[] getTransformsAtTime( string animationName, float time )
     {
-        mat4f[] boneTransforms = new mat4f[ _numberOfBones ];
+        mat4f[] boneTransforms = new mat4f[ numberOfBones ];
 
         // Check shader/model
-        for( int i = 0; i < _numberOfBones; i++)
+        for( int i = 0; i < numberOfBones; i++)
         {
             boneTransforms[ i ] = mat4f.identity;
         }

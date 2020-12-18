@@ -2,34 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Dash Docs{% if page.title }%} - {{page.title}}{% endif %}</title>
+    <title>Dash Docs{% if page.title %} - {{page.title}}{% endif %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="" />
     <meta name="author" content="" />
     <!-- Le styles -->
-    <link href="{{ site.url }}/assets/css/bootstrap.css" rel="stylesheet" />
+    <link href="{{ site.baseurl }}/assets/css/bootstrap.css" rel="stylesheet" />
     <style>
       /* 60px to make the container go all the way
       to the bottom of the topbar */
       body { padding-top: 60px; }
     </style>
-    <link href="{{ site.url }}/assets/css/bootstrap-responsive.css" rel="stylesheet" />
-    <link href="{{ site.url }}/assets/css/docs.css" rel="stylesheet" />
+    <link href="{{ site.baseurl }}/assets/css/bootstrap-responsive.css" rel="stylesheet" />
+    <link href="{{ site.baseurl }}/assets/css/docs.css" rel="stylesheet" />
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <!-- Le fav and touch icons -->
-    <link rel="shortcut icon" type="image/png" href="{{ site.url }}/assets/img/dash-logo.png" />
+    <link rel="shortcut icon" type="image/png" href="{{ site.baseurl }}/assets/img/dash-logo.png" />
   </head>
   <body>
     <!--<a href="https://github.com/driftyco/jetstrap-docs"><img style="position: absolute; z-index: 10000; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>-->
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <a href="{{ site.landing }}/" class="brand"><img src="{{ site.url }}/assets/img/Dash.png"></a>
+          <a href="{{ site.baseurl }}/" class="brand"><img src="{{ site.baseurl }}/assets/img/Dash.png"></a>
           <ul class="nav pull-right">
             <li><a href="https://github.com/Circular-Studios/Dash">Dash on GitHub</a></li>
-            <li><a href="{{ site.url }}/api/latest">API Documentation</a></li>
+            <li><a href="{{ site.baseurl }}/api/latest">API Documentation</a></li>
             <li><a href="http://circularstudios.com">Circular Studios</a></li>
           </ul>
         </div>
@@ -40,14 +40,14 @@
         <div class="span3">
           <ul id="menu" class="nav nav-list" data-spy="affix">
             <li class="nav-header">DASH DOCS</li>
-            <li data-section="index"><a href="{{ site.url }}/guides/">Home</a></li>
+            <li data-section="index"><a href="{{ site.baseurl }}/guides/">Home</a></li>
             <li class="nav-header">GUIDES</li>
-            <li data-section="guides/gettingstarted"><a href="{{ site.url }}/guides/gettingstarted.html">Getting Started</a></li>
-            <li data-section="guides/prefabs"><a href="{{ site.url }}/guides/prefabs.html">Prefabs</a></li>
-            <li data-section="guides/scripts"><a href="{{ site.url }}/guides/scripts.html">Scripts</a></li>
+            <li data-section="guides/gettingstarted"><a href="{{ site.baseurl }}/guides/gettingstarted.html">Getting Started</a></li>
+            <li data-section="guides/prefabs"><a href="{{ site.baseurl }}/guides/prefabs.html">Prefabs</a></li>
+            <li data-section="guides/scripts"><a href="{{ site.baseurl }}/guides/scripts.html">Scripts</a></li>
             <li class="nav-header">SCHEMAS</li>
-            <li data-section="guides/schemas/objects"><a href="{{ site.url }}/guides/schemas/objects.html">Objects</a></li>
-            <li data-section="guides/schemas/materials"><a href="{{ site.url }}/guides/schemas/materials.html">Materials</a></li>
+            <li data-section="guides/schemas/objects"><a href="{{ site.baseurl }}/guides/schemas/objects.html">Objects</a></li>
+            <li data-section="guides/schemas/materials"><a href="{{ site.baseurl }}/guides/schemas/materials.html">Materials</a></li>
           </ul>
         </div>
         <div class="span9">
@@ -57,7 +57,7 @@
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="{{ site.url }}/assets/js/bootstrap.js"></script>
+    <script src="{{ site.baseurl }}/assets/js/bootstrap.js"></script>
     <script>
       $( '#menu [data-section="{{ page.section }}"]' ).addClass( 'active' );
     </script>
